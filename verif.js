@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: CC-BY-NC-SA-4.0
 // Lance une page en Chrome headless et rend le contenu du <pre> de resultat.
 // node verif.js examen_clinique.html
 const { spawn } = require("child_process");

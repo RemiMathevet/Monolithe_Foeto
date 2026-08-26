@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: CC-BY-NC-SA-4.0
 """Fabrique public/ — les modules et une page d'index lue dans les modules eux-memes.
 
     python3 publier.py            # regenere public/

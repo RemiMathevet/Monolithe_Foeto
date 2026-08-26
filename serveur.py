@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: CC-BY-NC-SA-4.0
 """Sert public/ sur 5075. Les modules partent en octet-stream, pas en text/html.
 
 Cloudflare injecte un lien piege anti-bot dans toute reponse text/html

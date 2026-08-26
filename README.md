@@ -77,5 +77,23 @@ git config core.hooksPath .githooks
 
 ## Licence
 
+`SPDX-License-Identifier: CC-BY-NC-SA-4.0`
+
 [CC BY-NC-SA 4.0](LICENSE) — réutilisation et modification libres, attribution
-demandée, partage à l'identique, **usage commercial exclu**.
+demandée, partage à l'identique, **usage commercial exclu**. Une seule licence
+pour tout le dépôt : les formulaires, les scripts, le vocabulaire et les
+gabarits de compte rendu. Chaque fichier porte la ligne SPDX, y compris les
+modules HTML — ils sont faits pour circuler seuls, détachés de ce dépôt, et
+doivent rester lisibles quant à leur licence une fois arrivés sur une clé USB.
+
+GitHub affichera « Other » plutôt qu'un badge : son détecteur ne connaît aucune
+licence non commerciale (il porte CC0, CC-BY et CC-BY-SA, tous trois autorisant
+l'usage commercial). Le badge est donc inatteignable tant que la clause NC est
+là — c'est un effet du choix de licence, pas un défaut du fichier `LICENSE`.
+
+Deux limites à connaître, la clause NC étant un choix délibéré : une licence
+Creative Commons n'accorde **pas de licence de brevet** et n'a pas de notion de
+« code source » comme en ont les licences logicielles ; et le partage à
+l'identique s'applique aussi aux dérivés des scripts. Si un usage logiciel plus
+strict devient nécessaire, PolyForm Noncommercial 1.0.0 dit la même chose en
+termes faits pour du code.
