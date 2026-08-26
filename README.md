@@ -18,10 +18,10 @@ ce soit n'est ni possible ni souhaitable.
 | `biometrie_clinique.html` | Mesures au ruban et au pied à coulisse, z-scores contre les références |
 | `radio.html` | Lecture du squelette, mesures des os longs, z-scores de Chitty |
 | `autopsie.html` | Le déroulé complet de l'autopsie, masses d'organes et z-scores |
+| `neuropath.html` | Examen de l'encéphale fixé, biométries cérébrales et z-scores |
 
-Restent à définir : macroscopie de l'organe fixé, description des coupes,
-lecture microscopique, module de neuropathologie. Le script de reprise des
-JSON dans la base est en cours.
+Restent à définir : module d'administration, lecture microscopique, placenta.
+Le script de reprise des JSON dans la base est en cours.
 
 ## Les deux numéros de version
 

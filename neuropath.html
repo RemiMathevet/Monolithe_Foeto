@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Neuropathologie — examen de l'encéphale fixé</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF; --grey18:#7A7E7C;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --amber:#8A6A18;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off input,section.off select,section.off textarea{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 180px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],select{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+textarea{width:100%;font-family:var(--sans);font-size:16px;color:var(--ink);
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;padding:9px 10px;resize:vertical}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:#F7EAE7}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ── Clichés ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px}
+.slot{border:1px solid var(--rule);border-radius:2px;overflow:hidden;background:var(--card);
+      cursor:pointer;text-align:left}
+.slot:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.slot .plate{background:var(--grey18);aspect-ratio:4/3;display:flex;align-items:center;
+             justify-content:center;position:relative}
+.slot .plate img{width:100%;height:100%;object-fit:contain;display:block}
+.slot .ph{font-size:26px;opacity:.55;color:#fff}
+.slot .cap{padding:7px 8px;font-size:13px;line-height:1.25}
+.slot .stat{font-family:var(--mono);font-size:10px;color:var(--ink-soft);
+            display:flex;justify-content:space-between;align-items:center;gap:6px;
+            padding:0 8px 7px}
+.slot .stat button{appearance:none;background:none;border:0;color:var(--alert);
+  font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.07em;
+  cursor:pointer;padding:4px;min-height:30px}
+.slot.done{border-color:var(--drape)}
+.slot.done .cap{font-weight:600}
+.tick{position:absolute;right:0;top:0;background:var(--drape);color:#fff;
+      font-family:var(--mono);font-size:10px;padding:2px 5px}
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+.sousTitre:first-child{margin-top:0}
+
+/* ── Champs ── */
+.ch{border-top:1px solid var(--rule);padding:9px 0}
+.ch:first-of-type{border-top:0}
+.ch .lib{font-size:15px;margin-bottom:6px}
+.tete{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tete .lib{flex:1 1 160px;min-width:0;margin:0}
+.tog{display:inline-flex;border:1px solid var(--rule);border-radius:2px;overflow:hidden;flex:0 0 auto}
+.tog button{appearance:none;border:0;background:var(--paper);color:var(--ink-soft);
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:9px 12px;cursor:pointer;min-height:38px}
+.tog button[aria-pressed=true][data-e=o]{background:var(--drape);color:#fff}
+.tog button[aria-pressed=true][data-e=n]{background:var(--alert);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font-family:var(--sans);font-size:14px;color:var(--ink);
+      background:var(--card);border:1px solid var(--rule);border-radius:2px;
+      padding:8px 11px;cursor:pointer;min-height:38px}
+.chip:hover{background:var(--drape-soft)}
+.chip[aria-pressed=true]{background:var(--drape);border-color:var(--drape);color:#fff;font-weight:550}
+.chip:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.mini{appearance:none;font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+  text-transform:uppercase;border:1px solid var(--rule);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:8px 11px;cursor:pointer;min-height:36px;margin-top:8px}
+.mini:hover{background:var(--drape-soft)}
+
+/* ── Mesures et z-scores ── */
+.mes{position:relative}
+.mes .u{position:absolute;right:9px;top:50%;transform:translateY(-50%);
+        font-family:var(--mono);font-size:11px;color:var(--ink-soft);pointer-events:none}
+.mes input{padding-right:34px}
+.zs{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;min-height:1px}
+.z{font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:2px 5px;
+   border:1px solid var(--rule);border-radius:2px;color:var(--ink-soft);background:var(--paper)}
+.z.out{border-color:var(--amber);color:var(--amber);font-weight:600}
+.z.far{border-color:var(--alert);color:var(--alert);font-weight:600}
+
+.bar{height:24px;background:#2A3634;border-radius:2px;display:flex;overflow:hidden;margin:10px 0 6px}
+.bar i{display:block;height:100%;transition:width .35s ease}
+.bar .used{background:#4FB3A6} .bar .proj{background:#3A5C58}
+.jauge{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.jauge h2{color:#9FB5B1} .jauge .n{color:#4FB3A6} .jauge .tally{color:#9FB5B1}
+.legende{display:flex;flex-wrap:wrap;gap:14px;font-family:var(--mono);font-size:11px;color:#9FB5B1}
+.legende b{color:var(--paper);font-weight:600}
+.legende .sw{display:inline-block;width:9px;height:9px;margin-right:5px;border-radius:1px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · encéphale fixé</p>
+  <h1>Neuropathologie <span class="ver" id="ver"></span></h1>
+  <p class="sub">Document autonome, pour l'examen de l'encéphale après fixation. Clichés et constatations restent sur cet appareil ; rien n'est transmis. Le terme conditionne les z-scores.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Deux chiffres, P, puis le numéro. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Opérateur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la saisie.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — Contexte -->
+<section id="secContexte" class="off">
+  <h2><span class="n">02</span>Contexte<span class="tally" id="talContexte">—</span></h2>
+  <div class="row">
+    <div class="field">
+      <label for="sa">Terme — semaines</label>
+      <input type="text" id="sa" class="mono" inputmode="numeric" placeholder="24" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="saj">Terme — jours</label>
+      <input type="text" id="saj" class="mono" inputmode="numeric" placeholder="3" autocomplete="off">
+    </div>
+  </div>
+  <p class="note" id="ctxHint">Le terme conditionne tous les z-scores : masses, biométries cérébrales et rapport.</p>
+  
+</section>
+
+<!-- Étapes : construites par le script -->
+<div id="etapes"></div>
+
+<!-- Stockage -->
+<section class="jauge">
+  <h2><span class="n" id="nJauge"></span>Stockage<span class="tally" id="tPhotos">0/0</span></h2>
+  <div class="bar"><i class="proj" id="barProj" style="width:0"></i><i class="used" id="barUsed" style="width:0"></i></div>
+  <div class="legende">
+    <span><i class="sw" style="background:#4FB3A6"></i>occupé <b id="usedTxt">—</b><b id="quotaTxt"></b></span>
+    <span><i class="sw" style="background:#3A5C58"></i>export projeté <b id="projTxt">—</b></span>
+  </div>
+</section>
+
+<!-- Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n" id="nSortie"></span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Effacer le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- Diagnostic -->
+<section>
+  <h2><span class="n" id="nDiag"></span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="pick" accept="image/*" capture="environment">
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante : doit fonctionner par double-clic sur un poste hors réseau.
+
+   Examen de l'encéphale fixé. Les clés de clichés et les identifiants de champs
+   reprennent ceux de la PWA (neuropath.html) ; les tables de référence sont
+   celles de Biometry_tables/, recopiées telles quelles par le script de
+   fabrication — un document en file:// ne peut pas aller les chercher.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var MODULE = "neuropath";
+var SCHEMA = "0.1.0";
+var VERSION = "1.0.0";   /* version du document ; à incrémenter à chaque diffusion */
+var DB_NAME = "foeto-neuropath", DB_VER = 1, db = null;
+
+/* ── Référentiels (recopiés des tables de la PWA, Biometry_tables/) ───────────
+   ME : masse de l'encéphale fixé (g)      · Guihard-Costa 2002 / Maroun 2017
+   MI : masse de l'étage infratentoriel (g) · idem
+   RI : rapport infratentoriel / encéphale (%)
+   BC : biométries cérébrales (mm), table par SA + régression hors table */
+var REF_ME = {"8-9":{"m":0.8,"s":0.2},"10-11":{"m":1.2,"s":0.25},"12-13":{"m":5.87,"s":1.5},"14-15":{"m":14.4,"s":3.34},"16-17":{"m":21.49,"s":5.34},"18-19":{"m":38.75,"s":9.52},"20-21":{"m":55.38,"s":10.18},"22-23":{"m":78.15,"s":14.37},"24-25":{"m":111.97,"s":17.3},"26-27":{"m":146.21,"s":21.69},"28-29":{"m":184.62,"s":36.4},"30-31":{"m":229.54,"s":29.84},"32-33":{"m":266,"s":32.78},"34-35":{"m":309.32,"s":47.04},"36-37":{"m":366,"s":50.27},"38-39":{"m":433.3,"s":56.89},"40-41":{"m":455.27,"s":53.66}};
+var REF_MI = {"8-9":{"m":0.4,"s":0.1},"10-11":{"m":0.5,"s":0.1},"12-13":{"m":0.6,"s":0.1},"14-15":{"m":0.76,"s":0.14},"16-17":{"m":1.21,"s":0.19},"18-19":{"m":2.19,"s":0.7},"20-21":{"m":2.81,"s":0.42},"22-23":{"m":3.71,"s":0.74},"24-25":{"m":5.23,"s":0.7},"26-27":{"m":6.95,"s":1.41},"28-29":{"m":7.63,"s":0.79},"30-31":{"m":12.25,"s":2.02},"32-33":{"m":14,"s":2.5},"34-35":{"m":15.75,"s":3.18},"36-37":{"m":21.43,"s":3.36},"38-39":{"m":26.93,"s":4.7},"40-41":{"m":29.05,"s":4.04}};
+var REF_RI = {"14-15":{"m":5.91,"s":0.62},"16-17":{"m":5.37,"s":0.78},"18-19":{"m":4.88,"s":0.5},"20-21":{"m":4.98,"s":0.49},"22-23":{"m":5.54,"s":0.41},"24-25":{"m":4.61,"s":0.29},"26-27":{"m":4.52,"s":0.32},"28-29":{"m":4.76,"s":0.46},"30-31":{"m":5.24,"s":0.35},"32-33":{"m":5.18,"s":0.3},"34-35":{"m":5.58,"s":0.41},"36-37":{"m":6.07,"s":0.66},"38-39":{"m":6.27,"s":0.56},"40-41":{"m":6.68,"s":0.65}};
+var REF_BC = {"DOFD":{"22-23":{"m":67.5,"s":3.1},"24-25":{"m":69.7,"s":8.12},"26":{"m":76.8,"s":7.91},"27":{"m":81.3,"s":4.68},"28":{"m":81.5,"s":4.15},"29":{"m":85.3,"s":5.84},"30":{"m":89.2,"s":5.94},"31":{"m":91,"s":3.85},"32":{"m":93.4,"s":5.43},"33":{"m":97,"s":4.48},"34":{"m":99,"s":5.28},"35-36":{"m":102.2,"s":3.92},"37-38":{"m":103,"s":5.78}},"DOFG":{"22-23":{"m":67.5,"s":3.1},"24-25":{"m":69.7,"s":8.12},"26":{"m":76.8,"s":7.91},"27":{"m":81.3,"s":4.68},"28":{"m":81.5,"s":4.15},"29":{"m":85.3,"s":5.84},"30":{"m":89.2,"s":5.94},"31":{"m":91,"s":3.85},"32":{"m":93.4,"s":5.43},"33":{"m":97,"s":4.48},"34":{"m":99,"s":5.28},"35-36":{"m":102.2,"s":3.92},"37-38":{"m":103,"s":5.78}},"DT":{"22-23":{"m":49,"s":4.24},"24-25":{"m":51.8,"s":5.76},"26":{"m":57.8,"s":4.14},"27":{"m":59.4,"s":3.65},"28":{"m":61.3,"s":4.73},"29":{"m":65.7,"s":3.71},"30":{"m":69,"s":4.55},"31":{"m":70.5,"s":4.42},"32":{"m":72.4,"s":5.85},"33":{"m":77.7,"s":3.89},"34":{"m":76.7,"s":4.81},"35-36":{"m":81.2,"s":3.72},"37-38":{"m":83.6,"s":5.63}},"DTC":{"22-23":{"m":25.9,"s":3.09},"24-25":{"m":26.7,"s":1.86},"26":{"m":28.7,"s":4.27},"27":{"m":31.1,"s":3.11},"28":{"m":32.4,"s":1.96},"29":{"m":35.4,"s":2.59},"30":{"m":36.6,"s":3.25},"31":{"m":38.9,"s":2.04},"32":{"m":39.9,"s":2.27},"33":{"m":41.6,"s":2.22},"34":{"m":43.4,"s":3.29},"35-36":{"m":46.6,"s":2.36},"37-38":{"m":48,"s":3.77}},"HautVermis":{"22-23":{"m":11.5,"s":1},"24-25":{"m":12.8,"s":2.12},"26":{"m":14,"s":0.81},"27":{"m":15.2,"s":2.24},"28":{"m":15.4,"s":1.91},"29":{"m":16,"s":1.07},"30":{"m":17.1,"s":2.14},"31":{"m":17.1,"s":1.37},"32":{"m":18.3,"s":2.01},"33":{"m":19.2,"s":1.78},"34":{"m":20.1,"s":2.15},"35-36":{"m":20.9,"s":1.83},"37-38":{"m":21.1,"s":2.79}},"CC":{"22-23":{"m":30.12,"s":1.84},"24-25":{"m":30.95,"s":3.3},"26":{"m":33.4,"s":2.6},"27":{"m":35.05,"s":4.34},"28":{"m":36.2,"s":2.57},"29":{"m":35.62,"s":3.55},"30":{"m":37.06,"s":3.05},"31":{"m":37.51,"s":3.1},"32":{"m":38.63,"s":3.6},"33":{"m":40.97,"s":3.37},"34":{"m":38.89,"s":3.09},"35-36":{"m":40.9,"s":3.54},"37-38":{"m":43.12,"s":5.87}}};
+var REG_BC = {"DOFD":{"slope":2.6197,"int":8.86,"sET":-0.0582,"iET":7.01},"DOFG":{"slope":2.6197,"int":8.86,"sET":-0.0582,"iET":7.01},"DT":{"slope":2.4837,"int":-7.12,"sET":0.0238,"iET":3.83},"DTC":{"slope":1.6481,"int":-12.89,"sET":0.0057,"iET":2.6},"HautVermis":{"slope":0.6861,"int":-3.76,"sET":0.07,"iET":-0.31},"CC":{"slope":0.8528,"int":11.22,"sET":0.1382,"iET":-0.78}};
+var SRC_REF = {"ME":"Guihard-Costa 2002 / Maroun 2017","MI":"Guihard-Costa 2002 / Maroun 2017","RI":"Guihard-Costa 2002 / Maroun 2017","BC":"Données internes / littérature neuropathologique"};
+
+/* Les tables sont indexées par tranches de SA : "8-9", "26", "35-36". */
+function bande(table, sa){
+  var k = Object.keys(table);
+  for (var i = 0; i < k.length; i++){
+    var p = k[i].split("-");
+    var a = +p[0], b = p.length > 1 ? +p[1] : +p[0];
+    if (sa >= a && sa <= b) return k[i];
+  }
+  return null;
+}
+/* Renvoie {m, sd} pour une mesure, ou null. Pour les biométries cérébrales,
+   hors des bornes de la table on retombe sur la régression linéaire de la PWA
+   — c'est elle qui étend le référentiel au-delà de 22-38 SA, pas une
+   extrapolation de mon fait. */
+function refDe(cle, sa){
+  if (sa == null) return null;
+  var t = cle === "ME" ? REF_ME : cle === "MI" ? REF_MI : cle === "RI" ? REF_RI : null;
+  if (t){
+    var b = bande(t, sa);
+    return b ? { m: t[b].m, sd: t[b].s } : null;
+  }
+  if (!REF_BC[cle]) return null;
+  var bb = bande(REF_BC[cle], sa);
+  if (bb) return { m: REF_BC[cle][bb].m, sd: REF_BC[cle][bb].s };
+  var r = REG_BC[cle];
+  if (!r) return null;
+  var sd = r.sET * sa + r.iET;
+  return sd > 0 ? { m: r.slope * sa + r.int, sd: sd } : null;
+}
+
+/* ── Trame de l'examen neuropathologique ────────────────────────────────────
+   Calquée sur l'examen neuropath de la PWA (pwa/foet/neuropath.html).
+   Une étape : ses clichés, puis ses champs. Types de champs :
+     chips  — liste fermée, multi:1 pour le choix multiple
+     bool   — oui / non
+     num    — nombre avec unité, sans référentiel
+     mes    — mesure avec unité, jugée contre le référentiel nommé par ref
+     calc   — valeur calculée (non saisie), jugée elle aussi
+     txt    — texte libre
+   L'examen porte sur l'encéphale FIXÉ : il vient après l'autopsie, souvent
+   des semaines après. Le module d'autopsie n'en garde que le niveau « en
+   salle » — prélevé ou non, et le cliché de la base du crâne. */
+var ETAPES = [
+  { id:"prelevement", t:"Prélèvement et fixation",
+    photos:[ {k:"p_base_crane",     l:"Base du crâne après prélèvement"},
+             {k:"p_encephale_frais", l:"Encéphale à l'état frais"} ],
+    champs:[
+      {t:"bool",  id:"preleve", l:"Encéphale prélevé"},
+      {t:"chips", id:"fixation", l:"Fixation",
+       v:["Formol tamponné 10 %","Liquide de Bouin","Autre fixateur","Non fixé"]},
+      {t:"num",   id:"duree_fixation", l:"Durée de fixation", u:"jours"},
+      {t:"chips", id:"etat_reception", l:"État à la réception",
+       v:["Intact","Fragmenté","Autolysé","Liquéfié"]},
+      {t:"chips", id:"fosse_post", l:"Fosse postérieure", multi:1,
+       v:["Normale","Kystique","Malformation de Dandy-Walker","Méga grande citerne",
+          "Kyste arachnoïdien","Hernie des amygdales cérébelleuses"]},
+      {t:"txt",   id:"prelevement_detail", l:"Prélèvement — précisions"}
+    ]},
+  { id:"aspect", t:"Aspect général — les six faces",
+    photos:[ {k:"p_face_frontale", l:"Face frontale"},
+             {k:"p_cote_droit",    l:"Côté droit"},
+             {k:"p_cote_gauche",   l:"Côté gauche"},
+             {k:"p_par_derriere",  l:"Par derrière"},
+             {k:"p_dessus",        l:"Dessus"},
+             {k:"p_dessous",       l:"Dessous"} ],
+    champs:[
+      {t:"chips", id:"symetrie", l:"Symétrie hémisphérique",
+       v:["Symétrique","Asymétrie droite","Asymétrie gauche"]},
+      {t:"chips", id:"consistance", l:"Consistance après fixation",
+       v:["Ferme","Molle","Très molle — coupe difficile"]},
+      {t:"txt",   id:"aspect_detail", l:"Aspect général — précisions"}
+    ]},
+  { id:"macro", t:"Description macroscopique",
+    photos:[ {k:"p_meninges",    l:"Méninges"},
+             {k:"p_gyration",    l:"Gyration"},
+             {k:"p_willis",      l:"Polygone de Willis"},
+             {k:"p_mamillaires", l:"Corps mamillaires"},
+             {k:"p_colliculi",   l:"Colliculi"} ],
+    champs:[
+      {t:"chips", id:"meninges", l:"Méninges", multi:1,
+       v:["Normales","Hémorragie méningée","Méningite / inflammation","Épaississement méningé"]},
+      {t:"txt",   id:"meninges_detail", l:"Méninges — précisions"},
+      {t:"chips", id:"gyration", l:"Gyration", multi:1,
+       v:["Normale","Gyration simplifiée","Polymicrogyrie","Pachygyrie","Lissencéphalie",
+          "Agyrie","Retard de gyration"]},
+      {t:"txt",   id:"gyration_detail", l:"Gyration — précisions"},
+      {t:"chips", id:"willis", l:"Polygone de Willis", multi:1,
+       v:["Normal","Asymétrie vasculaire","Anévrisme","Hypoplasie artérielle","Non analysable"]},
+      {t:"txt",   id:"willis_detail", l:"Polygone de Willis — précisions"},
+      {t:"chips", id:"mamillaires", l:"Corps mamillaires",
+       v:["Normaux","Hypoplasie","Asymétrie","Absence","Non vus"]},
+      {t:"chips", id:"colliculi", l:"Colliculi",
+       v:["Normaux","Fusion","Asymétrie","Hypoplasie","Non vus"]},
+      {t:"txt",   id:"macro_detail", l:"Autres constatations macroscopiques"}
+    ]},
+  { id:"biometrie", t:"Biométries",
+    photos:[ {k:"p_pesee", l:"Pesée de l'encéphale"} ],
+    champs:[
+      {t:"mes",  id:"masse_enc",   l:"Masse de l'encéphale fixé", u:"g",  ref:"ME"},
+      {t:"mes",  id:"masse_cerv",  l:"Masse de l'étage infratentoriel", u:"g", ref:"MI"},
+      {t:"calc", id:"ratio_ce",    l:"Rapport infratentoriel / encéphale", u:"%", ref:"RI"},
+      {t:"mes",  id:"DOFD",        l:"Diamètre occipito-frontal droit", u:"mm", ref:"DOFD"},
+      {t:"mes",  id:"DOFG",        l:"Diamètre occipito-frontal gauche", u:"mm", ref:"DOFG"},
+      {t:"mes",  id:"DT",          l:"Diamètre transverse (BIP cérébral)", u:"mm", ref:"DT"},
+      {t:"mes",  id:"DTC",         l:"Diamètre transverse du cervelet", u:"mm", ref:"DTC"},
+      {t:"mes",  id:"HautVermis",  l:"Hauteur du vermis", u:"mm", ref:"HautVermis"}
+    ]},
+  { id:"cervelet", t:"Cervelet et aqueduc",
+    photos:[ {k:"p_coupe_sagittale", l:"Coupe sagittale médiane"},
+             {k:"p_vue_posterieure", l:"Cervelet — vue postérieure"},
+             {k:"p_aqueduc",         l:"Aqueduc de Sylvius"} ],
+    champs:[
+      {t:"chips", id:"cervelet_aspect", l:"Cervelet — aspect", multi:1,
+       v:["Normal","Hypoplasie vermienne","Hypoplasie hémisphérique","Agénésie du vermis",
+          "Dysplasie corticale","Hémorragie","Hétérotopie"]},
+      {t:"txt",   id:"cervelet_detail", l:"Cervelet — précisions"},
+      {t:"chips", id:"aqueduc", l:"Aqueduc de Sylvius",
+       v:["Normal","Sténose","Atrésie","Forking","Non analysable"]},
+      {t:"txt",   id:"aqueduc_detail", l:"Aqueduc — précisions"},
+      {t:"chips", id:"tronc", l:"Tronc cérébral", multi:1,
+       v:["Normal","Hypoplasie","Aplatissement des pyramides","Hémorragie","Non analysable"]}
+    ]},
+  { id:"corps_calleux", t:"Corps calleux",
+    photos:[ {k:"p_cc_d", l:"Callosotomie — hémisphère droit"},
+             {k:"p_cc_g", l:"Callosotomie — hémisphère gauche"} ],
+    champs:[
+      {t:"chips", id:"cc", l:"Corps calleux",
+       v:["Normal","CC incomplet","CC court / hypoplasique","Agénésie du corps calleux","Autre"]},
+      {t:"mes",   id:"CC", l:"Longueur du corps calleux", u:"mm", ref:"CC"},
+      {t:"txt",   id:"cc_detail", l:"Corps calleux — précisions"},
+      {t:"chips", id:"ventricules", l:"Ventricules latéraux", multi:1,
+       v:["Normaux","Dilatation droite","Dilatation gauche","Dilatation bilatérale",
+          "Colpocéphalie","Hémorragie intraventriculaire"]}
+    ]},
+  { id:"oculaire", t:"Globes oculaires",
+    photos:[ {k:"p_oeil_d", l:"Globe oculaire droit"},
+             {k:"p_oeil_g", l:"Globe oculaire gauche"} ],
+    champs:[
+      {t:"num", id:"oeil_d_dt",  l:"Œil droit — diamètre transverse", u:"mm"},
+      {t:"num", id:"oeil_d_dap", l:"Œil droit — diamètre antéro-postérieur", u:"mm"},
+      {t:"num", id:"oeil_d_dc",  l:"Œil droit — diamètre cranio-caudal", u:"mm"},
+      {t:"num", id:"oeil_g_dt",  l:"Œil gauche — diamètre transverse", u:"mm"},
+      {t:"num", id:"oeil_g_dap", l:"Œil gauche — diamètre antéro-postérieur", u:"mm"},
+      {t:"num", id:"oeil_g_dc",  l:"Œil gauche — diamètre cranio-caudal", u:"mm"},
+      {t:"txt", id:"oculaire_detail", l:"Globes oculaires — précisions"}
+    ]},
+  { id:"tranches_hd", t:"Tranches — hémisphère droit",
+    photos:[ {k:"p_tranches_hd", l:"Tranches de l'hémisphère droit"} ],
+    champs:[
+      {t:"chips", id:"thd", l:"Constatations — hémisphère droit", multi:1,
+       v:["Normales","Hémorragie périventriculaire","Hémorragie intraparenchymateuse",
+          "Hétérotopie nodulaire","Hétérotopie en bande","Dilatation ventriculaire",
+          "Leucomalacie","Porencéphalie","Kyste","Nécrose"]},
+      {t:"txt", id:"thd_detail", l:"Hémisphère droit — précisions"}
+    ]},
+  { id:"tranches_hg", t:"Tranches — hémisphère gauche",
+    photos:[ {k:"p_tranches_hg", l:"Tranches de l'hémisphère gauche"} ],
+    champs:[
+      {t:"chips", id:"thg", l:"Constatations — hémisphère gauche", multi:1,
+       v:["Normales","Hémorragie périventriculaire","Hémorragie intraparenchymateuse",
+          "Hétérotopie nodulaire","Hétérotopie en bande","Dilatation ventriculaire",
+          "Leucomalacie","Porencéphalie","Kyste","Nécrose"]},
+      {t:"txt", id:"thg_detail", l:"Hémisphère gauche — précisions"}
+    ]},
+  { id:"prelevements", t:"Prélèvements pour histologie",
+    photos:[],
+    champs:[
+      {t:"chips", id:"blocs", l:"Régions prélevées", multi:1,
+       v:["Frontal","Pariétal","Temporal","Occipital","Hippocampe","Noyaux gris centraux",
+          "Thalamus","Cervelet — vermis","Cervelet — hémisphère","Tronc cérébral","Moelle",
+          "Nerf optique","Plexus choroïde"]},
+      {t:"bool",  id:"congelation", l:"Congélation réalisée"},
+      {t:"txt",   id:"prelev_detail", l:"Prélèvements — précisions"},
+      {t:"txt",   id:"commentaire", l:"Commentaire libre"}
+    ]}
+];
+var N_TRAME  = ETAPES.reduce(function(a, e){ return a + e.photos.length; }, 0);
+var N_CHAMPS = ETAPES.reduce(function(a, e){ return a + e.champs.length; }, 0);
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function fmt(n){
+  if (n == null || isNaN(n)) return "—";
+  if (n < 1024) return n + " o";
+  if (n < 1048576) return (n/1024).toFixed(0) + " Ko";
+  if (n < 1073741824) return (n/1048576).toFixed(1) + " Mo";
+  return (n/1073741824).toFixed(2) + " Go";
+}
+function uid(){
+  try { if (crypto && crypto.randomUUID) return crypto.randomUUID().slice(0, 8); } catch(e){}
+  return "x" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+function normDossier(v){ return v.toUpperCase().replace(/^(\d{2})P/, "$1P").replace(/\s+/g,""); }
+function dossierOk(v){ return /^\d{2}P\d+$/.test(v); }
+function num(v){
+  var s = String(v == null ? "" : v).trim().replace(",", ".");
+  if (!s) return null;
+  var n = parseFloat(s);
+  return isFinite(n) ? n : null;
+}
+function champDef(id){
+  var r = null;
+  ETAPES.forEach(function(e){ e.champs.forEach(function(c){ if (c.id === id) r = c; }); });
+  return r;
+}
+function zscore(v, m, sd){
+  if (v == null || m == null || sd == null || !sd) return null;
+  return (v - m) / sd;
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────── */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+      if (!d.objectStoreNames.contains("shots")){
+        d.createObjectStore("shots", {keyPath:"id"}).createIndex("dossier", "dossier");
+      }
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(store, mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction(store, mode), out = fn(t.objectStore(store));
+    t.oncomplete = function(){ res(out && out.result !== undefined ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("saisies", "readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("saisies", "readonly",  function(s){ return s.get(d); }); }
+function sid(k){ return dossier + "|" + k; }
+function putShot(r){ return tx("shots", "readwrite", function(s){ return s.put(r); }); }
+function delShot(i){ return tx("shots", "readwrite", function(s){ return s.delete(i); }); }
+function shotsOf(d){
+  return tx("shots", "readonly", function(s){ return s.index("dossier").getAll(IDBKeyRange.only(d)); });
+}
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", shots = {}, urls = {}, libres = {}, slotCible = null;
+/* libres : clichés hors trame, clé -> { l: intitulé, etape } */
+
+/* ── Construction ─────────────────────────────────────────────────────────── */
+function champHTML(c){
+  var h = '<div class="ch" id="ch_wrap_' + c.id + '" data-champ="' + c.id + '">';
+  if (c.t === "bool"){
+    return h + '<div class="tete"><div class="lib">' + esc(c.l) + '</div>' +
+             '<div class="tog" id="it_' + c.id + '" data-etat="">' +
+               '<button type="button" data-e="o" aria-pressed="false">Oui</button>' +
+               '<button type="button" data-e="n" aria-pressed="false">Non</button>' +
+             '</div></div></div>';
+  }
+  h += '<div class="lib">' + esc(c.l) + '</div>';
+  if (c.t === "chips"){
+    h += '<div class="chips" id="ch_' + c.id + '"' + (c.multi ? ' data-multi="1"' : '') + '>' +
+         c.v.map(function(v){
+           return '<button type="button" class="chip" aria-pressed="false" data-v="' + esc(v) + '">' + esc(v) + '</button>';
+         }).join("") + '</div>';
+  } else if (c.t === "num"){
+    h += '<div class="mes"><input type="text" inputmode="decimal" id="n_' + c.id + '" autocomplete="off">' +
+         '<span class="u">' + esc(c.u || "") + '</span></div>';
+  } else if (c.t === "mes"){
+    h += '<div class="mes"><input type="text" inputmode="decimal" id="m_' + c.id + '" autocomplete="off">' +
+         '<span class="u">' + esc(c.u || "") + '</span></div><div class="zs" id="zs_' + c.id + '"></div>';
+  } else if (c.t === "calc"){
+    h += '<div class="mes"><output class="mono" id="cv_' + c.id + '">—</output>' +
+         '<span class="u">' + esc(c.u || "") + '</span></div><div class="zs" id="zs_' + c.id + '"></div>';
+  } else if (c.t === "txt"){
+    h += '<textarea id="t_' + c.id + '" rows="2" placeholder="Précisions…"></textarea>';
+  }
+  return h + '</div>';
+}
+(function batir(){
+  $("etapes").innerHTML = ETAPES.map(function(e, n){
+    var h = '<section id="sec_' + e.id + '" class="off" data-etape="' + e.id + '">' +
+            '<h2><span class="n">' + ("0" + (n+3)).slice(-2) + '</span>' + esc(e.t) +
+            '<span class="tally" id="tal_' + e.id + '">—</span></h2>';
+    h += '<div class="sousTitre">Clichés</div>' +
+         '<div class="grid" id="ph_' + e.id + '"></div>' +
+         '<button type="button" class="mini" data-add="' + e.id + '">＋ Cliché + descriptif</button>' +
+         '<div class="sousTitre">Constatations</div>';
+    h += e.champs.map(champHTML).join("");
+    return h + '</section>';
+  }).join("");
+  $("nJauge").textContent  = ("0" + (ETAPES.length + 3)).slice(-2);
+  $("nSortie").textContent = ("0" + (ETAPES.length + 4)).slice(-2);
+  $("nDiag").textContent   = ("0" + (ETAPES.length + 5)).slice(-2);
+  $("ver").textContent = "v" + VERSION;
+})();
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  ETAPES.forEach(function(e){ $("sec_" + e.id).classList.toggle("off", !ouvert); });
+  $("secContexte").classList.toggle("off", !ouvert);
+  $("secSortie").classList.toggle("off", !ouvert);
+}
+
+/* ── Lecture / écriture des champs ────────────────────────────────────────── */
+function etatDe(id){ return $("it_" + id).dataset.etat || null; }
+function poserEtat(id, v){
+  var el = $("it_" + id);
+  el.dataset.etat = v || "";
+  Array.prototype.forEach.call(el.children, function(b){
+    b.setAttribute("aria-pressed", b.dataset.e === v ? "true" : "false");
+  });
+}
+function chipsDe(id){
+  return Array.prototype.filter.call($("ch_" + id).children, function(b){
+    return b.getAttribute("aria-pressed") === "true";
+  }).map(function(b){ return b.dataset.v; });
+}
+function poserChips(id, vals){
+  Array.prototype.forEach.call($("ch_" + id).children, function(b){
+    b.setAttribute("aria-pressed", (vals || []).indexOf(b.dataset.v) >= 0 ? "true" : "false");
+  });
+}
+function lire(c){
+  switch(c.t){
+    case "chips":  return chipsDe(c.id);
+    case "bool":   return etatDe(c.id) === "o" ? "oui" : etatDe(c.id) === "n" ? "non" : null;
+    case "num":    return num($("n_" + c.id).value);
+    case "mes":    return num($("m_" + c.id).value);
+    case "calc":   return calcule(c.id);
+    case "txt":    return $("t_" + c.id).value.trim() || null;
+  }
+  return null;
+}
+function ecrire(c, v){
+  switch(c.t){
+    case "chips":  poserChips(c.id, v || []); break;
+    case "bool":   poserEtat(c.id, v === "oui" ? "o" : v === "non" ? "n" : null); break;
+    case "num":    $("n_" + c.id).value = v == null ? "" : v; break;
+    case "mes":    $("m_" + c.id).value = v == null ? "" : v; break;
+    case "calc":   break;   /* recalculé, jamais restitué */
+    case "txt":    $("t_" + c.id).value = v || ""; break;
+  }
+}
+
+/* ── Terme, valeurs calculées, z-scores ───────────────────────────────────── */
+function terme(){ return num($("sa").value); }
+/* Le rapport infratentoriel / encéphale n'est pas saisi : il se déduit des deux
+   masses, et c'est lui qui porte le référentiel RI. */
+function calcule(id){
+  if (id === "ratio_ce"){
+    var e = num($("m_masse_enc").value), c = num($("m_masse_cerv").value);
+    if (e == null || c == null || !e) return null;
+    return Math.round(c / e * 1000) / 10;
+  }
+  return null;
+}
+/* Une mesure est jugée contre le seul référentiel qui la concerne. */
+function zs(c, v){
+  var sa = terme();
+  if (v == null || sa == null || !c.ref) return [];
+  var r = refDe(c.ref, Math.round(sa));
+  if (!r) return [];
+  var z = zscore(v, r.m, r.sd);
+  return z === null ? [] : [{ s: c.ref, z: z, m: r.m, sd: r.sd }];
+}
+function valeurDe(c){ return lire(c); }
+function majZ(c){
+  var el = $("zs_" + c.id);
+  if (!el) return;
+  var v = valeurDe(c), l = zs(c, v);
+  var o = $("cv_" + c.id);
+  if (o) o.textContent = v == null ? "—" : v;
+  if (v == null){ el.innerHTML = ""; return; }
+  if (!l.length){
+    el.innerHTML = '<span class="z">' + (terme() == null ? "terme non saisi" : "hors référentiel") + '</span>';
+    return;
+  }
+  el.innerHTML = l.map(function(x){
+    var a = Math.abs(x.z);
+    return '<span class="z' + (a > 4 ? " far" : a > 2 ? " out" : "") + '">' +
+           x.s + " z " + (x.z >= 0 ? "+" : "") + x.z.toFixed(2) +
+           ' <small>(attendu ' + x.m + " ± " + x.sd.toFixed(2) + ')</small></span>';
+  }).join("");
+}
+function majTousZ(){
+  ETAPES.forEach(function(e){
+    e.champs.forEach(function(c){ if (c.t === "mes" || c.t === "calc") majZ(c); });
+  });
+}
+
+/* ── Interactions ─────────────────────────────────────────────────────────── */
+document.addEventListener("click", function(ev){
+  var t = ev.target;
+  if (!t.closest) return;
+  var sec = t.closest("section");
+  if (sec && sec.classList.contains("off")) return;
+
+  var tog = t.closest(".tog button");
+  if (tog){
+    var id = tog.parentNode.id.slice(3);
+    /* un second appui sur l'état actif le retire : le champ redevient non renseigné */
+    poserEtat(id, etatDe(id) === tog.dataset.e ? null : tog.dataset.e);
+    majTallies(); enregistrer();
+    return;
+  }
+  var chip = t.closest(".chip");
+  if (chip){
+    var box = chip.parentNode, on = chip.getAttribute("aria-pressed") === "true";
+    if (!box.dataset.multi){
+      Array.prototype.forEach.call(box.children, function(b){ b.setAttribute("aria-pressed", "false"); });
+    }
+    chip.setAttribute("aria-pressed", on ? "false" : "true");
+    majTallies(); enregistrer();
+    return;
+  }
+  var add = t.closest("[data-add]");
+  if (add){ nouveauCliche(add.dataset.add); return; }
+  var del = t.closest("[data-del]");
+  if (del){ ev.stopPropagation(); retirer(del.dataset.del); return; }
+  var slot = t.closest(".slot");
+  if (slot){ ouvrirSlot(slot.dataset.k); return; }
+});
+document.addEventListener("keydown", function(ev){
+  if (ev.key !== "Enter" && ev.key !== " ") return;
+  var s = ev.target.classList && ev.target.classList.contains("slot") ? ev.target : null;
+  if (s && !s.closest("section").classList.contains("off")){ ev.preventDefault(); ouvrirSlot(s.dataset.k); }
+});
+document.addEventListener("input", function(ev){
+  var el = ev.target;
+  if (el.id === "dossier" || el.id === "operateur") return;
+  if (el.id === "sa" || el.id === "saj"){ majTousZ(); majTallies(); enregistrer(); return; }
+  var w = el.closest ? el.closest(".ch") : null;
+  if (w){
+    var c = champDef(w.dataset.champ);
+    if (c && c.t === "mes") majTousZ();   /* une masse déplace aussi le rapport */
+    majTallies(); enregistrer();
+  }
+});
+
+/* ── Vignette ─────────────────────────────────────────────────────────────── */
+function decode(b){
+  try { return createImageBitmap(b, {imageOrientation:"from-image"}); }
+  catch(e){ return createImageBitmap(b); }
+}
+function toBlob(bmp, w, h, q){
+  var c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  c.getContext("2d").drawImage(bmp, 0, 0, w, h);
+  return new Promise(function(res){ c.toBlob(res, "image/jpeg", q); });
+}
+/* Le cliché est conservé tel que le capteur l'a produit : aucun
+   réencodage, aucune réduction. La vignette ne sert qu'à l'affichage. */
+async function traiter(file){
+  var bmp = await decode(file);
+  var ow = bmp.width, oh = bmp.height;
+  var tk = Math.min(1, 400 / Math.max(ow, oh));
+  var vig = await toBlob(bmp, Math.round(ow*tk), Math.round(oh*tk), 0.7);
+  if (bmp.close) bmp.close();
+  return { blob: file, thumb: vig, w: ow, h: oh, ow: ow, oh: oh };
+}
+
+/* ── Rendu des clichés ────────────────────────────────────────────────────── */
+function slotHTML(k, l, libre){
+  var r = shots[k];
+  var img = r && urls[k]
+    ? '<img src="' + urls[k] + '" alt="' + esc(l) + '"><span class="tick">✓</span>'
+    : '<span class="ph">📷</span>';
+  var stat = r
+    ? '<div class="stat"><span>' + r.w + '×' + r.h + ' · ' + fmt(r.bytes) + '</span>' +
+      '<button type="button" data-del="' + esc(k) + '">Retirer</button></div>'
+    : '<div class="stat"><span>' + (libre ? "supplémentaire" : "à réaliser") + '</span></div>';
+  return '<div class="slot' + (r ? " done" : "") + '" data-k="' + esc(k) + '" tabindex="0" role="button">' +
+           '<div class="plate">' + img + '</div>' +
+           '<div class="cap">' + esc(l) + '</div>' + stat +
+         '</div>';
+}
+function rendreCliches(){
+  ETAPES.forEach(function(e){
+    var h = e.photos.map(function(p){ return slotHTML(p.k, p.l, false); }).join("");
+    Object.keys(libres).forEach(function(k){
+      if (libres[k].etape === e.id) h += slotHTML(k, libres[k].l, true);
+    });
+    $("ph_" + e.id).innerHTML = h;
+  });
+  majTallies();
+  jauge();
+}
+function majTallies(){
+  var faits = 0;
+  ETAPES.forEach(function(e){
+    var p = e.photos.filter(function(x){ return shots[x.k]; }).length;
+    faits += p;
+    var vus = e.champs.filter(function(c){
+      var v = lire(c);
+      if (c.t === "chips") return v.length > 0;
+      if (c.t === "calc") return false;   /* déduit, ne compte pas comme saisi */
+      return v != null;
+    }).length;
+    $("tal_" + e.id).textContent =
+      (e.photos.length ? p + "/" + e.photos.length + " cliché · " : "") +
+      vus + "/" + e.champs.length;
+  });
+  $("tPhotos").textContent = faits + "/" + N_TRAME;
+
+  var sa = terme(), j = num($("saj").value);
+  $("talContexte").textContent = sa == null ? "terme manquant"
+    : sa + " SA" + (j != null ? " + " + j + " j" : "");
+}
+async function jauge(){
+  var total = Object.keys(shots).reduce(function(a,k){ return a + (shots[k].bytes||0); }, 0);
+  var proj  = Math.round(total * 4/3) + 8192;
+  var used = null, quota = null;
+  if (navigator.storage && navigator.storage.estimate){
+    try { var e = await navigator.storage.estimate(); used = e.usage; quota = e.quota; } catch(x){}
+  }
+  $("usedTxt").textContent  = fmt(used != null ? used : total);
+  $("quotaTxt").textContent = quota ? "  sur " + fmt(quota) : "  (quota inconnu)";
+  $("projTxt").textContent  = fmt(proj);
+  if (quota){
+    $("barUsed").style.width = Math.min(100, ((used||total)/quota)*100) + "%";
+    $("barProj").style.width = Math.min(100, (proj/quota)*100) + "%";
+  }
+}
+
+/* ── Prise de vue ─────────────────────────────────────────────────────────── */
+function ouvrirSlot(k){
+  if (!dossier){ flash("Saisir d'abord dossier et opérateur."); $("dossier").focus(); return; }
+  slotCible = k;
+  $("pick").click();
+}
+function nouveauCliche(etape){
+  if (!dossier){ flash("Saisir d'abord dossier et opérateur."); $("dossier").focus(); return; }
+  var l = prompt("Descriptif du cliché :", "");
+  if (l === null) return;
+  l = l.trim(); if (!l) return;
+  var k = "extra_" + etape + "_" + uid();
+  libres[k] = { l: l, etape: etape };
+  rendreCliches();
+  ouvrirSlot(k);
+}
+function etapeDeCliche(k){
+  var t = null;
+  ETAPES.forEach(function(e){ e.photos.forEach(function(p){ if (p.k === k) t = e.id; }); });
+  return t;
+}
+function libelle(k){
+  var t = null;
+  ETAPES.forEach(function(e){ e.photos.forEach(function(p){ if (p.k === k) t = p.l; }); });
+  return t || (libres[k] ? libres[k].l : k);
+}
+async function ajouterPhoto(k, file){
+  var lib = libelle(k), l = libres[k];
+  var r = await traiter(file);
+  var rec = {
+    id: sid(k), dossier: dossier, module: MODULE, key: k, label: lib,
+    etape: l ? l.etape : etapeDeCliche(k), libre: !!l,
+    name: file.name || (k + ".jpg"), type: r.blob.type || "image/jpeg",
+    bytes: r.blob.size, w: r.w, h: r.h, ow: r.ow, oh: r.oh,
+    addedAt: new Date().toISOString(), blob: r.blob, thumb: r.thumb
+  };
+  await putShot(rec);
+  shots[k] = rec;
+  if (urls[k]) URL.revokeObjectURL(urls[k]);
+  urls[k] = URL.createObjectURL(r.thumb);
+  rendreCliches();
+  enregistrer();
+  return rec;
+}
+$("pick").addEventListener("change", async function(){
+  var f = this.files[0]; this.value = "";
+  if (!f || !slotCible) return;
+  var k = slotCible; slotCible = null;
+  try {
+    flash("Traitement…");
+    var rec = await ajouterPhoto(k, f);
+    flash(rec.label + " enregistré.");
+  } catch(err){
+    flash("Échec : " + err.message + " — cliché non conservé.");
+  }
+});
+async function retirer(k){
+  await delShot(sid(k)).catch(function(){});
+  if (urls[k]){ URL.revokeObjectURL(urls[k]); delete urls[k]; }
+  delete shots[k]; delete libres[k];
+  rendreCliches();
+  enregistrer();
+  flash("Cliché retiré.");
+}
+
+/* ── Collecte / restitution ─────────────────────────────────────────────────
+   Les identifiants de champs reprennent ceux de la PWA, mais le JSON suit la
+   trame d'étapes de ce document : le regroupement diffère de collectData(). */
+function exportChamp(c){
+  var v = lire(c);
+  var o = { id: c.id, label: c.l, type: c.t };
+  if (c.t === "chips") o.valeurs = v;
+  else if (c.t === "mes" || c.t === "calc"){
+    o.valeur = v;
+    o.unite = c.u || null;
+    o.zscore = zsObjet(c, v);
+  } else {
+    o.valeur = v;
+    if (c.t === "num") o.unite = c.u || null;
+  }
+  return o;
+}
+/* Le JSON porte le z, mais aussi la référence contre laquelle il a été calculé
+   et sa source : un z sans son référentiel n'est pas relisible dix ans après. */
+function zsObjet(c, v){
+  var l = zs(c, v);
+  if (!l.length) return { reference: c.ref || null, source: SRC_REF[c.ref] || SRC_REF.BC || null,
+                          z: null, attendu_m: null, attendu_sd: null };
+  return { reference: c.ref, source: SRC_REF[c.ref] || SRC_REF.BC || null,
+           z: +l[0].z.toFixed(2), attendu_m: l[0].m, attendu_sd: l[0].sd };
+}
+function collecter(){
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    terme_sa: terme(),
+    terme_jours: num($("saj").value),
+    trame_attendue: N_TRAME,
+    etapes: ETAPES.map(function(e){
+      return { id: e.id, titre: e.t, champs: e.champs.map(exportChamp) };
+    }),
+    cliches_libres: Object.keys(libres).map(function(k){
+      return { key: k, label: libres[k].l, etape: libres[k].etape };
+    })
+  };
+}
+function appliquer(o){
+  if (o.terme_sa != null) $("sa").value = o.terme_sa;
+  if (o.terme_jours != null) $("saj").value = o.terme_jours;
+  (o.etapes || []).forEach(function(e){
+    (e.champs || []).forEach(function(x){
+      var c = champDef(x.id);
+      if (!c) return;
+      if (c.t === "chips") ecrire(c, x.valeurs);
+      else ecrire(c, x.valeur);
+    });
+  });
+  (o.cliches_libres || []).forEach(function(c){
+    libres[c.key] = { l: c.label, etape: c.etape };
+  });
+  majTousZ();
+  rendreCliches();
+}
+function vider(){
+  ETAPES.forEach(function(e){ e.champs.forEach(function(c){ ecrire(c, c.t === "chips" ? [] : null); }); });
+  $("sa").value = ""; $("saj").value = "";
+  Object.keys(urls).forEach(function(k){ URL.revokeObjectURL(urls[k]); });
+  urls = {}; shots = {}; libres = {};
+  majTousZ();
+  rendreCliches();
+}
+
+/* ── Chargement d'un dossier ──────────────────────────────────────────────── */
+/* Remonte en mémoire les clichés déjà en base sans toucher aux constatations :
+   la relecture d'un JSON écrit d'abord ses clichés, puis rappelle ceci. */
+async function relierCliches(){
+  var list = await shotsOf(dossier).catch(function(){ return []; });
+  list.forEach(function(r){
+    shots[r.key] = r;
+    if (urls[r.key]) URL.revokeObjectURL(urls[r.key]);
+    urls[r.key] = URL.createObjectURL(r.thumb || r.blob);
+    if (r.libre && !libres[r.key]) libres[r.key] = { l: r.label, etape: r.etape };
+  });
+  return list.length;
+}
+async function chargerDossier(){
+  vider();
+  if (!dossier || !db) return;
+  var rec = await getSaisie(dossier).catch(function(){ return null; });
+  if (rec) appliquer(rec);
+  var n = await relierCliches();
+  rendreCliches();
+  if (rec || n) flash("Dossier " + dossier + " restitué.");
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, ok_n = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = ok_n && op;
+  var h = $("dossierHint");
+  h.className = "hint" + (v && !ok_n ? " bad" : ok_n ? " good" : "");
+  h.textContent = !v ? "Deux chiffres, P, puis le numéro. Conditionne l'enregistrement."
+                : ok_n ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                       : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la saisie.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json — clichés inclus en base64."
+    : ok_n ? "Saisir l'opérateur pour activer l'export."
+           : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){ dossier = v; await chargerDossier(); }
+  else if (!ok && dossier){ dossier = ""; await chargerDossier(); }
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function toB64(b){
+  return new Promise(function(res, rej){
+    var fr = new FileReader();
+    fr.onload  = function(){ var s = String(fr.result); res(s.slice(s.indexOf(",")+1)); };
+    fr.onerror = function(){ rej(fr.error); };
+    fr.readAsDataURL(b);
+  });
+}
+function fromB64(b64, type){
+  var bin = atob(b64), a = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+  return new Blob([a], {type: type || "image/jpeg"});
+}
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+async function paquet(){
+  var out = collecter();
+  out.photos = [];
+  var cles = [];
+  ETAPES.forEach(function(e){ e.photos.forEach(function(p){ if (shots[p.k]) cles.push(p.k); }); });
+  Object.keys(libres).forEach(function(k){ if (shots[k]) cles.push(k); });
+  for (var i = 0; i < cles.length; i++){
+    var r = shots[cles[i]];
+    flash("Encodage " + (i+1) + "/" + cles.length + "…");
+    out.photos.push({
+      key: r.key, label: r.label, etape: r.etape, libre: !!r.libre,
+      name: r.name, type: r.type, bytes: r.bytes, w: r.w, h: r.h, ow: r.ow, oh: r.oh,
+      addedAt: r.addedAt, data_base64: await toB64(r.blob)
+    });
+  }
+  return out;
+}
+$("btnExport").onclick = async function(){
+  if (!dossierOk(dossier)) return;
+  this.disabled = true;
+  var t0 = performance.now();
+  try {
+    var out = await paquet();
+    var blob = new Blob([JSON.stringify(out, null, 1)], {type:"application/json"});
+    telecharger(blob, dossier + "_" + MODULE + ".json");
+    flash(out.photos.length + " cliché(s), " + fmt(blob.size) +
+          " exportés en " + Math.round(performance.now()-t0) + " ms.");
+  } catch(e){
+    flash("Export impossible : " + e.message);
+  }
+  this.disabled = false;
+};
+async function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.etapes) throw new Error("aucune clé « etapes »");
+  if (o.dossier) $("dossier").value = normDossier(o.dossier);
+  if (o.operateur) $("operateur").value = o.operateur;
+  await majDossier();
+  if (!dossier) throw new Error("numéro de dossier absent ou opérateur manquant");
+
+  var photos = o.photos || [];
+  for (var i = 0; i < photos.length; i++){
+    var p = photos[i];
+    var blob = fromB64(p.data_base64, p.type);
+    var bmp = await decode(blob);
+    var tk = Math.min(1, 400 / Math.max(bmp.width, bmp.height));
+    var th = await toBlob(bmp, Math.round(bmp.width*tk), Math.round(bmp.height*tk), 0.7);
+    if (bmp.close) bmp.close();
+    await putShot({
+      id: sid(p.key), dossier: dossier, module: MODULE, key: p.key, label: p.label,
+      etape: p.etape, libre: !!p.libre, name: p.name, type: p.type,
+      bytes: blob.size, w: p.w, h: p.h, ow: p.ow, oh: p.oh, addedAt: p.addedAt,
+      blob: blob, thumb: th
+    });
+  }
+  /* les constatations d'abord — cliches_libres porte aussi les clichés
+     supplémentaires déclarés mais pas encore pris — puis les blobs. */
+  appliquer(o);
+  await relierCliches();
+  rendreCliches();
+  enregistrer();
+  return photos.length;
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = async function(){
+    try {
+      var n = await relire(JSON.parse(String(fr.result)));
+      flash("Saisie et " + n + " cliché(s) relus.");
+    } catch(e){ flash("Relecture impossible : " + e.message); }
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la saisie et les clichés du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    var list = await shotsOf(dossier);
+    for (var i = 0; i < list.length; i++) await delShot(list[i].id);
+    await tx("saisies", "readwrite", function(s){ return s.delete(dossier); });
+    await chargerDossier();
+    flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les saisies et TOUS les clichés sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("shots",   "readwrite", function(s){ return s.clear(); });
+  await tx("saisies", "readwrite", function(s){ return s.clear(); });
+  await chargerDossier();
+  flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Étapes", ETAPES.length + " — " + N_CHAMPS + " champs, " + N_TRAME + " clichés de trame");
+  ligne("Référentiels de masses", "Guihard-Costa 2002, Maroun, Muller-Brochut 2018");
+  ligne("Clichés", "pleine résolution, aucun réencodage", "ok");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+(async function(){
+  rendreCliches();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — rien ne sera conservé. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir autopsie.html?selftest=1 ──────────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+  function clic(el){ el.dispatchEvent(new MouseEvent("click", {bubbles:true})); }
+  function pres(a, b){ return a != null && Math.abs(a - b) < 0.005; }
+  function image(w, h){
+    var c = document.createElement("canvas"); c.width = w; c.height = h;
+    var x = c.getContext("2d");
+    x.fillStyle = "#c33"; x.fillRect(0, 0, w, h);
+    x.fillStyle = "#3c3"; x.fillRect(0, 0, w/2, h/2);
+    return new Promise(function(r){ c.toBlob(r, "image/jpeg", 0.9); });
+  }
+  function zDe(id){ var c = champDef(id); return zs(c, valeurDe(c)); }
+
+  var ids = [], cles = [];
+  ETAPES.forEach(function(e){
+    e.champs.forEach(function(c){ ids.push(c.id); });
+    e.photos.forEach(function(p){ cles.push(p.k); });
+  });
+  chk("champs sans doublon",      new Set(ids).size === ids.length);
+  chk("clés photo sans doublon",  new Set(cles).size === cles.length);
+  chk("étapes sans doublon",      new Set(ETAPES.map(function(e){ return e.id; })).size === ETAPES.length);
+  chk("trame de 23 clichés",      N_TRAME === 23);
+  chk("50 champs",                N_CHAMPS === 50);
+  chk("les six faces",            ETAPES.filter(function(e){ return e.id === "aspect"; })[0].photos.length === 6);
+  chk("fosse postérieure kystique", champDef("fosse_post").v.indexOf("Kystique") >= 0);
+  chk("Dandy-Walker au vocabulaire", champDef("fosse_post").v.indexOf("Malformation de Dandy-Walker") >= 0);
+  chk("agénésie du corps calleux", champDef("cc").v.indexOf("Agénésie du corps calleux") >= 0);
+  chk("étape d'un cliché",        etapeDeCliche("p_base_crane") === "prelevement");
+  chk("chaque chips a des choix", ETAPES.every(function(e){ return e.champs.every(function(c){
+                                    return c.t !== "chips" || (c.v || []).length > 0; }); }));
+  chk("chaque mesure a un référentiel", ETAPES.every(function(e){ return e.champs.every(function(c){
+                                    return c.t !== "mes" || !$("zs_" + c.id) || !!c.ref || c.id.indexOf("oeil") === 0; }); }));
+  chk("normDossier 26p0123",      normDossier("26p0123") === "26P0123");
+  chk("dossier incomplet refusé", !dossierOk("26P"));
+  chk("num accepte la virgule",   num("12,5") === 12.5 && num("") === null && num("abc") === null);
+
+  /* Référentiels : bandes de SA, puis régression hors table */
+  chk("bande encadrante",         bande(REF_ME, 28) === "28-29" && bande(REF_BC.DOFD, 26) === "26");
+  chk("bande hors table",         bande(REF_ME, 50) === null);
+  chk("bande à borne unique",     bande(REF_BC.DOFD, 35) === "35-36");
+  chk("z centré à 0",             zscore(10, 10, 2) === 0);
+  chk("z avec sd nul",            zscore(10, 10, 0) === null);
+  chk("référentiel de masse",     refDe("ME", 28).m === 184.62 && refDe("ME", 28).sd === 36.4);
+  chk("masse hors table à 50 SA", refDe("ME", 50) === null);
+  chk("rapport non défini à 12 SA", refDe("RI", 12) === null);
+  chk("biométrie en table",       refDe("DOFD", 28).m === 81.5);
+  chk("biométrie par régression", pres(refDe("DOFD", 40).m, 113.648) && pres(refDe("DOFD", 40).sd, 4.682));
+  chk("référentiel inconnu",      refDe("XX", 28) === null);
+
+  chk("verrouillé au départ",     $("sec_prelevement").classList.contains("off"));
+  set("dossier", "26p0123");
+  chk("opérateur manquant",       $("sec_prelevement").classList.contains("off"));
+  set("operateur", "RM");
+  await new Promise(function(r){ setTimeout(r, 40); });
+  chk("déverrouillé",            !$("sec_prelevement").classList.contains("off"));
+  chk("contexte déverrouillé",   !$("secContexte").classList.contains("off"));
+  chk("export activé",           !$("btnExport").disabled);
+  chk("version en entête",        $("ver").textContent === "v" + VERSION);
+
+  /* Chips : choix unique contre choix multiple */
+  var cf = $("ch_fixation");
+  clic(cf.children[0]); clic(cf.children[1]);
+  chk("chips à choix unique",     chipsDe("fixation").length === 1 && chipsDe("fixation")[0] === "Liquide de Bouin");
+  var cp = $("ch_fosse_post");
+  clic(cp.children[0]); clic(cp.children[4]);
+  chk("chips à choix multiple",   chipsDe("fosse_post").length === 2);
+  clic(cp.children[0]);
+  chk("chips se déclenche",       chipsDe("fosse_post").length === 1 &&
+                                  chipsDe("fosse_post")[0] === "Kyste arachnoïdien");
+
+  /* Bool */
+  var tg = $("it_preleve");
+  clic(tg.children[0]); chk("bool oui",  etatDe("preleve") === "o");
+  clic(tg.children[1]); chk("bool non",  etatDe("preleve") === "n");
+  clic(tg.children[1]); chk("second appui remet à vide", etatDe("preleve") === null);
+  clic(tg.children[0]);
+
+  /* Nombres, textes */
+  set("n_duree_fixation", "12,5");
+  set("t_commentaire", "examen neuropathologique complet");
+  chk("nombre relu",              lire(champDef("duree_fixation")) === 12.5);
+
+  /* Mesures et z-scores — un seul référentiel par mesure */
+  set("sa", "28"); set("saj", "2");
+  set("m_masse_enc", "184.62");
+  chk("un seul repère par mesure", zDe("masse_enc").length === 1);
+  chk("z de masse exact",          zDe("masse_enc")[0].s === "ME" && Math.abs(zDe("masse_enc")[0].z) < 0.005);
+  chk("z affiché",                 $("zs_masse_enc").children.length === 1);
+  chk("valeur attendue affichée",  $("zs_masse_enc").textContent.indexOf("attendu 184.62") > 0);
+
+  /* Le rapport ne se saisit pas : il se déduit des deux masses */
+  set("m_masse_cerv", "7.63");
+  chk("z infratentoriel exact",    Math.abs(zDe("masse_cerv")[0].z) < 0.005);
+  chk("rapport calculé",           calcule("ratio_ce") === 4.1);
+  chk("rapport affiché",           $("cv_ratio_ce").textContent === "4.1");
+  chk("rapport jugé contre RI",    zDe("ratio_ce")[0].s === "RI" &&
+                                   pres(zDe("ratio_ce")[0].z, (4.1 - 4.76) / 0.46));
+  chk("le rapport suit la masse",  (set("m_masse_cerv", "9.23"), calcule("ratio_ce") === 5) &&
+                                   $("cv_ratio_ce").textContent === "5");
+  set("m_masse_cerv", "7.63");
+
+  /* Biométries cérébrales : table, puis régression */
+  set("m_DOFD", "81.5");
+  chk("biométrie en table",        Math.abs(zDe("DOFD")[0].z) < 0.005);
+  set("sa", "40");
+  chk("biométrie par régression",  pres(zDe("DOFD")[0].z, (81.5 - 113.648) / 4.682));
+  set("sa", "50");
+  chk("hors référentiel à 50 SA",  zDe("masse_enc").length === 0 &&
+                                   $("zs_masse_enc").textContent.indexOf("hors référentiel") === 0);
+  set("sa", "28");
+  chk("z rétabli",                 zDe("masse_enc").length === 1);
+
+  /* Tallies */
+  majTallies();
+  chk("contexte résumé",          $("talContexte").textContent === "28 SA + 2 j");
+  chk("tally d'étape",            $("tal_prelevement").textContent.indexOf("0/2 cliché") === 0);
+  chk("le calcul ne compte pas",  $("tal_biometrie").textContent.indexOf("3/8") > 0);
+
+  var snap = collecter();
+  var pre = snap.etapes.filter(function(e){ return e.id === "prelevement"; })[0];
+  var bio = snap.etapes.filter(function(e){ return e.id === "biometrie"; })[0];
+  function ch(e, id){ return e.champs.filter(function(c){ return c.id === id; })[0]; }
+  chk("enveloppe conforme",       snap.schema_version === SCHEMA && snap.module === MODULE &&
+                                  snap.module_version === VERSION && snap.dossier === "26P0123" && !!snap.exported_at);
+  chk("terme dans le JSON",       snap.terme_sa === 28 && snap.terme_jours === 2);
+  chk("plus de macération",       !("maceration_maroun" in snap) && !("ouverture_at" in snap));
+  chk("étapes exportées",         snap.etapes.length === ETAPES.length);
+  chk("chips exportées",          ch(pre, "fixation").valeurs[0] === "Liquide de Bouin");
+  chk("bool exporté",             ch(pre, "preleve").valeur === "oui");
+  chk("nombre exporté",           ch(pre, "duree_fixation").valeur === 12.5);
+  chk("unité exportée",           ch(pre, "duree_fixation").unite === "jours");
+  chk("mesure exportée",          ch(bio, "masse_enc").valeur === 184.62 && ch(bio, "masse_enc").unite === "g");
+  chk("z exporté avec sa règle",  ch(bio, "masse_enc").zscore.z === 0 &&
+                                  ch(bio, "masse_enc").zscore.reference === "ME" &&
+                                  ch(bio, "masse_enc").zscore.attendu_m === 184.62 &&
+                                  ch(bio, "masse_enc").zscore.attendu_sd === 36.4);
+  chk("source du référentiel",    ch(bio, "masse_enc").zscore.source.indexOf("Guihard-Costa") === 0);
+  chk("rapport exporté",          ch(bio, "ratio_ce").valeur === 4.1 &&
+                                  ch(bio, "ratio_ce").zscore.reference === "RI");
+  chk("z absent laissé à null",   ch(bio, "DTC").valeur === null && ch(bio, "DTC").zscore.z === null &&
+                                  ch(bio, "DTC").zscore.reference === "DTC");
+  chk("champ vide à null",        ch(pre, "etat_reception").valeurs.length === 0);
+
+  /* Clichés */
+  var img = await image(1200, 900);
+  var rec = await ajouterPhoto("p_base_crane", img);
+  chk("cliché stocké",            !!shots["p_base_crane"]);
+  chk("cliché rattaché à l'étape", rec.etape === "prelevement");
+  chk("vignette produite",        rec.thumb.size > 0 && rec.thumb.size < rec.blob.size);
+  chk("original intact",          rec.blob === img && rec.bytes === img.size);
+  chk("pleine résolution gardée", rec.w === 1200 && rec.h === 900 && rec.ow === 1200);
+  chk("slot marqué fait",         $("ph_prelevement").children[0].classList.contains("done"));
+  chk("compteur de clichés",      $("tPhotos").textContent === "1/" + N_TRAME);
+
+  /* Cliché supplémentaire déclaré mais pas encore pris */
+  var kv = "extra_macro_" + uid();
+  libres[kv] = { l: "Gyration — vue rapprochée", etape: "macro" };
+  rendreCliches();
+  chk("slot supplémentaire vide", $("ph_macro").children.length === 6);
+  await ajouterPhoto(kv, await image(600, 400));
+  chk("cliché supplémentaire pris", !!shots[kv]);
+
+  var pack = await paquet();
+  chk("deux clichés exportés",    pack.photos.length === 2);
+  chk("base64 non vide",          pack.photos[0].data_base64.length > 100);
+  chk("cliché libre repéré",      pack.photos.filter(function(p){ return p.libre; }).length === 1);
+  chk("supplémentaires listés",   pack.cliches_libres.length === 1);
+  chk("relecture base64",         fromB64(pack.photos[1].data_base64, "image/jpeg").size === shots[kv].bytes);
+
+  await putSaisie(collecter());
+  vider();
+  chk("vider efface les chips",   chipsDe("fixation").length === 0);
+  chk("vider efface les mesures", lire(champDef("masse_enc")) === null);
+  chk("vider efface le rapport",  calcule("ratio_ce") === null);
+  chk("vider efface le terme",    terme() === null);
+  chk("vider efface les clichés", !shots["p_base_crane"]);
+  await chargerDossier();
+  chk("IndexedDB restitue chips",  chipsDe("fixation")[0] === "Liquide de Bouin");
+  chk("IndexedDB restitue bool",   etatDe("preleve") === "o");
+  chk("IndexedDB restitue mesure", lire(champDef("masse_enc")) === 184.62);
+  chk("IndexedDB refait le calcul", calcule("ratio_ce") === 4.1 && $("cv_ratio_ce").textContent === "4.1");
+  chk("IndexedDB restitue terme",  terme() === 28);
+  chk("IndexedDB restitue texte",  $("t_commentaire").value === "examen neuropathologique complet");
+  chk("IndexedDB restitue photo",  !!shots["p_base_crane"]);
+  chk("IndexedDB restitue le z",   $("zs_masse_enc").children.length === 1);
+
+  await retirer("p_base_crane");
+  chk("retrait du cliché",        !shots["p_base_crane"] && $("tPhotos").textContent === "0/" + N_TRAME);
+
+  /* Relecture d'un JSON — elle ne doit pas être écrasée par ce qui traîne
+     en base pour le même dossier. */
+  async function nettoyer(){
+    var l = await shotsOf("26P0123");
+    for (var i = 0; i < l.length; i++) await delShot(l[i].id);
+    await tx("saisies", "readwrite", function(s){ return s.delete("26P0123"); });
+    $("dossier").value = ""; await majDossier();   /* majDossier remet dossier à "" et vide */
+  }
+  await nettoyer();
+  chk("banc remis à zéro",        chipsDe("fixation").length === 0 && Object.keys(shots).length === 0);
+
+  chk("clichés relus",            (await relire(pack)) === 2);
+  chk("relecture : chips",        chipsDe("fixation")[0] === "Liquide de Bouin");
+  chk("relecture : chips multi",  chipsDe("fosse_post").length === 1);
+  chk("relecture : bool",         etatDe("preleve") === "o");
+  chk("relecture : nombre",       lire(champDef("duree_fixation")) === 12.5);
+  chk("relecture : mesure",       lire(champDef("masse_enc")) === 184.62);
+  chk("relecture : rapport",      calcule("ratio_ce") === 4.1);
+  chk("relecture : terme",        terme() === 28);
+  chk("relecture : z recalculé",  $("zs_masse_enc").children.length === 1);
+  chk("relecture : cliché trame", !!shots["p_base_crane"] && $("tPhotos").textContent === "1/" + N_TRAME);
+  chk("relecture : cliché libre", $("ph_macro").children.length === 6);
+
+  await nettoyer();
+  $("operateur").value = "";
+  chk("nettoyage du banc",        (await shotsOf("26P0123")).length === 0);
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>
