@@ -1,2 +1,7 @@
 public/
 __pycache__/
+
+# popote locale de publication — hors dépôt, voir README « Si vous rediffusez »
+publier.py
+serveur.py
+verif.js

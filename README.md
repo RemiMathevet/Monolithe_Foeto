@@ -42,28 +42,19 @@ Chaque module embarque le sien. Ouvrir le fichier en ajoutant `?selftest=1` à
 son adresse : un bandeau vert `OK : n/n` s'affiche en haut de la page. Rouge,
 ne pas s'en servir et le signaler.
 
-Hors navigateur, sur les quatre modules d'un coup :
+## Si vous rediffusez ces fichiers
 
-```
-for f in *.html; do node verif.js "$f"; done
-```
+Servez-les en `application/octet-stream`, jamais en `text/html`.
 
-## Publier
+Un proxy ou un CDN peut réécrire ce qu'il sert. Cloudflare, par exemple, injecte
+dans toute réponse `text/html` un lien piège anti-bot, invisible et unique à
+chaque requête. Le fichier téléchargé n'est alors plus celui qui a été publié :
+son empreinte ne correspond plus, et un document censé fonctionner hors réseau
+se retrouve à embarquer une URL distante. En `octet-stream`, rien n'est touché.
 
-```
-python3 publier.py                 # regénère public/ et sa page d'index
-python3 serveur.py                 # sert public/ sur 127.0.0.1:5075
-```
-
-`publier.py` ne recopie pas une page écrite à la main : versions, tailles et
-empreintes sont relues dans les fichiers eux-mêmes, donc l'index ne peut pas
-mentir sur ce qui est publié.
-
-`serveur.py` sert les modules en `application/octet-stream` et non en
-`text/html`. Cloudflare injecte un lien piège anti-bot dans toute réponse
-`text/html`, unique à chaque requête : le fichier reçu ne serait plus celui
-publié, son empreinte ne correspondrait plus, et un document censé fonctionner
-hors réseau embarquerait une URL distante.
+Après mise en ligne, comparez l'empreinte du fichier téléchargé à celle du
+fichier d'origine. Si elles diffèrent, quelque chose sur le trajet a modifié
+le document.
 
 ## Aucune donnée réelle ici
 
