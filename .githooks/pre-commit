@@ -1,0 +1,20 @@
+#!/bin/sh
+# Refuse un commit qui introduit un numero de dossier reel.
+# Depot public : seuls les numeros fictifs du README ont le droit d'y figurer.
+# ponytail: grep sur les lignes ajoutees, pas sur l'arbre entier — un fichier
+# deja commite ne redeclenche pas le garde-fou a chaque commit suivant.
+
+FICTIFS='26P0123|25P9999|25P1234'
+
+trouves=$(git diff --cached --diff-filter=ACM -U0 |
+          grep '^+' |
+          grep -Eoi '\b[0-9]{2}[PAB][0-9]{3,6}\b' |
+          grep -Evi "^($FICTIFS)$" |
+          sort -u)
+
+if [ -n "$trouves" ]; then
+  echo "pre-commit : numero(s) de dossier non fictif(s) dans les lignes ajoutees :" >&2
+  echo "$trouves" | sed 's/^/  /' >&2
+  echo "Depot public — retirer ces numeros, ou les ajouter a FICTIFS si ils le sont." >&2
+  exit 1
+fi

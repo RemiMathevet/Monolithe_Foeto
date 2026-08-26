@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Autopsie — examen interne</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF; --grey18:#7A7E7C;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --amber:#8A6A18;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off input,section.off select,section.off textarea{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 180px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],select{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+textarea{width:100%;font-family:var(--sans);font-size:16px;color:var(--ink);
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;padding:9px 10px;resize:vertical}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:#F7EAE7}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ── Clichés ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px}
+.slot{border:1px solid var(--rule);border-radius:2px;overflow:hidden;background:var(--card);
+      cursor:pointer;text-align:left}
+.slot:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.slot .plate{background:var(--grey18);aspect-ratio:4/3;display:flex;align-items:center;
+             justify-content:center;position:relative}
+.slot .plate img{width:100%;height:100%;object-fit:contain;display:block}
+.slot .ph{font-size:26px;opacity:.55;color:#fff}
+.slot .cap{padding:7px 8px;font-size:13px;line-height:1.25}
+.slot .stat{font-family:var(--mono);font-size:10px;color:var(--ink-soft);
+            display:flex;justify-content:space-between;align-items:center;gap:6px;
+            padding:0 8px 7px}
+.slot .stat button{appearance:none;background:none;border:0;color:var(--alert);
+  font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.07em;
+  cursor:pointer;padding:4px;min-height:30px}
+.slot.done{border-color:var(--drape)}
+.slot.done .cap{font-weight:600}
+.tick{position:absolute;right:0;top:0;background:var(--drape);color:#fff;
+      font-family:var(--mono);font-size:10px;padding:2px 5px}
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+.sousTitre:first-child{margin-top:0}
+
+/* ── Champs ── */
+.ch{border-top:1px solid var(--rule);padding:9px 0}
+.ch:first-of-type{border-top:0}
+.ch .lib{font-size:15px;margin-bottom:6px}
+.tete{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tete .lib{flex:1 1 160px;min-width:0;margin:0}
+.tog{display:inline-flex;border:1px solid var(--rule);border-radius:2px;overflow:hidden;flex:0 0 auto}
+.tog button{appearance:none;border:0;background:var(--paper);color:var(--ink-soft);
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:9px 12px;cursor:pointer;min-height:38px}
+.tog button[aria-pressed=true][data-e=o]{background:var(--drape);color:#fff}
+.tog button[aria-pressed=true][data-e=n]{background:var(--alert);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font-family:var(--sans);font-size:14px;color:var(--ink);
+      background:var(--card);border:1px solid var(--rule);border-radius:2px;
+      padding:8px 11px;cursor:pointer;min-height:38px}
+.chip:hover{background:var(--drape-soft)}
+.chip[aria-pressed=true]{background:var(--drape);border-color:var(--drape);color:#fff;font-weight:550}
+.chip:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.mini{appearance:none;font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+  text-transform:uppercase;border:1px solid var(--rule);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:8px 11px;cursor:pointer;min-height:36px;margin-top:8px}
+.mini:hover{background:var(--drape-soft)}
+
+/* ── Mesures et z-scores ── */
+.mes{position:relative}
+.mes .u{position:absolute;right:9px;top:50%;transform:translateY(-50%);
+        font-family:var(--mono);font-size:11px;color:var(--ink-soft);pointer-events:none}
+.mes input{padding-right:34px}
+.zs{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;min-height:1px}
+.z{font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:2px 5px;
+   border:1px solid var(--rule);border-radius:2px;color:var(--ink-soft);background:var(--paper)}
+.z.out{border-color:var(--amber);color:var(--amber);font-weight:600}
+.z.far{border-color:var(--alert);color:var(--alert);font-weight:600}
+
+.bar{height:24px;background:#2A3634;border-radius:2px;display:flex;overflow:hidden;margin:10px 0 6px}
+.bar i{display:block;height:100%;transition:width .35s ease}
+.bar .used{background:#4FB3A6} .bar .proj{background:#3A5C58}
+.jauge{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.jauge h2{color:#9FB5B1} .jauge .n{color:#4FB3A6} .jauge .tally{color:#9FB5B1}
+.legende{display:flex;flex-wrap:wrap;gap:14px;font-family:var(--mono);font-size:11px;color:#9FB5B1}
+.legende b{color:var(--paper);font-weight:600}
+.legende .sw{display:inline-block;width:9px;height:9px;margin-right:5px;border-radius:1px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · examen interne</p>
+  <h1>Autopsie <span class="ver" id="ver"></span></h1>
+  <p class="sub">Document autonome, suivant le déroulé de l'autopsie. Clichés et constatations restent sur cet appareil ; rien n'est transmis. Le cliché d'ouverture horodate l'acte.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Deux chiffres, P, puis le numéro. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Opérateur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la saisie.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — Contexte -->
+<section id="secContexte" class="off">
+  <h2><span class="n">02</span>Contexte<span class="tally" id="talContexte">—</span></h2>
+  <div class="row">
+    <div class="field">
+      <label for="sa">Terme — semaines</label>
+      <input type="text" id="sa" class="mono" inputmode="numeric" placeholder="24" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="saj">Terme — jours</label>
+      <input type="text" id="saj" class="mono" inputmode="numeric" placeholder="3" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="maroun">Macération — grade de Maroun</label>
+      <select id="maroun">
+        <option value="0">0 — aucune</option>
+        <option value="1">1 — desquamation focale</option>
+        <option value="2">2 — desquamation étendue</option>
+        <option value="3">3 — macération marquée</option>
+        <option value="4">4 — macération majeure</option>
+      </select>
+    </div>
+  </div>
+  <p class="note" id="ctxHint">Le terme conditionne les z-scores de masses ; le grade de Maroun choisit la strate de Maroun.</p>
+  <p class="note" id="ouvHint">Ouverture non horodatée — le cliché « Ouverture » date l'acte.</p>
+</section>
+
+<!-- Étapes : construites par le script -->
+<div id="etapes"></div>
+
+<!-- Stockage -->
+<section class="jauge">
+  <h2><span class="n" id="nJauge"></span>Stockage<span class="tally" id="tPhotos">0/0</span></h2>
+  <div class="bar"><i class="proj" id="barProj" style="width:0"></i><i class="used" id="barUsed" style="width:0"></i></div>
+  <div class="legende">
+    <span><i class="sw" style="background:#4FB3A6"></i>occupé <b id="usedTxt">—</b><b id="quotaTxt"></b></span>
+    <span><i class="sw" style="background:#3A5C58"></i>export projeté <b id="projTxt">—</b></span>
+  </div>
+</section>
+
+<!-- Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n" id="nSortie"></span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Effacer le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- Diagnostic -->
+<section>
+  <h2><span class="n" id="nDiag"></span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="pick" accept="image/*" capture="environment">
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante : doit fonctionner par double-clic sur un poste hors réseau.
+
+   Un seul module pour l'examen interne, dans l'ordre de l'autopsie. Les clés
+   de clichés et les identifiants de champs reprennent ceux de la PWA
+   (macro_autopsie.html) ; les tables de masses sont celles de references.js,
+   recopiées telles quelles par le script de fabrication.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var MODULE = "autopsie";
+var SCHEMA = "0.1.0";
+var VERSION = "1.0.2";   /* version du document ; à incrémenter à chaque diffusion */
+var DB_NAME = "foeto-autopsie", DB_VER = 1, db = null;
+
+/* ── Référentiels de masses (recopiés de references.js) ─────────────────── */
+var MA_ORG = [
+  {s:12,brain:{m:5.7,sd:1.4},heart:{m:0.2,sd:0.14},liver_01:{m:1.8,sd:1.2},liver_2:{m:1.8,sd:1.2},liver_3:{m:1.8,sd:1.2},lungs_01:{m:1.2,sd:0.9},lungs_23:{m:1.2,sd:0.9},thymus_01:{m:0.04,sd:0.06},thymus_2:{m:0.02,sd:0.03},thymus_3:{m:0.08,sd:0.03},spleen_01:{m:0.3,sd:0.1},spleen_23:{m:0.2,sd:0.1},kidneys_01:{m:0.17,sd:0.18},kidneys_23:{m:0.17,sd:0.18},adrenals_01:{m:null,sd:null},adrenals_23:{m:null,sd:null}},
+  {s:13,brain:{m:5.7,sd:1.4},heart:{m:0.2,sd:0.14},liver_01:{m:1.8,sd:1.2},liver_2:{m:1.8,sd:1.2},liver_3:{m:1.8,sd:1.2},lungs_01:{m:1.2,sd:0.9},lungs_23:{m:1.2,sd:0.9},thymus_01:{m:0.04,sd:0.06},thymus_2:{m:0.02,sd:0.03},thymus_3:{m:0.08,sd:0.03},spleen_01:{m:0.3,sd:0.1},spleen_23:{m:0.2,sd:0.1},kidneys_01:{m:0.17,sd:0.18},kidneys_23:{m:0.17,sd:0.18},adrenals_01:{m:null,sd:null},adrenals_23:{m:null,sd:null}},
+  {s:14,brain:{m:9.1,sd:2.5},heart:{m:0.3,sd:0.1},liver_01:{m:2.9,sd:1.2},liver_2:{m:2.4,sd:1.2},liver_3:{m:2.3,sd:1.2},lungs_01:{m:2.0,sd:0.9},lungs_23:{m:1.5,sd:0.9},thymus_01:{m:0.05,sd:0.06},thymus_2:{m:0.07,sd:0.06},thymus_3:{m:0.05,sd:0.06},spleen_01:{m:0.04,sd:0.04},spleen_23:{m:0.14,sd:0.04},kidneys_01:{m:0.4,sd:0.1},kidneys_23:{m:0.3,sd:0.1},adrenals_01:{m:0.3,sd:0.2},adrenals_23:{m:0.2,sd:0.2}},
+  {s:15,brain:{m:12.7,sd:3.9},heart:{m:0.5,sd:0.1},liver_01:{m:4.2,sd:1.2},liver_2:{m:3.3,sd:1.2},liver_3:{m:3.2,sd:1.2},lungs_01:{m:2.9,sd:0.9},lungs_23:{m:2.1,sd:0.9},thymus_01:{m:0.07,sd:0.06},thymus_2:{m:0.08,sd:0.06},thymus_3:{m:0.06,sd:0.06},spleen_01:{m:0.06,sd:0.06},spleen_23:{m:0.17,sd:0.06},kidneys_01:{m:0.6,sd:0.3},kidneys_23:{m:0.5,sd:0.3},adrenals_01:{m:0.5,sd:0.2},adrenals_23:{m:0.3,sd:0.2}},
+  {s:16,brain:{m:17.3,sd:5.4},heart:{m:0.8,sd:0.2},liver_01:{m:5.9,sd:1.5},liver_2:{m:4.5,sd:1.5},liver_3:{m:4.2,sd:1.5},lungs_01:{m:3.9,sd:1.2},lungs_23:{m:2.7,sd:1.2},thymus_01:{m:0.11,sd:0.06},thymus_2:{m:0.12,sd:0.06},thymus_3:{m:0.09,sd:0.06},spleen_01:{m:0.09,sd:0.08},spleen_23:{m:0.17,sd:0.08},kidneys_01:{m:0.9,sd:0.4},kidneys_23:{m:0.8,sd:0.4},adrenals_01:{m:0.6,sd:0.3},adrenals_23:{m:0.4,sd:0.3}},
+  {s:17,brain:{m:22.9,sd:6.9},heart:{m:1.0,sd:0.4},liver_01:{m:8.1,sd:3.0},liver_2:{m:6.1,sd:3.0},liver_3:{m:5.4,sd:3.0},lungs_01:{m:5.1,sd:1.7},lungs_23:{m:3.5,sd:1.7},thymus_01:{m:0.18,sd:0.06},thymus_2:{m:0.18,sd:0.06},thymus_3:{m:0.12,sd:0.06},spleen_01:{m:0.13,sd:0.12},spleen_23:{m:0.16,sd:0.12},kidneys_01:{m:1.3,sd:0.6},kidneys_23:{m:1.1,sd:0.6},adrenals_01:{m:0.8,sd:0.4},adrenals_23:{m:0.5,sd:0.4}},
+  {s:18,brain:{m:29.4,sd:8.4},heart:{m:1.4,sd:0.5},liver_01:{m:10.7,sd:4.5},liver_2:{m:7.9,sd:4.5},liver_3:{m:6.8,sd:4.5},lungs_01:{m:6.4,sd:2.3},lungs_23:{m:4.4,sd:2.3},thymus_01:{m:0.3,sd:0.2},thymus_2:{m:0.3,sd:0.2},thymus_3:{m:0.2,sd:0.2},spleen_01:{m:0.19,sd:0.17},spleen_23:{m:0.15,sd:0.17},kidneys_01:{m:1.8,sd:0.8},kidneys_23:{m:1.5,sd:0.8},adrenals_01:{m:1.0,sd:0.4},adrenals_23:{m:0.7,sd:0.4}},
+  {s:19,brain:{m:37.0,sd:9.8},heart:{m:1.7,sd:0.7},liver_01:{m:13.8,sd:6.0},liver_2:{m:10.1,sd:6.0},liver_3:{m:8.4,sd:6.0},lungs_01:{m:7.9,sd:2.8},lungs_23:{m:5.4,sd:2.8},thymus_01:{m:0.4,sd:0.3},thymus_2:{m:0.4,sd:0.3},thymus_3:{m:0.3,sd:0.3},spleen_01:{m:0.3,sd:0.2},spleen_23:{m:0.15,sd:0.22},kidneys_01:{m:2.4,sd:1.0},kidneys_23:{m:2.0,sd:1.0},adrenals_01:{m:1.2,sd:0.5},adrenals_23:{m:0.8,sd:0.5}},
+  {s:20,brain:{m:45.5,sd:11.3},heart:{m:2.1,sd:0.8},liver_01:{m:17.2,sd:7.5},liver_2:{m:12.5,sd:7.5},liver_3:{m:10.2,sd:7.5},lungs_01:{m:9.5,sd:3.4},lungs_23:{m:6.5,sd:3.4},thymus_01:{m:0.6,sd:0.4},thymus_2:{m:0.5,sd:0.4},thymus_3:{m:0.3,sd:0.4},spleen_01:{m:0.4,sd:0.3},spleen_23:{m:0.17,sd:0.29},kidneys_01:{m:3.0,sd:1.2},kidneys_23:{m:2.5,sd:1.2},adrenals_01:{m:1.4,sd:0.6},adrenals_23:{m:1.0,sd:0.6}},
+  {s:21,brain:{m:55.0,sd:12.8},heart:{m:2.6,sd:1.0},liver_01:{m:21.1,sd:9.0},liver_2:{m:15.2,sd:9.0},liver_3:{m:12.3,sd:9.0},lungs_01:{m:11.2,sd:4.0},lungs_23:{m:7.8,sd:4.0},thymus_01:{m:0.8,sd:0.5},thymus_2:{m:0.7,sd:0.5},thymus_3:{m:0.4,sd:0.5},spleen_01:{m:0.5,sd:0.4},spleen_23:{m:0.22,sd:0.36},kidneys_01:{m:3.8,sd:1.4},kidneys_23:{m:3.1,sd:1.4},adrenals_01:{m:1.7,sd:0.7},adrenals_23:{m:1.2,sd:0.7}},
+  {s:22,brain:{m:65.4,sd:14.3},heart:{m:3.1,sd:1.1},liver_01:{m:25.5,sd:10.4},liver_2:{m:18.2,sd:10.4},liver_3:{m:14.5,sd:10.4},lungs_01:{m:13.1,sd:4.6},lungs_23:{m:9.2,sd:4.6},thymus_01:{m:1.0,sd:0.6},thymus_2:{m:0.9,sd:0.6},thymus_3:{m:0.6,sd:0.6},spleen_01:{m:0.7,sd:0.4},spleen_23:{m:0.3,sd:0.4},kidneys_01:{m:4.6,sd:1.6},kidneys_23:{m:3.8,sd:1.6},adrenals_01:{m:1.9,sd:0.8},adrenals_23:{m:1.4,sd:0.8}},
+  {s:23,brain:{m:76.9,sd:15.8},heart:{m:3.6,sd:1.3},liver_01:{m:30.2,sd:11.9},liver_2:{m:21.6,sd:11.9},liver_3:{m:16.9,sd:11.9},lungs_01:{m:15.1,sd:5.3},lungs_23:{m:10.7,sd:5.3},thymus_01:{m:1.3,sd:0.8},thymus_2:{m:1.1,sd:0.8},thymus_3:{m:0.7,sd:0.8},spleen_01:{m:0.9,sd:0.5},spleen_23:{m:0.4,sd:0.5},kidneys_01:{m:5.5,sd:1.8},kidneys_23:{m:4.6,sd:1.8},adrenals_01:{m:2.2,sd:0.9},adrenals_23:{m:1.6,sd:0.9}},
+  {s:24,brain:{m:89.3,sd:17.3},heart:{m:4.3,sd:1.5},liver_01:{m:35.4,sd:13.5},liver_2:{m:25.3,sd:13.5},liver_3:{m:19.6,sd:13.5},lungs_01:{m:17.3,sd:6.0},lungs_23:{m:12.3,sd:6.0},thymus_01:{m:1.6,sd:0.9},thymus_2:{m:1.3,sd:0.9},thymus_3:{m:0.8,sd:0.9},spleen_01:{m:1.1,sd:0.6},spleen_23:{m:0.5,sd:0.6},kidneys_01:{m:6.5,sd:2.1},kidneys_23:{m:5.5,sd:2.1},adrenals_01:{m:2.5,sd:1.0},adrenals_23:{m:1.8,sd:1.0}},
+  {s:25,brain:{m:102,sd:18.8},heart:{m:5.0,sd:1.6},liver_01:{m:41,sd:15},liver_2:{m:29.3,sd:15},liver_3:{m:22.5,sd:15},lungs_01:{m:19.7,sd:6.7},lungs_23:{m:14,sd:6.7},thymus_01:{m:1.9,sd:1.0},thymus_2:{m:1.6,sd:1.0},thymus_3:{m:1.0,sd:1.0},spleen_01:{m:1.4,sd:0.7},spleen_23:{m:0.7,sd:0.7},kidneys_01:{m:7.6,sd:2.3},kidneys_23:{m:6.4,sd:2.3},adrenals_01:{m:2.8,sd:1.0},adrenals_23:{m:2.1,sd:1.0}},
+  {s:26,brain:{m:116,sd:20.3},heart:{m:5.7,sd:1.8},liver_01:{m:47.2,sd:16.6},liver_2:{m:33.7,sd:16.6},liver_3:{m:25.7,sd:16.6},lungs_01:{m:22.2,sd:7.5},lungs_23:{m:15.8,sd:7.5},thymus_01:{m:2.3,sd:1.2},thymus_2:{m:1.9,sd:1.2},thymus_3:{m:1.2,sd:1.2},spleen_01:{m:1.7,sd:0.8},spleen_23:{m:1.0,sd:0.8},kidneys_01:{m:8.8,sd:2.5},kidneys_23:{m:7.4,sd:2.5},adrenals_01:{m:3.1,sd:1.1},adrenals_23:{m:2.3,sd:1.1}},
+  {s:27,brain:{m:131,sd:21.8},heart:{m:6.6,sd:1.9},liver_01:{m:53.8,sd:18.3},liver_2:{m:38.4,sd:18.3},liver_3:{m:29,sd:18.3},lungs_01:{m:24.8,sd:8.2},lungs_23:{m:17.8,sd:8.2},thymus_01:{m:2.7,sd:1.3},thymus_2:{m:2.3,sd:1.3},thymus_3:{m:1.4,sd:1.3},spleen_01:{m:2.1,sd:0.9},spleen_23:{m:1.3,sd:0.9},kidneys_01:{m:10,sd:2.8},kidneys_23:{m:8.5,sd:2.8},adrenals_01:{m:3.4,sd:1.2},adrenals_23:{m:2.6,sd:1.2}},
+  {s:28,brain:{m:147,sd:23.3},heart:{m:7.5,sd:2.0},liver_01:{m:61,sd:20},liver_2:{m:43.4,sd:20},liver_3:{m:32.5,sd:20},lungs_01:{m:27.5,sd:9},lungs_23:{m:19.9,sd:9},thymus_01:{m:3.2,sd:1.5},thymus_2:{m:2.7,sd:1.5},thymus_3:{m:1.7,sd:1.5},spleen_01:{m:2.5,sd:1.1},spleen_23:{m:1.7,sd:1.1},kidneys_01:{m:11.4,sd:3.1},kidneys_23:{m:9.6,sd:3.1},adrenals_01:{m:3.8,sd:1.3},adrenals_23:{m:2.9,sd:1.3}},
+  {s:29,brain:{m:163,sd:24.8},heart:{m:8.5,sd:2.1},liver_01:{m:68.7,sd:21.7},liver_2:{m:48.8,sd:21.7},liver_3:{m:36.2,sd:21.7},lungs_01:{m:30.4,sd:9.8},lungs_23:{m:22.1,sd:9.8},thymus_01:{m:3.7,sd:1.8},thymus_2:{m:3.1,sd:1.8},thymus_3:{m:1.9,sd:1.8},spleen_01:{m:3.0,sd:1.3},spleen_23:{m:2.2,sd:1.3},kidneys_01:{m:12.9,sd:3.4},kidneys_23:{m:10.8,sd:3.4},adrenals_01:{m:4.1,sd:1.3},adrenals_23:{m:3.2,sd:1.3}},
+  {s:30,brain:{m:181,sd:26.3},heart:{m:8.5,sd:2.2},liver_01:{m:76.9,sd:23.3},liver_2:{m:54.5,sd:23.3},liver_3:{m:40,sd:23.3},lungs_01:{m:33.3,sd:10.6},lungs_23:{m:24.5,sd:10.6},thymus_01:{m:4.1,sd:2.0},thymus_2:{m:3.4,sd:2.0},thymus_3:{m:2.1,sd:2.0},spleen_01:{m:3.6,sd:1.4},spleen_23:{m:2.7,sd:1.4},kidneys_01:{m:14.5,sd:3.6},kidneys_23:{m:12.1,sd:3.6},adrenals_01:{m:4.5,sd:1.4},adrenals_23:{m:3.5,sd:1.4}},
+  {s:31,brain:{m:204,sd:28},heart:{m:9.6,sd:2.4},liver_01:{m:83.9,sd:23.8},liver_2:{m:59,sd:23.8},liver_3:{m:43.4,sd:23.8},lungs_01:{m:36.3,sd:11},lungs_23:{m:27.4,sd:11},thymus_01:{m:4.5,sd:2.3},thymus_2:{m:3.7,sd:2.3},thymus_3:{m:2.3,sd:2.3},spleen_01:{m:4.2,sd:1.6},spleen_23:{m:3.3,sd:1.6},kidneys_01:{m:16,sd:4.3},kidneys_23:{m:13.4,sd:4.3},adrenals_01:{m:4.8,sd:1.5},adrenals_23:{m:3.8,sd:1.5}},
+  {s:32,brain:{m:224,sd:29},heart:{m:10.6,sd:2.6},liver_01:{m:92.6,sd:25.3},liver_2:{m:65,sd:25.3},liver_3:{m:47.6,sd:25.3},lungs_01:{m:39.6,sd:11.8},lungs_23:{m:30,sd:11.8},thymus_01:{m:5.0,sd:2.5},thymus_2:{m:4.2,sd:2.5},thymus_3:{m:2.6,sd:2.5},spleen_01:{m:4.8,sd:1.8},spleen_23:{m:3.9,sd:1.8},kidneys_01:{m:17.7,sd:4.6},kidneys_23:{m:14.9,sd:4.6},adrenals_01:{m:5.2,sd:1.6},adrenals_23:{m:4.1,sd:1.6}},
+  {s:33,brain:{m:245,sd:31},heart:{m:11.6,sd:2.7},liver_01:{m:102,sd:27},liver_2:{m:71.3,sd:26.7},liver_3:{m:52.1,sd:26.7},lungs_01:{m:43,sd:12.6},lungs_23:{m:32.8,sd:12.6},thymus_01:{m:5.6,sd:2.8},thymus_2:{m:4.6,sd:2.8},thymus_3:{m:2.9,sd:2.8},spleen_01:{m:5.5,sd:1.9},spleen_23:{m:4.5,sd:1.9},kidneys_01:{m:19.5,sd:5},kidneys_23:{m:16.4,sd:5},adrenals_01:{m:5.6,sd:1.7},adrenals_23:{m:4.5,sd:1.7}},
+  {s:34,brain:{m:268,sd:32},heart:{m:12.6,sd:2.9},liver_01:{m:111,sd:28},liver_2:{m:77.9,sd:28},liver_3:{m:56.7,sd:28},lungs_01:{m:46.6,sd:13.5},lungs_23:{m:35.7,sd:13.5},thymus_01:{m:6.2,sd:3.1},thymus_2:{m:5.1,sd:3.1},thymus_3:{m:3.2,sd:3.1},spleen_01:{m:6.3,sd:2.1},spleen_23:{m:5.2,sd:2.1},kidneys_01:{m:21.4,sd:5.2},kidneys_23:{m:18,sd:5.2},adrenals_01:{m:6.0,sd:1.8},adrenals_23:{m:4.8,sd:1.8}},
+  {s:35,brain:{m:291,sd:33},heart:{m:13.7,sd:3.0},liver_01:{m:121,sd:30},liver_2:{m:84.8,sd:29.7},liver_3:{m:61.5,sd:29.7},lungs_01:{m:50.3,sd:14.3},lungs_23:{m:38.7,sd:14.3},thymus_01:{m:6.9,sd:3.3},thymus_2:{m:5.7,sd:3.3},thymus_3:{m:3.5,sd:3.3},spleen_01:{m:7.2,sd:2.3},spleen_23:{m:6.0,sd:2.3},kidneys_01:{m:23.3,sd:5.8},kidneys_23:{m:19.6,sd:5.8},adrenals_01:{m:6.5,sd:1.9},adrenals_23:{m:5.2,sd:1.9}},
+  {s:36,brain:{m:315,sd:35},heart:{m:14.8,sd:3.2},liver_01:{m:132,sd:31},liver_2:{m:92.1,sd:31.2},liver_3:{m:66.5,sd:31.2},lungs_01:{m:54.1,sd:15.2},lungs_23:{m:41.9,sd:15.2},thymus_01:{m:7.5,sd:3.6},thymus_2:{m:6.2,sd:3.6},thymus_3:{m:3.8,sd:3.6},spleen_01:{m:8.1,sd:2.5},spleen_23:{m:6.7,sd:2.5},kidneys_01:{m:25.4,sd:6.2},kidneys_23:{m:21.4,sd:6.2},adrenals_01:{m:6.9,sd:2.0},adrenals_23:{m:5.6,sd:2.0}},
+  {s:37,brain:{m:340,sd:36},heart:{m:16,sd:3.3},liver_01:{m:142,sd:33},liver_2:{m:100,sd:33},liver_3:{m:71.7,sd:32.7},lungs_01:{m:58.1,sd:16.1},lungs_23:{m:45.1,sd:16.1},thymus_01:{m:8.2,sd:3.9},thymus_2:{m:6.8,sd:3.9},thymus_3:{m:4.2,sd:3.9},spleen_01:{m:9.1,sd:2.7},spleen_23:{m:7.5,sd:2.7},kidneys_01:{m:27.5,sd:6.6},kidneys_23:{m:23.2,sd:6.6},adrenals_01:{m:7.4,sd:2.1},adrenals_23:{m:6.0,sd:2.1}},
+  {s:38,brain:{m:366,sd:38},heart:{m:17.2,sd:3.4},liver_01:{m:154,sd:34},liver_2:{m:107,sd:34},liver_3:{m:77.2,sd:34.2},lungs_01:{m:62.2,sd:17},lungs_23:{m:48.5,sd:17},thymus_01:{m:8.9,sd:4.2},thymus_2:{m:7.4,sd:4.2},thymus_3:{m:3.9,sd:4.2},spleen_01:{m:10.1,sd:3.0},spleen_23:{m:8.3,sd:3.0},kidneys_01:{m:29.8,sd:7.1},kidneys_23:{m:25,sd:7.1},adrenals_01:{m:7.8,sd:2.2},adrenals_23:{m:6.5,sd:2.2}},
+  {s:39,brain:{m:394,sd:39},heart:{m:18.5,sd:3.6},liver_01:{m:165,sd:36},liver_2:{m:116,sd:36},liver_3:{m:82.8,sd:35.6},lungs_01:{m:66.5,sd:18},lungs_23:{m:52.1,sd:18},thymus_01:{m:9.7,sd:4.6},thymus_2:{m:8.0,sd:4.6},thymus_3:{m:5.0,sd:4.6},spleen_01:{m:11.2,sd:3.2},spleen_23:{m:9.1,sd:3.2},kidneys_01:{m:32.1,sd:7.5},kidneys_23:{m:27,sd:7.5},adrenals_01:{m:8.3,sd:2.3},adrenals_23:{m:6.9,sd:2.3}},
+  {s:40,brain:{m:422,sd:41},heart:{m:19.8,sd:3.7},liver_01:{m:177,sd:37},liver_2:{m:124,sd:37},liver_3:{m:88.6,sd:37.1},lungs_01:{m:70.9,sd:18.9},lungs_23:{m:55.7,sd:18.9},thymus_01:{m:10.5,sd:4.9},thymus_2:{m:8.6,sd:4.9},thymus_3:{m:5.4,sd:4.9},spleen_01:{m:12.4,sd:3.4},spleen_23:{m:9.9,sd:3.4},kidneys_01:{m:34.5,sd:8.0},kidneys_23:{m:29,sd:8.0},adrenals_01:{m:8.8,sd:2.4},adrenals_23:{m:7.4,sd:2.4}},
+  {s:41,brain:{m:451,sd:42},heart:{m:21.2,sd:3.9},liver_01:{m:190,sd:39},liver_2:{m:133,sd:39},liver_3:{m:94.6,sd:38.5},lungs_01:{m:75.4,sd:19.8},lungs_23:{m:59.5,sd:19.8},thymus_01:{m:11.3,sd:5.3},thymus_2:{m:9.3,sd:5.3},thymus_3:{m:5.8,sd:5.3},spleen_01:{m:13.5,sd:3.7},spleen_23:{m:10.8,sd:3.7},kidneys_01:{m:37.1,sd:8.5},kidneys_23:{m:31,sd:8.5},adrenals_01:{m:9.3,sd:2.6},adrenals_23:{m:7.8,sd:2.6}},
+  {s:42,brain:{m:481,sd:44},heart:{m:22.7,sd:4.0},liver_01:{m:203,sd:41},liver_2:{m:142,sd:41},liver_3:{m:100,sd:40},lungs_01:{m:80.1,sd:20.8},lungs_23:{m:63.4,sd:20.8},thymus_01:{m:12.2,sd:5.7},thymus_2:{m:10,sd:5.7},thymus_3:{m:6.3,sd:5.7},spleen_01:{m:14.8,sd:3.9},spleen_23:{m:11.8,sd:3.9},kidneys_01:{m:39.8,sd:9.0},kidneys_23:{m:33.2,sd:9.0},adrenals_01:{m:9.8,sd:2.7},adrenals_23:{m:8.3,sd:2.7}},
+  {s:43,brain:{m:512,sd:46},heart:{m:24.2,sd:4.2},liver_01:{m:216,sd:43},liver_2:{m:152,sd:43},liver_3:{m:106,sd:42},lungs_01:{m:84.9,sd:21.8},lungs_23:{m:67.5,sd:21.8},thymus_01:{m:13.2,sd:6.0},thymus_2:{m:10.8,sd:6.0},thymus_3:{m:6.8,sd:6.0},spleen_01:{m:16.1,sd:4.2},spleen_23:{m:12.8,sd:4.2},kidneys_01:{m:42.6,sd:9.5},kidneys_23:{m:35.6,sd:9.5},adrenals_01:{m:10.4,sd:2.8},adrenals_23:{m:8.8,sd:2.8}}
+];
+var MB_ORG = {
+  12:{Brain:{m:3.6,sd:2.03},Thymus:{m:0.10,sd:0.06},Heart:{m:0.15,sd:0.09},Lungs:{m:0.49,sd:0.24},Liver:{m:1.15,sd:0.43},Spleen:{m:0.05,sd:0.07},Kidneys:{m:0.24,sd:0.13},Adrenals:{m:0.10,sd:0.06}},
+  13:{Brain:{m:5.26,sd:1.14},Thymus:{m:0.14,sd:0.06},Heart:{m:0.21,sd:0.06},Lungs:{m:0.89,sd:0.29},Liver:{m:1.49,sd:0.30},Spleen:{m:0.34,sd:0.07},Kidneys:{m:0.61,sd:0.21},Adrenals:{m:0.12,sd:0.05}},
+  14:{Brain:{m:7.96,sd:2.03},Thymus:{m:0.11,sd:0.05},Heart:{m:0.33,sd:0.12},Lungs:{m:1.52,sd:0.43},Liver:{m:2.36,sd:0.52},Spleen:{m:0.55,sd:0.04},Kidneys:{m:0.63,sd:0.13},Adrenals:{m:0.25,sd:0.08}},
+  15:{Brain:{m:11.33,sd:2.21},Thymus:{m:0.17,sd:0.06},Heart:{m:0.46,sd:0.15},Lungs:{m:2.34,sd:0.58},Liver:{m:3.37,sd:0.66},Spleen:{m:0.65,sd:0.15},Kidneys:{m:1.05,sd:0.25},Adrenals:{m:0.41,sd:0.33}},
+  16:{Brain:{m:15.48,sd:3.19},Thymus:{m:0.19,sd:0.05},Heart:{m:0.64,sd:0.12},Lungs:{m:3.04,sd:0.55},Liver:{m:4.63,sd:0.78},Spleen:{m:0.79,sd:0.06},Kidneys:{m:1.17,sd:0.33},Adrenals:{m:0.47,sd:0.36}},
+  17:{Brain:{m:20.13,sd:2.62},Thymus:{m:0.22,sd:0.13},Heart:{m:0.80,sd:0.19},Lungs:{m:3.93,sd:0.61},Liver:{m:6.07,sd:1.07},Spleen:{m:0.96,sd:0.14},Kidneys:{m:1.50,sd:0.35},Adrenals:{m:0.61,sd:0.28}},
+  18:{Brain:{m:26.26,sd:4.48},Thymus:{m:0.24,sd:0.06},Heart:{m:1.14,sd:0.36},Lungs:{m:4.89,sd:0.76},Liver:{m:7.92,sd:1.21},Spleen:{m:1.21,sd:0.15},Kidneys:{m:1.76,sd:0.51},Adrenals:{m:0.90,sd:0.23}},
+  19:{Brain:{m:34.58,sd:5.02},Thymus:{m:0.29,sd:0.09},Heart:{m:1.65,sd:0.43},Lungs:{m:6.09,sd:0.25},Liver:{m:10.77,sd:1.45},Spleen:{m:0.90,sd:0.24},Kidneys:{m:2.13,sd:0.41},Adrenals:{m:1.05,sd:0.24}},
+  20:{Brain:{m:46.0,sd:0.57},Thymus:{m:0.26,sd:0.14},Heart:{m:1.99,sd:0.18},Lungs:{m:6.64,sd:1.15},Liver:{m:12.76,sd:1.23},Spleen:{m:0.55,sd:0.26},Kidneys:{m:2.63,sd:0.63},Adrenals:{m:1.27,sd:0.32}}
+};
+var GC_ORG = {
+  "13-14":{thymus:{m:0.09,sd:0.07},coeur:{m:0.24,sd:0.13},poumons:{m:1.26,sd:0.25},foie:{m:3.09,sd:0.27},spleen:{m:0.06,sd:0.04},pancreas:{m:0.09,sd:0.01},surrenales:{m:0.29,sd:0.06},reins:{m:0.41,sd:0.11}},
+  "15-16":{thymus:{m:0.17,sd:0.12},coeur:{m:0.82,sd:0.23},poumons:{m:2.99,sd:0.54},foie:{m:5.81,sd:1.71},spleen:{m:0.12,sd:0.08},pancreas:{m:0.28,sd:0.08},surrenales:{m:0.56,sd:0.10},reins:{m:0.71,sd:0.18}},
+  "17-18":{thymus:{m:0.31,sd:0.19},coeur:{m:1.44,sd:0.37},poumons:{m:5.09,sd:0.91},foie:{m:9.39,sd:3.33},spleen:{m:0.23,sd:0.13},pancreas:{m:0.42,sd:0.16},surrenales:{m:0.91,sd:0.16},reins:{m:1.38,sd:0.27}},
+  "19-20":{thymus:{m:0.53,sd:0.3},coeur:{m:2.21,sd:0.56},poumons:{m:7.68,sd:1.34},foie:{m:14.33,sd:5.15},spleen:{m:0.38,sd:0.2},pancreas:{m:0.57,sd:0.24},surrenales:{m:1.32,sd:0.23},reins:{m:2.41,sd:0.38}},
+  "21-22":{thymus:{m:0.87,sd:0.45},coeur:{m:3.23,sd:0.79},poumons:{m:10.84,sd:1.84},foie:{m:21,sd:7.15},spleen:{m:0.62,sd:0.29},pancreas:{m:0.78,sd:0.34},surrenales:{m:1.79,sd:0.32},reins:{m:3.84,sd:0.53}},
+  "23-24":{thymus:{m:1.35,sd:0.64},coeur:{m:4.55,sd:1.07},poumons:{m:14.65,sd:2.39},foie:{m:29.63,sd:9.35},spleen:{m:0.96,sd:0.42},pancreas:{m:1.08,sd:0.45},surrenales:{m:2.33,sd:0.41},reins:{m:5.64,sd:0.70}},
+  "25-26":{thymus:{m:2.01,sd:0.89},coeur:{m:6.21,sd:1.39},poumons:{m:19.09,sd:2.98},foie:{m:40.27,sd:11.75},spleen:{m:1.44,sd:0.59},pancreas:{m:1.47,sd:0.57},surrenales:{m:2.92,sd:0.51},reins:{m:7.78,sd:0.90}},
+  "27-28":{thymus:{m:2.92,sd:1.21},coeur:{m:8.2,sd:1.76},poumons:{m:24.15,sd:3.61},foie:{m:52.89,sd:14.33},spleen:{m:2.09,sd:0.8},pancreas:{m:1.98,sd:0.7},surrenales:{m:3.57,sd:0.61},reins:{m:10.22,sd:1.12}},
+  "29-30":{thymus:{m:4.14,sd:1.61},coeur:{m:10.48,sd:2.17},poumons:{m:29.79,sd:4.27},foie:{m:67.29,sd:17.1},spleen:{m:2.95,sd:1.06},pancreas:{m:2.58,sd:0.84},surrenales:{m:4.3,sd:0.72},reins:{m:12.9,sd:1.37}},
+  "31-32":{thymus:{m:5.72,sd:2.1},coeur:{m:12.98,sd:2.63},poumons:{m:35.9,sd:4.94},foie:{m:83.1,sd:20.07},spleen:{m:4.08,sd:1.39},pancreas:{m:3.26,sd:0.98},surrenales:{m:5.08,sd:0.82},reins:{m:15.73,sd:1.65}},
+  "33-34":{thymus:{m:7.75,sd:2.7},coeur:{m:15.6,sd:3.14},poumons:{m:42.36,sd:5.62},foie:{m:99.87,sd:23.23},spleen:{m:5.53,sd:1.78},pancreas:{m:3.97,sd:1.14},surrenales:{m:5.93,sd:0.92},reins:{m:18.62,sd:1.96}},
+  "35-36":{thymus:{m:10.33,sd:3.42},coeur:{m:18.21,sd:3.69},poumons:{m:48.98,sd:6.30},foie:{m:116.97,sd:26.58},spleen:{m:7.35,sd:2.25},pancreas:{m:4.66,sd:1.31},surrenales:{m:6.83,sd:1.01},reins:{m:21.46,sd:2.29}},
+  "37-38":{thymus:{m:13.54,sd:4.27},coeur:{m:20.63,sd:4.28},poumons:{m:55.59,sd:6.98},foie:{m:133.64,sd:30.12},spleen:{m:9.63,sd:2.82},pancreas:{m:5.26,sd:1.49},surrenales:{m:7.79,sd:1.09},reins:{m:24.12,sd:2.65}},
+  "39-40":{thymus:{m:17.5,sd:5.27},coeur:{m:22.68,sd:4.92},poumons:{m:61.94,sd:7.64},foie:{m:148.97,sd:33.85},spleen:{m:12.43,sd:3.48},pancreas:{m:5.71,sd:1.67},surrenales:{m:8.83,sd:1.17},reins:{m:26.45,sd:3.04}},
+  "41-42":{thymus:{m:22.34,sd:6.44},coeur:{m:24.49,sd:5.58},poumons:{m:67.6,sd:8.28},foie:{m:161.94,sd:37.78},spleen:{m:15.85,sd:4.25},pancreas:{m:5.9,sd:1.87},surrenales:{m:9.92,sd:1.22},reins:{m:28.28,sd:3.45}}
+};
+
+function getGCKey(sa){
+  var k = Object.keys(GC_ORG);
+  for (var i = 0; i < k.length; i++){
+    var p = k[i].split("-");
+    if (sa >= +p[0] && sa <= +p[1]) return k[i];
+  }
+  return null;
+}
+function getGCOrg(sa){ var k = getGCKey(sa); return k ? GC_ORG[k] : null; }
+function getMAOrg(sa){
+  for (var i = 0; i < MA_ORG.length; i++) if (MA_ORG[i].s === sa) return MA_ORG[i];
+  return null;
+}
+function getMBOrg(sa){ return (sa >= 12 && sa <= 20) ? MB_ORG[sa] : null; }
+function getMarounGrade(g){ return g <= 1 ? "01" : g === 2 ? "2" : "3"; }
+function getMarounGrade23(g){ return g <= 1 ? "01" : "23"; }
+
+/* ── Trame de l'autopsie ────────────────────────────────────────────────────
+   Une étape : ses clichés, puis ses champs. Types de champs :
+     chips  — liste fermée, multi:1 pour le choix multiple
+     bool   — oui / non
+     num    — nombre avec unité
+     masse  — masse en grammes, z-scores contre les référentiels renseignés
+     masse2 — masses droite et gauche, z-score sur la somme
+     txt    — texte libre
+   Sur masse/masse2 : gc/ma/mb = clé dans chaque table ; mg = strate de Maroun
+     absent → clé telle quelle · 1 → _01|_2|_3 · 2 → _01|_23 */
+var ETAPES = [
+  { id:"ouverture", t:"Ouverture",
+    photos:[ {k:"p_avant_ouv", l:"Avant ouverture"},
+             {k:"p_ouverture", l:"Ouverture (horodate l'acte)"} ],
+    champs:[
+      {t:"chips", id:"situs", l:"Situs", v:["Solitus","Inversus","Ambiguus"]},
+      {t:"num", id:"ep_pleural_d", l:"Épanchement pleural D", u:"mL"},
+      {t:"num", id:"ep_pleural_g", l:"Épanchement pleural G", u:"mL"},
+      {t:"num", id:"ep_peritoine", l:"Épanchement péritonéal", u:"mL"},
+      {t:"num", id:"ep_pericarde", l:"Épanchement péricardique", u:"mL"},
+      {t:"bool", id:"anasarque", l:"Anasarque"},
+      {t:"chips", id:"diaphragme", l:"Diaphragme", v:["Normal","Hernie D","Hernie G","Éventration","Agénésie"]}
+    ]},
+  { id:"en_place", t:"Organes en place",
+    photos:[ {k:"p_veine_omb", l:"Veine ombilicale"},
+             {k:"p_art_omb",   l:"Artères ombilicales"},
+             {k:"p_vessie",    l:"Vessie"},
+             {k:"p_ogi",       l:"Organes génitaux internes"},
+             {k:"p_appendice", l:"Appendice"},
+             {k:"p_vb",        l:"Vésicule biliaire"} ],
+    champs:[
+      {t:"chips", id:"veine_omb", l:"Veine ombilicale", v:["Perméable","Thrombosée","Cathétérisée","Non vue"]},
+      {t:"chips", id:"art_omb", l:"Artères ombilicales", v:["Deux","Artère ombilicale unique","Non identifiables"]},
+      {t:"chips", id:"vessie", l:"Vessie", v:["Normale","Vide","Distendue","Mégavessie","Non vue"]},
+      {t:"chips", id:"ogi", l:"Organes génitaux internes", multi:1,
+       v:["Testicules en place","Testicules inguinaux","Cryptorchidie","Ovaires en place","Utérus présent","Ambiguïté","Non identifiés"]},
+      {t:"txt", id:"ogi_detail", l:"OGI — précisions"},
+      {t:"chips", id:"appendice", l:"Appendice", v:["Présent","Absent","Position anormale"]},
+      {t:"chips", id:"vb", l:"Vésicule biliaire", v:["Présente","Absente","Atrésique","Distendue"]}
+    ]},
+  { id:"thorax", t:"Thorax",
+    photos:[ {k:"p_airway",    l:"Trachée / œsophage"},
+             {k:"p_thymus",    l:"Thymus"},
+             {k:"p_pericarde", l:"Péricarde"},
+             {k:"p_tvi",       l:"Tronc veineux innominé"} ],
+    champs:[
+      {t:"chips", id:"voies_aer", l:"Trachée / œsophage", multi:1,
+       v:["Perméables","Atrésie œsophagienne","Fistule œso-trachéale","Sténose trachéale","Cathétérisme non réalisé"]},
+      {t:"chips", id:"thymus_aspect", l:"Thymus — aspect", multi:1,
+       v:["Normal","Hypoplasique","Absent","Involution de stress","Ectopique","Hémorragique"]},
+      {t:"masse", id:"thymus_masse", l:"Thymus", gc:"thymus", ma:"thymus", mb:"Thymus", mg:1},
+      {t:"bool", id:"thymus_prelev", l:"Thymus prélevé"},
+      {t:"chips", id:"tvi", l:"Tronc veineux innominé", v:["Présent","Absent","Trajet rétro-aortique"]},
+      {t:"chips", id:"pericarde", l:"Péricarde — aspect", multi:1,
+       v:["Normal","Épaissi","Adhérent","Hémorragique","Fibrineux"]},
+      {t:"bool", id:"pericarde_prelev", l:"Péricarde prélevé"}
+    ]},
+  { id:"coeur", t:"Cœur",
+    photos:[ {k:"p_situs",     l:"Situs cardiaque"},
+             {k:"p_coeur",     l:"Cœur"},
+             {k:"p_tsa",       l:"Troncs supra-aortiques"},
+             {k:"p_ret_vein_d", l:"Retour veineux pulmonaire D"},
+             {k:"p_ret_vein_g", l:"Retour veineux pulmonaire G"},
+             {k:"p_od_fo",     l:"OD / foramen ovale"},
+             {k:"p_septum",    l:"Septum interventriculaire"},
+             {k:"p_vd_ej",     l:"Éjection VD"},
+             {k:"p_vg_ej",     l:"Éjection VG"} ],
+    champs:[
+      {t:"chips", id:"pointe", l:"Pointe", v:["À gauche","À droite","Médiane"]},
+      {t:"chips", id:"gros_vx", l:"Gros vaisseaux", v:["Concordants","Transposition","Malposition","Tronc artériel commun","Ventricule droit à double issue"]},
+      {t:"chips", id:"tsa", l:"Troncs supra-aortiques", multi:1,
+       v:["Normaux","Variante d'origine","Arc aortique droit","Sous-clavière rétro-œsophagienne"]},
+      {t:"chips", id:"rvp_d", l:"Retour veineux pulmonaire D", v:["Normal","Anormal partiel","Anormal total","Non exploré"]},
+      {t:"chips", id:"rvp_g", l:"Retour veineux pulmonaire G", v:["Normal","Anormal partiel","Anormal total","Non exploré"]},
+      {t:"chips", id:"crosse", l:"Crosse et isthme", multi:1,
+       v:["Normaux","Hypoplasie de l'arc","Coarctation","Interruption de l'arc"]},
+      {t:"chips", id:"quatre_cav", l:"Quatre cavités", v:["Équilibrées","VG hypoplasique","VD hypoplasique","Ventricule unique"]},
+      {t:"chips", id:"foramen_ovale", l:"Foramen ovale", v:["Perméable","Restrictif","Fermé","Absent"]},
+      {t:"chips", id:"septum_iv", l:"Septum interventriculaire",
+       v:["Intact","CIV périmembraneuse","CIV musculaire","CIV d'admission","Canal atrio-ventriculaire"]},
+      {t:"chips", id:"valves", l:"Valves", multi:1,
+       v:["Normales","Sténose pulmonaire","Atrésie pulmonaire","Sténose aortique","Atrésie aortique","Dysplasie tricuspide","Maladie d'Ebstein","Dysplasie mitrale"]},
+      {t:"bool", id:"canal_art", l:"Canal artériel perméable"},
+      {t:"bool", id:"coronaires", l:"Coronaires d'origine normale"},
+      {t:"masse", id:"coeur_masse", l:"Cœur", gc:"coeur", ma:"heart", mb:"Heart"},
+      {t:"bool", id:"coeur_prelev", l:"Cœur prélevé"},
+      {t:"txt", id:"coeur_detail", l:"Cœur — précisions"}
+    ]},
+  { id:"poumons", t:"Poumons",
+    photos:[ {k:"p_poumon_d", l:"Poumon droit"},
+             {k:"p_poumon_g", l:"Poumon gauche"},
+             {k:"p_docimasie", l:"Docimasie"} ],
+    champs:[
+      {t:"chips", id:"poumon_d_aspect", l:"Poumon droit — aspect", multi:1,
+       v:["Normal","Hypoplasique","Congestif","Lobation anormale","Malformation kystique","Séquestration"]},
+      {t:"chips", id:"poumon_g_aspect", l:"Poumon gauche — aspect", multi:1,
+       v:["Normal","Hypoplasique","Congestif","Lobation anormale","Malformation kystique","Séquestration"]},
+      {t:"masse2", id:"poumons_masse", l:"Poumons", gc:"poumons", ma:"lungs", mb:"Lungs", mg:2},
+      {t:"chips", id:"docimasie", l:"Docimasie pulmonaire", v:["Négative","Positive partielle","Positive"]},
+      {t:"bool", id:"poumons_prelev", l:"Poumons prélevés"}
+    ]},
+  { id:"digestif", t:"Appareil digestif",
+    photos:[ {k:"p_foie",     l:"Foie"},
+             {k:"p_estomac",  l:"Estomac"},
+             {k:"p_tube_dig", l:"Tube digestif"},
+             {k:"p_pancreas", l:"Pancréas"},
+             {k:"p_rate",     l:"Rate"} ],
+    champs:[
+      {t:"chips", id:"foie_aspect", l:"Foie — aspect", multi:1,
+       v:["Normal","Congestif","Stéatosique","Fibreux","Nodulaire","Pâle","Hémorragique"]},
+      {t:"masse", id:"foie_masse", l:"Foie", gc:"foie", ma:"liver", mb:"Liver", mg:1},
+      {t:"bool", id:"foie_prelev", l:"Foie prélevé"},
+      {t:"chips", id:"estomac", l:"Estomac", multi:1,
+       v:["Normal","Vide","Distendu","Atrésie","Contenu méconial","Contenu hémorragique"]},
+      {t:"chips", id:"tube_dig", l:"Tube digestif", multi:1,
+       v:["Normal","Malrotation","Atrésie","Sténose","Volvulus","Perforation","Diverticule de Meckel","Mésentère commun"]},
+      {t:"chips", id:"meconium", l:"Méconium", v:["Présent en place","Absent","Retard d'évacuation"]},
+      {t:"bool", id:"tubedig_prelev", l:"Tube digestif prélevé"},
+      {t:"chips", id:"pancreas_aspect", l:"Pancréas — aspect", v:["Normal","Annulaire","Hypoplasique","Ectopie"]},
+      {t:"masse", id:"pancreas_masse", l:"Pancréas", gc:"pancreas"},
+      {t:"bool", id:"intrication_spleno_panc", l:"Intrication spléno-pancréatique"},
+      {t:"chips", id:"rate_aspect", l:"Rate — aspect", multi:1,
+       v:["Normale","Asplénie","Polysplénie","Rate accessoire","Congestive"]},
+      {t:"masse", id:"rate_masse", l:"Rate", gc:"spleen", ma:"spleen", mb:"Spleen", mg:2}
+    ]},
+  { id:"retroperitoine", t:"Rétropéritoine",
+    photos:[ {k:"p_surrenales", l:"Surrénales"},
+             {k:"p_reins",      l:"Reins"} ],
+    champs:[
+      {t:"chips", id:"surrenales_aspect", l:"Surrénales — aspect", multi:1,
+       v:["Normales","Hypoplasiques","Hémorragiques","Kystiques","En galette"]},
+      {t:"masse2", id:"surrenales_masse", l:"Surrénales", gc:"surrenales", ma:"adrenals", mb:"Adrenals", mg:2},
+      {t:"bool", id:"surr_prelev", l:"Surrénales prélevées"},
+      {t:"chips", id:"reins_aspect", l:"Reins — aspect", multi:1,
+       v:["Normaux","Agénésie","Hypoplasie","Dysplasie multikystique","Polykystose","Fer à cheval","Ectopie","Lobulation persistante"]},
+      {t:"masse2", id:"reins_masse", l:"Reins", gc:"reins", ma:"kidneys", mb:"Kidneys", mg:2},
+      {t:"bool", id:"reins_prelev", l:"Reins prélevés"},
+      {t:"chips", id:"voies_urin", l:"Voies urinaires", multi:1,
+       v:["Normales","Dilatation pyélique","Urétérohydronéphrose","Méga-uretère","Valves de l'urètre postérieur","Duplicité"]}
+    ]},
+  /* Niveau « en salle » seulement : l'examen détaillé de l'encéphale fixé
+     est l'affaire du module de neuropathologie. Ce qui compte ici est de
+     savoir s'il a été prélevé, et de photographier la base du crâne. */
+  { id:"neuro", t:"Système nerveux",
+    photos:[ {k:"p_cerveau",    l:"Encéphale"},
+             {k:"p_base_crane", l:"Base du crâne"} ],
+    champs:[
+      {t:"chips", id:"cerveau_ext", l:"Encéphale — aspect", multi:1,
+       v:["Normal","Autolysé","Œdémateux","Hémorragique","Malformatif","Non prélevable"]},
+      {t:"chips", id:"gyration", l:"Gyration", v:["Adaptée au terme","Retard","Avance","Lissencéphalie","Polymicrogyrie"]},
+      {t:"chips", id:"fosse_post", l:"Fosse postérieure", multi:1,
+       v:["Normale","Kystique","Dandy-Walker","Méga grande citerne","Hypoplasie vermienne","Chiari II"]},
+      {t:"masse", id:"cerveau_masse", l:"Encéphale", ma:"brain", mb:"Brain"},
+      {t:"bool", id:"cerveau_prelev", l:"Encéphale prélevé"},
+      {t:"bool", id:"rachis_ouv", l:"Rachis ouvert"},
+      {t:"chips", id:"moelle", l:"Moelle", v:["Normale","Non explorée","Malformative","Autolysée"]},
+      {t:"txt", id:"neuro_detail", l:"Neuro — précisions"}
+    ]},
+  { id:"prelevements", t:"Prélèvements", photos:[],
+    champs:[
+      {t:"chips", id:"annexes", l:"Annexes", multi:1, v:["Placenta","Cordon","Membranes","Aucune"]},
+      {t:"chips", id:"speciaux", l:"Prélèvements spéciaux", multi:1,
+       v:["Caryotype","ACPA","Bactériologie","Virologie","Métabolique","Muscle","Peau (fibroblastes)"]},
+      {t:"bool", id:"congelation", l:"Congélation"},
+      {t:"bool", id:"dnatheque", l:"DNAthèque"},
+      {t:"txt", id:"prelev_detail", l:"Prélèvements — précisions"}
+    ]},
+  { id:"restitution", t:"Restitution", photos:[ {k:"p_post_restit", l:"Après restitution"} ],
+    champs:[ {t:"txt", id:"commentaire", l:"Commentaire de l'autopsie"} ]}
+];
+var N_TRAME  = ETAPES.reduce(function(a, e){ return a + e.photos.length; }, 0);
+var N_CHAMPS = ETAPES.reduce(function(a, e){ return a + e.champs.length; }, 0);
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function fmt(n){
+  if (n == null || isNaN(n)) return "—";
+  if (n < 1024) return n + " o";
+  if (n < 1048576) return (n/1024).toFixed(0) + " Ko";
+  if (n < 1073741824) return (n/1048576).toFixed(1) + " Mo";
+  return (n/1073741824).toFixed(2) + " Go";
+}
+function uid(){
+  try { if (crypto && crypto.randomUUID) return crypto.randomUUID().slice(0, 8); } catch(e){}
+  return "x" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+function normDossier(v){ return v.toUpperCase().replace(/^(\d{2})P/, "$1P").replace(/\s+/g,""); }
+function dossierOk(v){ return /^\d{2}P\d+$/.test(v); }
+function num(v){
+  var s = String(v == null ? "" : v).trim().replace(",", ".");
+  if (!s) return null;
+  var n = parseFloat(s);
+  return isFinite(n) ? n : null;
+}
+function champDef(id){
+  var r = null;
+  ETAPES.forEach(function(e){ e.champs.forEach(function(c){ if (c.id === id) r = c; }); });
+  return r;
+}
+function zscore(v, m, sd){
+  if (v == null || m == null || sd == null || !sd) return null;
+  return (v - m) / sd;
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────── */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+      if (!d.objectStoreNames.contains("shots")){
+        d.createObjectStore("shots", {keyPath:"id"}).createIndex("dossier", "dossier");
+      }
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(store, mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction(store, mode), out = fn(t.objectStore(store));
+    t.oncomplete = function(){ res(out && out.result !== undefined ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("saisies", "readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("saisies", "readonly",  function(s){ return s.get(d); }); }
+function sid(k){ return dossier + "|" + k; }
+function putShot(r){ return tx("shots", "readwrite", function(s){ return s.put(r); }); }
+function delShot(i){ return tx("shots", "readwrite", function(s){ return s.delete(i); }); }
+function shotsOf(d){
+  return tx("shots", "readonly", function(s){ return s.index("dossier").getAll(IDBKeyRange.only(d)); });
+}
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", shots = {}, urls = {}, libres = {}, slotCible = null;
+/* libres : clichés hors trame, clé -> { l: intitulé, etape } */
+
+/* ── Construction ─────────────────────────────────────────────────────────── */
+function champHTML(c){
+  var h = '<div class="ch" id="ch_wrap_' + c.id + '" data-champ="' + c.id + '">';
+  if (c.t === "bool"){
+    return h + '<div class="tete"><div class="lib">' + esc(c.l) + '</div>' +
+             '<div class="tog" id="it_' + c.id + '" data-etat="">' +
+               '<button type="button" data-e="o" aria-pressed="false">Oui</button>' +
+               '<button type="button" data-e="n" aria-pressed="false">Non</button>' +
+             '</div></div></div>';
+  }
+  h += '<div class="lib">' + esc(c.l) + '</div>';
+  if (c.t === "chips"){
+    h += '<div class="chips" id="ch_' + c.id + '"' + (c.multi ? ' data-multi="1"' : '') + '>' +
+         c.v.map(function(v){
+           return '<button type="button" class="chip" aria-pressed="false" data-v="' + esc(v) + '">' + esc(v) + '</button>';
+         }).join("") + '</div>';
+  } else if (c.t === "num"){
+    h += '<div class="mes"><input type="text" inputmode="decimal" id="n_' + c.id + '" autocomplete="off">' +
+         '<span class="u">' + esc(c.u || "") + '</span></div>';
+  } else if (c.t === "masse"){
+    h += '<div class="mes"><input type="text" inputmode="decimal" id="m_' + c.id + '" autocomplete="off">' +
+         '<span class="u">g</span></div><div class="zs" id="zs_' + c.id + '"></div>';
+  } else if (c.t === "masse2"){
+    h += '<div class="row">' +
+           '<div class="field mes"><label for="m_' + c.id + '_d">Droite</label>' +
+             '<input type="text" inputmode="decimal" id="m_' + c.id + '_d" autocomplete="off"><span class="u">g</span></div>' +
+           '<div class="field mes"><label for="m_' + c.id + '_g">Gauche</label>' +
+             '<input type="text" inputmode="decimal" id="m_' + c.id + '_g" autocomplete="off"><span class="u">g</span></div>' +
+         '</div><div class="zs" id="zs_' + c.id + '"></div>';
+  } else if (c.t === "txt"){
+    h += '<textarea id="t_' + c.id + '" rows="2" placeholder="Précisions…"></textarea>';
+  }
+  return h + '</div>';
+}
+(function batir(){
+  $("etapes").innerHTML = ETAPES.map(function(e, n){
+    var h = '<section id="sec_' + e.id + '" class="off" data-etape="' + e.id + '">' +
+            '<h2><span class="n">' + ("0" + (n+3)).slice(-2) + '</span>' + esc(e.t) +
+            '<span class="tally" id="tal_' + e.id + '">—</span></h2>';
+    h += '<div class="sousTitre">Clichés</div>' +
+         '<div class="grid" id="ph_' + e.id + '"></div>' +
+         '<button type="button" class="mini" data-add="' + e.id + '">＋ Cliché + descriptif</button>' +
+         '<div class="sousTitre">Constatations</div>';
+    h += e.champs.map(champHTML).join("");
+    return h + '</section>';
+  }).join("");
+  $("nJauge").textContent  = ("0" + (ETAPES.length + 3)).slice(-2);
+  $("nSortie").textContent = ("0" + (ETAPES.length + 4)).slice(-2);
+  $("nDiag").textContent   = ("0" + (ETAPES.length + 5)).slice(-2);
+  $("ver").textContent = "v" + VERSION;
+})();
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  ETAPES.forEach(function(e){ $("sec_" + e.id).classList.toggle("off", !ouvert); });
+  $("secContexte").classList.toggle("off", !ouvert);
+  $("secSortie").classList.toggle("off", !ouvert);
+}
+
+/* ── Lecture / écriture des champs ────────────────────────────────────────── */
+function etatDe(id){ return $("it_" + id).dataset.etat || null; }
+function poserEtat(id, v){
+  var el = $("it_" + id);
+  el.dataset.etat = v || "";
+  Array.prototype.forEach.call(el.children, function(b){
+    b.setAttribute("aria-pressed", b.dataset.e === v ? "true" : "false");
+  });
+}
+function chipsDe(id){
+  return Array.prototype.filter.call($("ch_" + id).children, function(b){
+    return b.getAttribute("aria-pressed") === "true";
+  }).map(function(b){ return b.dataset.v; });
+}
+function poserChips(id, vals){
+  Array.prototype.forEach.call($("ch_" + id).children, function(b){
+    b.setAttribute("aria-pressed", (vals || []).indexOf(b.dataset.v) >= 0 ? "true" : "false");
+  });
+}
+function lire(c){
+  switch(c.t){
+    case "chips":  return chipsDe(c.id);
+    case "bool":   return etatDe(c.id) === "o" ? "oui" : etatDe(c.id) === "n" ? "non" : null;
+    case "num":    return num($("n_" + c.id).value);
+    case "masse":  return num($("m_" + c.id).value);
+    case "masse2": return { d: num($("m_" + c.id + "_d").value), g: num($("m_" + c.id + "_g").value) };
+    case "txt":    return $("t_" + c.id).value.trim() || null;
+  }
+  return null;
+}
+function ecrire(c, v){
+  switch(c.t){
+    case "chips":  poserChips(c.id, v || []); break;
+    case "bool":   poserEtat(c.id, v === "oui" ? "o" : v === "non" ? "n" : null); break;
+    case "num":    $("n_" + c.id).value = v == null ? "" : v; break;
+    case "masse":  $("m_" + c.id).value = v == null ? "" : v; break;
+    case "masse2": $("m_" + c.id + "_d").value = v && v.d != null ? v.d : "";
+                   $("m_" + c.id + "_g").value = v && v.g != null ? v.g : ""; break;
+    case "txt":    $("t_" + c.id).value = v || ""; break;
+  }
+}
+
+/* ── Terme, macération, z-scores ──────────────────────────────────────────── */
+function terme(){ return num($("sa").value); }
+function macGrade(){ return parseInt($("maroun").value, 10) || 0; }
+/* Une masse est jugée contre les trois référentiels renseignés pour l'organe.
+   Aucun n'est autoritaire : c'est leur accord qui informe. */
+function zs(c, v){
+  var sa = terme(), g = macGrade(), out = [];
+  if (v == null || sa == null) return out;
+  sa = Math.round(sa);
+  var t;
+  if (c.gc && (t = getGCOrg(sa)) && t[c.gc]) out.push({ s:"GC", z: zscore(v, t[c.gc].m, t[c.gc].sd) });
+  if (c.ma && (t = getMAOrg(sa))){
+    var k = c.mg === 1 ? c.ma + "_" + getMarounGrade(g)
+          : c.mg === 2 ? c.ma + "_" + getMarounGrade23(g) : c.ma;
+    if (t[k] && t[k].m != null) out.push({ s:"MA", z: zscore(v, t[k].m, t[k].sd) });
+  }
+  if (c.mb && (t = getMBOrg(sa)) && t[c.mb]) out.push({ s:"MB", z: zscore(v, t[c.mb].m, t[c.mb].sd) });
+  return out.filter(function(x){ return x.z !== null; });
+}
+function masseDe(c){
+  var v = lire(c);
+  if (c.t === "masse2"){
+    if (v.d == null && v.g == null) return null;
+    return (v.d || 0) + (v.g || 0);
+  }
+  return v;
+}
+function majZ(c){
+  var el = $("zs_" + c.id);
+  if (!el) return;
+  var v = masseDe(c), l = zs(c, v);
+  if (v == null){ el.innerHTML = ""; return; }
+  if (!l.length){
+    el.innerHTML = '<span class="z">' + (terme() == null ? "terme non saisi" : "hors référentiel") + '</span>';
+    return;
+  }
+  el.innerHTML = l.map(function(x){
+    var a = Math.abs(x.z);
+    return '<span class="z' + (a > 4 ? " far" : a > 2 ? " out" : "") + '">' +
+           x.s + " z " + (x.z >= 0 ? "+" : "") + x.z.toFixed(2) + '</span>';
+  }).join("");
+}
+function majTousZ(){
+  ETAPES.forEach(function(e){
+    e.champs.forEach(function(c){ if (c.t === "masse" || c.t === "masse2") majZ(c); });
+  });
+}
+
+/* ── Interactions ─────────────────────────────────────────────────────────── */
+document.addEventListener("click", function(ev){
+  var t = ev.target;
+  if (!t.closest) return;
+  var sec = t.closest("section");
+  if (sec && sec.classList.contains("off")) return;
+
+  var tog = t.closest(".tog button");
+  if (tog){
+    var id = tog.parentNode.id.slice(3);
+    /* un second appui sur l'état actif le retire : le champ redevient non renseigné */
+    poserEtat(id, etatDe(id) === tog.dataset.e ? null : tog.dataset.e);
+    majTallies(); enregistrer();
+    return;
+  }
+  var chip = t.closest(".chip");
+  if (chip){
+    var box = chip.parentNode, on = chip.getAttribute("aria-pressed") === "true";
+    if (!box.dataset.multi){
+      Array.prototype.forEach.call(box.children, function(b){ b.setAttribute("aria-pressed", "false"); });
+    }
+    chip.setAttribute("aria-pressed", on ? "false" : "true");
+    majTallies(); enregistrer();
+    return;
+  }
+  var add = t.closest("[data-add]");
+  if (add){ nouveauCliche(add.dataset.add); return; }
+  var del = t.closest("[data-del]");
+  if (del){ ev.stopPropagation(); retirer(del.dataset.del); return; }
+  var slot = t.closest(".slot");
+  if (slot){ ouvrirSlot(slot.dataset.k); return; }
+});
+document.addEventListener("keydown", function(ev){
+  if (ev.key !== "Enter" && ev.key !== " ") return;
+  var s = ev.target.classList && ev.target.classList.contains("slot") ? ev.target : null;
+  if (s && !s.closest("section").classList.contains("off")){ ev.preventDefault(); ouvrirSlot(s.dataset.k); }
+});
+document.addEventListener("input", function(ev){
+  var el = ev.target;
+  if (el.id === "dossier" || el.id === "operateur") return;
+  if (el.id === "sa" || el.id === "saj" || el.id === "maroun"){ majTousZ(); majTallies(); enregistrer(); return; }
+  var w = el.closest ? el.closest(".ch") : null;
+  if (w){
+    var c = champDef(w.dataset.champ);
+    if (c && (c.t === "masse" || c.t === "masse2")) majZ(c);
+    majTallies(); enregistrer();
+  }
+});
+$("maroun").addEventListener("change", function(){ majTousZ(); enregistrer(); });
+
+/* ── Vignette ─────────────────────────────────────────────────────────────── */
+function decode(b){
+  try { return createImageBitmap(b, {imageOrientation:"from-image"}); }
+  catch(e){ return createImageBitmap(b); }
+}
+function toBlob(bmp, w, h, q){
+  var c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  c.getContext("2d").drawImage(bmp, 0, 0, w, h);
+  return new Promise(function(res){ c.toBlob(res, "image/jpeg", q); });
+}
+/* Le cliché est conservé tel que le capteur l'a produit : aucun
+   réencodage, aucune réduction. La vignette ne sert qu'à l'affichage. */
+async function traiter(file){
+  var bmp = await decode(file);
+  var ow = bmp.width, oh = bmp.height;
+  var tk = Math.min(1, 400 / Math.max(ow, oh));
+  var vig = await toBlob(bmp, Math.round(ow*tk), Math.round(oh*tk), 0.7);
+  if (bmp.close) bmp.close();
+  return { blob: file, thumb: vig, w: ow, h: oh, ow: ow, oh: oh };
+}
+
+/* ── Rendu des clichés ────────────────────────────────────────────────────── */
+function slotHTML(k, l, libre){
+  var r = shots[k];
+  var img = r && urls[k]
+    ? '<img src="' + urls[k] + '" alt="' + esc(l) + '"><span class="tick">✓</span>'
+    : '<span class="ph">📷</span>';
+  var stat = r
+    ? '<div class="stat"><span>' + r.w + '×' + r.h + ' · ' + fmt(r.bytes) + '</span>' +
+      '<button type="button" data-del="' + esc(k) + '">Retirer</button></div>'
+    : '<div class="stat"><span>' + (libre ? "supplémentaire" : "à réaliser") + '</span></div>';
+  return '<div class="slot' + (r ? " done" : "") + '" data-k="' + esc(k) + '" tabindex="0" role="button">' +
+           '<div class="plate">' + img + '</div>' +
+           '<div class="cap">' + esc(l) + '</div>' + stat +
+         '</div>';
+}
+function rendreCliches(){
+  ETAPES.forEach(function(e){
+    var h = e.photos.map(function(p){ return slotHTML(p.k, p.l, false); }).join("");
+    Object.keys(libres).forEach(function(k){
+      if (libres[k].etape === e.id) h += slotHTML(k, libres[k].l, true);
+    });
+    $("ph_" + e.id).innerHTML = h;
+  });
+  majTallies();
+  jauge();
+}
+function ouvertureAt(){ return shots["p_ouverture"] ? shots["p_ouverture"].addedAt : null; }
+function majTallies(){
+  var faits = 0;
+  ETAPES.forEach(function(e){
+    var p = e.photos.filter(function(x){ return shots[x.k]; }).length;
+    faits += p;
+    var vus = e.champs.filter(function(c){
+      var v = lire(c);
+      if (c.t === "chips") return v.length > 0;
+      if (c.t === "masse2") return v.d != null || v.g != null;
+      return v != null;
+    }).length;
+    $("tal_" + e.id).textContent =
+      (e.photos.length ? p + "/" + e.photos.length + " cliché · " : "") +
+      vus + "/" + e.champs.length;
+  });
+  $("tPhotos").textContent = faits + "/" + N_TRAME;
+
+  var sa = terme(), j = num($("saj").value);
+  $("talContexte").textContent = sa == null ? "terme manquant"
+    : sa + " SA" + (j != null ? " + " + j + " j" : "") + " · Maroun " + macGrade();
+  var t = ouvertureAt();
+  $("ouvHint").textContent = t
+    ? "Ouverture horodatée par le cliché : " + new Date(t).toLocaleString("fr-FR")
+    : "Ouverture non horodatée — le cliché « Ouverture » date l'acte.";
+}
+async function jauge(){
+  var total = Object.keys(shots).reduce(function(a,k){ return a + (shots[k].bytes||0); }, 0);
+  var proj  = Math.round(total * 4/3) + 8192;
+  var used = null, quota = null;
+  if (navigator.storage && navigator.storage.estimate){
+    try { var e = await navigator.storage.estimate(); used = e.usage; quota = e.quota; } catch(x){}
+  }
+  $("usedTxt").textContent  = fmt(used != null ? used : total);
+  $("quotaTxt").textContent = quota ? "  sur " + fmt(quota) : "  (quota inconnu)";
+  $("projTxt").textContent  = fmt(proj);
+  if (quota){
+    $("barUsed").style.width = Math.min(100, ((used||total)/quota)*100) + "%";
+    $("barProj").style.width = Math.min(100, (proj/quota)*100) + "%";
+  }
+}
+
+/* ── Prise de vue ─────────────────────────────────────────────────────────── */
+function ouvrirSlot(k){
+  if (!dossier){ flash("Saisir d'abord dossier et opérateur."); $("dossier").focus(); return; }
+  slotCible = k;
+  $("pick").click();
+}
+function nouveauCliche(etape){
+  if (!dossier){ flash("Saisir d'abord dossier et opérateur."); $("dossier").focus(); return; }
+  var l = prompt("Descriptif du cliché :", "");
+  if (l === null) return;
+  l = l.trim(); if (!l) return;
+  var k = "extra_" + etape + "_" + uid();
+  libres[k] = { l: l, etape: etape };
+  rendreCliches();
+  ouvrirSlot(k);
+}
+function etapeDeCliche(k){
+  var t = null;
+  ETAPES.forEach(function(e){ e.photos.forEach(function(p){ if (p.k === k) t = e.id; }); });
+  return t;
+}
+function libelle(k){
+  var t = null;
+  ETAPES.forEach(function(e){ e.photos.forEach(function(p){ if (p.k === k) t = p.l; }); });
+  return t || (libres[k] ? libres[k].l : k);
+}
+async function ajouterPhoto(k, file){
+  var lib = libelle(k), l = libres[k];
+  var r = await traiter(file);
+  var rec = {
+    id: sid(k), dossier: dossier, module: MODULE, key: k, label: lib,
+    etape: l ? l.etape : etapeDeCliche(k), libre: !!l,
+    name: file.name || (k + ".jpg"), type: r.blob.type || "image/jpeg",
+    bytes: r.blob.size, w: r.w, h: r.h, ow: r.ow, oh: r.oh,
+    addedAt: new Date().toISOString(), blob: r.blob, thumb: r.thumb
+  };
+  await putShot(rec);
+  shots[k] = rec;
+  if (urls[k]) URL.revokeObjectURL(urls[k]);
+  urls[k] = URL.createObjectURL(r.thumb);
+  rendreCliches();
+  enregistrer();
+  return rec;
+}
+$("pick").addEventListener("change", async function(){
+  var f = this.files[0]; this.value = "";
+  if (!f || !slotCible) return;
+  var k = slotCible; slotCible = null;
+  try {
+    flash("Traitement…");
+    var rec = await ajouterPhoto(k, f);
+    flash(rec.label + " enregistré.");
+  } catch(err){
+    flash("Échec : " + err.message + " — cliché non conservé.");
+  }
+});
+async function retirer(k){
+  await delShot(sid(k)).catch(function(){});
+  if (urls[k]){ URL.revokeObjectURL(urls[k]); delete urls[k]; }
+  delete shots[k]; delete libres[k];
+  rendreCliches();
+  enregistrer();
+  flash("Cliché retiré.");
+}
+
+/* ── Collecte / restitution ─────────────────────────────────────────────────
+   Les identifiants de champs reprennent ceux de la PWA, mais le JSON suit la
+   trame d'étapes de ce document : le regroupement diffère de collectData(). */
+function exportChamp(c){
+  var v = lire(c);
+  var o = { id: c.id, label: c.l, type: c.t };
+  if (c.t === "chips") o.valeurs = v;
+  else if (c.t === "masse2"){
+    o.droite = v.d; o.gauche = v.g;
+    o.total = masseDe(c);
+    o.zscores = zsObjet(c, o.total);
+  } else if (c.t === "masse"){
+    o.grammes = v;
+    o.zscores = zsObjet(c, v);
+  } else {
+    o.valeur = v;
+    if (c.t === "num") o.unite = c.u || null;
+  }
+  return o;
+}
+function zsObjet(c, v){
+  var o = { gc: null, ma: null, mb: null };
+  zs(c, v).forEach(function(x){ o[x.s.toLowerCase()] = +x.z.toFixed(2); });
+  return o;
+}
+function collecter(){
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    ouverture_at: ouvertureAt(),
+    terme_sa: terme(),
+    terme_jours: num($("saj").value),
+    maceration_maroun: macGrade(),
+    trame_attendue: N_TRAME,
+    etapes: ETAPES.map(function(e){
+      return { id: e.id, titre: e.t, champs: e.champs.map(exportChamp) };
+    }),
+    cliches_libres: Object.keys(libres).map(function(k){
+      return { key: k, label: libres[k].l, etape: libres[k].etape };
+    })
+  };
+}
+function appliquer(o){
+  if (o.terme_sa != null) $("sa").value = o.terme_sa;
+  if (o.terme_jours != null) $("saj").value = o.terme_jours;
+  if (o.maceration_maroun != null) $("maroun").value = String(o.maceration_maroun);
+  (o.etapes || []).forEach(function(e){
+    (e.champs || []).forEach(function(x){
+      var c = champDef(x.id);
+      if (!c) return;
+      if (c.t === "chips") ecrire(c, x.valeurs);
+      else if (c.t === "masse2") ecrire(c, { d: x.droite, g: x.gauche });
+      else if (c.t === "masse") ecrire(c, x.grammes);
+      else ecrire(c, x.valeur);
+    });
+  });
+  (o.cliches_libres || []).forEach(function(c){
+    libres[c.key] = { l: c.label, etape: c.etape };
+  });
+  majTousZ();
+  rendreCliches();
+}
+function vider(){
+  ETAPES.forEach(function(e){ e.champs.forEach(function(c){ ecrire(c, c.t === "chips" ? [] : null); }); });
+  $("sa").value = ""; $("saj").value = ""; $("maroun").value = "0";
+  Object.keys(urls).forEach(function(k){ URL.revokeObjectURL(urls[k]); });
+  urls = {}; shots = {}; libres = {};
+  majTousZ();
+  rendreCliches();
+}
+
+/* ── Chargement d'un dossier ──────────────────────────────────────────────── */
+/* Remonte en mémoire les clichés déjà en base sans toucher aux constatations :
+   la relecture d'un JSON écrit d'abord ses clichés, puis rappelle ceci. */
+async function relierCliches(){
+  var list = await shotsOf(dossier).catch(function(){ return []; });
+  list.forEach(function(r){
+    shots[r.key] = r;
+    if (urls[r.key]) URL.revokeObjectURL(urls[r.key]);
+    urls[r.key] = URL.createObjectURL(r.thumb || r.blob);
+    if (r.libre && !libres[r.key]) libres[r.key] = { l: r.label, etape: r.etape };
+  });
+  return list.length;
+}
+async function chargerDossier(){
+  vider();
+  if (!dossier || !db) return;
+  var rec = await getSaisie(dossier).catch(function(){ return null; });
+  if (rec) appliquer(rec);
+  var n = await relierCliches();
+  rendreCliches();
+  if (rec || n) flash("Dossier " + dossier + " restitué.");
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, ok_n = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = ok_n && op;
+  var h = $("dossierHint");
+  h.className = "hint" + (v && !ok_n ? " bad" : ok_n ? " good" : "");
+  h.textContent = !v ? "Deux chiffres, P, puis le numéro. Conditionne l'enregistrement."
+                : ok_n ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                       : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la saisie.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json — clichés inclus en base64."
+    : ok_n ? "Saisir l'opérateur pour activer l'export."
+           : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){ dossier = v; await chargerDossier(); }
+  else if (!ok && dossier){ dossier = ""; await chargerDossier(); }
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function toB64(b){
+  return new Promise(function(res, rej){
+    var fr = new FileReader();
+    fr.onload  = function(){ var s = String(fr.result); res(s.slice(s.indexOf(",")+1)); };
+    fr.onerror = function(){ rej(fr.error); };
+    fr.readAsDataURL(b);
+  });
+}
+function fromB64(b64, type){
+  var bin = atob(b64), a = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+  return new Blob([a], {type: type || "image/jpeg"});
+}
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+async function paquet(){
+  var out = collecter();
+  out.photos = [];
+  var cles = [];
+  ETAPES.forEach(function(e){ e.photos.forEach(function(p){ if (shots[p.k]) cles.push(p.k); }); });
+  Object.keys(libres).forEach(function(k){ if (shots[k]) cles.push(k); });
+  for (var i = 0; i < cles.length; i++){
+    var r = shots[cles[i]];
+    flash("Encodage " + (i+1) + "/" + cles.length + "…");
+    out.photos.push({
+      key: r.key, label: r.label, etape: r.etape, libre: !!r.libre,
+      name: r.name, type: r.type, bytes: r.bytes, w: r.w, h: r.h, ow: r.ow, oh: r.oh,
+      addedAt: r.addedAt, data_base64: await toB64(r.blob)
+    });
+  }
+  return out;
+}
+$("btnExport").onclick = async function(){
+  if (!dossierOk(dossier)) return;
+  this.disabled = true;
+  var t0 = performance.now();
+  try {
+    var out = await paquet();
+    var blob = new Blob([JSON.stringify(out, null, 1)], {type:"application/json"});
+    telecharger(blob, dossier + "_" + MODULE + ".json");
+    flash(out.photos.length + " cliché(s), " + fmt(blob.size) +
+          " exportés en " + Math.round(performance.now()-t0) + " ms.");
+  } catch(e){
+    flash("Export impossible : " + e.message);
+  }
+  this.disabled = false;
+};
+async function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.etapes) throw new Error("aucune clé « etapes »");
+  if (o.dossier) $("dossier").value = normDossier(o.dossier);
+  if (o.operateur) $("operateur").value = o.operateur;
+  await majDossier();
+  if (!dossier) throw new Error("numéro de dossier absent ou opérateur manquant");
+
+  var photos = o.photos || [];
+  for (var i = 0; i < photos.length; i++){
+    var p = photos[i];
+    var blob = fromB64(p.data_base64, p.type);
+    var bmp = await decode(blob);
+    var tk = Math.min(1, 400 / Math.max(bmp.width, bmp.height));
+    var th = await toBlob(bmp, Math.round(bmp.width*tk), Math.round(bmp.height*tk), 0.7);
+    if (bmp.close) bmp.close();
+    await putShot({
+      id: sid(p.key), dossier: dossier, module: MODULE, key: p.key, label: p.label,
+      etape: p.etape, libre: !!p.libre, name: p.name, type: p.type,
+      bytes: blob.size, w: p.w, h: p.h, ow: p.ow, oh: p.oh, addedAt: p.addedAt,
+      blob: blob, thumb: th
+    });
+  }
+  /* les constatations d'abord — cliches_libres porte aussi les clichés
+     supplémentaires déclarés mais pas encore pris — puis les blobs. */
+  appliquer(o);
+  await relierCliches();
+  rendreCliches();
+  enregistrer();
+  return photos.length;
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = async function(){
+    try {
+      var n = await relire(JSON.parse(String(fr.result)));
+      flash("Saisie et " + n + " cliché(s) relus.");
+    } catch(e){ flash("Relecture impossible : " + e.message); }
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la saisie et les clichés du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    var list = await shotsOf(dossier);
+    for (var i = 0; i < list.length; i++) await delShot(list[i].id);
+    await tx("saisies", "readwrite", function(s){ return s.delete(dossier); });
+    await chargerDossier();
+    flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les saisies et TOUS les clichés sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("shots",   "readwrite", function(s){ return s.clear(); });
+  await tx("saisies", "readwrite", function(s){ return s.clear(); });
+  await chargerDossier();
+  flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Étapes", ETAPES.length + " — " + N_CHAMPS + " champs, " + N_TRAME + " clichés de trame");
+  ligne("Référentiels de masses", "Guihard-Costa 2002, Maroun, Muller-Brochut 2018");
+  ligne("Clichés", "pleine résolution, aucun réencodage", "ok");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+(async function(){
+  rendreCliches();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — rien ne sera conservé. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir autopsie.html?selftest=1 ──────────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+  function sel(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("change", {bubbles:true})); }
+  function clic(el){ el.dispatchEvent(new MouseEvent("click", {bubbles:true})); }
+  function image(w, h){
+    var c = document.createElement("canvas"); c.width = w; c.height = h;
+    var x = c.getContext("2d");
+    x.fillStyle = "#c33"; x.fillRect(0, 0, w, h);
+    x.fillStyle = "#3c3"; x.fillRect(0, 0, w/2, h/2);
+    return new Promise(function(r){ c.toBlob(r, "image/jpeg", 0.9); });
+  }
+  function zDe(id){
+    var c = champDef(id), l = zs(c, masseDe(c)), o = {};
+    l.forEach(function(x){ o[x.s] = x.z; });
+    return o;
+  }
+
+  var ids = [], cles = [];
+  ETAPES.forEach(function(e){
+    e.champs.forEach(function(c){ ids.push(c.id); });
+    e.photos.forEach(function(p){ cles.push(p.k); });
+  });
+  chk("champs sans doublon",      new Set(ids).size === ids.length);
+  chk("clés photo sans doublon",  new Set(cles).size === cles.length);
+  chk("étapes sans doublon",      new Set(ETAPES.map(function(e){ return e.id; })).size === ETAPES.length);
+  chk("trame de 34 clichés",      N_TRAME === 34);
+  chk("74 champs",                N_CHAMPS === 74);
+  chk("intrication spléno-pancréatique", champDef("intrication_spleno_panc").t === "bool");
+  chk("encéphale prélevé",        champDef("cerveau_prelev").t === "bool");
+  chk("base du crâne",            etapeDeCliche("p_base_crane") === "neuro");
+  chk("fosse postérieure kystique", champDef("fosse_post").v.indexOf("Kystique") >= 0);
+  chk("chaque chips a des choix", ETAPES.every(function(e){ return e.champs.every(function(c){
+                                    return c.t !== "chips" || (c.v || []).length > 0; }); }));
+  chk("étape d'un cliché",        etapeDeCliche("p_thymus") === "thorax");
+  chk("normDossier 26p0123",      normDossier("26p0123") === "26P0123");
+  chk("dossier incomplet refusé", !dossierOk("26P"));
+  chk("num accepte la virgule",   num("12,5") === 12.5 && num("") === null && num("abc") === null);
+
+  /* Référentiels */
+  chk("clé Guihard-Costa",        getGCKey(24) === "23-24" && getGCKey(41) === "41-42" && getGCKey(50) === null);
+  chk("strate de Maroun",         getMarounGrade(0) === "01" && getMarounGrade(2) === "2" && getMarounGrade(4) === "3");
+  chk("strate de Maroun 0-1/2-3", getMarounGrade23(1) === "01" && getMarounGrade23(3) === "23");
+  chk("z centré à 0",             zscore(10, 10, 2) === 0);
+  chk("z avec sd nul",            zscore(10, 10, 0) === null);
+  chk("table GC chargée",         !!getGCOrg(24) && getGCOrg(24).foie.m > 0);
+  chk("table MA chargée",         !!getMAOrg(20) && !!getMAOrg(20).liver_01);
+  chk("table MB bornée à 20 SA",  !!getMBOrg(20) && getMBOrg(24) === null);
+
+  chk("verrouillé au départ",     $("sec_coeur").classList.contains("off"));
+  set("dossier", "26p0123");
+  chk("opérateur manquant",       $("sec_coeur").classList.contains("off"));
+  set("operateur", "RM");
+  await new Promise(function(r){ setTimeout(r, 40); });
+  chk("déverrouillé",            !$("sec_coeur").classList.contains("off"));
+  chk("contexte déverrouillé",   !$("secContexte").classList.contains("off"));
+  chk("export activé",           !$("btnExport").disabled);
+  chk("version en entête",        $("ver").textContent === "v" + VERSION);
+
+  /* Chips : choix unique contre choix multiple */
+  var cs = $("ch_situs");
+  clic(cs.children[0]); clic(cs.children[1]);
+  chk("chips à choix unique",     chipsDe("situs").length === 1 && chipsDe("situs")[0] === "Inversus");
+  var co = $("ch_ogi");
+  clic(co.children[0]); clic(co.children[4]);
+  chk("chips à choix multiple",   chipsDe("ogi").length === 2);
+  clic(co.children[0]);
+  chk("chips se déclenche",       chipsDe("ogi").length === 1);
+
+  /* Bool */
+  var tg = $("it_anasarque");
+  clic(tg.children[0]); chk("bool oui",  etatDe("anasarque") === "o");
+  clic(tg.children[1]); chk("bool non",  etatDe("anasarque") === "n");
+  clic(tg.children[1]); chk("second appui remet à vide", etatDe("anasarque") === null);
+  clic(tg.children[0]);
+
+  /* Nombres, textes */
+  set("n_ep_pleural_d", "12,5");
+  set("t_commentaire", "autopsie complète");
+  chk("nombre relu",              lire(champDef("ep_pleural_d")) === 12.5);
+
+  /* Masses et z-scores — trois référentiels à 20 SA */
+  set("sa", "20"); set("saj", "3"); sel("maroun", "0");
+  set("m_foie_masse", "14.33");
+  var zf = zDe("foie_masse");
+  chk("trois référentiels à 20 SA", Object.keys(zf).length === 3);
+  chk("z Guihard-Costa exact",      Math.abs(zf.GC) < 0.005);
+  chk("z affiché",                  $("zs_foie_masse").children.length === 3);
+  var maAvant = zf.MA;
+  sel("maroun", "3");
+  chk("la macération change la strate", zDe("foie_masse").MA !== maAvant);
+  sel("maroun", "0");
+  chk("pancréas : GC seul",         Object.keys(zDe("pancreas_masse")).length === 0);
+  set("m_pancreas_masse", "0.57");
+  chk("pancréas : un seul repère",  Object.keys(zDe("pancreas_masse")).length === 1);
+  set("m_cerveau_masse", "46");
+  chk("encéphale sans GC",          !("GC" in zDe("cerveau_masse")) && Object.keys(zDe("cerveau_masse")).length === 2);
+  set("sa", "34");
+  chk("hors table MB à 34 SA",      Object.keys(zDe("foie_masse")).indexOf("MB") < 0);
+  set("sa", "20");
+
+  /* Masse appariée : z sur la somme */
+  set("m_poumons_masse_d", "4"); set("m_poumons_masse_g", "3.5");
+  chk("somme droite + gauche",    masseDe(champDef("poumons_masse")) === 7.5);
+  chk("z sur la somme",           Object.keys(zDe("poumons_masse")).length === 3);
+  set("m_reins_masse_d", "1.2");
+  chk("un seul côté suffit",      masseDe(champDef("reins_masse")) === 1.2);
+
+  /* Tallies */
+  majTallies();
+  chk("contexte résumé",          $("talContexte").textContent.indexOf("20 SA + 3 j") === 0);
+  chk("tally d'étape",            $("tal_ouverture").textContent.indexOf("0/2 cliché") === 0);
+
+  var snap = collecter();
+  var ouv = snap.etapes.filter(function(e){ return e.id === "ouverture"; })[0];
+  var dig = snap.etapes.filter(function(e){ return e.id === "digestif"; })[0];
+  var foie = dig.champs.filter(function(c){ return c.id === "foie_masse"; })[0];
+  var poum = snap.etapes.filter(function(e){ return e.id === "poumons"; })[0]
+               .champs.filter(function(c){ return c.id === "poumons_masse"; })[0];
+  chk("enveloppe conforme",       snap.schema_version === SCHEMA && snap.module === MODULE &&
+                                  snap.module_version === VERSION && snap.dossier === "26P0123" && !!snap.exported_at);
+  chk("terme dans le JSON",       snap.terme_sa === 20 && snap.terme_jours === 3 && snap.maceration_maroun === 0);
+  chk("étapes exportées",         snap.etapes.length === ETAPES.length);
+  chk("chips exportées",          ouv.champs.filter(function(c){ return c.id === "situs"; })[0].valeurs[0] === "Inversus");
+  chk("bool exporté",             ouv.champs.filter(function(c){ return c.id === "anasarque"; })[0].valeur === "oui");
+  chk("nombre exporté",           ouv.champs.filter(function(c){ return c.id === "ep_pleural_d"; })[0].valeur === 12.5);
+  chk("unité exportée",           ouv.champs.filter(function(c){ return c.id === "ep_pleural_d"; })[0].unite === "mL");
+  chk("masse exportée",           foie.grammes === 14.33 && foie.zscores.gc === 0);
+  chk("z absent laissé à null",   snap.etapes.filter(function(e){ return e.id === "coeur"; })[0]
+                                      .champs.filter(function(c){ return c.id === "coeur_masse"; })[0].zscores.gc === null);
+  chk("masse appariée exportée",  poum.droite === 4 && poum.gauche === 3.5 && poum.total === 7.5);
+  chk("champ vide à null",        ouv.champs.filter(function(c){ return c.id === "ep_peritoine"; })[0].valeur === null);
+
+  /* Clichés — l'ouverture horodate l'acte */
+  chk("pas encore horodaté",      snap.ouverture_at === null);
+  var img = await image(1200, 900);
+  var rec = await ajouterPhoto("p_ouverture", img);
+  chk("cliché stocké",            !!shots["p_ouverture"]);
+  chk("cliché rattaché à l'étape", rec.etape === "ouverture");
+  chk("vignette produite",        rec.thumb.size > 0 && rec.thumb.size < rec.blob.size);
+  chk("original intact",          rec.blob === img && rec.bytes === img.size);
+  chk("pleine résolution gardée", rec.w === 1200 && rec.h === 900 && rec.ow === 1200);
+  chk("ouverture horodatée",      collecter().ouverture_at === rec.addedAt);
+  chk("horodatage affiché",       $("ouvHint").textContent.indexOf("Ouverture horodatée") === 0);
+  chk("slot marqué fait",         $("ph_ouverture").children[1].classList.contains("done"));
+  chk("compteur de clichés",      $("tPhotos").textContent === "1/" + N_TRAME);
+
+  /* Cliché supplémentaire déclaré mais pas encore pris */
+  var kv = "extra_coeur_" + uid();
+  libres[kv] = { l: "Sonde dans le canal artériel", etape: "coeur" };
+  rendreCliches();
+  chk("slot supplémentaire vide", $("ph_coeur").children.length === 10);
+  await ajouterPhoto(kv, await image(600, 400));
+  chk("cliché supplémentaire pris", !!shots[kv]);
+
+  var pack = await paquet();
+  chk("deux clichés exportés",    pack.photos.length === 2);
+  chk("base64 non vide",          pack.photos[0].data_base64.length > 100);
+  chk("cliché libre repéré",      pack.photos.filter(function(p){ return p.libre; }).length === 1);
+  chk("supplémentaires listés",   pack.cliches_libres.length === 1);
+  chk("relecture base64",         fromB64(pack.photos[1].data_base64, "image/jpeg").size === shots[kv].bytes);
+
+  await putSaisie(collecter());
+  vider();
+  chk("vider efface les chips",   chipsDe("situs").length === 0);
+  chk("vider efface les masses",  lire(champDef("foie_masse")) === null);
+  chk("vider efface le terme",    terme() === null);
+  chk("vider efface les clichés", !shots["p_ouverture"]);
+  await chargerDossier();
+  chk("IndexedDB restitue chips",  chipsDe("situs")[0] === "Inversus");
+  chk("IndexedDB restitue bool",   etatDe("anasarque") === "o");
+  chk("IndexedDB restitue masse",  lire(champDef("foie_masse")) === 14.33);
+  chk("IndexedDB restitue terme",  terme() === 20 && macGrade() === 0);
+  chk("IndexedDB restitue texte",  $("t_commentaire").value === "autopsie complète");
+  chk("IndexedDB restitue photo",  !!shots["p_ouverture"]);
+  chk("IndexedDB restitue le z",   $("zs_foie_masse").children.length === 3);
+
+  await retirer("p_ouverture");
+  chk("retrait du cliché",        !shots["p_ouverture"] && $("tPhotos").textContent === "0/" + N_TRAME);
+
+  /* Relecture d'un JSON — elle ne doit pas être écrasée par ce qui traîne
+     en base pour le même dossier. */
+  async function nettoyer(){
+    var l = await shotsOf("26P0123");
+    for (var i = 0; i < l.length; i++) await delShot(l[i].id);
+    await tx("saisies", "readwrite", function(s){ return s.delete("26P0123"); });
+    $("dossier").value = ""; await majDossier();   /* majDossier remet dossier à "" et vide */
+  }
+  await nettoyer();
+  chk("banc remis à zéro",        chipsDe("situs").length === 0 && Object.keys(shots).length === 0);
+
+  chk("clichés relus",            (await relire(pack)) === 2);
+  chk("relecture : chips",        chipsDe("situs")[0] === "Inversus");
+  chk("relecture : chips multi",  chipsDe("ogi").length === 1);
+  chk("relecture : bool",         etatDe("anasarque") === "o");
+  chk("relecture : nombre",       lire(champDef("ep_pleural_d")) === 12.5);
+  chk("relecture : masse",        lire(champDef("foie_masse")) === 14.33);
+  chk("relecture : masse appariée", masseDe(champDef("poumons_masse")) === 7.5);
+  chk("relecture : terme",        terme() === 20 && macGrade() === 0);
+  chk("relecture : z recalculé",  $("zs_foie_masse").children.length === 3);
+  chk("relecture : cliché trame", !!shots["p_ouverture"] && $("tPhotos").textContent === "1/" + N_TRAME);
+  chk("relecture : horodatage",   collecter().ouverture_at === pack.ouverture_at);
+  chk("relecture : cliché libre", $("ph_coeur").children.length === 10);
+
+  await nettoyer();
+  $("operateur").value = "";
+  chk("nettoyage du banc",        (await shotsOf("26P0123")).length === 0);
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>

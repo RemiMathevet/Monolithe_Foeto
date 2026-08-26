@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biométries fœtales — saisie hors ligne</title>
+<style>
+:root{--bg:#0e1117;--card:#171b22;--line:#262c36;--txt:#e6edf3;--dim:#8b949e;
+--blue:#3b82f6;--green:#22c55e;--orange:#f59e0b;--red:#ef4444;--purple:#a855f7}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.4 system-ui,-apple-system,sans-serif;padding-bottom:80px}
+header{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--line);padding:12px 14px;display:flex;align-items:center;gap:10px}
+header h1{font-size:1rem;margin:0;flex:1}
+.badge{background:var(--blue);color:#fff;border-radius:6px;padding:3px 9px;font-size:.8rem;font-weight:600}
+.badge.off{background:var(--line);color:var(--dim)}
+main{padding:14px;max-width:640px;margin:0 auto}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:12px;overflow:hidden}
+section>h2{font-size:.9rem;margin:0;padding:12px 14px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+section>h2 .count{margin-left:auto;font-size:.72rem;color:var(--dim);font-weight:500}
+section>div{padding:0 14px 14px}
+section.shut>div{display:none}
+label{display:block;font-size:.75rem;color:var(--dim);margin-bottom:4px}
+input{width:100%;background:#0d1117;border:1px solid var(--line);border-radius:8px;
+color:var(--txt);padding:11px 12px;font-size:1rem;font-family:inherit}
+input:focus{outline:none;border-color:var(--blue)}
+.f{margin-bottom:12px;position:relative}
+.f .unit{position:absolute;right:12px;top:29px;font-size:.75rem;color:var(--dim);pointer-events:none}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.ds{margin-top:5px;display:flex;gap:5px;flex-wrap:wrap;min-height:1px}
+.t{font-size:.68rem;font-weight:600;padding:2px 6px;border-radius:4px;background:#1f2733;color:var(--dim)}
+.t.alert{background:var(--red);color:#fff}
+.hint{font-size:.72rem;color:var(--dim);margin:-4px 0 12px}
+#lock{background:var(--orange);color:#000;padding:10px 14px;border-radius:8px;font-size:.82rem;margin-bottom:12px}
+#body[inert],#body.off{opacity:.35;pointer-events:none}
+footer{position:fixed;bottom:0;left:0;right:0;display:flex;gap:8px;padding:10px 14px;
+background:var(--card);border-top:1px solid var(--line)}
+button{flex:1;border:none;border-radius:9px;padding:13px;font-size:.9rem;font-weight:600;font-family:inherit;cursor:pointer}
+.p{background:var(--blue);color:#fff;flex:2}.s{background:var(--line);color:var(--txt)}
+#toast{position:fixed;bottom:78px;left:14px;right:14px;background:#000d;border:1px solid var(--line);
+border-radius:9px;padding:12px;font-size:.82rem;text-align:center;opacity:0;transition:opacity .2s;pointer-events:none;white-space:pre-line}
+#toast.on{opacity:1}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📏 Biométries fœtales</h1>
+  <span class="badge off" id="badge">—</span>
+</header>
+
+<main>
+
+<section id="sec-id">
+  <h2><span>🪪</span>Identification<span class="count" id="c-id">requis</span></h2>
+  <div>
+    <div class="row">
+      <div class="f"><label>N° de dossier</label><input id="dossier" placeholder="25P1234" autocomplete="off"></div>
+      <div class="f"><label>Opérateur</label><input id="operateur" placeholder="Nom" autocomplete="off"></div>
+    </div>
+    <div class="hint">Format attendu <b>aaPnnnn</b>. Les deux champs débloquent la saisie.</div>
+  </div>
+</section>
+
+<div id="lock">Renseigner le dossier et l'opérateur pour débloquer la saisie.</div>
+
+<div id="body" class="off">
+
+<section id="sec-terme">
+  <h2><span>📅</span>Terme<span class="count" id="c-terme">—</span></h2>
+  <div class="row">
+    <div class="f"><label>SA</label><input type="number" id="terme_sa" min="10" max="45" step="1" inputmode="numeric" placeholder="—"><div class="unit">sem.</div></div>
+    <div class="f"><label>+ jours</label><input type="number" id="terme_j" min="0" max="6" step="1" inputmode="numeric" placeholder="0"><div class="unit">j</div></div>
+  </div>
+</section>
+
+<section id="sec-balance">
+  <h2><span>⚖️</span>Balance<span class="count" id="c-balance">0/1</span></h2>
+  <div id="b-balance"></div>
+</section>
+
+<section id="sec-caliper">
+  <h2><span>📐</span>Pied à coulisse<span class="count" id="c-caliper">0/10</span></h2>
+  <div id="b-caliper"></div>
+</section>
+
+<section id="sec-tape">
+  <h2><span>📏</span>Mètre ruban<span class="count" id="c-tape">0/5</span></h2>
+  <div id="b-tape"></div>
+</section>
+
+</div>
+</main>
+
+<footer>
+  <button class="p" onclick="exportJSON()">⬇ Exporter le JSON</button>
+  <button class="s" onclick="wipe()">🗑 Vider</button>
+</footer>
+<div id="toast"></div>
+
+<script>
+/* ════ TABLES DE RÉFÉRENCE (inlinées — aucune requête réseau) ════
+   GC  : Guihard-Costa 2002, biométries bi-hebdomadaires 13-42 SA (mm, masse g)
+   MA  : Maroun, SA entières 12-43 — B=masse g, F=pied mm, C=VC cm, H=VT cm, D=PC cm
+   MB  : Muller-Brochut 2018, 12-20 SA — cm sauf Fetus (g)                        */
+
+var GC = {
+  "13-14":{masse:{m:55.8,sd:14.4},VT:{m:131.8,sd:15.4},VC:{m:89.6,sd:11.7},PC:{m:89.2,sd:11.8},pied:{m:14,sd:2.9}},
+  "15-16":{masse:{m:108.6,sd:24.7},VT:{m:170.4,sd:16.2},VC:{m:116.2,sd:12.2},PC:{m:116.7,sd:12.2},pied:{m:19,sd:3}},
+  "17-18":{masse:{m:176.1,sd:39},VT:{m:207.4,sd:17},VC:{m:141.7,sd:12.7},PC:{m:142.8,sd:12.6},pied:{m:25,sd:3.2}},
+  "19-20":{masse:{m:267.7,sd:57.1},VT:{m:242.9,sd:17.8},VC:{m:166.2,sd:13.1},PC:{m:167.5,sd:12.9},pied:{m:30,sd:3.3}},
+  "21-22":{masse:{m:392.7,sd:79.2},VT:{m:276.8,sd:18.6},VC:{m:189.8,sd:13.6},PC:{m:190.9,sd:13.3},pied:{m:36,sd:3.5}},
+  "23-24":{masse:{m:559.6,sd:105.1},VT:{m:309.2,sd:19.4},VC:{m:212.3,sd:14.1},PC:{m:212.8,sd:13.7},pied:{m:42,sd:3.6}},
+  "25-26":{masse:{m:773.9,sd:134.9},VT:{m:340,sd:20.2},VC:{m:233.8,sd:14.6},PC:{m:233.4,sd:14},pied:{m:48,sd:3.8}},
+  "27-28":{masse:{m:1038.2,sd:168.6},VT:{m:369.3,sd:21},VC:{m:254.4,sd:15.1},PC:{m:252.7,sd:14.4},pied:{m:53,sd:3.9}},
+  "29-30":{masse:{m:1350.4,sd:206.1},VT:{m:397,sd:21.8},VC:{m:273.9,sd:15.5},PC:{m:270.5,sd:14.8},pied:{m:58,sd:4.1}},
+  "31-32":{masse:{m:1702.5,sd:247.6},VT:{m:432.2,sd:22.6},VC:{m:292.4,sd:16},PC:{m:287,sd:15.1},pied:{m:63,sd:4.2}},
+  "33-34":{masse:{m:2080.2,sd:292.9},VT:{m:447.8,sd:23.4},VC:{m:309.9,sd:16.5},PC:{m:302.1,sd:15.5},pied:{m:67,sd:4.4}},
+  "35-36":{masse:{m:2460.8,sd:342.1},VT:{m:470.9,sd:24.2},VC:{m:326.5,sd:17},PC:{m:315.8,sd:15.9},pied:{m:71,sd:4.6}},
+  "37-38":{masse:{m:2813.1,sd:395.3},VT:{m:492.5,sd:24.9},VC:{m:342,sd:17.5},PC:{m:328.1,sd:16.2},pied:{m:74,sd:4.7}},
+  "39-40":{masse:{m:3095.1,sd:452.2},VT:{m:512.5,sd:25.7},VC:{m:356,sd:17.9},PC:{m:339.1,sd:16.6},pied:{m:77,sd:4.9}},
+  "41-42":{masse:{m:3268.8,sd:512.7},VT:{m:531.1,sd:26.5},VC:{m:369,sd:18.4},PC:{m:348.8,sd:16.9},pied:{m:80,sd:5}}
+};
+
+var MA = [
+  {s:12,B:{m:29.6,sd:14.9},F:{m:9,sd:3},C:{m:7.4,sd:1.1},H:{m:9.8,sd:1.7},D:{m:7.1,sd:1.1}},
+  {s:13,B:{m:37.4,sd:14.9},F:{m:12,sd:3},C:{m:8.7,sd:1.2},H:{m:11.8,sd:1.8},D:{m:8.5,sd:1.2}},
+  {s:14,B:{m:53,sd:14.9},F:{m:15,sd:3},C:{m:9.9,sd:1.2},H:{m:13.7,sd:1.8},D:{m:9.8,sd:1.2}},
+  {s:15,B:{m:76.5,sd:18.5},F:{m:18,sd:3},C:{m:11.1,sd:1.2},H:{m:15.6,sd:1.8},D:{m:11.1,sd:1.2}},
+  {s:16,B:{m:108,sd:41},F:{m:21,sd:3},C:{m:12.4,sd:1.3},H:{m:17.5,sd:1.8},D:{m:12.4,sd:1.3}},
+  {s:17,B:{m:147,sd:53},F:{m:24,sd:3},C:{m:13.5,sd:1.3},H:{m:19.3,sd:1.9},D:{m:13.6,sd:1.3}},
+  {s:18,B:{m:194,sd:65},F:{m:27,sd:3},C:{m:14.7,sd:1.3},H:{m:21.1,sd:1.9},D:{m:14.8,sd:1.3}},
+  {s:19,B:{m:249,sd:78},F:{m:30,sd:3},C:{m:15.9,sd:1.3},H:{m:22.9,sd:1.9},D:{m:16,sd:1.3}},
+  {s:20,B:{m:312,sd:92},F:{m:33,sd:3},C:{m:17,sd:1.4},H:{m:24.6,sd:1.9},D:{m:17.2,sd:1.4}},
+  {s:21,B:{m:382,sd:107},F:{m:36,sd:3},C:{m:18.2,sd:1.4},H:{m:26.3,sd:2},D:{m:18.3,sd:1.4}},
+  {s:22,B:{m:461,sd:122},F:{m:39,sd:3},C:{m:19.3,sd:1.4},H:{m:28,sd:2},D:{m:19.4,sd:1.4}},
+  {s:23,B:{m:547,sd:122},F:{m:41,sd:4},C:{m:20.4,sd:1.5},H:{m:29.6,sd:2},D:{m:20.5,sd:1.4}},
+  {s:24,B:{m:641,sd:137},F:{m:44,sd:4},C:{m:21.5,sd:1.5},H:{m:31.2,sd:2},D:{m:21.6,sd:1.5}},
+  {s:25,B:{m:743,sd:154},F:{m:47,sd:4},C:{m:22.6,sd:1.5},H:{m:32.8,sd:2.1},D:{m:22.6,sd:1.5}},
+  {s:26,B:{m:853,sd:171},F:{m:50,sd:4},C:{m:23.6,sd:1.5},H:{m:34.3,sd:2.1},D:{m:23.6,sd:1.5}},
+  {s:27,B:{m:971,sd:188},F:{m:52,sd:4},C:{m:24.7,sd:1.6},H:{m:35.8,sd:2.1},D:{m:24.5,sd:1.5}},
+  {s:28,B:{m:1096,sd:206},F:{m:55,sd:4},C:{m:25.7,sd:1.6},H:{m:37.3,sd:2.2},D:{m:25.5,sd:1.6}},
+  {s:29,B:{m:1230,sd:225},F:{m:57,sd:4},C:{m:26.7,sd:1.6},H:{m:38.7,sd:2.2},D:{m:26.4,sd:1.6}},
+  {s:30,B:{m:1371,sd:244},F:{m:60,sd:4},C:{m:27.7,sd:1.6},H:{m:40.1,sd:2.2},D:{m:27.2,sd:1.6}},
+  {s:31,B:{m:1520,sd:264},F:{m:62,sd:4},C:{m:28.7,sd:1.7},H:{m:41.4,sd:2.2},D:{m:28.1,sd:1.7}},
+  {s:32,B:{m:1677,sd:285},F:{m:64,sd:4},C:{m:29.7,sd:1.7},H:{m:42.8,sd:2.3},D:{m:28.9,sd:1.7}},
+  {s:33,B:{m:1842,sd:306},F:{m:67,sd:4},C:{m:30.6,sd:1.7},H:{m:44,sd:2.3},D:{m:29.7,sd:1.7}},
+  {s:34,B:{m:2015,sd:328},F:{m:69,sd:4},C:{m:31.6,sd:1.8},H:{m:45.3,sd:2.3},D:{m:30.5,sd:1.7}},
+  {s:35,B:{m:2195,sd:350},F:{m:71,sd:5},C:{m:32.5,sd:1.8},H:{m:46.5,sd:2.3},D:{m:31.2,sd:1.8}},
+  {s:36,B:{m:2383,sd:373},F:{m:73,sd:5},C:{m:33.4,sd:1.8},H:{m:47.7,sd:2.4},D:{m:31.9,sd:1.8}},
+  {s:37,B:{m:2580,sd:397},F:{m:76,sd:5},C:{m:34.3,sd:1.8},H:{m:48.9,sd:2.4},D:{m:32.6,sd:1.8}},
+  {s:38,B:{m:2784,sd:421},F:{m:78,sd:5},C:{m:35.2,sd:1.9},H:{m:50,sd:2.4},D:{m:33.2,sd:1.8}},
+  {s:39,B:{m:2996,sd:446},F:{m:80,sd:5},C:{m:36.1,sd:1.9},H:{m:51.1,sd:2.4},D:{m:33.8,sd:1.9}},
+  {s:40,B:{m:3215,sd:471},F:{m:82,sd:5},C:{m:37,sd:1.9},H:{m:52.1,sd:2.5},D:{m:34.4,sd:1.9}},
+  {s:41,B:{m:3443,sd:497},F:{m:84,sd:5},C:{m:37.8,sd:1.9},H:{m:53.1,sd:2.5},D:{m:35,sd:1.9}},
+  {s:42,B:{m:3678,sd:524},F:{m:86,sd:5},C:{m:38.6,sd:2},H:{m:54.1,sd:2.5},D:{m:35.5,sd:2}},
+  {s:43,B:{m:3922,sd:551},F:{m:88,sd:5},C:{m:39.4,sd:2},H:{m:55,sd:2.5},D:{m:36,sd:2}}
+];
+
+var MB = {
+  12:{CRL:{m:6.82,sd:.73},CFL:{m:8.85,sd:1},HC:{m:7.03,sd:.69},TC:{m:5.97,sd:.68},AC:{m:5.32,sd:.76},Foot:{m:.9,sd:.12},Hand:{m:.84,sd:.14},BPD:{m:2,sd:1},FOD:{m:2.72,sd:.32},Fetus:{m:17.86,sd:4.8}},
+  13:{CRL:{m:7.99,sd:.78},CFL:{m:11.11,sd:1.02},HC:{m:7.99,sd:.82},TC:{m:6.72,sd:.57},AC:{m:5.51,sd:.72},Foot:{m:1.15,sd:.11},Hand:{m:1,sd:.11},BPD:{m:2.24,sd:.19},FOD:{m:2.85,sd:.23},Fetus:{m:28.11,sd:6.41}},
+  14:{CRL:{m:9.51,sd:.82},CFL:{m:13.2,sd:1.19},HC:{m:9.2,sd:.89},TC:{m:7.81,sd:.62},AC:{m:6.56,sd:.8},Foot:{m:1.42,sd:.19},Hand:{m:1.27,sd:.16},BPD:{m:2.55,sd:.19},FOD:{m:3.31,sd:.17},Fetus:{m:45.88,sd:10.58}},
+  15:{CRL:{m:10.67,sd:.83},CFL:{m:15.34,sd:1.2},HC:{m:10.78,sd:1.21},TC:{m:9.08,sd:.79},AC:{m:7.83,sd:1.36},Foot:{m:1.72,sd:.19},Hand:{m:1.52,sd:.19},BPD:{m:3.04,sd:.25},FOD:{m:3.71,sd:.24},Fetus:{m:69.41,sd:13.07}},
+  16:{CRL:{m:11.53,sd:1.03},CFL:{m:16.77,sd:1.21},HC:{m:12.01,sd:.72},TC:{m:10.29,sd:.66},AC:{m:8.42,sd:.99},Foot:{m:2.03,sd:.12},Hand:{m:1.75,sd:.21},BPD:{m:3.42,sd:.2},FOD:{m:4.19,sd:.22},Fetus:{m:98.6,sd:11.6}},
+  17:{CRL:{m:12.73,sd:.55},CFL:{m:18.55,sd:.9},HC:{m:13.27,sd:.79},TC:{m:11.11,sd:.79},AC:{m:8.56,sd:1.05},Foot:{m:2.34,sd:.14},Hand:{m:1.97,sd:.16},BPD:{m:3.63,sd:.23},FOD:{m:4.33,sd:.28},Fetus:{m:125.21,sd:17.84}},
+  18:{CRL:{m:13.89,sd:.66},CFL:{m:20.49,sd:.65},HC:{m:14.58,sd:.97},TC:{m:11.9,sd:.88},AC:{m:9.45,sd:.76},Foot:{m:2.62,sd:.21},Hand:{m:2.32,sd:.2},BPD:{m:3.89,sd:.36},FOD:{m:4.93,sd:.22},Fetus:{m:172.04,sd:25.16}},
+  19:{CRL:{m:15.18,sd:.71},CFL:{m:22.88,sd:1.58},HC:{m:15.82,sd:1.35},TC:{m:12.64,sd:.47},AC:{m:10.34,sd:1.3},Foot:{m:2.95,sd:.18},Hand:{m:2.42,sd:.08},BPD:{m:4.3,sd:.28},FOD:{m:5.44,sd:.32},Fetus:{m:228.47,sd:43.37}},
+  20:{CRL:{m:16.67,sd:.46},CFL:{m:25.48,sd:1.23},HC:{m:16.88,sd:.68},TC:{m:14.23,sd:.13},AC:{m:11.97,sd:1.12},Foot:{m:3.31,sd:.18},Hand:{m:2.72,sd:.15},BPD:{m:4.38,sd:.04},FOD:{m:5.93,sd:.04},Fetus:{m:306.5,sd:26.71}}
+};
+
+/* Champs par instrument. gc/ma/mb = clé dans la table ; mad/mbd = diviseur d'unité
+   (saisie en mm → référence en cm). */
+var INSTRUMENTS = [
+  {id:'balance', el:'b-balance', unit:'g', step:1, fields:[
+    {id:'masse', l:'Masse fœtale', gc:'masse', ma:'B', mb:'Fetus'}
+  ]},
+  {id:'caliper', el:'b-caliper', unit:'mm', step:0.1, fields:[
+    {id:'pied',    l:'Longueur pied',      gc:'pied', ma:'F', mb:'Foot', mbd:10},
+    {id:'bip',     l:'BIP',                mb:'BPD', mbd:10},
+    {id:'fo',      l:'FO (Fronto-occ.)',   mb:'FOD', mbd:10},
+    {id:'dici',    l:'DICI'},
+    {id:'dice',    l:'DICE'},
+    {id:'fpg',     l:'FPG (fente palp. G)'},
+    {id:'fpd',     l:'FPD (fente palp. D)'},
+    {id:'dim',     l:'DIM (intermamelon.)'},
+    {id:'sternum', l:'Hauteur sternum'},
+    {id:'main',    l:'Hauteur main',       mb:'Hand', mbd:10}
+  ]},
+  {id:'tape', el:'b-tape', unit:'mm', step:1, fields:[
+    {id:'vt', l:'VT (vertex-talon)',   gc:'VT', ma:'H', mad:10, mb:'CFL', mbd:10},
+    {id:'vc', l:'VC (vertex-coccyx)',  gc:'VC', ma:'C', mad:10, mb:'CRL', mbd:10},
+    {id:'pc', l:'PC (périm. crânien)', gc:'PC', ma:'D', mad:10, mb:'HC',  mbd:10},
+    {id:'pt', l:'PT (périm. thorac.)', mb:'TC', mbd:10},
+    {id:'pa', l:'PA (périm. abdom.)',  mb:'AC', mbd:10}
+  ]}
+];
+
+var ALL = INSTRUMENTS.reduce(function(a,i){return a.concat(i.fields)},[]);
+
+/* ════ LOOKUPS + Z-SCORE ════ */
+function gcKey(sa){
+  if(!(sa>=13&&sa<=42)) return null;
+  for(var k in GC){var p=k.split('-');if(sa>=+p[0]&&sa<=+p[1])return k}
+  return null;
+}
+function maRow(sa){for(var i=0;i<MA.length;i++)if(MA[i].s===sa)return MA[i];return null}
+function mbRow(sa){return (sa>=12&&sa<=20)?MB[sa]:null}
+function zscore(v,m,sd){
+  if(!isFinite(v)||m==null||sd==null||!sd) return null;
+  return (v-m)/sd;
+}
+function tag(z,src){
+  if(z===null) return '';
+  var r=Math.round(z*100)/100;
+  return '<span class="t'+(Math.abs(r)>2?' alert':'')+'">'+src+' '+r.toFixed(2)+'</span>';
+}
+
+/* ════ DOM ════ */
+var $=function(id){return document.getElementById(id)};
+var val=function(id){var e=$(id);return e?e.value.trim():''};
+var dossier='', operateur='';
+
+INSTRUMENTS.forEach(function(inst){
+  $(inst.el).innerHTML = inst.fields.map(function(f){
+    return '<div class="f"><label>'+f.l+'</label>'
+      +'<input type="number" step="'+inst.step+'" min="0" inputmode="decimal" '
+      +'id="v_'+f.id+'" placeholder="—">'
+      +'<div class="unit">'+inst.unit+'</div><div class="ds" id="z_'+f.id+'"></div></div>';
+  }).join('');
+});
+
+document.querySelectorAll('section>h2').forEach(function(h){
+  h.onclick=function(){h.parentNode.classList.toggle('shut')};
+});
+
+/* ════ Z-SCORES ════ */
+function refresh(){
+  var sa=parseInt(val('terme_sa'),10);
+  var gk=gcKey(sa), ma=maRow(sa), mb=mbRow(sa);
+  ALL.forEach(function(f){
+    var v=parseFloat(val('v_'+f.id)), h='';
+    if(isFinite(v)){
+      if(f.gc&&gk&&GC[gk][f.gc]) h+=tag(zscore(v,GC[gk][f.gc].m,GC[gk][f.gc].sd),'GC');
+      if(f.ma&&ma&&ma[f.ma])     h+=tag(zscore(v/(f.mad||1),ma[f.ma].m,ma[f.ma].sd),'MA');
+      if(f.mb&&mb&&mb[f.mb])     h+=tag(zscore(v/(f.mbd||1),mb[f.mb].m,mb[f.mb].sd),'MB');
+    }
+    $('z_'+f.id).innerHTML=h;
+  });
+  $('c-terme').textContent = sa ? sa+' SA'+(val('terme_j')?' +'+val('terme_j')+'j':'') : '—';
+  INSTRUMENTS.forEach(function(inst){
+    var n=inst.fields.filter(function(f){return val('v_'+f.id)!==''}).length;
+    $('c-'+inst.id).textContent=n+'/'+inst.fields.length;
+  });
+}
+
+/* ════ VERROU IDENTIFICATION ════ */
+function normDossier(s){return s.replace(/^(\d{2})p/i,'$1P')}
+
+function checkGate(){
+  var d=$('dossier'); d.value=normDossier(d.value);
+  var nd=d.value.trim(), no=val('operateur');
+  var ok = /^\d{2}P\d+$/.test(nd) && no.length>0;
+  $('body').classList.toggle('off',!ok);
+  $('lock').style.display = ok?'none':'block';
+  $('badge').textContent = ok?nd:'—';
+  $('badge').classList.toggle('off',!ok);
+  $('c-id').textContent = ok?'OK':'requis';
+  if(ok && nd!==dossier){ dossier=nd; operateur=no; restore(); }
+  else if(ok){ operateur=no; }
+  return ok;
+}
+
+/* ════ CACHE (localStorage) ════
+   ponytail: pas d'IndexedDB ici — la biométrie n'a que des scalaires, ça tient
+   largement dans localStorage. Passer à IndexedDB sur les modules à photos. */
+var PREFIX='hubhtml_biometries_';
+
+function collect(){
+  var b={};
+  ALL.forEach(function(f){var v=parseFloat(val('v_'+f.id)); b[f.id]=isFinite(v)?v:null});
+  return {
+    // schema: les fichiers sont diffusés en copies ; l'ingestion verra des
+    // exports produits par des versions plus vieilles que la sienne.
+    schema:1, module:'biometries', dossier:dossier, operateur:operateur,
+    saved_at:new Date().toISOString(),
+    terme:{sa:parseInt(val('terme_sa'),10)||null, jours:parseInt(val('terme_j'),10)||0},
+    biometries:b
+  };
+}
+
+var timer=null;
+function cache(){
+  if(!dossier) return;
+  clearTimeout(timer);
+  timer=setTimeout(function(){
+    try{ localStorage.setItem(PREFIX+dossier, JSON.stringify(collect())); }
+    catch(e){ toast('⚠ Cache plein : '+e.name); }
+  },400);
+}
+
+function restore(){
+  var raw=null;
+  try{ raw=localStorage.getItem(PREFIX+dossier); }catch(e){}
+  if(!raw) return;
+  var d=JSON.parse(raw);
+  if(d.terme){ $('terme_sa').value=d.terme.sa||''; $('terme_j').value=d.terme.jours||''; }
+  ALL.forEach(function(f){
+    var v=d.biometries?d.biometries[f.id]:null;
+    $('v_'+f.id).value = (v==null?'':v);
+  });
+  refresh();
+  toast('↺ Saisie restaurée — '+new Date(d.saved_at).toLocaleString('fr-FR'));
+}
+
+/* ════ EXPORT / PURGE ════ */
+function exportJSON(){
+  if(!checkGate()) return toast('⚠ Dossier et opérateur requis avant export.');
+  var data=collect();
+  var url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  var a=document.createElement('a');
+  a.href=url; a.download=dossier+'_biometries.json';
+  a.click(); URL.revokeObjectURL(url);
+  toast('⬇ '+a.download);
+}
+
+function wipe(){
+  var keys=Object.keys(localStorage).filter(function(k){return k.indexOf('hubhtml_')===0});
+  if(!confirm('Effacer '+keys.length+' saisie(s) en cache ?\nAction irréversible.')) return;
+  keys.forEach(function(k){localStorage.removeItem(k)});
+  if(indexedDB.databases) indexedDB.databases().then(function(dbs){
+    dbs.forEach(function(db){ if(db.name&&db.name.indexOf('hubhtml')===0) indexedDB.deleteDatabase(db.name); });
+  });
+  location.reload();
+}
+
+function toast(m){
+  var t=$('toast'); t.textContent=m; t.classList.add('on');
+  clearTimeout(toast._t); toast._t=setTimeout(function(){t.classList.remove('on')},3000);
+}
+
+/* ════ CÂBLAGE ════ */
+['dossier','operateur'].forEach(function(id){ $(id).addEventListener('input',checkGate) });
+document.querySelectorAll('#body input').forEach(function(i){
+  i.addEventListener('input',function(){ refresh(); cache(); });
+});
+window.addEventListener('beforeunload',function(){ clearTimeout(timer); if(dossier) try{localStorage.setItem(PREFIX+dossier,JSON.stringify(collect()))}catch(e){} });
+checkGate(); refresh();
+
+/* ════ AUTO-CONTRÔLE — ouvrir biometries.html?selftest=1 ════ */
+if(location.search.indexOf('selftest')>=0){
+  var ok=[], ko=[];
+  function chk(name,cond){ (cond?ok:ko).push(name) }
+  chk('gcKey(13)=13-14',      gcKey(13)==='13-14');
+  chk('gcKey(22)=21-22',      gcKey(22)==='21-22');
+  chk('gcKey(12)=null',       gcKey(12)===null);
+  chk('gcKey(43)=null',       gcKey(43)===null);
+  chk('maRow(20).B.m=312',    maRow(20).B.m===312);
+  chk('mbRow(21)=null',       mbRow(21)===null);
+  chk('z centré = 0',         zscore(100,100,10)===0);
+  chk('z +2 SD',              zscore(120,100,10)===2);
+  chk('z sd=0 -> null',       zscore(120,100,0)===null);
+  chk('z NaN -> null',        zscore(NaN,100,10)===null);
+  chk('tag(null) vide',       tag(null,'GC')==='');
+  chk('tag>2SD alerte',       tag(3.1,'GC').indexOf('alert')>0);
+  chk('tag<2SD sans alerte',  tag(1.9,'GC').indexOf('alert')<0);
+  chk('normDossier 25p1 ',    normDossier('25p1234')==='25P1234');
+  chk('normDossier inchangé', normDossier('25P1234')==='25P1234');
+  // VT saisi en mm, réf MA en cm : 246 mm à 20 SA -> (24.6-24.6)/1.9 = 0
+  chk('VT mm->cm vers MA',    zscore(246/10, maRow(20).H.m, maRow(20).H.sd)===0);
+  chk('pas de doublon d\'id', new Set(ALL.map(function(f){return f.id})).size===ALL.length);
+
+  // Flux réel : verrou → saisie → cache → restauration
+  function type(id,v){ $(id).value=v; $(id).dispatchEvent(new Event('input')); }
+  chk('verrouillé au départ',   $('body').classList.contains('off'));
+  type('dossier','25p9999');
+  chk('opérateur seul manque',  $('body').classList.contains('off'));
+  type('operateur','TEST');
+  chk('déverrouillé',          !$('body').classList.contains('off'));
+  chk('dossier normalisé',      $('dossier').value==='25P9999');
+  type('terme_sa','20'); type('v_vt','246'); type('v_masse','312');
+  chk('z-score VT affiché',     $('z_vt').textContent.indexOf('MA 0.00')>=0);
+  chk('masse 312g à 20SA = 0',  $('z_masse').textContent.indexOf('MA 0.00')>=0);
+  var snap=collect();
+  chk('collect() lit les mm',   snap.biometries.vt===246);
+  chk('collect() garde null',   snap.biometries.dici===null);
+  localStorage.setItem(PREFIX+'25P9999',JSON.stringify(snap));
+  type('v_vt',''); dossier='25P9999'; restore();
+  chk('restore() récupère VT',  $('v_vt').value==='246');
+  localStorage.removeItem(PREFIX+'25P9999');
+
+  document.body.insertAdjacentHTML('afterbegin',
+    '<pre style="background:'+(ko.length?'#7f1d1d':'#14532d')+';color:#fff;padding:14px;margin:0;white-space:pre-wrap">'
+    +(ko.length?'ÉCHEC ('+ko.length+') :\n  '+ko.join('\n  ')+'\n\n':'')
+    +'OK : '+ok.length+'/'+(ok.length+ko.length)+'</pre>');
+}
+</script>
+</body>
+</html>
