@@ -48,7 +48,30 @@ input:focus,select:focus{outline:2px solid var(--drape);outline-offset:-1px;back
 input[type=number]{font-family:var(--mono);letter-spacing:.03em}
 .mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
 .hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
-.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+/* ── Clichés ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px}
+.slot{border:1px solid var(--rule);border-radius:2px;overflow:hidden;background:var(--card);
+      cursor:pointer;text-align:left}
+.slot:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.slot .plate{background:var(--grey18);aspect-ratio:4/3;display:flex;align-items:center;
+             justify-content:center;position:relative}
+.slot .plate img{width:100%;height:100%;object-fit:contain;display:block}
+.slot .ph{font-size:26px;opacity:.55;color:#fff}
+.slot .cap{padding:7px 8px;font-size:13px;line-height:1.25}
+.slot .stat{font-family:var(--mono);font-size:10px;color:var(--ink-soft);
+            display:flex;justify-content:space-between;align-items:center;gap:6px;
+            padding:0 8px 7px}
+.slot .stat button{appearance:none;background:none;border:0;color:var(--alert);
+  font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.07em;
+  cursor:pointer;padding:4px;min-height:30px}
+.slot.done{border-color:var(--drape)}
+.slot.done .cap{font-weight:600}
+.tick{position:absolute;right:0;top:0;background:var(--drape);color:#fff;
+      font-family:var(--mono);font-size:10px;padding:2px 5px}
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
 
 .mesures{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}
 .mes{min-width:0}
@@ -117,6 +140,9 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
       <div class="hint" id="operateurHint">Requis pour déverrouiller la saisie.</div>
     </div>
   </div>
+  <div class="sousTitre">Étiquette patient</div>
+  <div class="grid" id="ph_etiquette"></div>
+  <div class="hint" id="etiquetteHint">Photographier l'étiquette : elle certifie le numéro saisi.</div>
 </section>
 
 <!-- 02 — Terme -->
@@ -165,6 +191,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 </div>
 
 <input type="file" id="jsonPick" accept="application/json,.json">
+<input type="file" id="pick" accept="image/*" capture="environment">
 <div class="flash" id="flash" role="status" aria-live="polite"></div>
 
 <script>
@@ -183,8 +210,8 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 
 var MODULE = "biometrie_clinique";
 var SCHEMA = "0.1.0";
-var VERSION = "1.0.0";   /* version du document ; à incrémenter à chaque diffusion */
-var DB_NAME = "foeto-biometrie-clinique", DB_VER = 1, db = null;
+var VERSION = "1.1.0";   /* version du document ; à incrémenter à chaque diffusion */
+var DB_NAME = "foeto-biometrie-clinique", DB_VER = 2, db = null;
 
 /* ── Guihard-Costa 2002 — biométries, bi-hebdomadaire (masse g, reste mm) ─── */
 var GC = {
@@ -297,6 +324,13 @@ function flash(m){
 function normDossier(v){ return v.toUpperCase().replace(/^(\d{2})P/, "$1P").replace(/\s+/g,""); }
 function dossierOk(v){ return /^\d{2}P\d+$/.test(v); }
 function num(id){ var e = $(id); if (!e) return NaN; var v = parseFloat(e.value); return isFinite(v) ? v : NaN; }
+function fmt(n){
+  if (n == null || isNaN(n)) return "—";
+  if (n < 1024) return n + " o";
+  if (n < 1048576) return (n/1024).toFixed(0) + " Ko";
+  if (n < 1073741824) return (n/1048576).toFixed(1) + " Mo";
+  return (n/1073741824).toFixed(2) + " Go";
+}
 
 /* ── Références et écarts-types ───────────────────────────────────────────── */
 function gcKey(sa){
@@ -369,25 +403,151 @@ function openDB(){
     r.onupgradeneeded = function(e){
       var d = e.target.result;
       if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+      if (!d.objectStoreNames.contains("shots")){
+        d.createObjectStore("shots", {keyPath:"id"}).createIndex("dossier", "dossier");
+      }
     };
     r.onsuccess = function(){ res(r.result); };
     r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
   });
 }
-function tx(mode, fn){
+function tx(store, mode, fn){
   return new Promise(function(res, rej){
     if (!db){ rej(new Error("base indisponible")); return; }
-    var t = db.transaction("saisies", mode), out = fn(t.objectStore("saisies"));
+    var t = db.transaction(store, mode), out = fn(t.objectStore(store));
     t.oncomplete = function(){ res(out && out.result !== undefined ? out.result : out); };
     t.onerror    = function(){ rej(t.error); };
     t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
   });
 }
-function putSaisie(r){ return tx("readwrite", function(s){ return s.put(r); }); }
-function getSaisie(d){ return tx("readonly", function(s){ return s.get(d); }); }
+function putSaisie(r){ return tx("saisies", "readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("saisies", "readonly", function(s){ return s.get(d); }); }
+function putShot(r){ return tx("shots", "readwrite", function(s){ return s.put(r); }); }
+function delShot(i){ return tx("shots", "readwrite", function(s){ return s.delete(i); }); }
+function shotsOf(d){
+  return tx("shots", "readonly", function(s){ return s.index("dossier").getAll(IDBKeyRange.only(d)); });
+}
+function sid(k){ return dossier + "|" + k; }
 
 /* ── État ─────────────────────────────────────────────────────────────────── */
-var dossier = "";
+var dossier = "", shots = {}, urls = {}, slotCible = null;
+
+/* ── Étiquette patient ────────────────────────────────────────────────────────
+   Pièce source qui certifie le numéro saisi. Une double saisie n'attraperait
+   que la faute de frappe ; le risque réel est la faute de lecture, et qu'un
+   même cas se coupe en deux dans la base parce qu'un module porte un autre
+   numéro. Chaque module de salle photographie donc sa propre étiquette : le
+   contrôle vaut par JSON, pas par examen. Le cliché est nominatif — il n'a
+   rien à faire dans un jeu anonymisé. Manquant, on signale, on ne bloque pas.
+
+   Seul cliché de ce module : la machinerie reste au minimum, mais l'entrée de
+   out.photos[] a la même forme que dans les autres modules de salle, pour que
+   l'ingestion n'ait qu'un seul contrat à connaître.                          */
+var K_ETIQUETTE = "etiquette", L_ETIQUETTE = "Étiquette patient";
+
+function decode(b){
+  try { return createImageBitmap(b, {imageOrientation:"from-image"}); }
+  catch(e){ return createImageBitmap(b); }
+}
+function toBlob(bmp, w, h, q){
+  var c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  c.getContext("2d").drawImage(bmp, 0, 0, w, h);
+  return new Promise(function(res){ c.toBlob(res, "image/jpeg", q); });
+}
+/* Le cliché est conservé tel que le capteur l'a produit : aucun
+   réencodage, aucune réduction. La vignette ne sert qu'à l'affichage. */
+async function vignette(blob){
+  var bmp = await decode(blob);
+  var w = bmp.width, h = bmp.height, tk = Math.min(1, 400 / Math.max(w, h));
+  var vig = await toBlob(bmp, Math.round(w*tk), Math.round(h*tk), 0.7);
+  if (bmp.close) bmp.close();
+  return { thumb: vig, w: w, h: h };
+}
+function slotHTML(k, l){
+  var r = shots[k];
+  var img = r && urls[k]
+    ? '<img src="' + urls[k] + '" alt="' + esc(l) + '"><span class="tick">✓</span>'
+    : '<span class="ph">📷</span>';
+  var stat = r
+    ? '<div class="stat"><span>' + r.w + '×' + r.h + ' · ' + fmt(r.bytes) + '</span>' +
+      '<button type="button" data-del="' + esc(k) + '">Retirer</button></div>'
+    : '<div class="stat"><span>à réaliser</span></div>';
+  return '<div class="slot' + (r ? " done" : "") + '" data-k="' + esc(k) + '" tabindex="0" role="button">' +
+           '<div class="plate">' + img + '</div>' +
+           '<div class="cap">' + esc(l) + '</div>' + stat +
+         '</div>';
+}
+function rendreEtiquette(){
+  var pris = !!shots[K_ETIQUETTE];
+  $("ph_" + K_ETIQUETTE).innerHTML = slotHTML(K_ETIQUETTE, L_ETIQUETTE);
+  var h = $("etiquetteHint");
+  h.className = "hint" + (pris ? " good" : " warn");
+  h.textContent = pris
+    ? "Étiquette au dossier — le numéro saisi est vérifiable à l'ingestion."
+    : "Photographier l'étiquette : elle certifie le numéro saisi.";
+}
+async function ajouterPhoto(k, file){
+  var v = await vignette(file);
+  var rec = {
+    id: sid(k), dossier: dossier, module: MODULE, key: k, label: L_ETIQUETTE,
+    etage: null, item: null, libre: false,
+    name: file.name || (k + ".jpg"), type: file.type || "image/jpeg",
+    bytes: file.size, w: v.w, h: v.h, ow: v.w, oh: v.h,
+    addedAt: new Date().toISOString(), blob: file, thumb: v.thumb
+  };
+  await putShot(rec);
+  shots[k] = rec;
+  if (urls[k]) URL.revokeObjectURL(urls[k]);
+  urls[k] = URL.createObjectURL(v.thumb);
+  rendreEtiquette();
+  return rec;
+}
+async function retirer(k){
+  await delShot(sid(k)).catch(function(){});
+  if (urls[k]){ URL.revokeObjectURL(urls[k]); delete urls[k]; }
+  delete shots[k];
+  rendreEtiquette();
+  flash("Cliché retiré.");
+}
+async function relierCliches(){
+  var list = await shotsOf(dossier).catch(function(){ return []; });
+  list.forEach(function(r){
+    shots[r.key] = r;
+    if (urls[r.key]) URL.revokeObjectURL(urls[r.key]);
+    urls[r.key] = URL.createObjectURL(r.thumb || r.blob);
+  });
+  rendreEtiquette();
+  return list.length;
+}
+function ouvrirSlot(k){
+  if (!dossier){ flash("Saisir d'abord dossier et opérateur."); $("dossier").focus(); return; }
+  slotCible = k;
+  $("pick").click();
+}
+document.addEventListener("click", function(ev){
+  var del = ev.target.closest("[data-del]");
+  if (del){ ev.stopPropagation(); retirer(del.dataset.del); return; }
+  var slot = ev.target.closest(".slot");
+  if (slot) ouvrirSlot(slot.dataset.k);
+});
+document.addEventListener("keydown", function(ev){
+  if (ev.key !== "Enter" && ev.key !== " ") return;
+  var s = ev.target.classList && ev.target.classList.contains("slot") ? ev.target : null;
+  if (s){ ev.preventDefault(); ouvrirSlot(s.dataset.k); }
+});
+$("pick").addEventListener("change", async function(){
+  var f = this.files[0]; this.value = "";
+  if (!f || !slotCible) return;
+  var k = slotCible; slotCible = null;
+  try {
+    flash("Traitement…");
+    var rec = await ajouterPhoto(k, f);
+    flash(rec.label + " enregistrée.");
+  } catch(err){
+    flash("Échec : " + err.message + " — cliché non conservé.");
+  }
+});
 
 /* ── Rendu de la trame ────────────────────────────────────────────────────── */
 function mesureHTML(g, m){
@@ -493,6 +653,9 @@ function appliquer(o){
 function vider(){
   $("terme_sa").value = ""; $("terme_j").value = ""; $("sexe").value = "";
   TOUTES.forEach(function(m){ $("v_" + m.k).value = ""; });
+  Object.keys(urls).forEach(function(k){ URL.revokeObjectURL(urls[k]); });
+  urls = {}; shots = {};
+  rendreEtiquette();
   recalculer();
 }
 
@@ -536,29 +699,86 @@ async function majDossier(){
 
   if (ok && v !== dossier){
     dossier = v;
+    vider();
     var rec = await getSaisie(dossier).catch(function(){ return null; });
     if (rec){ appliquer(rec); flash("Saisie du " + dossier + " restituée."); }
-    else vider();
+    await relierCliches();
   } else if (!ok && dossier){
     dossier = ""; vider();
   }
 }
 
 /* ── Export / relecture / purge ───────────────────────────────────────────── */
+function toB64(b){
+  return new Promise(function(res, rej){
+    var fr = new FileReader();
+    fr.onload  = function(){ var s = String(fr.result); res(s.slice(s.indexOf(",")+1)); };
+    fr.onerror = function(){ rej(fr.error); };
+    fr.readAsDataURL(b);
+  });
+}
+function fromB64(b64, type){
+  var bin = atob(b64), a = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+  return new Blob([a], {type: type || "image/jpeg"});
+}
+async function paquet(){
+  var out = collecter();
+  out.photos = [];
+  var r = shots[K_ETIQUETTE];
+  if (r) out.photos.push({
+    key: r.key, label: r.label, etage: r.etage, item: r.item, libre: !!r.libre,
+    name: r.name, type: r.type, bytes: r.bytes, w: r.w, h: r.h, ow: r.ow, oh: r.oh,
+    addedAt: r.addedAt, data_base64: await toB64(r.blob)
+  });
+  return out;
+}
 function telecharger(blob, nom){
   var a = document.createElement("a");
   a.href = URL.createObjectURL(blob); a.download = nom;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
 }
-$("btnExport").onclick = function(){
+$("btnExport").onclick = async function(){
   if (!dossierOk(dossier)) return;
-  var out = collecter();
-  telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
-              dossier + "_" + MODULE + ".json");
-  var n = TOUTES.filter(function(m){ return out.mesures[m.k] != null; }).length;
-  flash(n + " mesure(s) exportée(s).");
+  this.disabled = true;
+  try {
+    var out = await paquet();
+    telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+                dossier + "_" + MODULE + ".json");
+    var n = TOUTES.filter(function(m){ return out.mesures[m.k] != null; }).length;
+    flash(n + " mesure(s) exportée(s)." +
+          (shots[K_ETIQUETTE] ? "" : " ⚠ sans étiquette patient."));
+  } catch(e){
+    flash("Export impossible : " + e.message);
+  }
+  this.disabled = false;
 };
+async function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.mesures) throw new Error("aucune clé « mesures »");
+  if (o.dossier){ $("dossier").value = normDossier(o.dossier); }
+  if (o.operateur) $("operateur").value = o.operateur;
+  await majDossier();
+  if (!dossier) throw new Error("numéro de dossier absent ou opérateur manquant");
+
+  var photos = o.photos || [];
+  for (var i = 0; i < photos.length; i++){
+    var p = photos[i];
+    var blob = fromB64(p.data_base64, p.type);
+    var v = await vignette(blob);
+    await putShot({
+      id: sid(p.key), dossier: dossier, module: MODULE, key: p.key, label: p.label,
+      etage: null, item: null, libre: false, name: p.name, type: p.type,
+      bytes: blob.size, w: p.w, h: p.h, ow: p.ow, oh: p.oh, addedAt: p.addedAt,
+      blob: blob, thumb: v.thumb
+    });
+  }
+  appliquer(o);
+  await relierCliches();
+  enregistrer();
+  return photos.length;
+}
 $("btnImport").onclick = function(){ $("jsonPick").click(); };
 $("jsonPick").addEventListener("change", function(){
   var f = this.files[0]; this.value = "";
@@ -566,16 +786,8 @@ $("jsonPick").addEventListener("change", function(){
   var fr = new FileReader();
   fr.onload = async function(){
     try {
-      var o = JSON.parse(String(fr.result));
-      if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
-      if (!o.mesures) throw new Error("aucune clé « mesures »");
-      if (o.dossier){ $("dossier").value = normDossier(o.dossier); }
-      if (o.operateur) $("operateur").value = o.operateur;
-      await majDossier();
-      if (!dossier) throw new Error("numéro de dossier absent ou opérateur manquant");
-      appliquer(o);
-      enregistrer();
-      flash("Saisie relue.");
+      var n = await relire(JSON.parse(String(fr.result)));
+      flash("Saisie relue" + (n ? " — " + n + " cliché(s)." : "."));
     } catch(e){ flash("Relecture impossible : " + e.message); }
   };
   fr.readAsText(f);
@@ -586,13 +798,16 @@ $("btnWipe").onclick = async function(){
               "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
     : false;
   if (seul){
-    await tx("readwrite", function(s){ return s.delete(dossier); });
+    var list = await shotsOf(dossier).catch(function(){ return []; });
+    for (var i = 0; i < list.length; i++) await delShot(list[i].id);
+    await tx("saisies", "readwrite", function(s){ return s.delete(dossier); });
     vider(); flash("Dossier " + dossier + " vidé.");
     return;
   }
-  if (!confirm("Effacer TOUTES les saisies de TOUS les dossiers sur cet appareil ?\n" +
-               "Vérifier que les exports JSON ont bien été récupérés.")) return;
-  await tx("readwrite", function(s){ return s.clear(); });
+  if (!confirm("Effacer TOUTES les saisies et TOUS les clichés de TOUS les dossiers sur cet " +
+               "appareil ?\nVérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("saisies", "readwrite", function(s){ return s.clear(); });
+  await tx("shots",   "readwrite", function(s){ return s.clear(); });
   vider(); flash("Stockage vidé.");
 };
 
@@ -627,6 +842,7 @@ document.addEventListener("change", function(e){
 
 (async function(){
   $("ver").textContent = "v" + VERSION;
+  rendreEtiquette();
   recalculer();
   try { db = await openDB(); }
   catch(e){
@@ -705,13 +921,58 @@ async function autotest(){
   chk("enveloppe conforme",       snap.schema_version === SCHEMA && snap.module === MODULE &&
                                   snap.dossier === "26P0123" && !!snap.exported_at);
 
+  /* Étiquette patient — pièce source du numéro de dossier */
+  function image(w, h){
+    var c = document.createElement("canvas"); c.width = w; c.height = h;
+    var x = c.getContext("2d");
+    x.fillStyle = "#c33"; x.fillRect(0, 0, w, h);
+    x.fillStyle = "#3c3"; x.fillRect(0, 0, w/2, h/2);
+    return new Promise(function(r){ c.toBlob(r, "image/jpeg", 0.9); });
+  }
+  chk("étiquette absente signalée", !shots[K_ETIQUETTE] &&
+                                    $("etiquetteHint").className.indexOf("warn") >= 0);
+  var img = await image(800, 400);
+  var rec = await ajouterPhoto(K_ETIQUETTE, img);
+  chk("étiquette stockée",        !!shots[K_ETIQUETTE]);
+  chk("étiquette libellée",       rec.label === L_ETIQUETTE);
+  chk("original intact",          rec.blob === img && rec.bytes === img.size);
+  chk("pleine résolution gardée", rec.w === 800 && rec.h === 400 && rec.ow === 800);
+  chk("vignette produite",        rec.thumb.size > 0 && rec.thumb.size < rec.blob.size);
+  chk("slot marqué fait",         $("ph_etiquette").children[0].classList.contains("done"));
+  chk("bandeau étiquette vert",   $("etiquetteHint").className.indexOf("good") >= 0);
+  chk("clé rattachée au dossier", rec.id === "26P0123|" + K_ETIQUETTE);
+
+  var pack = await paquet();
+  chk("étiquette exportée",       pack.photos.length === 1 && pack.photos[0].key === K_ETIQUETTE);
+  chk("mesures toujours là",      pack.mesures.vt === 246);
+  chk("base64 non vide",          pack.photos[0].data_base64.length > 100);
+  chk("relecture base64",         fromB64(pack.photos[0].data_base64, "image/jpeg").size === img.size);
+
   await putSaisie(snap);
   vider();
   chk("vider efface le champ",    $("v_vt").value === "");
+  chk("vider efface l'étiquette", !shots[K_ETIQUETTE]);
   var relu = await getSaisie("26P0123");
   appliquer(relu);
   chk("IndexedDB restitue VT",    $("v_vt").value === "246");
-  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  chk("IndexedDB restitue l'étiquette", (await relierCliches()) === 1 && !!shots[K_ETIQUETTE]);
+
+  await retirer(K_ETIQUETTE);
+  chk("retrait du cliché",        !shots[K_ETIQUETTE] &&
+                                  $("etiquetteHint").className.indexOf("warn") >= 0);
+
+  /* Relecture d'un JSON sur un banc remis à zéro */
+  await tx("saisies", "readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+  chk("banc remis à zéro",        Object.keys(shots).length === 0);
+  chk("relecture : clichés",      (await relire(pack)) === 1 && !!shots[K_ETIQUETTE]);
+  chk("relecture : mesures",      $("v_vt").value === "246");
+  chk("relecture : étiquette liée", shots[K_ETIQUETTE].dossier === "26P0123");
+
+  var l = await shotsOf("26P0123");
+  for (var i = 0; i < l.length; i++) await delShot(l[i].id);
+  await tx("saisies", "readwrite", function(s){ return s.delete("26P0123"); });
+  chk("nettoyage du banc",        (await shotsOf("26P0123")).length === 0);
   vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
 
   document.body.insertAdjacentHTML("afterbegin",

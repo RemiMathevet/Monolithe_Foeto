@@ -48,7 +48,7 @@ textarea{width:100%;font-family:var(--sans);font-size:16px;color:var(--ink);
   background:var(--paper);border:1px solid var(--rule);border-radius:2px;padding:9px 10px;resize:vertical}
 .mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
 .hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
-.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
 
 .btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
   border:1px solid var(--ink);background:var(--card);color:var(--ink);
@@ -170,6 +170,9 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
       <div class="hint" id="operateurHint">Requis pour déverrouiller la saisie.</div>
     </div>
   </div>
+  <div class="sousTitre">Étiquette patient</div>
+  <div class="grid" id="ph_etiquette"></div>
+  <div class="hint" id="etiquetteHint">Photographier l'étiquette : elle certifie le numéro saisi.</div>
 </section>
 
 <!-- 02 — Contexte -->
@@ -239,7 +242,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 
 var MODULE = "neuropath";
 var SCHEMA = "0.1.0";
-var VERSION = "1.0.0";   /* version du document ; à incrémenter à chaque diffusion */
+var VERSION = "1.1.0";   /* version du document ; à incrémenter à chaque diffusion */
 var DB_NAME = "foeto-neuropath", DB_VER = 1, db = null;
 
 /* ── Référentiels (recopiés des tables de la PWA, Biometry_tables/) ───────────
@@ -725,6 +728,24 @@ async function traiter(file){
   return { blob: file, thumb: vig, w: ow, h: oh, ow: ow, oh: oh };
 }
 
+/* ── Étiquette patient ────────────────────────────────────────────────────────
+   Pièce source qui certifie le numéro saisi. Une double saisie n'attraperait
+   que la faute de frappe ; le risque réel est la faute de lecture, et qu'un
+   même cas se coupe en deux dans la base parce qu'un module porte un autre
+   numéro. Chaque module de salle photographie donc sa propre étiquette : le
+   contrôle vaut par JSON, pas par examen. Le cliché est nominatif — il n'a
+   rien à faire dans un jeu anonymisé. Manquant, on signale, on ne bloque pas. */
+var K_ETIQUETTE = "etiquette", L_ETIQUETTE = "Étiquette patient";
+function rendreEtiquette(){
+  var pris = !!shots[K_ETIQUETTE];
+  $("ph_" + K_ETIQUETTE).innerHTML = slotHTML(K_ETIQUETTE, L_ETIQUETTE, false);
+  var h = $("etiquetteHint");
+  h.className = "hint" + (pris ? " good" : " warn");
+  h.textContent = pris
+    ? "Étiquette au dossier — le numéro saisi est vérifiable à l'ingestion."
+    : "Photographier l'étiquette : elle certifie le numéro saisi.";
+}
+
 /* ── Rendu des clichés ────────────────────────────────────────────────────── */
 function slotHTML(k, l, libre){
   var r = shots[k];
@@ -741,6 +762,7 @@ function slotHTML(k, l, libre){
          '</div>';
 }
 function rendreCliches(){
+  rendreEtiquette();
   ETAPES.forEach(function(e){
     var h = e.photos.map(function(p){ return slotHTML(p.k, p.l, false); }).join("");
     Object.keys(libres).forEach(function(k){
@@ -810,6 +832,7 @@ function etapeDeCliche(k){
   return t;
 }
 function libelle(k){
+  if (k === K_ETIQUETTE) return L_ETIQUETTE;
   var t = null;
   ETAPES.forEach(function(e){ e.photos.forEach(function(p){ if (p.k === k) t = p.l; }); });
   return t || (libres[k] ? libres[k].l : k);
@@ -1013,6 +1036,7 @@ async function paquet(){
   var out = collecter();
   out.photos = [];
   var cles = [];
+  if (shots[K_ETIQUETTE]) cles.push(K_ETIQUETTE);
   ETAPES.forEach(function(e){ e.photos.forEach(function(p){ if (shots[p.k]) cles.push(p.k); }); });
   Object.keys(libres).forEach(function(k){ if (shots[k]) cles.push(k); });
   for (var i = 0; i < cles.length; i++){
@@ -1035,7 +1059,8 @@ $("btnExport").onclick = async function(){
     var blob = new Blob([JSON.stringify(out, null, 1)], {type:"application/json"});
     telecharger(blob, dossier + "_" + MODULE + ".json");
     flash(out.photos.length + " cliché(s), " + fmt(blob.size) +
-          " exportés en " + Math.round(performance.now()-t0) + " ms.");
+          " exportés en " + Math.round(performance.now()-t0) + " ms." +
+          (shots[K_ETIQUETTE] ? "" : " ⚠ sans étiquette patient."));
   } catch(e){
     flash("Export impossible : " + e.message);
   }
@@ -1310,12 +1335,24 @@ async function autotest(){
   await ajouterPhoto(kv, await image(600, 400));
   chk("cliché supplémentaire pris", !!shots[kv]);
 
+  /* Étiquette patient — pièce source du numéro de dossier */
+  chk("étiquette absente signalée", !shots[K_ETIQUETTE] &&
+                                    $("etiquetteHint").className.indexOf("warn") >= 0);
+  await ajouterPhoto(K_ETIQUETTE, await image(800, 400));
+  chk("étiquette stockée",        !!shots[K_ETIQUETTE]);
+  chk("étiquette libellée",       shots[K_ETIQUETTE].label === L_ETIQUETTE);
+  chk("étiquette hors trame",     $("tPhotos").textContent === "1/" + N_TRAME);
+  chk("étiquette hors libres",    !libres[K_ETIQUETTE]);
+  chk("bandeau étiquette vert",   $("etiquetteHint").className.indexOf("good") >= 0);
+
   var pack = await paquet();
-  chk("deux clichés exportés",    pack.photos.length === 2);
+  var parCle = function(p, k){ return p.photos.filter(function(x){ return x.key === k; })[0]; };
+  chk("trois clichés exportés",   pack.photos.length === 3);
+  chk("étiquette en tête",        pack.photos[0].key === K_ETIQUETTE);
   chk("base64 non vide",          pack.photos[0].data_base64.length > 100);
   chk("cliché libre repéré",      pack.photos.filter(function(p){ return p.libre; }).length === 1);
   chk("supplémentaires listés",   pack.cliches_libres.length === 1);
-  chk("relecture base64",         fromB64(pack.photos[1].data_base64, "image/jpeg").size === shots[kv].bytes);
+  chk("relecture base64",         fromB64(parCle(pack, kv).data_base64, "image/jpeg").size === shots[kv].bytes);
 
   await putSaisie(collecter());
   vider();
@@ -1332,6 +1369,7 @@ async function autotest(){
   chk("IndexedDB restitue terme",  terme() === 28);
   chk("IndexedDB restitue texte",  $("t_commentaire").value === "examen neuropathologique complet");
   chk("IndexedDB restitue photo",  !!shots["p_base_crane"]);
+  chk("IndexedDB restitue l'étiquette", !!shots[K_ETIQUETTE]);
   chk("IndexedDB restitue le z",   $("zs_masse_enc").children.length === 1);
 
   await retirer("p_base_crane");
@@ -1348,7 +1386,8 @@ async function autotest(){
   await nettoyer();
   chk("banc remis à zéro",        chipsDe("fixation").length === 0 && Object.keys(shots).length === 0);
 
-  chk("clichés relus",            (await relire(pack)) === 2);
+  chk("clichés relus",            (await relire(pack)) === 3);
+  chk("relecture : étiquette",    !!shots[K_ETIQUETTE]);
   chk("relecture : chips",        chipsDe("fixation")[0] === "Liquide de Bouin");
   chk("relecture : chips multi",  chipsDe("fosse_post").length === 1);
   chk("relecture : bool",         etatDe("preleve") === "o");
