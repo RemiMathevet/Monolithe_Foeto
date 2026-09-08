@@ -252,7 +252,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 
 var MODULE = "autopsie";
 var SCHEMA = "0.1.0";
-var VERSION = "1.2.0";   /* version du document ; à incrémenter à chaque diffusion */
+var VERSION = "1.3.0";   /* version du document ; à incrémenter à chaque diffusion */
 var DB_NAME = "foeto-autopsie", DB_VER = 1, db = null;
 
 /* ── Référentiels de masses (recopiés de references.js) ─────────────────── */
@@ -291,15 +291,15 @@ var MA_ORG = [
   {s:43,brain:{m:512,sd:45},heart:{m:24.0,sd:4.2},liver_01:{m:216,sd:42},liver_2:{m:151,sd:42},liver_3:{m:107,sd:42},lungs_01:{m:84.9,sd:21.9},lungs_23:{m:67.4,sd:21.9},thymus_01:{m:13.1,sd:6.0},thymus_2:{m:10.7,sd:6.0},thymus_3:{m:6.6,sd:6.0},spleen_01:{m:16.4,sd:4.2},spleen_23:{m:12.2,sd:4.2},kidneys_01:{m:42.2,sd:9.4},kidneys_23:{m:35.5,sd:9.4},adrenals_01:{m:10.4,sd:2.7},adrenals_23:{m:8.9,sd:2.7}}
 ];
 var MB_ORG = {
-  12:{Brain:{m:3.6,sd:2.03},Thymus:{m:0.10,sd:0.06},Heart:{m:0.15,sd:0.09},Lungs:{m:0.49,sd:0.24},Liver:{m:1.15,sd:0.43},Spleen:{m:0.05,sd:0.07},Kidneys:{m:0.24,sd:0.13},Adrenals:{m:0.10,sd:0.06}},
-  13:{Brain:{m:5.26,sd:1.14},Thymus:{m:0.14,sd:0.06},Heart:{m:0.21,sd:0.06},Lungs:{m:0.89,sd:0.29},Liver:{m:1.49,sd:0.30},Spleen:{m:0.34,sd:0.07},Kidneys:{m:0.61,sd:0.21},Adrenals:{m:0.12,sd:0.05}},
-  14:{Brain:{m:7.96,sd:2.03},Thymus:{m:0.11,sd:0.05},Heart:{m:0.33,sd:0.12},Lungs:{m:1.52,sd:0.43},Liver:{m:2.36,sd:0.52},Spleen:{m:0.55,sd:0.04},Kidneys:{m:0.63,sd:0.13},Adrenals:{m:0.25,sd:0.08}},
-  15:{Brain:{m:11.33,sd:2.21},Thymus:{m:0.17,sd:0.06},Heart:{m:0.46,sd:0.15},Lungs:{m:2.34,sd:0.58},Liver:{m:3.37,sd:0.66},Spleen:{m:0.65,sd:0.15},Kidneys:{m:1.05,sd:0.25},Adrenals:{m:0.41,sd:0.33}},
-  16:{Brain:{m:15.48,sd:3.19},Thymus:{m:0.19,sd:0.05},Heart:{m:0.64,sd:0.12},Lungs:{m:3.04,sd:0.55},Liver:{m:4.63,sd:0.78},Spleen:{m:0.79,sd:0.06},Kidneys:{m:1.17,sd:0.33},Adrenals:{m:0.47,sd:0.36}},
-  17:{Brain:{m:20.13,sd:2.62},Thymus:{m:0.22,sd:0.13},Heart:{m:0.80,sd:0.19},Lungs:{m:3.93,sd:0.61},Liver:{m:6.07,sd:1.07},Spleen:{m:0.96,sd:0.14},Kidneys:{m:1.50,sd:0.35},Adrenals:{m:0.61,sd:0.28}},
-  18:{Brain:{m:26.26,sd:4.48},Thymus:{m:0.24,sd:0.06},Heart:{m:1.14,sd:0.36},Lungs:{m:4.89,sd:0.76},Liver:{m:7.92,sd:1.21},Spleen:{m:1.21,sd:0.15},Kidneys:{m:1.76,sd:0.51},Adrenals:{m:0.90,sd:0.23}},
-  19:{Brain:{m:34.58,sd:5.02},Thymus:{m:0.29,sd:0.09},Heart:{m:1.65,sd:0.43},Lungs:{m:6.09,sd:0.25},Liver:{m:10.77,sd:1.45},Spleen:{m:0.90,sd:0.24},Kidneys:{m:2.13,sd:0.41},Adrenals:{m:1.05,sd:0.24}},
-  20:{Brain:{m:46.0,sd:0.57},Thymus:{m:0.26,sd:0.14},Heart:{m:1.99,sd:0.18},Lungs:{m:6.64,sd:1.15},Liver:{m:12.76,sd:1.23},Spleen:{m:0.55,sd:0.26},Kidneys:{m:2.63,sd:0.63},Adrenals:{m:1.27,sd:0.32}}
+  12:{Brain:{m:3.6,sd:2.03},Thymus:{m:0.07,sd:0.05},Heart:{m:0.15,sd:0.09},Lungs:{m:0.49,sd:0.24},Liver:{m:1.15,sd:0.43},Spleen:{m:0.05,sd:0.07},Kidneys:{m:0.2,sd:0.13},Adrenals:{m:0.10,sd:0.06}},
+  13:{Brain:{m:5.26,sd:1.14},Thymus:{m:0.03,sd:0.01},Heart:{m:0.21,sd:0.06},Lungs:{m:0.89,sd:0.29},Liver:{m:1.49,sd:0.30},Spleen:{m:0.03,sd:0.03},Kidneys:{m:0.21,sd:0.07},Adrenals:{m:0.14,sd:0.06}},
+  14:{Brain:{m:7.96,sd:2.03},Thymus:{m:0.08,sd:0.11},Heart:{m:0.33,sd:0.12},Lungs:{m:1.52,sd:0.43},Liver:{m:2.36,sd:0.52},Spleen:{m:0.05,sd:0.04},Kidneys:{m:0.36,sd:0.13},Adrenals:{m:0.25,sd:0.08}},
+  15:{Brain:{m:11.33,sd:2.21},Thymus:{m:0.09,sd:0.06},Heart:{m:0.46,sd:0.15},Lungs:{m:2.34,sd:0.58},Liver:{m:3.37,sd:0.66},Spleen:{m:0.07,sd:0.06},Kidneys:{m:0.53,sd:0.15},Adrenals:{m:0.35,sd:0.12}},
+  16:{Brain:{m:15.48,sd:3.19},Thymus:{m:0.12,sd:0.04},Heart:{m:0.64,sd:0.12},Lungs:{m:3.04,sd:0.55},Liver:{m:4.63,sd:0.78},Spleen:{m:0.09,sd:0.06},Kidneys:{m:0.71,sd:0.19},Adrenals:{m:0.44,sd:0.09}},
+  17:{Brain:{m:20.13,sd:2.62},Thymus:{m:0.22,sd:0.13},Heart:{m:0.80,sd:0.19},Lungs:{m:3.93,sd:0.61},Liver:{m:6.07,sd:1.07},Spleen:{m:0.10,sd:0.04},Kidneys:{m:1.11,sd:0.33},Adrenals:{m:0.61,sd:0.17}},
+  18:{Brain:{m:26.26,sd:4.48},Thymus:{m:0.24,sd:0.06},Heart:{m:1.14,sd:0.36},Lungs:{m:4.89,sd:0.76},Liver:{m:7.92,sd:1.21},Spleen:{m:0.15,sd:0.04},Kidneys:{m:1.43,sd:0.20},Adrenals:{m:0.90,sd:0.23}},
+  19:{Brain:{m:34.58,sd:5.02},Thymus:{m:0.35,sd:0.04},Heart:{m:1.65,sd:0.43},Lungs:{m:6.09,sd:0.25},Liver:{m:10.77,sd:1.45},Spleen:{m:0.20,sd:0.08},Kidneys:{m:1.76,sd:0.51},Adrenals:{m:1.05,sd:0.24}},
+  20:{Brain:{m:46.0,sd:0.57},Thymus:{m:0.45,sd:0.14},Heart:{m:1.99,sd:0.18},Lungs:{m:6.64,sd:1.15},Liver:{m:12.76,sd:1.23},Spleen:{m:0.35,sd:0.05},Kidneys:{m:2.63,sd:0.63},Adrenals:{m:1.27,sd:0.32}}
 };
 var GC_ORG = {
   "13-14":{thymus:{m:0.09,sd:0.07},coeur:{m:0.24,sd:0.13},poumons:{m:1.26,sd:0.25},foie:{m:3.09,sd:0.27},spleen:{m:0.06,sd:0.04},pancreas:{m:0.09,sd:0.01},surrenales:{m:0.29,sd:0.06},reins:{m:0.41,sd:0.11}},
@@ -1316,6 +1316,13 @@ async function autotest(){
                                   getMAOrg(13).kidneys_01.m === 0.3 && getMAOrg(13).adrenals_01.m === 0.17);
   chk("MA 12 SA non décalée",     getMAOrg(12).spleen_23.m === null && getMAOrg(12).kidneys_01.m === 0.25);
   chk("table MB bornée à 20 SA",  !!getMBOrg(20) && getMBOrg(24) === null);
+  /* Muller-Brochut : le thymus, la rate, les reins et les surrénales portaient
+     les valeurs de colonnes voisines alors que les effectifs, eux, étaient bons.
+     Ces quatre-là sont donc les témoins à surveiller. */
+  chk("MB 12-13 SA non décalées", getMBOrg(12).Thymus.m === 0.07 && getMBOrg(12).Kidneys.m === 0.2 &&
+                                  getMBOrg(13).Spleen.m === 0.03 && getMBOrg(13).Adrenals.m === 0.14);
+  chk("MB reins croissants",      [12,13,14,15,16,17,18,19].every(function(s){
+                                    return getMBOrg(s).Kidneys.m < getMBOrg(s + 1).Kidneys.m; }));
 
   chk("verrouillé au départ",     $("sec_coeur").classList.contains("off"));
   set("dossier", "26p0123");
