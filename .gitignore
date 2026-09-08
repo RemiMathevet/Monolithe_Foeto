@@ -5,3 +5,8 @@ __pycache__/
 publier.py
 serveur.py
 verif.js
+batterie.py
+
+# transcription des tables de trois articles sous droits : le depot est
+# public, ces JSON restent locaux. Voir references_pdf/PROVENANCE.md
+references_pdf/

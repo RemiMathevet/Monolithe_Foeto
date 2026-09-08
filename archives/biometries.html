@@ -103,6 +103,28 @@ border-radius:9px;padding:12px;font-size:.82rem;text-align:center;opacity:0;tran
    MA  : Maroun, SA entières 12-43 — B=masse g, F=pied mm, C=VC cm, H=VT cm, D=PC cm
    MB  : Muller-Brochut 2018, 12-20 SA — cm sauf Fetus (g)                        */
 
+/* =========================================================================
+   BIOMETRIE FAUSSE aux dernieres lignes.   Constate le 2026-09-08.
+
+   11 cellules sur 150, presque toutes a 41-42 SA :
+     pied   decale d'un cran a la fin — 39-40 porte le 77 mm de 41-42, et le
+            80 mm de 41-42 n'existe nulle part (vraie valeur 77 mm)
+     masse  41-42 : 3268.8 ± 512.7   au lieu de 3254.9 ± 513.1
+     VT     31-32 : 432.2 au lieu de 423.2 ; 41-42 : 531.1 au lieu de 530.9
+     VC     39-40 : 356 au lieu de 356.5 ; 41-42 : 369 au lieu de 370.0
+     PC     41-42 : 348.8 ± 16.9 au lieu de 348.6 ± 17.0
+
+   Origine probable : dans le rendu texte du PDF, « Crown-heel » et
+   « Crown-rump » de la table 4 s'entremelent (deux colonnes cote a cote).
+   Lu ainsi, la taille chute de 492 mm a 356 mm entre 37-38 et 39-40. Les
+   dernieres lignes ont ete rattrapees a la main, d'ou les valeurs inventees.
+   Relever ce tableau aux coordonnees des mots, pas au rendu -layout.
+
+   Les 13 premiers intervalles sont exacts.
+
+   Version corrigee : Hub_HTML/biometrie_clinique.html
+                      FoetoPath_Luminarium_V2/Foeto/pwa/foet/references.js
+   ========================================================================= */
 var GC = {
   "13-14":{masse:{m:55.8,sd:14.4},VT:{m:131.8,sd:15.4},VC:{m:89.6,sd:11.7},PC:{m:89.2,sd:11.8},pied:{m:14,sd:2.9}},
   "15-16":{masse:{m:108.6,sd:24.7},VT:{m:170.4,sd:16.2},VC:{m:116.2,sd:12.2},PC:{m:116.7,sd:12.2},pied:{m:19,sd:3}},
