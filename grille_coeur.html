@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grille de lecture — coeur, pericarde et arteres coronaires</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --alert-soft:#F7EAE7;
+  --amber:#8A6A18; --amber-soft:#F6F0DE;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off button,section.off input,section.off select{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 170px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],input[type=number],textarea{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+input[type=number]{font-family:var(--mono);letter-spacing:.03em}
+textarea{resize:vertical;min-height:60px;font-size:15px}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+/* ── Boutons-clics : toute la saisie sémantique passe par là ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font-family:var(--sans);font-size:14px;line-height:1.25;
+  border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+  border-radius:2px;padding:8px 11px;cursor:pointer;min-height:38px;text-align:left}
+.chip:hover{background:var(--drape-soft)}
+.chip:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.chip.on{background:var(--drape);border-color:var(--drape);color:#fff;font-weight:600}
+.chip.no{background:var(--alert-soft);border-color:var(--alert);color:var(--alert);font-weight:600}
+.chip.sugg{border-color:var(--amber);border-style:dashed}
+.chip[data-act=foeto]::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;background:var(--drape);opacity:.55}
+.chip.on[data-act=foeto]::after{background:#fff}
+.plus{font-size:13px;color:var(--drape);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline dotted}
+.rech{position:relative;margin-top:8px}
+.rech input{font:inherit;font-size:14px;padding:6px 10px;border:1px solid #bbb;border-radius:8px;width:min(100%,24rem)}
+.sugg{position:absolute;z-index:5;background:#fff;border:1px solid #bbb;border-radius:8px;max-height:12rem;overflow:auto;width:min(100%,24rem);display:none}
+.sugg.on{display:block}
+.sugg div{padding:5px 10px;cursor:pointer;font-size:14px}
+.sugg div:hover{background:var(--drape-soft)}
+.sugg small{color:#777}
+.chip .k{font-family:var(--mono);font-size:10px;letter-spacing:.07em;opacity:.75;
+         display:block;text-transform:uppercase}
+
+.item{border-top:1px solid var(--rule);padding:10px 0}
+.item:first-child{border-top:0}
+.item .head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.item .lbl{flex:1 1 240px;min-width:0;font-size:15px}
+.item .meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-soft);
+            display:block;margin-top:2px}
+.item .meta.bon{color:var(--drape)} .item .meta.mauvais{color:var(--alert)}
+.item .meta.moyen{color:var(--amber)}
+.unfold{margin:9px 0 0 0;padding:9px 0 0;border-top:1px dashed var(--rule)}
+.unfold[hidden]{display:none}
+.stop{font-size:13px;line-height:1.35;color:var(--alert);background:var(--alert-soft);
+      border-left:2px solid var(--alert);padding:6px 9px;margin-top:8px}
+.stop b{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+
+.verdict{font-size:14px;line-height:1.4;border-left:3px solid var(--rule);
+         padding:7px 10px;margin-top:11px;background:var(--paper)}
+.verdict.ok{border-color:var(--drape);background:var(--drape-soft)}
+.verdict.warn{border-color:var(--amber);background:var(--amber-soft)}
+.verdict.bad{border-color:var(--alert);background:var(--alert-soft)}
+.verdict b{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+           display:block;color:var(--ink-soft)}
+
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+.sousTitre:first-child{margin-top:0}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:var(--alert-soft)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+pre.cr{font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;
+  padding:12px;margin:0 0 10px;max-height:44vh;overflow:auto}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · lecture microscopique</p>
+  <h1>Grille de lecture — coeur, pericarde et arteres coronaires <span class="ver" id="ver"></span></h1>
+  <p class="sub">Sortie de <code>fiche_coeur.md</code>. Tout se clique ; seuls le dossier, le terme et les comptes se tapent. Document autonome : rien n'est transmis.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Deux chiffres, P, puis le numéro. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Lecteur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la grille.</div>
+    </div>
+    <div class="field">
+      <label for="sa">Terme (SA)</label>
+      <input type="number" id="sa" min="8" max="45" step="1" inputmode="numeric" placeholder="—">
+      <div class="hint" id="saHint">SA = semaines de gestation + 2. Commande le stade attendu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — Prélèvement -->
+<section id="secPrelevement" class="off">
+  <h2><span class="n">02</span>Prélèvement<span class="tally" id="tPrelevement">—</span></h2>
+  <div id="coteBloc" hidden>
+    <div class="sousTitre">Côté prélevé</div>
+    <div class="chips" id="cote" style="margin-bottom:11px"></div>
+  </div>
+  <div class="chips" id="prelevement"></div>
+  <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
+</section>
+
+<!-- 03 — Rétention -->
+<section id="secRetention" class="off">
+  <h2><span class="n">03</span>Rétention<span class="tally" id="tRetention">—</span></h2>
+  <div id="retention"></div>
+  <div class="chips" id="kcl" style="margin-top:11px"></div>
+  <div class="verdict" id="vRetention"><b>Borne inférieure</b>—</div>
+</section>
+
+<!-- 04 — Maturation -->
+<section id="secMaturation" class="off">
+  <h2><span class="n">04</span>Maturation<span class="tally" id="tMaturation">—</span></h2>
+  <div class="sousTitre" id="stTitre">Stade observé</div>
+  <div class="chips" id="stades"></div>
+  <div id="mesure"></div>
+  <div class="verdict" id="vMaturation"><b>Lecture</b>—</div>
+  <div class="verdict" id="vMesure" hidden><b>Mesure</b>—</div>
+</section>
+
+<!-- 05 — Variantes normales -->
+<section id="secVariantes" class="off">
+  <h2><span class="n">05</span>Variantes normales<span class="tally" id="tVariantes">—</span></h2>
+  <p class="note" style="margin-top:0">Cliquer ce qui est vu et écarté comme normal. Rien de coché ne veut pas dire absent : ça veut dire non regardé.</p>
+  <div class="chips" id="variantes" style="margin-top:10px"></div>
+</section>
+
+<!-- 06 — Signes -->
+<section id="secSignes" class="off">
+  <h2><span class="n">06</span>Signes<span class="tally" id="tSignes">—</span></h2>
+  <p class="note" style="margin-top:0">On coche des signes, pas des diagnostics. Les associations en dessous se déduisent de ce qui est coché : elles s'affichent, elles ne se choisissent pas.</p>
+  <div id="signes" style="margin-top:10px"></div>
+  <div class="sousTitre" style="margin-top:16px">Associations lues</div>
+  <div id="diags"></div>
+</section>
+
+<!-- 07 — Termes FOETO attestés par la fiche -->
+<section id="secFoeto" class="off">
+  <h2><span class="n">07</span>Termes FOETO<span class="tally" id="tFoeto">—</span></h2>
+  <p class="note" style="margin-top:0">Les termes du vocabulaire FOETO que la fiche de l'organe retient comme lésions, par sous-section. Un terme coché est présent ; rien de coché ne veut pas dire absent.</p>
+  <div id="foeto"></div>
+  <button type="button" class="plus" id="foetoPlus" hidden>▸ tous les termes attestés</button>
+  <div class="chips" id="foetoTous" hidden style="margin-top:6px"></div>
+  <div class="rech" id="foetoRech" hidden><input type="text" id="rqFoeto" placeholder="rechercher un terme (3 lettres)…" autocomplete="off"><div class="sugg" id="sgFoeto"></div></div>
+</section>
+
+<!-- 08 — Négatifs obligatoires -->
+<section id="secNegatifs" class="off">
+  <h2><span class="n">08</span>Négatifs obligatoires<span class="tally" id="tNegatifs">—</span></h2>
+  <div class="btns" style="margin-bottom:11px">
+    <button class="btn" id="btnNegAll">Tous vérifiés</button>
+  </div>
+  <div id="negatifs"></div>
+</section>
+
+<!-- 08 — Techniques -->
+<section id="secTechniques" class="off">
+  <h2><span class="n">09</span>Techniques<span class="tally" id="tTechniques">—</span></h2>
+  <p class="note" style="margin-top:0" id="techNote"></p>
+  <div class="chips" id="techniques" style="margin-top:10px"></div>
+</section>
+
+<!-- 09 — Compte rendu -->
+<section id="secCR" class="off">
+  <h2><span class="n">10</span>Compte rendu<span class="tally" id="tCR">—</span></h2>
+  <pre class="cr" id="cr">—</pre>
+  <div class="row">
+    <div class="field" style="flex:1 1 100%">
+      <label for="libre">Remarque libre</label>
+      <textarea id="libre" placeholder="Ce que la grille ne prévoit pas."></textarea>
+    </div>
+  </div>
+  <div class="btns" style="margin-top:10px">
+    <button class="btn" id="btnCopie">Copier le compte rendu</button>
+  </div>
+</section>
+
+<!-- 10 — Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n">11</span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Vider le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- 11 — Diagnostic -->
+<section>
+  <h2><span class="n">12</span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante, aucun fetch : doit fonctionner par double-clic hors réseau.
+
+   Ce module est la SORTIE de fiche_coeur.md, jamais l'inverse. Les bornes, les
+   spécificités et les « ce qu'il ne faut pas conclure » sont recopiés de la
+   fiche ; ils ne se corrigent pas ici mais dans la fiche.
+
+   La grille ne conclut pas : elle contraint la description et rend ses
+   réserves visibles. Un critère non cliqué n'est pas un négatif — c'est un
+   non-regardé, et le compte rendu le dit.
+
+   Fichier ENGENDRÉ par gen_grille.py depuis grilles/coeur.js.
+   Corriger le fragment, pas ce fichier.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  FRAGMENT D'ORGANE — grilles/coeur.js                            ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+// Fragment de donnees — coeur. Assemble par gen_grille.py en grille_coeur.html.
+// Fond : fiche_coeur.md, sections 1 a 7 ; les divergences de la section 9 sont
+// PORTEES dans les notes et les stop, jamais tranchees ici.
+
+var ORGANE  = "coeur";
+var TITRE   = "coeur, pericarde et arteres coronaires";
+var SOURCE  = "fiche_coeur.md";
+var MODULE  = "grille_coeur";
+var VERSION = "1.0.0";
+var PAIR    = false;
+
+var TITRE_CR    = "COEUR";
+var STADE_TITRE = "Reperes dates isoles — le coeur n'a pas d'echelle de maturation";
+
+var KCL_TXT =
+  "Foeticide au KCl declare : le point de ponction epicardique est une lesion locale ATTENDUE, " +
+  "pas un signe. « If there has been feticide by injection of potassium chloride into the heart, " +
+  "the fatal puncture site in the epicardium is frequently visible at post-mortem. » " +
+  "Le livre ajoute que les alterations induites peuvent « mimic maceration changes » : " +
+  "l'horloge de retention est donc suspendue, aucune borne ne se lit sur ce coeur. " +
+  "Reserve inverse a garder : « KCl injection may not be applied directly into the heart » — " +
+  "un KCl declare ne garantit pas que le myocarde ait ete traverse, l'absence de point de ponction " +
+  "ne dement pas le geste.";
+
+var RETARD_NOTE =
+  " — RESERVE DE FOND : le coeur n'a pas d'echelle de maturation. Le retard cardiaque ne se " +
+  "fabrique pas a partir d'un repere date isole. La fiche est explicite en section 9 : interroge " +
+  "sur une echelle de maturation cardiaque, le corpus repond « il n'y en a pas » et, sur la " +
+  "datation histologique du myocarde, « on ne la pratique pas ». Aucun CR du corpus n'ecrit de " +
+  "stade de maturation cardiaque. La seule forme utile d'un ecart est l'ASYMETRIE entre les deux " +
+  "ventricules d'un meme coeur, lue au bloc quatre cavites — pas un decalage en SA.";
+
+var AVANCE_NOTE =
+  " — RESERVE DE FOND : idem, pas d'echelle. Ne pas ecrire d'avance de maturation cardiaque. " +
+  "Ce qui se lit sur ce coeur, c'est l'ASYMETRIE des deux parois ventriculaires entre elles, " +
+  "sur une meme coupe, jamais un age histologique.";
+
+var TECH_NOTE =
+  "Aucune technique ne rattrape un bloc absent. « Devant toute pathologie cardiaque, un caryotype " +
+  "est réalisé même en cas de macération ainsi qu'un prélèvement de tissus en congélation. » — " +
+  "cette décision se prend à l'autopsie, elle ne se rattrape pas sur lame.";
+
+var PRELEV = [
+  { k:"fixation", l:"Coeur fixe au formol avant coupe", grave:true,
+    manque:"Coupe a frais d'un petit coeur : les reperes se perdent. « For smaller hearts, particularly when macerated or malformed, formalin fixation of the heart is essential » — sans fixation prealable, ne rien conclure d'une geometrie de cavite ni d'une epaisseur de paroi." },
+  { k:"blocA", l:"Bloc A — paroi ventriculaire gauche + septum interventriculaire", grave:true,
+    manque:"Sans paroi VG et septum sur la meme coupe, ni l'endocarde du VG ni le disarray septal ne se lisent, et aucun rapport d'epaisseur ne se calcule." },
+  { k:"blocB", l:"Bloc B — paroi ventriculaire droite" },
+  { k:"blocC", l:"Bloc C — oreillettes et sillon auriculo-ventriculaire" },
+  { k:"transillumination", l:"Septum transillumine avant prelevement",
+    manque:"Une CIV musculaire punctiforme se voit a la transillumination et se manque sur lame. Sans ce geste, ne pas ecrire septum integre." },
+  { k:"jonctionVCS", l:"Jonction veine cave superieure / oreillette droite laissee en place", grave:true,
+    manque:"Zone du noeud sinusal entamee : « cutting this area risks loss of landmarks should it become necessary to examine the node ». Le tissu nodal devient inlocalisable — ecrire non explorable, pas normal." },
+  { k:"arteresNodales", l:"Arteres nodales reperees sur la coupe" },
+  { k:"quatreCavites", l:"Coupe quatre cavites disponible",
+    manque:"Sans coupe quatre cavites, l'equilibre des cavites droite et gauche ne se juge pas ; l'asymetrie ventriculaire n'est pas evaluable." },
+  { k:"rapports", l:"Rapports vasculaires examines avant ouverture" },
+  { k:"congele", l:"Fragment de myocarde congele", grave:true,
+    manque:"Sans congele, les enzymes oxydatives et les colorations lipidiques sur coupe a congelation sont perdues : « Staining of frozen sections of myocardium may show reduction in oxidative enzymes or increase in cytoplasmic lipid. » Une surcharge metabolique peut rester indemontrable." },
+  { k:"caryotype", l:"Caryotype et tissus en congelation prevus",
+    manque:"« Devant toute pathologie cardiaque, un caryotype est réalisé même en cas de macération ainsi qu'un prélèvement de tissus en congélation. » — geste d'autopsie, non rattrapable." },
+  { k:"glutaraldehyde", l:"Fragment fixe au glutaraldehyde pour microscopie electronique",
+    manque:"Sans glutaraldehyde, ni les anomalies mitochondriales ni les inclusions myeliniques ne se documentent." },
+  { k:"poids", l:"Poids du coeur note",
+    manque:"« As a very minimum, the heart weight should be recorded » — non rattrapable apres coupe." },
+  { k:"provenance", l:"Provenance du materiel identifiee (lame de coeur entier ou bloc tissulaire oriente)",
+    manque:"Provenance non declaree : une epaisseur de paroi mesuree sur un bloc non oriente ne se rapporte a aucune cavite. Aucun rapport ventriculaire ne se calcule." }
+];
+
+var RETENTION = [
+  { k:"basoInterneVG", l:"Perte de basophilie nucleaire limitee a la moitie interne du VG",
+    b:"24 h et plus", d:"24 h", h:24, q:"bon",
+    note:"DIVERGENCE PORTEE, non tranchee : le CR du corpus decrit a 24 h une « discrète perte de basophilie nucléaire des cardiomyocytes de la moitié interne du VG, persistance dans la moitié externe » ; le referentiel FOETO place la meme perte de basophilie myocardique dans une fenetre 4—12 h. Les deux bornes ne se recouvrent pas. Ecrire les deux, ne pas choisir." },
+  { k:"basoDeuxMoities", l:"Perte de basophilie nucleaire etendue aux deux moities de la paroi VG",
+    b:"48 h et plus", d:"48 h", h:48, q:"bon",
+    note:"Au-dela de la paroi, ne rien conclure sur le tissu nodal : le noeud n'a pas de chronologie de lyse propre dans le corpus." },
+  { k:"bandeService2a4", l:"Coeur encore lisible mais aucun repere de datation fin (2 a 4 semaines)",
+    b:"2 a 4 semaines", d:"2—4 sem.", h:336, q:"moyen",
+    note:"Borne de service, pas un critere positif. « There is no fetal organ that provides a good estimate of the timing of fetal death between 2 and 4 weeks » ; la fiche redit « il n'existe aucun organe fœtal donnant une bonne estimation entre 2 et 4 semaines ». La borne est declaree large parce que le corpus n'en propose pas de plus etroite.",
+    alerte:true },
+  { k:"bandeService4a8", l:"Retention prolongee presumee au-dela de 4 semaines",
+    b:"plus de 4 semaines", d:"> 4 sem.", h:672, q:"moyen",
+    note:"Meme reserve : aucune borne fine au-dela de 2 semaines dans le corpus. Ne pas convertir cette bande en une duree chiffree.",
+    alerte:true },
+  { k:"nodalIllisible", l:"Tissu nodal non identifiable sur la coupe",
+    b:"aucune borne", d:"—", h:0, q:"mauvais",
+    note:"Un noeud introuvable ne date rien : c'est un defaut de reperage ou de lyse, pas un chronometre." },
+  { k:"lymphoEfface", l:"Lymphocytes myocardiques non reconnaissables",
+    b:"aucune borne", d:"—", h:0, q:"mauvais",
+    note:"« In macerated myocardial tissues, lymphocytes can be nearly impossible to recognize » — ecrire indeterminable, jamais absence d'inflammation." },
+  { k:"necrosePanPM", l:"Necrose pan-myocardique diffuse sans territoire",
+    b:"aucune borne", d:"—", h:0, q:"mauvais",
+    note:"Le CR du corpus l'ecrit « discrète nécrose pan myocardique post-mortem » : c'est un artefact de retention, il ne fournit aucune borne." },
+  { k:"inflamPolymorphePM", l:"Inflammation polymorphe diffuse sans necrose myocytaire",
+    b:"aucune borne", d:"—", h:0, q:"mauvais",
+    note:"Le corpus l'ecrit « discrète inflammation polymorphe post mortem diffuse » et « inflammation de signification inconnue, mineure, probablement artéfactuelle ». Ne pas la lire comme une myocardite ni comme un delai." },
+  { k:"liquidePericarde", l:"Liquide serosanglant abondant dans le sac pericardique",
+    b:"aucune borne", d:"—", h:0, q:"mauvais",
+    note:"« in macerated fetuses, it may contain abundant serosanguineous fluid » : consequence de la maceration, pas un epanchement pathologique et pas une horloge." },
+  { k:"cytoarchitectureTient", l:"Cytoarchitecture conservee malgre une maceration franche",
+    b:"aucune borne", d:"—", h:0, q:"mauvais",
+    note:"« Despite the obvious maceration, the morphology … is still visible. » et « l'examen du cœur, contrairement à celui du cerveau est presque toujours interprétable ». Cette robustesse permet de LIRE le coeur, elle ne permet pas de le DATER : ne pas transformer une cytoarchitecture tenue en delai court." }
+];
+
+// Le coeur n'a pas d'echelle de maturation. Ce tableau ne classe pas : il liste
+// les rares reperes DATES de la section 3, chacun dans sa fenetre, sans continuum.
+var STADES = [
+  { k:"septation", l:"Septation ventriculaire en cours d'achevement", max:9.5,
+    note:"repere embryonnaire ; au-dela, la septation est acquise et ne date plus rien" },
+  { k:"valvesAnneau", l:"Valves AV et anneau fibreux complets, en cours de maturation", max:16,
+    note:"« By approximately 12 weeks of development, the AV and outflow tract valve structures are complete, but they continue to undergo maturation » et « By approximately 12 weeks of gestation, the fibrous annulus is mostly complete » — un repere acquis, pas une graduation" },
+  { k:"vacuolisationMax", l:"Vacuolisation glycogenique myocytaire physiologique, encore marquee", max:30,
+    note:"la clarte cytoplasmique du myocyte foetal est NORMALE a ce terme ; elle ne se cote pas et ne se compte pas" },
+  { k:"coussinetsCanal", l:"Coussinets intimaux du canal arteriel du troisieme trimestre", max:37,
+    note:"« small areas of intimal thickening with some disruption of the underlying internal elastic lamina are present even in late fetal life » — normal, ne pas lire une lesion" },
+  { k:"cytoplasmeEosinophile", l:"Cytoplasme myocytaire plus abondant et plus eosinophile", max:99,
+    note:"« As the fetus approaches term, the clearing of the fetal myocyte cytoplasm is generally less prominent. » — tendance de fin de grossesse, pas un stade" }
+];
+
+var MESURE = {
+  titre:"Mesures parietales et endocardiques — aucune normale foetale publiee",
+  defLabel:"cavite ou la mesure est prise",
+  optLabel:"coloration de l'endocarde",
+  defs:[
+    { k:"vg", l:"Ventricule gauche" },
+    { k:"vd", l:"Ventricule droit" },
+    { k:"og", l:"Oreillette gauche" },
+    { k:"od", l:"Oreillette droite" },
+    { k:"indeterminee", l:"Cavite non identifiable sur la coupe" }
+  ],
+  opts:[
+    { k:"hes", l:"HES seul" },
+    { k:"orceine", l:"Orceine" },
+    { k:"tvma", l:"Trichrome vert lumiere / TVMA" },
+    { k:"duo", l:"Orceine + trichrome" },
+    { k:"aucune", l:"Aucune coloration speciale" }
+  ],
+  champs:[
+    { id:"vg",    label:"Paroi VG (micrometres)", min:0, max:20000, step:10 },
+    { id:"vd",    label:"Paroi VD (micrometres)", min:0, max:20000, step:10 },
+    { id:"endo",  label:"Endocarde, epaisseur maximale (micrometres)", min:0, max:5000, step:10 },
+    { id:"ratio", label:"Rapport trabecule / compact", min:0, max:20, step:0.1 }
+  ]
+};
+
+function verdictMesure(){
+  var v   = E.mesure.v || {};
+  var def = E.mesure.def, opt = E.mesure.opt;
+  var vg = v.vg, vd = v.vd, endo = v.endo, ratio = v.ratio;
+  var rien = !vg && !vd && !endo && !ratio;
+  if (rien) return { cls:"", txt:"Aucune mesure saisie — les mesures parietales sont facultatives ; rien ne se deduit d'un champ vide." };
+
+  var T = [], pire = "ok";
+  function bad(){ pire = "bad"; }
+  function warn(){ if (pire !== "bad") pire = "warn"; }
+
+  if ((vg && !vd) || (vd && !vg)){
+    bad();
+    T.push("Une seule paroi ventriculaire mesuree : la valeur isolee ne dit rien, c'est le rapport qui se lit, il se saisit en PAIRE. Le corpus ne donne qu'un couple, « assymétrie de taille des parois ventriculaires (de l'ordre de 720 µm pour le VG et 370 µm pour le VD) », et jamais une normale de paroi isolee.");
+  }
+  if (vg && vd){
+    T.push("rapport VG/VD = " + (vg / vd).toFixed(2) + " — a rapporter au couple d'exemple du corpus (720 µm / 370 µm), qui est un CAS et non une norme.");
+    T.push("Normale par terme non etablie : aucune table de paroi ventriculaire foetale n'est citee dans la fiche. Ne jamais ecrire hypoplasie ni hypertrophie sur ces chiffres seuls.");
+    T.push("Premisse a garder avant de lire un desequilibre : « The fetal heart shows right-sided dominance with up to two-thirds of cardiac output going through the right ventricle » — la dominance droite est la regle foetale.");
+    warn();
+  }
+  if (endo){
+    T.push("Epaisseur endocardique : normale foetale non etablie. Le corpus n'offre que des repres de cas — « très important épaississement fibro-élastique de l'endocarde mesuré jusqu'à 1 mm (orcéine et TVMA positives) » et, ailleurs, « up to several millimetres thick ». La section 9 signale que ces deux ordres de grandeur coexistent sans etre reconcilies.");
+    warn();
+    if (def === "og"){
+      bad();
+      T.push("Mesure prise dans l'oreillette GAUCHE : « The endocardium of the left atrium is thicker than that of the right atrium » et « the endocardium occupies nearly one-third of the thickness of the atrial wall ». « This should not be mistaken for a pathological change. » Aucune fibro-elastose ne se conclut ici.");
+    }
+    if (!def){
+      warn();
+      T.push("Cavite non declaree — est-on dans l'oreillette gauche ? L'epaisseur y est normalement majoree, la mesure change de sens selon la cavite.");
+    }
+    if (!opt){
+      warn();
+      T.push("Coloration de l'endocarde non declaree.");
+    } else if (opt === "hes"){
+      warn();
+      T.push("HES seul : l'HES ne distingue pas fibrose et fibro-elastose. Orceine et trichrome sont ce que le corpus utilise pour trancher.");
+    }
+  }
+  if (ratio){
+    T.push("Rapport trabecule / compact : aucun seuil foetal dans le corpus — ni Keeling ni Ashworth n'en donnent. La valeur se consigne, elle ne classe pas.");
+    T.push("Et la premisse morphogenetique interdit la lecture naive : « Ventricular myocardial compaction is, thus, not a process by which trabeculated myocardium becomes compact » ; « The compacted layer forms by addition of cells to the outer aspect of the myocardium rather than fusion (compaction) of the trabeculae. »");
+    warn();
+  }
+  if (!E.prelev.blocA){
+    warn();
+    T.push("Reserve de provenance : bloc A (paroi VG + septum) non declare — l'orientation de la mesure n'est pas garantie.");
+  }
+  return { cls:pire, txt:T.join(" ") };
+}
+
+var VARIANTES = [
+  { k:"vacuolisationPhysio", l:"Clarte vacuolaire du cytoplasme myocytaire",
+    note:"normale au foetus ; « If more extensive vacuolar change is seen, however, it is likely to represent pathologic change » — c'est l'etendue, non la presence, qui interroge" },
+  { k:"graisseMyocyte", l:"Graisse dans le cardiomyocyte",
+    note:"« fat is a normal constituent of the cardiomyocyte » ; « This should not be confused with a disorder of fatty acid oxidation. »" },
+  { k:"mitoses", l:"Mitoses myocytaires",
+    note:"le myocarde foetal se divise ; le corpus ne cite « numerous mitotic figures in myocytes » que dans un contexte deja constitue. Une mitose ne se coche pas comme signe" },
+  { k:"endocardeCellulaire", l:"Endocarde riche en cellules",
+    note:"« The younger the tissue, the more likely it is to be cellular. » — fonction du terme, pas une lesion" },
+  { k:"endocardeOG", l:"Endocarde auriculaire gauche epaissi",
+    note:"physiologique ; « This should not be mistaken for a pathological change. »" },
+  { k:"stromaMyxoide", l:"Stroma valvulaire myxoide diffus",
+    note:"« Fetal valve stroma is frequently focally myxoid in character » ; seul le caractere NODULAIRE fait sortir de la variante" },
+  { k:"trabeculesGrossieresVD", l:"Trabeculations grossieres du ventricule droit",
+    note:"« Les parois ventriculaires comportent des trabéculations grossières, caractéristiques d'un ventricule de type droit »" },
+  { k:"trabeculesFinesVG", l:"Trabeculations tres fines du ventricule gauche",
+    note:"« Le VG se caractérise par l'extrême finesse des trabéculations » ; « Si l'examen des valves AV est douteux, la comparaison des trabéculations tranchera. »" },
+  { k:"coussinetsIntimaux", l:"Epaississements intimaux focaux des arteres",
+    note:"« small areas of intimal thickening with some disruption of the underlying internal elastic lamina are present even in late fetal life »" },
+  { k:"dysplasieMineurePiliers", l:"Traits dysplasiques mineurs des arteres intramurales des piliers",
+    note:"« Even in the normal heart, the intramural arteries located in the papillary muscles of the atrioventricular valves may show minor dysplastic features. »" },
+  { k:"disarrayJonctionPhysio", l:"Disarray a la jonction paroi libre / septum",
+    note:"« Myofibre disarray occurs in the normal heart at the junction of the free wall of the ventricles with the interventricular septum »" },
+  { k:"ilotsMyocardeAuriculaire", l:"Ilots myocardiques disperses dans le tissu fibreux auriculaire",
+    note:"« These should not be taken as evidence of aberrant conduction pathways. »" },
+  { k:"remodelageNodal", l:"Remodelage du tissu nodal sans degenerescence",
+    note:"acceptable « without any evidence of active degeneration, necrosis, phagocytosis, inflammation, or replacement fibrosis » ; des que l'un de ces elements parait, sortir de la variante" },
+  { k:"liquidePericardiqueMinime", l:"Petite quantite de liquide pericardique",
+    note:"« A small amount of fluid is a feature of the normal pericardial sac »" }
+];
+
+// Table PLATE. Aucun nom d'entite ici : les entites se DEDUISENT dans Associations lues.
+var SIGNES = [
+  // — endocarde
+  { k:"endoLamellaire", l:"Endocarde epaissi, fibro-elastique lamellaire dense",
+    meta:"« dense laminar fibroelastic tissue that usually does not show increased vascularity or inflammatory cell infiltration »" },
+  { k:"endoSansVascul", l:"Epaississement endocardique sans neovascularisation ni infiltrat",
+    meta:"le corollaire du critere precedent : la pauvrete cellulaire fait partie de la description" },
+  { k:"endoVG", l:"Epaississement endocardique portant sur le ventricule gauche",
+    meta:"« The right ventricle usually does not show significant endocardial fibrosis. »" },
+  { k:"endoPiliers", l:"Epaississement endocardique s'etendant aux piliers et cordages" },
+  { k:"endoBiventriculaire", l:"Epaississement endocardique des deux ventricules",
+    meta:"repartition inhabituelle : le VD n'est pas le siege attendu, verifier l'orientation du bloc" },
+  { k:"endoFocalPeriLesionnel", l:"Epaississement endocardique focal au contact d'une lesion myocardique" },
+  { k:"endoCellulaire", l:"Endocarde epaissi et riche en cellules",
+    meta:"« The younger the tissue, the more likely it is to be cellular. » — a confronter au terme avant d'en faire une lesion" },
+  { k:"coupeOG", l:"Coupe passant par l'oreillette gauche",
+    meta:"signe de LOCALISATION, coche des que la mesure ou l'epaississement porte sur l'OG" },
+  // — compaction
+  { k:"trabeculesEpais", l:"Couche trabeculee epaisse au regard de la couche compacte" },
+  { k:"compacteMince", l:"Couche compacte amincie" },
+  { k:"recessusEndocardes", l:"Recessus intertrabeculaires profonds, tapisses d'endocarde" },
+  { k:"cavitePresqueEpicarde", l:"Cavite ventriculaire s'etendant presque jusqu'a l'epicarde",
+    meta:"« The left ventricular cavity extends almost to the epicardial surface among a myriad of thin muscular trabeculations »" },
+  { k:"piliersMalDeveloppes", l:"Piliers mal individualises ou mal developpes" },
+  // — desorganisation myocytaire
+  { k:"disarraySIV", l:"Desorganisation des myofibres dans le septum interventriculaire",
+    meta:"« disarray should not be seen in the normal heart in the interventricular septum or lateral ventricular walls »" },
+  { k:"disarrayLateral", l:"Desorganisation des myofibres dans une paroi ventriculaire laterale" },
+  { k:"disarrayJonction", l:"Desorganisation limitee a la jonction paroi libre / septum",
+    meta:"NORMAL : « Myofibre disarray occurs in the normal heart at the junction of the free wall of the ventricles with the interventricular septum ». Coche pour ecarter, jamais pour retenir" },
+  { k:"disarrayAuriculaire", l:"Desorganisation des myofibres dans le myocarde auriculaire" },
+  { k:"hypertrophieMyocytaire", l:"Myocytes elargis a noyau volumineux, aspect etale",
+    meta:"« disorganised hypertrophied myocytes that have a splayed appearance »" },
+  { k:"fibroseInterstitielle", l:"Fibrose interstitielle myocardique" },
+  { k:"coupeOblique", l:"Coupe oblique ou tangentielle du myocarde",
+    meta:"« oblique or tangential sectioning » ; les fibres sont « organised as geodesic curves around toroid nested layers », une coupe hors axe fabrique un faux disarray" },
+  // — myocarde dilate
+  { k:"myocytesEtires", l:"Myocytes etires, amincis" },
+  { k:"noyauxHyperchromatiques", l:"Noyaux myocytaires volumineux, hyperchromatiques et irreguliers",
+    meta:"« myocytes with enlarged, hyperchromatic and irregular nuclei » ; le CR du corpus ecrit « certains cardiomyocytes possèdent un noyau hyperchromatique et trop volumineux »" },
+  { k:"piliersAmincis", l:"Piliers amincis, cavite d'aspect dilate" },
+  { k:"foyersFibroseDissemines", l:"Multiples petits foyers de fibrose disperses dans les ventricules",
+    meta:"« multiple small foci of fibrosis scattered throughout the ventricles »" },
+  // — inflammation
+  { k:"infiltratMyocardique", l:"Infiltrat inflammatoire interstitiel du myocarde" },
+  { k:"necroseMyocytaireFocale", l:"Necrose ou degenerescence des myocytes au contact de l'infiltrat",
+    meta:"« Myocyte necrosis or damage must also be present for the diagnosis. »" },
+  { k:"neutrophilesPrecoces", l:"Polynucleaires neutrophiles au sein de l'infiltrat",
+    meta:"« Neutrophils may be prominent, particularly in the early stages. »" },
+  { k:"phenotypeT", l:"Infiltrat a predominance lymphocytaire T documentee",
+    meta:"seuil cite : « a value of > 14 leukocytes per mm² with > 7 T-cells per mm² »" },
+  { k:"agentViral", l:"Agent viral mis en evidence dans le myocarde" },
+  { k:"microAbces", l:"Micro-abces ou foyers a polynucleaires groupes" },
+  { k:"infiltratSillonAV", l:"Infiltrat centre sur le sillon auriculo-ventriculaire",
+    meta:"« not just of the conduction tissue, but also of much of the atrioventricular junction and the surrounding myocardium »" },
+  { k:"inflammationPolymorpheDiffuse", l:"Inflammation polymorphe diffuse, sans foyer ni necrose",
+    meta:"« discrète inflammation polymorphe post mortem diffuse » — artefact de retention attendu" },
+  // — souffrance ischemique
+  { k:"myocytesHypereosinophiles", l:"Myocytes hypereosinophiles",
+    meta:"« The first tissue change that is evident by light microscopy is that the myocytes become hypereosinophilic. »" },
+  { k:"bandesContraction", l:"Bandes de contraction dans les myocytes",
+    meta:"le corpus dit a la fois « Contraction bands are frequently present. » et « Contraction band necrosis is uncommon. » — divergence portee, ne pas trancher" },
+  { k:"oedemeIntercellulaire", l:"Oedeme intercellulaire du myocarde" },
+  { k:"dilatationCapillaire", l:"Dilatation des capillaires myocardiques" },
+  { k:"calcificationMyocardique", l:"Calcification dystrophique dans le myocarde",
+    meta:"« necrosis of myocardium with dystrophic calcification »" },
+  { k:"necroseSousEndocardique", l:"Necrose de topographie sous-endocardique" },
+  { k:"necroseRegionale", l:"Necrose myocardique limitee a un territoire" },
+  { k:"necrosePanDiffuse", l:"Necrose myocardique diffuse, sans systematisation",
+    meta:"« discrète nécrose pan myocardique post-mortem » — a lire comme un artefact avant toute autre chose" },
+  { k:"cytoarchitecturePreservee", l:"Cytoarchitecture d'ensemble conservee malgre l'alteration",
+    meta:"« Despite the obvious maceration, the morphology … is still visible. » ; coche pour PONDERER une necrose diffuse, jamais pour affirmer un delai" },
+  // — voies de conduction
+  { k:"fibroseNodale", l:"Fibrose du tissu nodal ou de la jonction auriculo-ventriculaire" },
+  { k:"calcificationNodale", l:"Calcification au sein du tissu de conduction" },
+  { k:"perteMyocytesNodaux", l:"Perte des myocytes du tissu nodal" },
+  { k:"pointePiliers", l:"Fibrose ou calcification de la pointe des piliers" },
+  { k:"infiltratPauvre", l:"Lesion de conduction avec tres peu de cellules inflammatoires",
+    meta:"« it is striking how frequently there is minimal inflammatory cell infiltration » et « remarkably little inflammatory cell infiltration »" },
+  { k:"nodalIntrouvable", l:"Tissu nodal non retrouve sur les coupes disponibles" },
+  // — surcharge
+  { k:"vacuolisationEtendue", l:"Vacuolisation myocytaire d'etendue anormale",
+    meta:"« If more extensive vacuolar change is seen, however, it is likely to represent pathologic change »" },
+  { k:"vacuolesSousEndocardiques", l:"Vacuolisation predominant en sous-endocardique" },
+  { k:"pasResistantDiastase", l:"Materiel PAS positif partiellement resistant a la diastase",
+    meta:"« inclusions are PAS-positive and are partly resistant to diastase digestion »" },
+  { k:"oilRedPositif", l:"Surcharge lipidique demontree sur coupe a congelation",
+    meta:"« dramatically demonstrated if frozen sections of myocardium are stained with fat stains such as oil-red-O »" },
+  { k:"granulesEosinophiles", l:"Granulations eosinophiles cytoplasmiques anormales" },
+  { k:"mitochondriesAnormales", l:"Mitochondries anormales en microscopie electronique" },
+  { k:"inclusionsMyeliniques", l:"Inclusions lamellaires ou myeliniques en microscopie electronique" },
+  { k:"cellulesHistiocytoides", l:"Myocytes arrondis a cytoplasme finement vacuolaire, d'allure histiocytaire",
+    meta:"« rounded myocytes with finely vacuolated cytoplasm that resemble histiocytes »" },
+  // — masses
+  { k:"noduleCirconscrit", l:"Nodule bien circonscrit dans le myocarde",
+    meta:"« well circumscribed within the myocardium »" },
+  { k:"cellulesAraignee", l:"Grandes cellules claires a expansions cytoplasmiques radiaires",
+    meta:"« composed of large cells with clear cytoplasm » ; « The nucleus is connected by strands of cytoplasm to the cell membrane, giving rise to so-called spider cells. »" },
+  { k:"nodulesMultiples", l:"Nodules multiples" },
+  { k:"noduleUnique", l:"Nodule unique" },
+  { k:"collageneFusiforme", l:"Proliferation de cellules fusiformes uniformes dans un collagene abondant",
+    meta:"« abundant collagen that contains uniform spindle cells »" },
+  { k:"siegeSIV", l:"Masse siegeant dans le septum interventriculaire" },
+  { k:"calcificationTumorale", l:"Calcification au sein de la masse",
+    meta:"« Calcification is common. »" },
+  { k:"masseIntrapericardique", l:"Masse intrapericardique refoulant le coeur" },
+  { k:"elementsTeratomateux", l:"Tissus de plusieurs feuillets embryonnaires dans la masse" },
+  // — valves
+  { k:"myxoideNodulaire", l:"Structures myxoides NODULAIRES dans le stroma valvulaire",
+    meta:"« Fetal valve stroma is frequently focally myxoid in character, but nodular myxoid structures are considered a sign of valvular dysplasia. » ; la valve normale « may be rather myxoid, but should not be nodular »" },
+  { k:"valveEpaissie", l:"Valve globalement epaissie" },
+  // — pericarde
+  { k:"pericarditeFibrine", l:"Depot de fibrine a la surface du pericarde" },
+  { k:"pericardeFibrose", l:"Fibrose du pericarde" },
+  { k:"hemorragiePericarde", l:"Hemorragie dans le sac pericardique" },
+  { k:"amasEosinoPericarde", l:"Infiltrat inflammatoire du pericarde",
+    meta:"« The pericardium has a very restricted repertoire of reactions to injury » — l'aspect ne designe pas la cause" },
+  // — vaisseaux
+  { k:"calcificationElastique", l:"Calcium depose dans et entre les lames elastiques arterielles",
+    meta:"« deposition of calcium in and between the elastic laminae »" },
+  { k:"proliferationIntimale", l:"Proliferation fibreuse intimale marquee",
+    meta:"« There is associated fibrous intimal proliferation which may be quite striking. »" },
+  { k:"paroiDesorganisee", l:"Paroi arterielle desorganisee, irregulierement amincie et epaissie",
+    meta:"« disorganisation of the elements of the vascular wall with irregular thinning and thickening of the wall and encroachment on the lumen »" },
+  { k:"thromboseCoronaire", l:"Thrombose d'une artere coronaire" },
+  { k:"coronairesDilatees", l:"Arteres coronaires dilatees" },
+  // — geste et prelevement
+  { k:"pointPonction", l:"Effraction epicardique focale d'allure traumatique" },
+  { k:"calcificationPilier", l:"Calcification ponctiforme focale d'un pilier mitral",
+    meta:"le CR du corpus l'ecrit avec son doute : « présence d'une calcification ponctiforme focale d'un pilier mitral (artéfact ?) »" },
+  { k:"caviteNonIdentifiable", l:"Cavite d'origine non identifiable sur la coupe" },
+  { k:"trabeculesGrossieres", l:"Trabeculations grossieres sur la coupe" },
+  { k:"trabeculesFines", l:"Trabeculations tres fines sur la coupe" },
+  { k:"cavitesEffondrees", l:"Cavites effondrees ou deformees par la fixation" },
+  { k:"hemorragieIntraVentriculaire", l:"Hemorragie intra-ventriculaire" }
+];
+
+// Aucun de ces libelles n'est cochable. Ils se DEDUISENT des signes ci-dessus.
+var DIAGS = [
+  { k:"fee", l:"Fibro-elastose endocardique", cle:"endoLamellaire", min:2,
+    signes:["endoLamellaire","endoSansVascul","endoVG","endoPiliers","endoCellulaire"],
+    stop:" — l'epaisseur n'a pas de normale foetale etablie : le corpus donne « jusqu'à 1 mm » d'un cote et « up to several millimetres thick » de l'autre, sans les reconcilier. Un endocarde riche en cellules peut n'etre que jeune (« The younger the tissue, the more likely it is to be cellular. »). Surtout, la FEE est un phenotype, pas une cause : si la mitrale est atresique, « if the mitral valve is atretic, there is no endocardial fibroelastosis » — et le corpus decrit alors « un épaississement endocardique sans réelle fibro-élastose » dont « a very similar picture is seen ». Sans orceine ni trichrome, ne pas trancher entre fibrose et fibro-elastose." },
+  { k:"feeOG", l:"Epaississement endocardique de l'oreillette gauche — piege physiologique", cle:"coupeOG", min:1,
+    signes:["coupeOG","endoLamellaire","endoCellulaire","endoSansVascul"],
+    stop:" — dans l'oreillette gauche l'endocarde est NORMALEMENT plus epais : « The endocardium of the left atrium is thicker than that of the right atrium » et « the endocardium occupies nearly one-third of the thickness of the atrial wall ». « This should not be mistaken for a pathological change. » Ne pas ecrire de fibro-elastose sur une coupe d'OG sans un autre argument." },
+  { k:"nonCompaction", l:"Non-compaction du myocarde ventriculaire", cle:"trabeculesEpais", min:2,
+    signes:["trabeculesEpais","compacteMince","recessusEndocardes","cavitePresqueEpicarde","piliersMalDeveloppes"],
+    stop:" — « Non-compaction of the ventricular myocardium is a phenotypic expression and not a discrete disease » et « there is no evidence of persistence of the embryonic phenotype ». La morphogenese interdit le raisonnement naif : « Ventricular myocardial compaction is, thus, not a process by which trabeculated myocardium becomes compact », « The compacted layer forms by addition of cells to the outer aspect of the myocardium rather than fusion (compaction) of the trabeculae. » Aucun rapport trabecule/compact foetal seuille n'existe dans le corpus. Noter aussi qu'« There is often prominent endocardial fibroelastosis » : la FEE associee ne dement pas, elle accompagne." },
+  { k:"disarrayPatho", l:"Desorganisation myocytaire de siege anormal", min:2,
+    signes:["disarraySIV","disarrayLateral","hypertrophieMyocytaire","fibroseInterstitielle","disarrayAuriculaire"],
+    stop:" — le siege fait tout : « disarray should not be seen in the normal heart in the interventricular septum or lateral ventricular walls », mais la jonction paroi libre / septum est normalement desorganisee. Et le disarray n'est pas specifique d'une cause : « Other cases with identical hypertrophic phenotype, for example those caused by maternal diabetes or a mitochondrial disease, do not show significant disarray. » Le corpus oriente vers le prelevement plutot que vers l'etiquette : « where possible genetic material should be obtained at autopsy to permit gene screening »." },
+  { k:"fauxDisarray", l:"Desorganisation d'origine technique ou physiologique", min:1,
+    signes:["disarrayJonction","coupeOblique","caviteNonIdentifiable","cavitesEffondrees"],
+    stop:" — a ecarter AVANT toute lecture pathologique. Les fibres sont « organised as geodesic curves around toroid nested layers » et « The left is more regular while the right is distorted by the pulmonary infundibulum. » : une « oblique or tangential sectioning » fabrique un desordre qui n'existe pas." },
+  { k:"cmd", l:"Aspect de myocarde dilate", cle:"noyauxHyperchromatiques", min:2,
+    signes:["noyauxHyperchromatiques","myocytesEtires","piliersAmincis","foyersFibroseDissemines"],
+    stop:" — « Fetal myocarditis can be indistinguishable from dilated cardiomyopathy » ; les « multiple small foci of fibrosis scattered throughout the ventricles » et les « numerous mitotic figures in myocytes » se voient dans les deux. Chercher la necrose myocytaire au contact d'un infiltrat avant de retenir une cardiomyopathie." },
+  { k:"myocardite", l:"Myocardite", cle:"necroseMyocytaireFocale", min:2,
+    signes:["necroseMyocytaireFocale","infiltratMyocardique","neutrophilesPrecoces","phenotypeT","agentViral","microAbces"],
+    stop:" — la definition exige la necrose : « Myocarditis is defined as an inflammatory infiltrate of the myocardium with necrosis and/or degeneration of adjacent myocytes not typical of the ischemic injury associated with coronary artery disease. » et « Myocyte necrosis or damage must also be present for the diagnosis. » Le seuil quantitatif cite est « a value of > 14 leukocytes per mm² with > 7 T-cells per mm² », il suppose un phenotypage. Enfin « The histological features do not permit distinction between the various causes of myocarditis. » : ne pas nommer l'agent sur la morphologie." },
+  { k:"infiltratSansNecrose", l:"Infiltrat myocardique sans necrose — non concluant", min:1,
+    signes:["infiltratMyocardique","inflammationPolymorpheDiffuse","phenotypeT"],
+    stop:" — sans necrose myocytaire adjacente, la definition n'est pas remplie. Le corpus decrit une « discrète inflammation polymorphe post mortem diffuse » et une « inflammation de signification inconnue, mineure, probablement artéfactuelle ». Et si le tissu est macere : « In macerated myocardial tissues, lymphocytes can be nearly impossible to recognize » — l'infiltrat n'est alors ni present ni absent, il est illisible." },
+  { k:"lupus", l:"Atteinte du tissu de conduction", min:2,
+    signes:["fibroseNodale","calcificationNodale","perteMyocytesNodaux","pointePiliers","infiltratPauvre","infiltratSillonAV"],
+    stop:" — l'infiltrat manque souvent : « it is striking how frequently there is minimal inflammatory cell infiltration » et « remarkably little inflammatory cell infiltration ». Son absence ne dement rien. L'atteinte deborde le noeud : « not just of the conduction tissue, but also of much of the atrioventricular junction and the surrounding myocardium ». La lesion decrite est une « necrosis of myocardium with dystrophic calcification ». Si le noeud n'a pas ete retrouve, ecrire non explorable ; et rappeler qu'un remodelage nodal reste acceptable « without any evidence of active degeneration, necrosis, phagocytosis, inflammation, or replacement fibrosis »." },
+  { k:"ischemie", l:"Souffrance ischemique myocardique", cle:"myocytesHypereosinophiles", min:2,
+    signes:["myocytesHypereosinophiles","bandesContraction","oedemeIntercellulaire","dilatationCapillaire","necroseSousEndocardique","necroseRegionale","calcificationMyocardique"],
+    stop:" — la fenetre temporelle bride la lecture : « it takes up to 12 h following the ischemic insult for histological changes to appear » et l'infiltrat neutrophile n'arrive qu'avec une « infiltration by neutrophil polymorphs, usually by 12–24 hours ». Une ischemie recente ne laisse donc rien voir. Sur les bandes de contraction le corpus se contredit — « Contraction bands are frequently present. » contre « Contraction band necrosis is uncommon. » — divergence portee, non tranchee. La vulnerabilite de fond : « The heart is the organ with the highest oxygen consumption for its weight in the body »." },
+  { k:"necrosePM", l:"Necrose myocardique d'allure post-mortem", cle:"necrosePanDiffuse", min:1,
+    signes:["necrosePanDiffuse","inflammationPolymorpheDiffuse","cytoarchitecturePreservee"],
+    stop:" — a ecarter avant toute ischemie : le corpus ecrit « discrète nécrose pan myocardique post-mortem ». Ce qui separe l'ischemie de l'artefact, c'est le TERRITOIRE, pas l'intensite. Sur un foetus macere, l'immunohistochimie C9 peut trancher : « Immunohistochemistry for the C9 complement component may demonstrate myocyte damage at an earlier stage of its development than coagulative necrosis and may be used in macerated stillbirths. »" },
+  { k:"surcharge", l:"Surcharge myocytaire", cle:"vacuolisationEtendue", min:2,
+    signes:["vacuolisationEtendue","vacuolesSousEndocardiques","pasResistantDiastase","oilRedPositif","granulesEosinophiles","mitochondriesAnormales","inclusionsMyeliniques"],
+    stop:" — NE JAMAIS ECRIRE absence de vacuolisation myocytaire : la vacuolisation est physiologique chez le foetus, seule son etendue interroge — « If more extensive vacuolar change is seen, however, it is likely to represent pathologic change ». De meme « fat is a normal constituent of the cardiomyocyte » et « This should not be confused with a disorder of fatty acid oxidation. » ; une vacuolisation vue en contexte inflammatoire « is a frequent finding in myocarditis and should not be taken as evidence of an underlying metabolic abnormality. » Le corpus exige d'ecarter le reste : « Care should be taken to exclude … ischemia, cardiomyopathy, myocarditis, or a storage disorder. » Piege de coloration enfin : « les vacuoles ne prennent pas la coloration PAS ni PAS + amylase » sur un materiel deja fixe, et le corpus reclame un « PAS sur cœur normal » comme temoin." },
+  { k:"pompe", l:"Surcharge glycogenique de type II", min:2,
+    signes:["vacuolisationEtendue","pasResistantDiastase","vacuolesSousEndocardiques"],
+    stop:" — le critere cite est « vacuolar change in the myocytes with accumulation of glycogen » avec des inclusions dont « inclusions are PAS-positive and are partly resistant to diastase digestion ». Deux garde-fous negatifs : « Myocyte disarray and myocardial fibrosis are not found. » et « myocyte disarray is not prominent ». Un disarray franc doit faire reconsiderer." },
+  { k:"histiocytoide", l:"Cardiomyopathie histiocytoide", cle:"cellulesHistiocytoides", min:1,
+    signes:["cellulesHistiocytoides","nodulesMultiples","mitochondriesAnormales"],
+    stop:" — « rounded myocytes with finely vacuolated cytoplasm that resemble histiocytes ». Le piege est la confusion avec une tumeur : « Histiocytoid cardiomyopathy may cause confusion because of its multiple nodules, although the histology is quite distinct. » La microscopie electronique est ce qui separe." },
+  { k:"rhabdomyome", l:"Rhabdomyome", cle:"cellulesAraignee", min:2,
+    signes:["cellulesAraignee","noduleCirconscrit","nodulesMultiples","noduleUnique"],
+    stop:" — « well circumscribed within the myocardium », « composed of large cells with clear cytoplasm », « The nucleus is connected by strands of cytoplasm to the cell membrane, giving rise to so-called spider cells. » Le nombre change la portee : « If multiple, it is much more likely to be associated with tuberous sclerosis. » Un nodule UNIQUE n'autorise pas a evoquer une sclerose tubereuse." },
+  { k:"fibrome", l:"Fibrome cardiaque", min:2,
+    signes:["collageneFusiforme","noduleUnique","siegeSIV","calcificationTumorale"],
+    stop:" — « abundant collagen that contains uniform spindle cells » et « Calcification is common. » Ne pas se rassurer sur l'histologie : « despite their benign histology, they may have significant morbidity and even mortality »." },
+  { k:"teratome", l:"Teratome intrapericardique", min:1,
+    signes:["masseIntrapericardique","elementsTeratomateux"],
+    stop:" — une masse intrapericardique n'est pas une masse myocardique ; ne pas conclure sans plusieurs feuillets identifies." },
+  { k:"dysplasieValvulaire", l:"Dysplasie valvulaire", cle:"myxoideNodulaire", min:1,
+    signes:["myxoideNodulaire","valveEpaissie"],
+    stop:" — seul le caractere NODULAIRE fait sortir de la normale : « Fetal valve stroma is frequently focally myxoid in character, but nodular myxoid structures are considered a sign of valvular dysplasia. » ; une valve normale « may be rather myxoid, but should not be nodular ». C'est l'un des rares apports reels de l'histologie ici : « Histology is useful in confirming abnormality in some cases, e.g. dysplasia of a valve »." },
+  { k:"pericardite", l:"Atteinte pericardique", min:2,
+    signes:["pericarditeFibrine","pericardeFibrose","amasEosinoPericarde","hemorragiePericarde"],
+    stop:" — « The pericardium has a very restricted repertoire of reactions to injury » : l'aspect ne designe pas la cause. Et l'atteinte pericardique peut tromper sur l'essentiel — « and may overshadow the myocardial involvement ». Un liquide abondant chez un macere n'est pas un epanchement : « in macerated fetuses, it may contain abundant serosanguineous fluid » ; « A small amount of fluid is a feature of the normal pericardial sac »." },
+  { k:"calcificationArterielle", l:"Calcification arterielle", min:2,
+    signes:["calcificationElastique","proliferationIntimale","coronairesDilatees"],
+    stop:" — « deposition of calcium in and between the elastic laminae » avec « There is associated fibrous intimal proliferation which may be quite striking. » Ne pas confondre avec les epaississements intimaux normaux de fin de grossesse : « small areas of intimal thickening with some disruption of the underlying internal elastic lamina are present even in late fetal life »." },
+  { k:"dysplasieFibromusculaire", l:"Dysplasie fibromusculaire arterielle", cle:"paroiDesorganisee", min:1,
+    signes:["paroiDesorganisee","proliferationIntimale","thromboseCoronaire"],
+    stop:" — « disorganisation of the elements of the vascular wall with irregular thinning and thickening of the wall and encroachment on the lumen », mais « It is likely that fibromuscular dysplasia is not a single entity but rather a phenotype indicating a limited range of responses of the arterial wall to injury. » Et le faux positif est prevu : « Even in the normal heart, the intramural arteries located in the papillary muscles of the atrioventricular valves may show minor dysplastic features. » — le corpus ecrit ailleurs « may show minor dysplastic features » pour la meme situation." },
+  { k:"gesteKcl", l:"Lesion en rapport avec le geste de foeticide", cle:"pointPonction", min:1,
+    signes:["pointPonction","calcificationPilier","hemorragieIntraVentriculaire"],
+    stop:" — « If there has been feticide by injection of potassium chloride into the heart, the fatal puncture site in the epicardium is frequently visible at post-mortem. » Les alterations peuvent « mimic maceration changes » : ne pas les lire comme un delai. Reciproquement « KCl injection may not be applied directly into the heart » — l'absence de point de ponction ne dement pas le geste. La calcification d'un pilier reste douteuse dans le corpus lui-meme : « présence d'une calcification ponctiforme focale d'un pilier mitral (artéfact ?) »." },
+  { k:"identificationCavite", l:"Identification de la cavite par les trabeculations", min:1,
+    signes:["trabeculesGrossieres","trabeculesFines","caviteNonIdentifiable"],
+    stop:" — outil d'orientation, pas un diagnostic. « Les parois ventriculaires comportent des trabéculations grossières, caractéristiques d'un ventricule de type droit » ; « Le VG se caractérise par l'extrême finesse des trabéculations » ; « Si l'examen des valves AV est douteux, la comparaison des trabéculations tranchera. »" },
+  { k:"blocInexploitable", l:"Bloc non concluant", min:2,
+    signes:["caviteNonIdentifiable","cavitesEffondrees","coupeOblique","nodalIntrouvable"],
+    stop:" — rien de coche ne veut pas dire absent : ca veut dire non regarde. Un bloc mal oriente ou effondre ne produit pas de negatif ; ecrire non explorable et redemander une coupe." }
+];
+
+var NEGATIFS = [
+  { k:"lyse", l:"Absence de perte de basophilie nucléaire des différents viscères",
+    p:"« Absence de perte de basophilie nucléaire des différents viscères » ; le CR alternatif du corpus ecrit « absence de rétention, la basophilie nucléaire est présente dans tous les tissus »",
+    ko:"Perte de basophilie constatee — ne pas ecrire ce negatif, renseigner le bloc retention." },
+  { k:"cytoarchitecture", l:"Cytoarchitecture normale",
+    p:"« Cytoarchitecture normale » ; « Leur morphologie est normale, notamment celle des cardiomyocytes »",
+    ko:"Cytoarchitecture alteree ou illisible — ecrire non interpretable, pas normale." },
+  { k:"septation", l:"Septation complete, absence de communication interventriculaire",
+    p:"« Sur lame, le cœur possède un septum intègre » ; « Sur lames, le cœur présente 4 cavités normales, absence de CIV » ; « la septation est complète »",
+    ko:"Septum non transillumine : une CIV musculaire punctiforme se manque sur lame. « Si l'examen du cœur n'a décelé aucun défect, on ne peut plus désormais parler de cœur normal sans pratiquer une coupe complémentaire »" },
+  { k:"situs", l:"Coeur en situs solitus",
+    p:"« Le cœur est en situs solitus »",
+    ko:"Situs non determinable sur ce materiel. Rappel : « in the atria it is possible to develop isomerism – it is impossible for this to occur in the ventricles »" },
+  { k:"equilibre", l:"Bon equilibre des cavites droite et gauche",
+    p:"« bon équilibre des cavités droite et gauche » ; le CR l'ecrit aussi « équilibre ventriculaire »",
+    ko:"Sans coupe quatre cavites, l'equilibre ne se juge pas. Et la reference est asymetrique : « The fetal heart shows right-sided dominance with up to two-thirds of cardiac output going through the right ventricle »" },
+  { k:"hypertrophie", l:"Absence d'hypertrophie",
+    p:"« Absence d'hypertrophie »",
+    ko:"Aucune normale de paroi ventriculaire foetale par terme n'est disponible dans le corpus ; ne pas ecrire ce negatif sur une mesure isolee." },
+  { k:"compaction", l:"Compaction ventriculaire normale",
+    p:"« compaction ventriculaire normale » ; le CR ecrit aussi « bonne compaction »",
+    ko:"Aucun seuil trabecule/compact foetal n'existe dans le corpus : ce negatif ne se soutient que d'une impression d'ensemble, le dire." },
+  { k:"endocarde", l:"Endocarde normal",
+    p:"« endocarde normal » ; « Cytoarchitecture normale, équilibre ventriculaire, bonne compaction, endocarde normal »",
+    ko:"Sans orceine ni trichrome, l'HES ne distingue pas fibrose et fibro-elastose : ecrire non evalue." },
+  { k:"fibrose", l:"Absence de fibro-elastose endocardique et de fibrose",
+    p:"« absence de fibroélastose endocardique » ; « absence de fibrose »",
+    ko:"Meme reserve de coloration ; et sur l'oreillette gauche l'endocarde est normalement epais, la lecture y change de sens." },
+  { k:"inflammation", l:"Absence d'inflammation",
+    p:"« absence d'inflammation »",
+    ko:"« In macerated myocardial tissues, lymphocytes can be nearly impossible to recognize » — ecrire indeterminable, jamais absence d'inflammation." },
+  { k:"necroseMyocytaire", l:"Absence de necrose myocytaire significative",
+    p:"le corpus n'ecrit ce negatif qu'apres avoir ecarte la « discrète nécrose pan myocardique post-mortem »",
+    ko:"Une necrose est vue : preciser d'abord si elle est territoriale ou diffuse avant toute lecture." },
+  { k:"coronaires", l:"Coronaires sans particularite, absence de thrombose",
+    p:"« Les coronaires sont sans particularité » ; « Absence de thrombose coronaire »",
+    ko:"Coronaires non individualisees sur les coupes disponibles — non explorees." },
+  { k:"hemorragieIV", l:"Absence d'hemorragie intra-ventriculaire",
+    p:"« il n'y a pas d'hémorragie intra-ventriculaire »",
+    ko:"Cavites effondrees ou lavees : l'absence n'est pas demontrable." },
+  { k:"surcharge", l:"Absence de surcharge des autres visceres",
+    p:"« absence de surcharge d'autres viscères (cœur…) » ; « PAS et trichrome vert de Gomori sur muscle et cœur sans particularité »",
+    ko:"Ne jamais formuler ce negatif comme une absence de vacuolisation myocytaire : la vacuolisation est physiologique. Et « les vacuoles ne prennent pas la coloration PAS ni PAS + amylase » sur certains materiels — sans « PAS sur cœur normal » comme temoin, la negativite n'est pas interpretable." },
+  { k:"viral", l:"Absence d'agent viral demontre",
+    p:"le corpus ne le documente qu'apres technique : « Parvovirus may be demonstrated in myocyte nuclei by in situ hybridisation or immunohistochemistry »",
+    ko:"Aucune technique virale realisee — ecrire non recherche, pas absent." },
+  { k:"lymphatique", l:"Absence de proliferation lymphatique",
+    p:"« sur muscle, tube digestif, cœur, absence de prolifération lymphatique »",
+    ko:"Sans marquage endothelial lymphatique, ce negatif est morphologique seulement." },
+  { k:"valves", l:"Stroma valvulaire myxoide non nodulaire",
+    p:"« stroma valvulaire myxoïde non nodulaire » ; le caractere focalement myxoide est normal, seul le nodule sort de la norme",
+    ko:"Valves non vues en coupe : non explorees." },
+  { k:"conduction", l:"Tissu nodal sans lesion evolutive",
+    p:"formulation acceptable seulement au sens du corpus : « without any evidence of active degeneration, necrosis, phagocytosis, inflammation, or replacement fibrosis »",
+    ko:"Noeud non retrouve, ou jonction VCS / OD entamee au prelevement : « cutting this area risks loss of landmarks should it become necessary to examine the node ». Ecrire non explorable." }
+];
+
+var TECHNIQUES = [
+  { k:"orceine",     l:"Orceine",                                q:"Les lames elastiques de l'endocarde et des arteres sont-elles individualisees ?" },
+  { k:"tvma",        l:"Trichrome vert lumiere / TVMA",          q:"La composante collagene est-elle distinguee de la composante elastique ?" },
+  { k:"masson",      l:"Trichrome de Masson",                    q:"La fibrose de remplacement du tissu nodal est-elle visible ?" },
+  { k:"sma",         l:"Actine musculaire lisse",                q:"Les myocytes nodaux residuels sont-ils reperables ?" },
+  { k:"c9",          l:"Immunohistochimie C9 du complement",     q:"Y a-t-il une souffrance myocytaire plus precoce que la necrose de coagulation ? (utilisable sur macere)" },
+  { k:"vonKossa",    l:"Von Kossa",                              q:"Les depots calciques sont-ils confirmes, et ou siegent-ils ?" },
+  { k:"pas",         l:"PAS et PAS + diastase",                  q:"Le materiel intracytoplasmique est-il PAS positif et resistant a la diastase ? Un temoin de coeur normal est-il passe ?" },
+  { k:"oilRedO",     l:"Oil red O sur coupe a congelation",      q:"Une surcharge lipidique est-elle visible au-dela du contenu graisseux normal du cardiomyocyte ?" },
+  { k:"enzymes",     l:"Enzymes oxydatives sur coupe congelee",  q:"Les enzymes oxydatives sont-elles diminuees ?" },
+  { k:"met",         l:"Microscopie electronique",               q:"Les mitochondries et les inclusions sont-elles anormales ?" },
+  { k:"gomori",      l:"Trichrome vert de Gomori",               q:"Y a-t-il des fibres rouges deguenillees sur le muscle associe ?" },
+  { k:"phenotypage", l:"Phenotypage lymphocytaire",              q:"L'infiltrat depasse-t-il le seuil de T par mm² retenu pour la myocardite ?" },
+  { k:"viral",       l:"Hybridation in situ ou immunohistochimie virale", q:"Un genome viral est-il present dans les noyaux myocytaires ?" },
+  { k:"cd34",        l:"Marquage endothelial",                   q:"La densite et la nature des vaisseaux sont-elles precisees ?" },
+  { k:"perls",       l:"Perls",                                  q:"Une surcharge en fer est-elle presente ?" },
+  { k:"caryotype",   l:"Caryotype",                              q:"Le caryotype a-t-il ete demande, y compris en cas de maceration ?" },
+  { k:"genetique",   l:"Materiel congele pour etude genetique",  q:"Du materiel a-t-il ete conserve pour un criblage genique ?" }
+];
+
+function suggerer(){
+  var S = E.signes, N = E.negatifs, P = E.prelev, M = E.mesure, o = {};
+  function a(k){ return S[k] === "anormal"; }
+  function mettre(){ for (var i = 0; i < arguments.length; i++) o[arguments[i]] = 1; }
+
+  if (a("endoLamellaire") || a("endoSansVascul") || a("endoVG") || a("endoPiliers") ||
+      a("endoBiventriculaire") || a("endoFocalPeriLesionnel") || a("endoCellulaire")) mettre("orceine","tvma");
+  if (a("trabeculesEpais") || a("compacteMince") || a("cavitePresqueEpicarde")) mettre("orceine","tvma");
+
+  if (a("fibroseNodale") || a("perteMyocytesNodaux") || a("nodalIntrouvable") ||
+      a("infiltratSillonAV") || a("pointePiliers")) mettre("masson","sma");
+  if (a("calcificationNodale") || a("calcificationPilier") || a("calcificationMyocardique") ||
+      a("calcificationElastique") || a("calcificationTumorale")) mettre("vonKossa");
+
+  if (a("myocytesHypereosinophiles") || a("bandesContraction") || a("necroseSousEndocardique") ||
+      a("necroseRegionale") || a("necrosePanDiffuse")) mettre("c9");
+
+  if (a("vacuolisationEtendue") || a("vacuolesSousEndocardiques") || a("granulesEosinophiles")) mettre("pas","oilRedO","met");
+  if (a("pasResistantDiastase")) mettre("pas","met");
+  if (a("mitochondriesAnormales") || a("inclusionsMyeliniques")) mettre("met","enzymes","gomori");
+  if (a("cellulesHistiocytoides")) mettre("met");
+
+  if (a("infiltratMyocardique") || a("neutrophilesPrecoces") || a("microAbces") ||
+      a("inflammationPolymorpheDiffuse")) mettre("phenotypage");
+  if ((a("necroseMyocytaireFocale") && a("infiltratMyocardique")) || a("agentViral")) mettre("viral");
+
+  if (a("disarraySIV") || a("disarrayLateral") || a("disarrayAuriculaire") || a("hypertrophieMyocytaire")) mettre("genetique","caryotype");
+  if (a("noduleCirconscrit") || a("nodulesMultiples") || a("cellulesAraignee") ||
+      a("collageneFusiforme") || a("elementsTeratomateux")) mettre("caryotype");
+
+  if (a("proliferationIntimale") || a("paroiDesorganisee") || a("thromboseCoronaire") ||
+      a("coronairesDilatees")) mettre("orceine");
+  if (a("myocytesEtires") || a("foyersFibroseDissemines")) mettre("masson","cd34");
+
+  if (N.surcharge === "present") mettre("perls","pas");
+  if (N.viral === "present") mettre("viral");
+  if (N.conduction === "present") mettre("masson");
+
+  if (P.congele && Object.keys(S).some(function(k){ return S[k] === "anormal"; })) mettre("genetique");
+  if (M.opt === "hes" && M.v && M.v.endo) mettre("orceine","tvma");
+  return o;
+}
+
+async function testsOrgane(chk, clic, set, crTient, pause){
+  function pose(k, v){ if (E.signes[k] !== v) clic("les", k, v); }
+  function ote(k){ if (E.signes[k]) clic("les", k, E.signes[k]); }
+  function propre(){ SIGNES.forEach(function(s){ ote(s.k); }); }
+  function tenue(k){ return associations().some(function(a){ return a.d.k === k && a.tenu; }); }
+  function lue(k){ return associations().some(function(a){ return a.d.k === k; }); }
+  function vidRet(){ RETENTION.forEach(function(r){ if (E.retention[r.k]) clic("ret", r.k); }); }
+  function vidMes(){ MESURE.champs.forEach(function(c){ set("m_" + c.id, ""); }); }
+
+  /* — le banc n'est pas propre en entrant : le shell a laisse DIAGS[0].signes[0] anormal */
+  propre();
+
+  /* 1. organe impair */
+
+  /* 2. retention : la borne haute recevable gagne */
+  vidRet();
+  clic("ret", "basoInterneVG");
+  chk("24 h : borne lue", $("vRetention").textContent.indexOf("Rétention 24 h et plus") >= 0);
+  chk("24 h : divergence FOETO portee", $("vRetention").textContent.indexOf("4—12 h") >= 0);
+  clic("ret", "basoDeuxMoities");
+  chk("48 h prime sur 24 h", $("vRetention").textContent.indexOf("Rétention 48 h et plus") >= 0);
+  vidRet();
+  clic("ret", "bandeService2a4");
+  chk("bande 2 a 4 semaines : divergence citee",
+      $("vRetention").textContent.indexOf("aucun organe fœtal donnant une bonne estimation") >= 0);
+  vidRet();
+  clic("ret", "necrosePanPM");
+  clic("ret", "lymphoEfface");
+  chk("predicteurs mauvais seuls : aucune borne",
+      $("vRetention").textContent.indexOf("aucune borne recevable") >= 0);
+  vidRet();
+  clic("ret", "cytoarchitectureTient");
+  vidRet();
+  clic("kcl", "kcl");
+  chk("KCl : point de ponction attendu, pas un signe",
+      $("vRetention").textContent.indexOf("ATTENDUE") >= 0);
+  clic("kcl", "kcl");
+
+  /* 3. pas d'echelle de maturation cardiaque */
+  chk("titre de stade : pas d'echelle", /n'a pas d'echelle de maturation/.test(STADE_TITRE));
+  chk("le retard renvoie a l'asymetrie, pas au terme", /ASYMETRIE/.test(RETARD_NOTE));
+  chk("aucun CR du corpus n'ecrit de stade cardiaque",
+      /Aucun CR du corpus n'ecrit de stade de maturation cardiaque/.test(RETARD_NOTE));
+  set("sa", "24");
+  clic("stade", "septation");
+  chk("repere date discordant : la reserve de fond s'affiche",
+      $("vMaturation").textContent.indexOf("pas d'echelle de maturation") >= 0);
+
+  /* 4. mesures parietales */
+  vidMes();
+  set("m_vg", "720");
+  chk("paroi isolee refusee", verdictMesure().cls === "bad");
+  set("m_vd", "370");
+  chk("rapport calcule", verdictMesure().txt.indexOf("rapport VG/VD = 1.95") >= 0);
+  chk("aucune normale de paroi par terme",
+      verdictMesure().txt.indexOf("Normale par terme non etablie") >= 0);
+  chk("jamais hypoplasie ni hypertrophie sur ces chiffres",
+      verdictMesure().txt.indexOf("hypoplasie ni hypertrophie") >= 0);
+  chk("dominance droite rappelee",
+      verdictMesure().txt.indexOf("two-thirds of cardiac output") >= 0);
+  vidMes();
+  set("m_endo", "1000");
+  clic("mopt", "hes");
+  chk("HES seul : reserve de coloration",
+      verdictMesure().txt.indexOf("ne distingue pas fibrose et fibro-elastose") >= 0);
+  clic("mopt", "hes");
+  clic("mopt", "duo");
+  chk("orceine + trichrome leve la reserve de coloration",
+      verdictMesure().txt.indexOf("ne distingue pas fibrose et fibro-elastose") < 0);
+  clic("mdef", "og");
+  chk("endocarde mesure dans l'OG : piege physiologique", verdictMesure().cls === "bad");
+  chk("OG : ne pas prendre pour une lesion",
+      verdictMesure().txt.indexOf("should not be mistaken for a pathological change") >= 0);
+  clic("mdef", "og");
+  clic("mdef", "vg");
+  set("m_ratio", "3");
+  chk("aucun seuil trabecule/compact foetal",
+      verdictMesure().txt.indexOf("aucun seuil foetal") >= 0);
+  chk("la compaction n'est pas une fusion des trabecules",
+      verdictMesure().txt.indexOf("rather than fusion") >= 0);
+  vidMes();
+  clic("mdef", "vg");
+  clic("mopt", "duo");
+
+  /* 5. endocarde : fibro-elastose et son piege auriculaire */
+  propre();
+  pose("endoLamellaire", "anormal");
+  pose("endoVG", "anormal");
+  chk("fibro-elastose tenue sur deux signes", tenue("fee"));
+  chk("orceine et trichrome suggeres", !!suggerer().orceine && !!suggerer().tvma);
+  pose("coupeOG", "anormal");
+  chk("la coupe d'OG s'affiche a cote de la fibro-elastose", lue("feeOG"));
+  ote("coupeOG");
+
+  /* 6. disarray : le siege fait tout */
+  propre();
+  pose("disarrayJonction", "anormal");
+  pose("coupeOblique", "anormal");
+  chk("disarray de jonction : jamais une desorganisation anormale", !tenue("disarrayPatho"));
+  chk("disarray de jonction : lu comme technique ou physiologique", tenue("fauxDisarray"));
+  pose("disarraySIV", "anormal");
+  pose("hypertrophieMyocytaire", "anormal");
+  chk("septum + hypertrophie : desorganisation de siege anormal", tenue("disarrayPatho"));
+
+  /* 7. myocardite : le pivot est la necrose, pas l'infiltrat */
+  propre();
+  pose("infiltratMyocardique", "anormal");
+  pose("neutrophilesPrecoces", "anormal");
+  chk("infiltrat seul : myocardite non tenue", !tenue("myocardite"));
+  chk("infiltrat seul : lu comme non concluant", tenue("infiltratSansNecrose"));
+  pose("necroseMyocytaireFocale", "anormal");
+  chk("necrose myocytaire : myocardite tenue", tenue("myocardite"));
+  chk("CR : la necrose est exigee par la definition",
+      crTient("must also be present for the diagnosis"));
+
+  /* 8. conduction */
+  propre();
+  pose("fibroseNodale", "anormal");
+  pose("calcificationNodale", "anormal");
+  pose("infiltratPauvre", "anormal");
+  chk("atteinte du tissu de conduction lue", tenue("lupus"));
+  chk("l'infiltrat pauvre ne dement pas",
+      crTient("minimal inflammatory cell infiltration"));
+
+  /* 9. ischemie contre artefact post-mortem */
+  propre();
+  pose("necrosePanDiffuse", "anormal");
+  pose("cytoarchitecturePreservee", "anormal");
+  chk("necrose diffuse lue d'abord comme post-mortem", tenue("necrosePM"));
+  chk("C9 utilisable sur macere", crTient("may be used in macerated stillbirths"));
+  chk("C9 suggere", !!suggerer().c9);
+  propre();
+  pose("myocytesHypereosinophiles", "anormal");
+  pose("necroseRegionale", "anormal");
+  chk("necrose territoriale : souffrance ischemique", tenue("ischemie"));
+
+  /* 10. surcharge : la vacuolisation est physiologique */
+  propre();
+  pose("vacuolisationEtendue", "anormal");
+  pose("pasResistantDiastase", "anormal");
+  chk("surcharge lue", tenue("surcharge"));
+  chk("jamais absence de vacuolisation myocytaire",
+      crTient("NE JAMAIS ECRIRE absence de vacuolisation myocytaire"));
+  chk("PAS et Oil red O suggeres", !!suggerer().pas && !!suggerer().oilRedO);
+
+  /* 11. masses */
+  propre();
+  pose("cellulesAraignee", "anormal");
+  pose("noduleUnique", "anormal");
+  chk("un nodule unique n'evoque pas la sclerose tubereuse",
+      crTient("If multiple, it is much more likely to be associated with tuberous sclerosis"));
+
+  /* 12. valves */
+  propre();
+  pose("valveEpaissie", "anormal");
+  chk("valve epaissie seule : dysplasie non tenue", !tenue("dysplasieValvulaire"));
+  pose("myxoideNodulaire", "anormal");
+  chk("seul le myxoide NODULAIRE fait la dysplasie", tenue("dysplasieValvulaire"));
+
+  /* 13. bloc non concluant */
+  propre();
+  pose("caviteNonIdentifiable", "anormal");
+  pose("cavitesEffondrees", "anormal");
+  chk("la phrase du non regarde est ecrite",
+      crTient("rien de coche ne veut pas dire absent : ca veut dire non regarde"));
+
+  /* 14. anti-invention */
+  chk("aucun grade cardiaque invente",
+      SIGNES.concat(DIAGS).every(function(x){ return !/grade|stade/i.test(x.l); }));
+  chk("les mitoses restent une variante", !par(SIGNES, "mitoses") && !!par(VARIANTES, "mitoses"));
+  chk("aucun bouton ne porte un diagnostic",
+      DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
+  chk("aucune page citee",
+      !/\bp\.\s?\d|\bpage\s\d/i.test(JSON.stringify([PRELEV, RETENTION, STADES, SIGNES, DIAGS, NEGATIFS, TECHNIQUES])));
+
+  propre();
+  vidRet();
+  set("sa", "30");
+}
+
+/* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
+var FOETO = {"sections":[{"t":"5.1 Fibroélastose endocardique (FEE)","termes":[{"id":"FOETO:PF.COE-RET-009","l":"Fibro-élastose endocardique"},{"id":"FOETO:PF.COE-CLA-003","l":"Fibrose endocardique"},{"id":"FOETO:PF.COE-MET-014","l":"Fibrose endomyocardique (fibroélastose endocardique)"},{"id":"FOETO:PF.COE-MAL-062","l":"Fibroélastose endocardique"},{"id":"FOETO:PF.COE-MAL-063","l":"Fibroélastose endocardique du ventricule gauche (cœur gauche hypoplasique)"}]},{"t":"5.10 Péricarde","termes":[{"id":"FOETO:PF.COE-MAL-042","l":"Défect congénital du péricarde pariétal"},{"id":"FOETO:PF.COE-MAL-049","l":"Exsudat péricardique hémorragique"},{"id":"FOETO:PF.COE-MAL-077","l":"Hémopéricarde"},{"id":"FOETO:PF.COE-MAL-088","l":"Kyste mésothélial du péricarde"}]},{"t":"5.11 Coronaires et vaisseaux","termes":[{"id":"FOETO:PF.COE-MET-006","l":"Calcification artérielle idiopathique (myocarde et artères)"},{"id":"FOETO:PF.COE-MAL-013","l":"Calcification de la limitante élastique interne artérielle"},{"id":"FOETO:PF.COE-RET-008","l":"Dysplasie fibromusculaire artérielle coronarienne"},{"id":"FOETO:PF.COE-MAL-036","l":"Dysplasie fibromusculaire coronaire"},{"id":"FOETO:PF.COE-DYS-007","l":"Dépôt de calcium et de fer intramyocytaire"},{"id":"FOETO:PF.COE-MAL-058","l":"Fibrose murale coronaire avec calcification pariétale"},{"id":"FOETO:PF.COE-MAL-108","l":"Prolifération intimale cellulaire coronaire avec calcification"},{"id":"FOETO:PF.COE-RET-021","l":"Prolifération intimale coronarienne"},{"id":"FOETO:PF.COE-MET-028","l":"Prolifération intimale des artères coronaires avec cellules vacuolisées"},{"id":"FOETO:PF.COE-MET-029","l":"Prolifération intimale fibroblastique oblitérante des artères coronaires"},{"id":"FOETO:PF.COE-RET-024","l":"Thrombose de l'artère coronaire"},{"id":"FOETO:PF.COE-MAL-126","l":"Thrombose luminale coronaire"},{"id":"FOETO:PF.COE-VAS-006","l":"Thrombose microvasculaire coronarienne"},{"id":"FOETO:PF.COE-MAL-143","l":"Épaississement concentrique lamellaire fibroélastique des artères coronaires (atrésie pulmonaire)"}]},{"t":"5.12 La frontière micro / macro — la cardiopathie congénitale ne se diagnostique pas sur la lame","termes":[{"id":"FOETO:PF.COE-DYS-022","l":"Valve myxoïde et nodulaire (valve dysplasique)"}]},{"t":"5.2 Non-compaction ventriculaire","termes":[{"id":"FOETO:PF.COE-MAL-099","l":"Non-compaction du myocarde ventriculaire"},{"id":"FOETO:PF.COE-RET-025","l":"Trabéculations myocardiques excessives"}]},{"t":"5.3 Cardiomyopathie hypertrophique et disarray myocytaire","termes":[{"id":"FOETO:PF.COE-DYS-008","l":"Désorganisation des myocytes (disarray)"},{"id":"FOETO:PF.COE-MET-013","l":"Désorganisation des myocytes cardiaques (disarray myocytaire)"},{"id":"FOETO:PF.COE-TUM-006","l":"Désorganisation des myocytes cardiaques (disarray)"},{"id":"FOETO:PF.COE-MAL-046","l":"Désorganisation myocytaire (disarray) du myocarde ventriculaire droit"},{"id":"FOETO:PF.COE-MAL-047","l":"Désorganisation myocytaire du ventricule gauche hypoplasique"},{"id":"FOETO:PF.COE-DYS-013","l":"Hypertrophie des myocytes cardiaques"},{"id":"FOETO:PF.COE-NOR-034","l":"Hypertrophie myocardique biventriculaire"},{"id":"FOETO:PF.COE-MAL-071","l":"Hypertrophie myocardique pariétale ventriculaire"},{"id":"FOETO:PF.COE-MAL-072","l":"Hypertrophie ventriculaire gauche"},{"id":"FOETO:PF.COE-MAL-073","l":"Hypertrophie ventriculaire gauche avec fibrose myocardique concentrique subendocardique"}]},{"t":"5.4 Cardiomyopathie dilatée","termes":[{"id":"FOETO:PF.COE-NOR-024","l":"Fibres myocardiques étirées et allongées"},{"id":"FOETO:PF.COE-MAL-053","l":"Fibrose des muscles papillaires"},{"id":"FOETO:PF.COE-DYS-009","l":"Fibrose interstitielle myocardique"},{"id":"FOETO:PF.COE-RET-010","l":"Fibrose myocardique"},{"id":"FOETO:PF.COE-CLA-006","l":"Fibrose myocardique cicatricielle"},{"id":"FOETO:PF.COE-MET-015","l":"Fibrose myocardique focale sans confluent nécrotique"},{"id":"FOETO:PF.COE-MET-017","l":"Hypertrophie des cardiomyocytes"},{"id":"FOETO:PF.COE-DYS-017","l":"Myocytes cardiaques étirés et ondulants"}]},{"t":"5.5 Myocardite","termes":[{"id":"FOETO:PF.COE-INF-002","l":"Inclusions intranucléaires dans les précurseurs érythroïdes myocardiques"},{"id":"FOETO:PF.COE-RET-017","l":"Nécrose myocytaire"}]},{"t":"5.6 Nécrose ischémique myocardique","termes":[{"id":"FOETO:PF.COE-NOR-004","l":"Bandes de contraction myocardiques"},{"id":"FOETO:PF.COE-MET-008","l":"Calcification myocardique"},{"id":"FOETO:PF.COE-VAS-001","l":"Dilatation capillaire myocardique"},{"id":"FOETO:PF.COE-INF-001","l":"Hyperéosinophilie des myocytes"},{"id":"FOETO:PF.COE-MAL-080","l":"Infarctus myocardique récent"},{"id":"FOETO:PF.COE-INF-004","l":"Infiltrat de polynucléaires neutrophiles dans le myocarde"},{"id":"FOETO:PF.COE-INF-007","l":"Margination des neutrophiles dans les capillaires myocardiques"},{"id":"FOETO:PF.COE-VAS-002","l":"Nécrose coagulative myocardique régionale"},{"id":"FOETO:PF.COE-VAS-003","l":"Nécrose des muscles papillaires"},{"id":"FOETO:PF.COE-DYS-019","l":"Nécrose ischémique sous-endocardique focale"},{"id":"FOETO:PF.COE-MAL-102","l":"Nécrose myocardique aiguë avec hémorragie (infarctus ventriculaire néonatal)"},{"id":"FOETO:PF.COE-VAS-005","l":"Nécrose sous-endocardique myocardique"},{"id":"FOETO:PF.COE-CLA-008","l":"Perte des noyaux des myocytes"},{"id":"FOETO:PF.COE-VAS-007","l":"Œdème interstitiel myocardique"}]},{"t":"5.7 Atteinte du tissu de conduction — lupus maternel / anti-Ro","termes":[{"id":"FOETO:PF.COE-MAL-014","l":"Calcification des muscles papillaires"},{"id":"FOETO:PF.COE-RET-002","l":"Calcification dystrophique myocardique"},{"id":"FOETO:PF.COE-CLA-002","l":"Fibrose de remplacement myocardique aux pointes des muscles papillaires"},{"id":"FOETO:PF.COE-MAL-054","l":"Fibrose et calcification des muscles papillaires de la valve mitrale (cœur gauche hypoplasique)"},{"id":"FOETO:PF.COE-CLA-007","l":"Nécrose myocardique avec calcification dystrophique"},{"id":"FOETO:PF.COE-VAS-004","l":"Nécrose myocardique sous-épicardique"},{"id":"FOETO:PF.COE-CLA-009","l":"Rupture du muscle papillaire"}]},{"t":"5.8 Surcharge métabolique — et la décision qui se prend à l'autopsie","termes":[{"id":"FOETO:PF.COE-MET-004","l":"Accumulation lipidique intramyocytaire (stéatose myocardique)"},{"id":"FOETO:PF.COE-RET-004","l":"Cellules histiocytoïdes myocardiques"},{"id":"FOETO:PF.COE-DYS-003","l":"Clairance périnucléaire et granules mitochondriaux myocytaires"},{"id":"FOETO:PF.COE-MET-016","l":"Fibrose myocardique méso-pariétale (couches moyennes du myocarde)"},{"id":"FOETO:PF.COE-MET-018","l":"Inclusions intracytoplasmiques PAS-positives résistantes à la diastase dans les myocytes"},{"id":"FOETO:PF.COE-MET-019","l":"Inclusions lamellaires lysosomales dans les cardiomyocytes (inclusions myélinoïdes)"},{"id":"FOETO:PF.COE-MET-021","l":"Mitochondries géantes dans les cardiomyocytes"},{"id":"FOETO:PF.COE-DYS-018","l":"Myocytes histiocytoïdes (cardiomyopathie histiocytoïde)"},{"id":"FOETO:PF.COE-MET-027","l":"Positivité PAS granulaire intense des cardiomyocytes (glycogène)"},{"id":"FOETO:PF.COE-MET-031","l":"Stéatose myocardique microvésiculaire"},{"id":"FOETO:PF.COE-MET-034","l":"Vacuolisation des myocytes cardiaques"}]},{"t":"5.9 Tumeurs","termes":[{"id":"FOETO:PF.COE-TUM-003","l":"Cellules en araignée (rhabdomyome)"},{"id":"FOETO:PF.COE-TUM-010","l":"Fibrome cardiaque"},{"id":"FOETO:PF.COE-RET-022","l":"Rhabdomyome cardiaque"},{"id":"FOETO:PF.COE-TUM-024","l":"Rhabdomyome cardiaque — aspect histologique"},{"id":"FOETO:PF.COE-TUM-029","l":"Tératome cardiaque"},{"id":"FOETO:PF.COE-TUM-031","l":"Éléments tissulaires immatures dans tératome"}]}],"formes":{"FOETO:PF.COE-MAL-001":["Absence de myocarde de la paroi libre du ventricule droit (anomalie d'Uhl)","Absence of right ventricular free wall myocardium (Uhl's anomaly)","(hors fiche)"],"FOETO:PF.COE-MET-001":["Accumulation cytoplasmique libre de glycogène dans les cardiomyocytes","Free cytoplasmic glycogen accumulation in cardiomyocytes","(hors fiche)"],"FOETO:PF.COE-MET-002":["Accumulation de glycogène dans les cellules musculaires lisses des coronaires","Glycogen accumulation in coronary artery smooth muscle cells","(hors fiche)"],"FOETO:PF.COE-MET-003":["Accumulation lipidique dans les cellules musculaires lisses vasculaires cardiaques","Lipid accumulation in cardiac vascular smooth muscle cells","(hors fiche)"],"FOETO:PF.COE-MET-005":["Accumulation lysosomale de glycogène dans les cardiomyocytes","Lysosomal glycogen accumulation in cardiomyocytes","(hors fiche)"],"FOETO:PF.COE-MAL-002":["Amincissement pariétal ventriculaire avec dilatation anévrismale","Ventricular wall thinning with aneurysmal bulging","(hors fiche)"],"FOETO:PF.COE-MAL-003":["Anévrisme coronaire thrombosé","Thrombosed coronary artery aneurysm","(hors fiche)"],"FOETO:PF.COE-RET-001":["Anévrisme coronarien","Coronary artery aneurysm","(hors fiche)"],"FOETO:PF.COE-MAL-004":["Anévrysme du canal artériel","Aneurysm of the arterial duct","(hors fiche)"],"FOETO:PF.COE-MAL-005":["Artère coronaire anomalique dilatée et à paroi mince","Dilated thin-walled anomalous coronary artery","(hors fiche)"],"FOETO:PF.COE-MAL-006":["Artérialisation des veines pulmonaires","Arterialisation of pulmonary veins","(hors fiche)"],"FOETO:PF.COE-MAL-007":["Artérite coronaire avec infiltrat inflammatoire sans nécrose fibrinoïde","Coronary arteritis without fibrinoid necrosis","(hors fiche)"],"FOETO:PF.COE-MAL-008":["Artérite coronaire nécrosante avec nécrose fibrinoïde","Necrotising coronary arteritis with fibrinoid necrosis","(hors fiche)"],"FOETO:PF.COE-MAL-009":["Aspect « excavé » du septum interventriculaire (AVSD)","Scooped-out interventricular septal crest (AVSD)","(hors fiche)"],"FOETO:PF.COE-MAL-010":["Atrophie de la media des artères pulmonaires musculaires (tétralogie de Fallot)","Tunica media atrophy of muscular pulmonary arteries (tetralogy of Fallot)","(hors fiche)"],"FOETO:PF.COE-MAL-011":["Atrésie pulmonaire à septum intact","Pulmonary atresia with intact ventricular septum","(hors fiche)"],"FOETO:PF.COE-MAL-012":["Atrésie pulmonaire à septum ouvert","Pulmonary atresia with ventricular septal defect","(hors fiche)"],"FOETO:PF.COE-DYS-002":["Augmentation des mastocytes interstitiels myocardiques","Increased interstitial myocardial mast cells","(hors fiche)"],"FOETO:PF.COE-TUM-001":["Axes avasculaires collagéneux recouverts d'endothélium (fibroélastome)","Avascular collagen cores covered by endothelium (fibroelastoma)","(hors fiche)"],"FOETO:PF.COE-MET-007":["Calcification coronarienne","Coronary artery calcification","(hors fiche)"],"FOETO:PF.COE-TUM-002":["Calcification dans tumeur cardiaque","Calcification in cardiac tumour","(hors fiche)"],"FOETO:PF.COE-MAL-015":["Calcification du conduit valvé (chirurgie cardiopathie congénitale)","Calcification of valved conduit (congenital heart disease surgery)","(hors fiche)"],"FOETO:PF.COE-MAL-016":["Calcification péricardique","Pericardial calcification","(hors fiche)"],"FOETO:PF.COE-MAL-017":["Canal atrio-ventriculaire complet","Complete atrioventricular septal defect","(hors fiche)"],"FOETO:PF.COE-MAL-018":["Canal atrio-ventriculaire partiel","Partial atrioventricular septal defect","(hors fiche)"],"FOETO:PF.COE-MAL-019":["Cardiopathie cono-truncale","Conotruncal cardiac defect","(hors fiche)"],"FOETO:PF.COE-MET-009":["Cellules claires dans les feuillets valvulaires cardiaques","Clear cells in cardiac valve leaflets","(hors fiche)"],"FOETO:PF.COE-TUM-004":["Cellules fusiformes myofibroblastiques avec infiltrat plasmocytaire","Myofibroblastic spindle cells with plasma cell infiltrate","(hors fiche)"],"FOETO:PF.COE-MAL-020":["Cellules géantes de Langhans dans le péricarde","Langhans giant cells in pericardium","(hors fiche)"],"FOETO:PF.COE-MAL-021":["Cellules mésothéliales réactives incluses dans la fibrose péricardique","Reactive mesothelial cell nests entrapped in pericardial fibrosis","(hors fiche)"],"FOETO:PF.COE-TUM-005":["Cellules stellaires en matrice myxoïde (myxome)","Stellate cells in myxoid matrix (myxoma)","(hors fiche)"],"FOETO:PF.COE-MAL-022":["Circulation coronaire anarchique","Anarchic coronary artery distribution","(hors fiche)"],"FOETO:PF.COE-MAL-023":["Communication inter-auriculaire de type ostium primum","Ostium primum atrial septal defect","(hors fiche)"],"FOETO:PF.COE-MAL-024":["Communication inter-auriculaire de type ostium secundum","Ostium secundum atrial septal defect","(hors fiche)"],"FOETO:PF.COE-MAL-025":["Communication inter-ventriculaire infundibulaire","Infundibular ventricular septal defect","(hors fiche)"],"FOETO:PF.COE-MAL-026":["Communication inter-ventriculaire périmembraneuse d'admission","Perimembranous inlet ventricular septal defect","(hors fiche)"],"FOETO:PF.COE-MAL-027":["Communication inter-ventriculaire périmembraneuse d'éjection","Perimembranous outlet ventricular septal defect","(hors fiche)"],"FOETO:PF.COE-MET-010":["Cristaux biréfringents intramyocardiques sous lumière polarisée","Birefringent crystals in myocardium under polarised light","(hors fiche)"],"FOETO:PF.COE-MAL-028":["Crête fibreuse sous-aortique (sténose sous-valvulaire aortique)","Subaortic fibrous shelf (subvalvar aortic stenosis)","(hors fiche)"],"FOETO:PF.COE-MAL-029":["Dilatation du sinus coronaire","Coronary sinus dilatation","(hors fiche)"],"FOETO:PF.COE-MAL-030":["Dilatation lymphatique péribroncho-vasculaire pulmonaire","Peribronchial lymphatic dilatation in pulmonary hypertension","(hors fiche)"],"FOETO:PF.COE-MAL-031":["Disposition parallèle des gros vaisseaux (transposition)","Parallel arrangement of great arteries (transposition)","(hors fiche)"],"FOETO:PF.COE-RET-005":["Dissection aortique avec déchirure intimale","Aortic dissection with intimal tear","(hors fiche)"],"FOETO:PF.COE-RET-006":["Dissection de l'artère coronaire","Coronary artery dissection","(hors fiche)"],"FOETO:PF.COE-RET-007":["Diverticule cardiaque congénital","Congenital cardiac diverticulum","(hors fiche)"],"FOETO:PF.COE-MAL-032":["Diverticulite de Kommerell — prolifération intimale et obstruction","Kommerell's diverticulum intimal proliferation and luminal obstruction","(hors fiche)"],"FOETO:PF.COE-MAL-033":["Double discordance (discordance atrio-ventriculaire et ventriculo-artérielle)","Congenitally corrected transposition of the great arteries","(hors fiche)"],"FOETO:PF.COE-MAL-034":["Dysplasie de la valve aortique (sténose aortique valvulaire)","Aortic valve dysplasia (valvar aortic stenosis)","(hors fiche)"],"FOETO:PF.COE-MAL-035":["Dysplasie de la valve pulmonaire (sténose pulmonaire)","Pulmonary valve dysplasia","(hors fiche)"],"FOETO:PF.COE-MAL-037":["Dysplasie polyvalvulaire","Polyvalvular dysplasia","(hors fiche)"],"FOETO:PF.COE-MAL-038":["Dysplasie valvulaire de la valve atrioventriculaire commune","Dysplasia of the common atrioventricular valve","(hors fiche)"],"FOETO:PF.COE-DYS-004":["Dysplasie valvulaire myxoïde","Myxoid valvular dysplasia","(hors fiche)"],"FOETO:PF.COE-DYS-005":["Dysplasie valvulaire — excrescence myxoïde nodulaire","Valvular dysplasia — nodular myxoid excrescence","(hors fiche)"],"FOETO:PF.COE-MAL-039":["Défaut septal interatrial de type ostium secundum","Secundum atrial septal defect","(hors fiche)"],"FOETO:PF.COE-MAL-040":["Défaut septal interventriculaire musculaire","Muscular ventricular septal defect","(hors fiche)"],"FOETO:PF.COE-MAL-041":["Défaut septal interventriculaire périmembraneux","Perimembranous ventricular septal defect","(hors fiche)"],"FOETO:PF.COE-DYS-006":["Dégénérescence kystique de la média aortique","Cystic medial degeneration of aorta","(hors fiche)"],"FOETO:PF.COE-MAL-043":["Dégénérescence vacuolaire des cellules musculaires lisses artérielles","Vacuolar degeneration of arterial smooth muscle cells","(hors fiche)"],"FOETO:PF.COE-MAL-044":["Déhiscence de patch de fermeture de CIV","Dehiscence of VSD closure patch","(hors fiche)"],"FOETO:PF.COE-CLA-001":["Dépôt de fibrine et infiltrat neutrophilique au site de perforation myocardique","Fibrin deposition and neutrophilic infiltrate at myocardial perforation site","(hors fiche)"],"FOETO:PF.COE-MET-011":["Dépôts d'oxalate de calcium intramyocardiques","Myocardial calcium oxalate deposits","(hors fiche)"],"FOETO:PF.COE-MET-012":["Dépôts sidérotiques intramyocytaires (hémosidérine/fer)","Intramyocyte siderotic deposits (iron/haemosiderin)","(hors fiche)"],"FOETO:PF.COE-MAL-045":["Désorganisation et séparation des lamelles élastiques aortiques (sténose supravalvulaire)","Disorganisation and separation of aortic elastic lamellae (supravalvar stenosis)","(hors fiche)"],"FOETO:PF.COE-MAL-048":["Embolie de l'artère coronaire","Coronary artery embolism","(hors fiche)"],"FOETO:PF.COE-TUM-007":["Envahissement cardiaque par tumeur secondaire","Cardiac involvement by secondary tumour","(hors fiche)"],"FOETO:PF.COE-TUM-008":["Espaces vasculaires en fente dans hémangiome cardiaque","Slit-like vascular channels in cardiac haemangioma","(hors fiche)"],"FOETO:PF.COE-TUM-009":["Excrescence cardiaque mésothéliale/monocytaire incidentelle (MICE)","Mesothelial/monocytic incidental cardiac excrescence (MICE)","(hors fiche)"],"FOETO:PF.COE-MAL-051":["Fermeture spontanée du défaut septal interventriculaire par fibrose","Spontaneous fibrous closure of ventricular septal defect","(hors fiche)"],"FOETO:PF.COE-MAL-052":["Fibrose adventitielle coronaire","Coronary artery adventitial fibrosis","(hors fiche)"],"FOETO:PF.COE-CLA-004":["Fibrose et calcification du tissu de conduction auriculo-ventriculaire","Fibrosis and calcification of atrioventricular conduction tissue","(hors fiche)"],"FOETO:PF.COE-MAL-055":["Fibrose interstitielle pulmonaire (hypertension veineuse)","Interstitial fibrosis of lung in pulmonary venous hypertension","(hors fiche)"],"FOETO:PF.COE-CLA-005":["Fibrose intimale aortique","Aortic intimal fibrosis","(hors fiche)"],"FOETO:PF.COE-MAL-056":["Fibrose intimale concentrique de l'anastomose prothétique (shunt de Blalock-Taussig)","Concentric intimal fibrosis at prosthetic shunt anastomosis (Blalock-Taussig shunt)","(hors fiche)"],"FOETO:PF.COE-MAL-057":["Fibrose intimale concentrique des artères pulmonaires","Concentric intimal fibrosis of pulmonary arteries","(hors fiche)"],"FOETO:PF.COE-MAL-059":["Fibrose myocardique diffuse avec survie sous-endocardique","Diffuse myocardial fibrosis with subendocardial survival","(hors fiche)"],"FOETO:PF.COE-TUM-011":["Fibrose myocardique intratumorale","Intratumoral myocardial fibrosis","(hors fiche)"],"FOETO:PF.COE-MAL-060":["Fibrose myocardique ischémique régionale","Regional ischaemic myocardial fibrosis","(hors fiche)"],"FOETO:PF.COE-MAL-061":["Fibrose péricardique dense constrictive","Dense constrictive pericardial fibrosis","(hors fiche)"],"FOETO:PF.COE-TUM-012":["Fibroélastome papillaire cardiaque","Papillary fibroelastoma of the heart","(hors fiche)"],"FOETO:PF.COE-MAL-064":["Fistules coronariennes dans l'atrésie pulmonaire à septum intact","Coronary artery fistulas in pulmonary atresia with intact septum","(hors fiche)"],"FOETO:PF.COE-MAL-065":["Follicules lymphoïdes dans le péricarde","Lymphoid follicles in pericardium","(hors fiche)"],"FOETO:PF.COE-MAL-066":["Foramen ovale perméable (persistant)","Patent foramen ovale","(hors fiche)"],"FOETO:PF.COE-RET-011":["Formation anévrismale ventriculaire","Ventricular aneurysm formation","(hors fiche)"],"FOETO:PF.COE-TUM-013":["Foyer myxoïde dans tumeur cardiaque","Myxoid focus in cardiac tumour","(hors fiche)"],"FOETO:PF.COE-DYS-011":["Fragmentation des lames élastiques aortiques","Elastic lamellae fragmentation in aortic wall","(hors fiche)"],"FOETO:PF.COE-TUM-014":["Hamartome de myocytes cardiaques matures","Hamartoma of mature cardiac myocytes","(hors fiche)"],"FOETO:PF.COE-MAL-068":["Herniation de tissu hépatique dans le péricarde","Hepatic tissue herniation into pericardium","(hors fiche)"],"FOETO:PF.COE-DYS-012":["Hyperplasie musculaire lisse endocardique","Endocardial smooth muscle hyperplasia","(hors fiche)"],"FOETO:PF.COE-MAL-069":["Hypertrophie de la média des artères pulmonaires musculaires","Medial hypertrophy of muscular pulmonary arteries","(hors fiche)"],"FOETO:PF.COE-MAL-070":["Hypertrophie de la tunique media coronaire","Coronary artery tunica media hypertrophy","(hors fiche)"],"FOETO:PF.COE-NOR-035":["Hypertrophie myocardique unilatérale (ventricule droit)","Right ventricular myocardial hypertrophy","(hors fiche)"],"FOETO:PF.COE-MAL-074":["Hypoplasie ventriculaire droite","Right ventricular hypoplasia","(hors fiche)"],"FOETO:PF.COE-MAL-075":["Hypoplasie ventriculaire gauche","Left ventricular hypoplasia","(hors fiche)"],"FOETO:PF.COE-TUM-015":["Hémangiome cardiaque","Cardiac haemangioma","(hors fiche)"],"FOETO:PF.COE-TUM-016":["Hémangiome cardiaque régressé","Regressed cardiac haemangioma","(hors fiche)"],"FOETO:PF.COE-MAL-076":["Hématome adventiciel de l'artère du canal artériel","Adventitial haematoma of the ductus arteriosus","(hors fiche)"],"FOETO:PF.COE-TUM-017":["Hématopoïèse extramédullaire dans tumeur cardiaque","Extramedullary haematopoiesis in cardiac tumour","(hors fiche)"],"FOETO:PF.COE-MAL-078":["Hémorragie intrapariétale artérielle coronaire","Coronary artery intramural haemorrhage","(hors fiche)"],"FOETO:PF.COE-MAL-079":["Hémorragie épicardique pétéchiale","Epicardial petechial haemorrhage","(hors fiche)"],"FOETO:PF.COE-DYS-014":["Inclusions myocytaires filamenteuses éosinophiles","Filamentous eosinophilic myocyte inclusions","(hors fiche)"],"FOETO:PF.COE-MET-020":["Inclusions polyglucosanes intramyocytaires cardiaques","Cardiac myocyte polyglucosan inclusions","(hors fiche)"],"FOETO:PF.COE-INF-003":["Inclusions virales à CMV dans les cardiomyocytes","Viral CMV inclusions in cardiomyocytes","(hors fiche)"],"FOETO:PF.COE-RET-013":["Infarctus myocardique hémorragique","Haemorrhagic myocardial infarction","(hors fiche)"],"FOETO:PF.COE-MAL-081":["Infiltrat inflammatoire chronique péricardique avec plasmocytes","Chronic inflammatory infiltrate of pericardium with plasma cells","(hors fiche)"],"FOETO:PF.COE-MAL-082":["Infiltrat inflammatoire neutrophilique péricardique","Neutrophilic inflammatory infiltrate of pericardium","(hors fiche)"],"FOETO:PF.COE-MAL-083":["Insertion linéaire des valves auriculo-ventriculaires sans défect","Linear insertion of atrioventricular valves without septal defect","(hors fiche)"],"FOETO:PF.COE-MAL-084":["Isomérisme auriculaire droit","Right atrial isomerism","(hors fiche)"],"FOETO:PF.COE-MAL-085":["Isomérisme auriculaire gauche","Left atrial isomerism","(hors fiche)"],"FOETO:PF.COE-MAL-086":["Jonction atrioventriculaire commune (AVSD)","Common atrioventricular junction","(hors fiche)"],"FOETO:PF.COE-MAL-087":["Juxtaposition auriculaire","Juxtaposition of atrial appendages","(hors fiche)"],"FOETO:PF.COE-MAL-089":["Kyste sanguin congénital de valvule cardiaque","Congenital blood cyst of cardiac valve","(hors fiche)"],"FOETO:PF.COE-TUM-018":["Lipoblastes à noyaux indentés dans tumeur cardiaque","Lipoblasts with indented nuclei in cardiac tumour","(hors fiche)"],"FOETO:PF.COE-TUM-019":["Lipoblastome cardiaque","Cardiac lipoblastoma","(hors fiche)"],"FOETO:PF.COE-TUM-020":["Lipome cardiaque","Cardiac lipoma","(hors fiche)"],"FOETO:PF.COE-TUM-021":["Lymphangiome cardiaque/péricardique","Cardiac/pericardial lymphangioma","(hors fiche)"],"FOETO:PF.COE-MAL-090":["Lymphangiome péricardique","Pericardial lymphangioma","(hors fiche)"],"FOETO:PF.COE-MAL-091":["Lésion de dilatation pulmonaire (angiomatoïde)","Dilatation and angiomatoid lesion of pulmonary artery","(hors fiche)"],"FOETO:PF.COE-MAL-092":["Lésion plexiforme pulmonaire","Plexiform lesion of pulmonary artery","(hors fiche)"],"FOETO:PF.COE-MAL-093":["Lésions plexiformes de l'hypertension pulmonaire","Plexiform lesions of pulmonary arterial hypertension","(hors fiche)"],"FOETO:PF.COE-MAL-094":["Macrophages alvéolaires chargés d'hémosidérine (hypertension veineuse pulmonaire)","Haemosiderin-laden alveolar macrophages in pulmonary venous hypertension","(hors fiche)"],"FOETO:PF.COE-MAL-095":["Maladie d'Ebstein","Ebstein anomaly","(hors fiche)"],"FOETO:PF.COE-TUM-022":["Marges interdigitantes tumeur-myocarde","Interdigitating tumour-myocardium margins","(hors fiche)"],"FOETO:PF.COE-MAL-096":["Muscularisation des artères intra-acinaires","Muscularisation of intra-acinar pulmonary arteries","(hors fiche)"],"FOETO:PF.COE-INF-008":["Myocardite virale à CMV","CMV viral myocarditis","(hors fiche)"],"FOETO:PF.COE-DYS-016":["Myocardite éosinophilique","Eosinophilic myocarditis","(hors fiche)"],"FOETO:PF.COE-TUM-023":["Myxome cardiaque","Cardiac myxoma","(hors fiche)"],"FOETO:PF.COE-MAL-097":["Médiolyse artérielle segmentaire coronaire","Segmental arterial mediolysis of coronary artery","(hors fiche)"],"FOETO:PF.COE-MAL-098":["Métaplasie osseuse pulmonaire (hypertension veineuse)","Osseous metaplasia of lung parenchyma in pulmonary venous hypertension","(hors fiche)"],"FOETO:PF.COE-MAL-100":["Nécrose caséeuse dans le péricarde","Caseous necrosis in pericardium","(hors fiche)"],"FOETO:PF.COE-MAL-101":["Nécrose fibrinoïde artérielle pulmonaire","Fibrinoid necrosis of pulmonary artery","(hors fiche)"],"FOETO:PF.COE-MAL-103":["Oblitération fibreuse de la lumière vasculaire pulmonaire","Fibrous obliteration of pulmonary arterial lumen","(hors fiche)"],"FOETO:PF.COE-MAL-104":["Occlusion myxoïde des veines pulmonaires (maladie veinopathie occlusive)","Myxoid occlusion of pulmonary veins (veno-occlusive disease)","(hors fiche)"],"FOETO:PF.COE-MAL-105":["Organisation fibreuse d'un exsudat fibrineux péricardique","Fibrous organisation of pericardial fibrinous exudate","(hors fiche)"],"FOETO:PF.COE-MET-022":["Perls positif granulaire intramyocytaire","Intramyocyte granular Perls positivity","(hors fiche)"],"FOETO:PF.COE-MAL-106":["Persistance de la veine cave supérieure gauche","Persistent left superior vena cava","(hors fiche)"],"FOETO:PF.COE-MET-023":["Plaque athéromateuse aortique avec macrophages spumeux","Aortic atheromatous plaque with foam cells","(hors fiche)"],"FOETO:PF.COE-MET-024":["Plaque d'athérome coronarienne","Coronary atheromatous plaque","(hors fiche)"],"FOETO:PF.COE-DYS-020":["Plaques fibreuses endocardiques épaisses","Thick endocardial fibrous plaques","(hors fiche)"],"FOETO:PF.COE-MAL-107":["Plaques intimales athéromateuses des artères pulmonaires élastiques","Atheromatous intimal plaques of elastic pulmonary arteries","(hors fiche)"],"FOETO:PF.COE-MET-025":["Positivité Alcian blue dans les valves cardiaques et coronaires (glycosaminoglycanes)","Alcian blue positivity in cardiac valves and coronary arteries (glycosaminoglycans)","(hors fiche)"],"FOETO:PF.COE-MET-026":["Positivité PAS granulaire dans les lymphocytes (vacuoles PAS-positives)","PAS-positive granular vacuoles in lymphocytes","(hors fiche)"],"FOETO:PF.COE-MAL-109":["Prolifération intimale cellulaire des artères pulmonaires","Cellular intimal proliferation of pulmonary arteries","(hors fiche)"],"FOETO:PF.COE-MAL-110":["Prolifération intimale excentrique post-embolique coronaire","Eccentric post-embolic coronary intimal proliferation","(hors fiche)"],"FOETO:PF.COE-MAL-111":["Prolifération intimale myofibroblastique coronaire","Coronary artery myofibroblastic intimal proliferation","(hors fiche)"],"FOETO:PF.COE-MAL-112":["Péricardite fibrineuse aiguë","Acute fibrinous pericarditis","(hors fiche)"],"FOETO:PF.COE-MAL-113":["Péricardite granulomateuse caséeuse","Caseous granulomatous pericarditis","(hors fiche)"],"FOETO:PF.COE-MAL-114":["Péricardite purulente aiguë","Acute purulent pericarditis","(hors fiche)"],"FOETO:PF.COE-MAL-115":["Remplacement fibro-adipeux du myocarde du ventricule droit (ARVC)","Fibrofatty replacement of right ventricular myocardium (ARVC)","(hors fiche)"],"FOETO:PF.COE-MAL-116":["Retour veineux pulmonaire anormal partiel","Partial anomalous pulmonary venous return","(hors fiche)"],"FOETO:PF.COE-MAL-117":["Retour veineux pulmonaire anormal total","Total anomalous pulmonary venous return","(hors fiche)"],"FOETO:PF.COE-TUM-025":["Rhabdomyosarcome cardiaque primitif","Primary cardiac rhabdomyosarcoma","(hors fiche)"],"FOETO:PF.COE-MAL-119":["Réaction fibroélastique bilatérale sur patch de réparation d'AVSD","Bilateral fibroelastic tissue deposition on AVSD repair patch","(hors fiche)"],"FOETO:PF.COE-MAL-120":["Réaction à corps étranger autour du patch de fermeture de CIV","Foreign body reaction around VSD patch","(hors fiche)"],"FOETO:PF.COE-MAL-121":["Sinusoïdes ventriculo-coronaires","Ventriculo-coronary sinusoids","(hors fiche)"],"FOETO:PF.COE-MAL-122":["Sinusoïdes ventriculo-coronaires (ventricule droit — atrésie pulmonaire)","Right ventricular-coronary artery sinusoids (pulmonary atresia with intact septum)","(hors fiche)"],"FOETO:PF.COE-MAL-123":["Situs inversus cardiaque","Cardiac situs inversus","(hors fiche)"],"FOETO:PF.COE-MET-030":["Stéatose myocardique macrovésiculaire","Macrovesicular myocardial steatosis","(hors fiche)"],"FOETO:PF.COE-MAL-124":["Thrombose intraluminale du canal artériel","Intraluminal thrombosis of the arterial duct","(hors fiche)"],"FOETO:PF.COE-MAL-125":["Thrombose intravasculaire pulmonaire","Intravascular thrombosis of pulmonary artery","(hors fiche)"],"FOETO:PF.COE-DYS-021":["Thrombus mural intracavitaire","Intracavitary mural thrombus","(hors fiche)"],"FOETO:PF.COE-MAL-127":["Tissu ductal en fronde dans la paroi aortique (coarctation)","Ductal sling tissue in aortic wall (coarctation)","(hors fiche)"],"FOETO:PF.COE-MAL-131":["Tissu valvulaire dysplasique avec excès de tissu redondant","Dysplastic valve tissue with excess redundant leaflet material","(hors fiche)"],"FOETO:PF.COE-MAL-132":["Transposition des gros vaisseaux","Transposition of the great arteries","(hors fiche)"],"FOETO:PF.COE-MAL-133":["Tronc artériel commun","Truncus arteriosus communis","(hors fiche)"],"FOETO:PF.COE-TUM-026":["Tumeur amorphe calcifiée du cœur","Calcified amorphous tumour of the heart","(hors fiche)"],"FOETO:PF.COE-RET-026":["Tumeur cardiaque myxomateuse","Cardiac myxoma","(hors fiche)"],"FOETO:PF.COE-TUM-027":["Tumeur kystique du nœud atrioventriculaire","Cystic tumour of the atrioventricular node","(hors fiche)"],"FOETO:PF.COE-TUM-028":["Tumeur myofibroblastique inflammatoire cardiaque","Inflammatory myofibroblastic tumour of the heart","(hors fiche)"],"FOETO:PF.COE-MAL-134":["Tétralogie de Fallot","Tetralogy of Fallot","(hors fiche)"],"FOETO:PF.COE-MET-032":["Vacuolisation des cellules endothéliales vasculaires cardiaques","Vacuolation of cardiac vascular endothelial cells","(hors fiche)"],"FOETO:PF.COE-MET-033":["Vacuolisation des fibroblastes valvulaires avec matériel de stockage (Fabry)","Vacuolation of valvular fibroblasts with storage material (Fabry)","(hors fiche)"],"FOETO:PF.COE-MET-035":["Vacuolisation myocytaire en toile d'araignée (aspect spider web)","Spider-web vacuolation of cardiac myocytes","(hors fiche)"],"FOETO:PF.COE-MAL-135":["Valve pulmonaire imperforée (atrésie pulmonaire)","Imperforate pulmonary valve (pulmonary atresia)","(hors fiche)"],"FOETO:PF.COE-MAL-136":["Valve tronculaire dysplasique (tronc artériel commun)","Dysplastic truncal valve (common arterial trunk)","(hors fiche)"],"FOETO:PF.COE-MAL-137":["Vasculite coronaire éosinophilique avec granulomes nécrosants","Eosinophilic coronary vasculitis with necrotising granulomas","(hors fiche)"],"FOETO:PF.COE-RET-027":["Vasculite coronarienne","Coronary artery vasculitis","(hors fiche)"],"FOETO:PF.COE-MAL-138":["Ventricule droit hypoplasique à paroi épaisse (atrésie pulmonaire)","Thick-walled hypoplastic right ventricle (pulmonary atresia)","(hors fiche)"],"FOETO:PF.COE-MAL-139":["Ventricule droit à double issue","Double outlet right ventricle","(hors fiche)"],"FOETO:PF.COE-MAL-140":["Ventricule unique","Single ventricle","(hors fiche)"],"FOETO:PF.COE-MAL-141":["Végétations fibrinopurulentes sur le bord d'une CIV","Fibrinous vegetations at ventricular septal defect margin","(hors fiche)"],"FOETO:PF.COE-CLA-011":["Végétations valvulaires cardiaques non infectieuses","Non-infectious cardiac valve vegetations","(hors fiche)"],"FOETO:PF.COE-TUM-030":["Xanthogranulome juvénile cardiaque","Juvenile xanthogranuloma of the heart","(hors fiche)"],"FOETO:PF.COE-MAL-142":["Épaississement circumférentiel endocardique autour d'un VSD restrictif","Circumferential endocardial thickening around restrictive VSD","(hors fiche)"],"FOETO:PF.COE-MAL-144":["Épaississement endocardique ventriculaire droit (anomalie d'Uhl / biopsy)","Right ventricular endocardial thickening (Uhl's anomaly biopsy)","(hors fiche)"],"FOETO:PF.COE-MAL-145":["Épaississement et fibrose des artères coronaires (sténose supravalvulaire aortique)","Coronary artery thickening and fibrosis (supravalvar aortic stenosis)","(hors fiche)"],"FOETO:PF.COE-MAL-146":["Épaississement fibro-intimal des veines pulmonaires","Fibrous intimal thickening of pulmonary veins","(hors fiche)"],"FOETO:PF.COE-MAL-147":["Épaississement fibro-intimal secondaire dans la coarctation aortique","Secondary intimal fibroelastic thickening in aortic coarctation","(hors fiche)"],"FOETO:PF.COE-MAL-148":["Épaississement fibro-élastique de l'intima veineuse pulmonaire (sténose des veines pulmonaires)","Fibroelastic intimal thickening of stenotic pulmonary vein","(hors fiche)"],"FOETO:PF.COE-MAL-149":["Épaississement fibroélastique endocardique sur patch de CIV","Fibroelastic endocardial thickening overlying VSD patch","(hors fiche)"],"FOETO:PF.COE-MAL-151":["Épaississement pariétal de la veine pulmonaire par dépôt de collagène et élastine","Wall thickening of pulmonary vein by medial and intimal collagen and elastic deposition","(hors fiche)"],"FOETO:PF.COE-MET-036":["Épaississement valvulaire cardiaque avec distorsion des feuillets","Cardiac valve leaflet thickening with distortion","(hors fiche)"],"FOETO:PF.COE-TUM-032":["Épithéliome hémangioendiothélial cardiaque","Epithelioid haemangioendothelioma of the heart","(hors fiche)"],"FOETO:PF.COE-RET-009":["Fibro-élastose endocardique","Endocardial fibroelastosis"],"FOETO:PF.COE-CLA-003":["Fibrose endocardique","Endocardial fibrosis"],"FOETO:PF.COE-MET-014":["Fibrose endomyocardique (fibroélastose endocardique)","Endocardial fibroelastosis"],"FOETO:PF.COE-MAL-062":["Fibroélastose endocardique","Endocardial fibroelastosis"],"FOETO:PF.COE-MAL-063":["Fibroélastose endocardique du ventricule gauche (cœur gauche hypoplasique)","Endocardial fibroelastosis of the left ventricle (hypoplastic left heart)"],"FOETO:PF.COE-MAL-042":["Défect congénital du péricarde pariétal","Congenital parietal pericardial defect"],"FOETO:PF.COE-MAL-049":["Exsudat péricardique hémorragique","Haemorrhagic pericardial exudate"],"FOETO:PF.COE-MAL-077":["Hémopéricarde","Haemopericardium"],"FOETO:PF.COE-MAL-088":["Kyste mésothélial du péricarde","Mesothelial cyst of pericardium"],"FOETO:PF.COE-MET-006":["Calcification artérielle idiopathique (myocarde et artères)","Idiopathic arterial calcification (myocardium and arteries)"],"FOETO:PF.COE-MAL-013":["Calcification de la limitante élastique interne artérielle","Arterial internal elastic lamina calcification"],"FOETO:PF.COE-RET-008":["Dysplasie fibromusculaire artérielle coronarienne","Coronary artery fibromuscular dysplasia"],"FOETO:PF.COE-MAL-036":["Dysplasie fibromusculaire coronaire","Coronary artery fibromuscular dysplasia"],"FOETO:PF.COE-DYS-007":["Dépôt de calcium et de fer intramyocytaire","Intramyocyte calcium and iron deposition"],"FOETO:PF.COE-MAL-058":["Fibrose murale coronaire avec calcification pariétale","Coronary artery mural fibrosis with wall calcification"],"FOETO:PF.COE-MAL-108":["Prolifération intimale cellulaire coronaire avec calcification","Coronary artery cellular intimal proliferation with calcification"],"FOETO:PF.COE-RET-021":["Prolifération intimale coronarienne","Coronary artery intimal proliferation"],"FOETO:PF.COE-MET-028":["Prolifération intimale des artères coronaires avec cellules vacuolisées","Coronary artery intimal proliferation with vacuolated cells"],"FOETO:PF.COE-MET-029":["Prolifération intimale fibroblastique oblitérante des artères coronaires","Obliterative fibroblastic coronary artery intimal proliferation"],"FOETO:PF.COE-RET-024":["Thrombose de l'artère coronaire","Coronary artery thrombosis"],"FOETO:PF.COE-MAL-126":["Thrombose luminale coronaire","Coronary artery luminal thrombosis"],"FOETO:PF.COE-VAS-006":["Thrombose microvasculaire coronarienne","Coronary microvascular thrombosis"],"FOETO:PF.COE-MAL-143":["Épaississement concentrique lamellaire fibroélastique des artères coronaires (atrésie pulmonaire)","Concentric lamellar fibroelastic coronary artery thickening (pulmonary atresia)"],"FOETO:PF.COE-DYS-022":["Valve myxoïde et nodulaire (valve dysplasique)","Myxoid nodular valve (dysplastic valve)"],"FOETO:PF.COE-MAL-099":["Non-compaction du myocarde ventriculaire","Non-compaction of ventricular myocardium"],"FOETO:PF.COE-RET-025":["Trabéculations myocardiques excessives","Excessive myocardial trabeculations"],"FOETO:PF.COE-DYS-008":["Désorganisation des myocytes (disarray)","Myocyte disarray"],"FOETO:PF.COE-MET-013":["Désorganisation des myocytes cardiaques (disarray myocytaire)","Cardiac myocyte disarray"],"FOETO:PF.COE-TUM-006":["Désorganisation des myocytes cardiaques (disarray)","Cardiac myocyte disarray"],"FOETO:PF.COE-MAL-046":["Désorganisation myocytaire (disarray) du myocarde ventriculaire droit","Right ventricular myocyte disarray"],"FOETO:PF.COE-MAL-047":["Désorganisation myocytaire du ventricule gauche hypoplasique","Left ventricular myocyte disarray in hypoplastic left heart"],"FOETO:PF.COE-DYS-013":["Hypertrophie des myocytes cardiaques","Cardiac myocyte hypertrophy"],"FOETO:PF.COE-NOR-034":["Hypertrophie myocardique biventriculaire","Biventricular myocardial hypertrophy"],"FOETO:PF.COE-MAL-071":["Hypertrophie myocardique pariétale ventriculaire","Ventricular myocardial wall hypertrophy"],"FOETO:PF.COE-MAL-072":["Hypertrophie ventriculaire gauche","Left ventricular hypertrophy"],"FOETO:PF.COE-MAL-073":["Hypertrophie ventriculaire gauche avec fibrose myocardique concentrique subendocardique","Left ventricular hypertrophy with concentric subendocardial myocardial fibrosis"],"FOETO:PF.COE-NOR-024":["Fibres myocardiques étirées et allongées","Stretched and elongated myocardial fibres"],"FOETO:PF.COE-MAL-053":["Fibrose des muscles papillaires","Papillary muscle fibrosis"],"FOETO:PF.COE-DYS-009":["Fibrose interstitielle myocardique","Myocardial interstitial fibrosis"],"FOETO:PF.COE-RET-010":["Fibrose myocardique","Myocardial fibrosis"],"FOETO:PF.COE-CLA-006":["Fibrose myocardique cicatricielle","Myocardial fibrotic scar"],"FOETO:PF.COE-MET-015":["Fibrose myocardique focale sans confluent nécrotique","Focal myocardial fibrosis without confluent necrosis"],"FOETO:PF.COE-MET-017":["Hypertrophie des cardiomyocytes","Cardiomyocyte hypertrophy"],"FOETO:PF.COE-DYS-017":["Myocytes cardiaques étirés et ondulants","Stretched wavy cardiac myocytes"],"FOETO:PF.COE-INF-002":["Inclusions intranucléaires dans les précurseurs érythroïdes myocardiques","Intranuclear inclusions in erythroid precursors (myocardium)"],"FOETO:PF.COE-RET-017":["Nécrose myocytaire","Myocyte necrosis"],"FOETO:PF.COE-NOR-004":["Bandes de contraction myocardiques","Myocardial contraction bands"],"FOETO:PF.COE-MET-008":["Calcification myocardique","Myocardial calcification"],"FOETO:PF.COE-VAS-001":["Dilatation capillaire myocardique","Myocardial capillary dilatation"],"FOETO:PF.COE-INF-001":["Hyperéosinophilie des myocytes","Myocyte hypereosinophilia"],"FOETO:PF.COE-MAL-080":["Infarctus myocardique récent","Recent myocardial infarction"],"FOETO:PF.COE-INF-004":["Infiltrat de polynucléaires neutrophiles dans le myocarde","Myocardial neutrophil infiltrate"],"FOETO:PF.COE-INF-007":["Margination des neutrophiles dans les capillaires myocardiques","Margination of neutrophils in myocardial capillaries"],"FOETO:PF.COE-VAS-002":["Nécrose coagulative myocardique régionale","Regional myocardial coagulative necrosis"],"FOETO:PF.COE-VAS-003":["Nécrose des muscles papillaires","Papillary muscle necrosis"],"FOETO:PF.COE-DYS-019":["Nécrose ischémique sous-endocardique focale","Focal subendocardial ischaemic necrosis"],"FOETO:PF.COE-MAL-102":["Nécrose myocardique aiguë avec hémorragie (infarctus ventriculaire néonatal)","Acute myocardial necrosis with haemorrhage (neonatal ventricular infarction)"],"FOETO:PF.COE-VAS-005":["Nécrose sous-endocardique myocardique","Subendocardial myocardial necrosis"],"FOETO:PF.COE-CLA-008":["Perte des noyaux des myocytes","Myocyte nuclear loss"],"FOETO:PF.COE-VAS-007":["Œdème interstitiel myocardique","Myocardial interstitial oedema"],"FOETO:PF.COE-MAL-014":["Calcification des muscles papillaires","Papillary muscle calcification"],"FOETO:PF.COE-RET-002":["Calcification dystrophique myocardique","Dystrophic myocardial calcification"],"FOETO:PF.COE-CLA-002":["Fibrose de remplacement myocardique aux pointes des muscles papillaires","Fibrotic replacement of papillary muscle tips"],"FOETO:PF.COE-MAL-054":["Fibrose et calcification des muscles papillaires de la valve mitrale (cœur gauche hypoplasique)","Papillary muscle fibrosis and calcification in hypoplastic left heart"],"FOETO:PF.COE-CLA-007":["Nécrose myocardique avec calcification dystrophique","Myocardial necrosis with dystrophic calcification"],"FOETO:PF.COE-VAS-004":["Nécrose myocardique sous-épicardique","Subepicardial myocardial necrosis"],"FOETO:PF.COE-CLA-009":["Rupture du muscle papillaire","Papillary muscle rupture"],"FOETO:PF.COE-MET-004":["Accumulation lipidique intramyocytaire (stéatose myocardique)","Myocardial lipid accumulation (cardiac steatosis)"],"FOETO:PF.COE-RET-004":["Cellules histiocytoïdes myocardiques","Histiocytoid cardiomyopathy cells"],"FOETO:PF.COE-DYS-003":["Clairance périnucléaire et granules mitochondriaux myocytaires","Perinuclear clearing with mitochondrial granules in myocytes"],"FOETO:PF.COE-MET-016":["Fibrose myocardique méso-pariétale (couches moyennes du myocarde)","Mid-myocardial fibrosis"],"FOETO:PF.COE-MET-018":["Inclusions intracytoplasmiques PAS-positives résistantes à la diastase dans les myocytes","Diastase-resistant PAS-positive intracytoplasmic inclusions in myocytes"],"FOETO:PF.COE-MET-019":["Inclusions lamellaires lysosomales dans les cardiomyocytes (inclusions myélinoïdes)","Lysosomal lamellar inclusions in cardiomyocytes (myeloid bodies)"],"FOETO:PF.COE-MET-021":["Mitochondries géantes dans les cardiomyocytes","Giant mitochondria in cardiomyocytes"],"FOETO:PF.COE-DYS-018":["Myocytes histiocytoïdes (cardiomyopathie histiocytoïde)","Histiocytoid myocytes"],"FOETO:PF.COE-MET-027":["Positivité PAS granulaire intense des cardiomyocytes (glycogène)","Intense granular PAS positivity of cardiomyocytes (glycogen)"],"FOETO:PF.COE-MET-031":["Stéatose myocardique microvésiculaire","Microvesicular myocardial steatosis"],"FOETO:PF.COE-MET-034":["Vacuolisation des myocytes cardiaques","Cardiac myocyte vacuolation"],"FOETO:PF.COE-TUM-003":["Cellules en araignée (rhabdomyome)","Spider cells (rhabdomyoma)"],"FOETO:PF.COE-TUM-010":["Fibrome cardiaque","Cardiac fibroma"],"FOETO:PF.COE-RET-022":["Rhabdomyome cardiaque","Cardiac rhabdomyoma"],"FOETO:PF.COE-TUM-024":["Rhabdomyome cardiaque — aspect histologique","Cardiac rhabdomyoma — histological appearance"],"FOETO:PF.COE-TUM-029":["Tératome cardiaque","Cardiac teratoma"],"FOETO:PF.COE-TUM-031":["Éléments tissulaires immatures dans tératome","Immature tissue elements in teratoma"]}};
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+
+var DB_NAME = "foeto-" + MODULE, DB_VER = 1, db = null;
+
+/* Organe pair : le côté fait partie de la donnée, pas du commentaire. Un rein
+   lu sans son côté n'est pas rattachable à l'imagerie ni à l'autre rein. */
+var COTES = [{ k:"droit", l:"Droit — 1/2" }, { k:"gauche", l:"Gauche — 1/2" },
+             { k:"deux", l:"Les deux — 2/2" }];
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function normDossier(v){ return v.toUpperCase().replace(/\s+/g, ""); }
+function dossierOk(v){ return /^\d{2}P\d+$/.test(v); }
+function num(id){ var e = $(id); if (!e) return null; var v = parseFloat(e.value); return isFinite(v) ? v : null; }
+function par(liste, k){ return liste.filter(function(x){ return x.k === k; })[0] || null; }
+function champs(){ return MESURE ? MESURE.champs : []; }
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", E = null;
+function neuf(){
+  var e = { cote:null, prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
+            negatifs:{}, techniques:{}, foeto:{}, mesure:{ def:null, opt:null, v:{} }, libre:"" };
+  champs().forEach(function(c){ e.mesure.v[c.id] = null; });
+  return e;
+}
+
+/* Le stade attendu au terme saisi. Bornes reconstruites depuis la prose des
+   sources : ce sont des repères, pas des seuils. */
+function stadeAttendu(sa){
+  if (sa == null || !isFinite(sa)) return null;
+  for (var i = 0; i < STADES.length; i++) if (sa < STADES[i].max) return STADES[i];
+  return STADES[STADES.length - 1];
+}
+function bornesTxt(s){
+  var i = STADES.indexOf(s), min = i ? STADES[i-1].max : 0;
+  return s.max === 99 ? "≳ " + min + " SA" : min + "–" + s.max + " SA";
+}
+
+/* ── Construction du DOM — une seule fois, le clic ne fait que repeindre ──── */
+function chip(act, k, l, sous){
+  return '<button type="button" class="chip" data-act="' + act + '" data-k="' + esc(k) + '">' +
+         (sous ? '<span class="k">' + esc(sous) + '</span>' : '') + esc(l) + '</button>';
+}
+function batir(){
+  if (PAIR){
+    $("coteBloc").hidden = false;
+    $("cote").innerHTML = COTES.map(function(c){ return chip("cote", c.k, c.l); }).join("");
+  }
+  $("prelevement").innerHTML = PRELEV.map(function(p){ return chip("prelev", p.k, p.l); }).join("");
+
+  $("retention").innerHTML = RETENTION.map(function(r){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(r.l) +
+      '<span class="meta ' + r.q + '">' + esc(r.b) + " · " + esc(r.d) +
+      " · prédicteur " + r.q + '</span></div>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="present">Présent</button>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="absent">Absent</button>' +
+      '</div></div>';
+  }).join("");
+  $("kcl").innerHTML = chip("kcl", "kcl", "Fœticide par KCl", "geste à déclarer avant toute datation");
+
+  $("stTitre").textContent = STADE_TITRE;
+  $("stades").innerHTML = STADES.map(function(s){ return chip("stade", s.k, s.l); }).join("");
+
+  if (MESURE){
+    var h = '<div class="sousTitre">' + esc(MESURE.titre) + '</div>';
+    h += '<div class="chips" id="mesDefs">' +
+         MESURE.defs.map(function(d){ return chip("mdef", d.k, d.l, MESURE.defLabel); }).join("") + '</div>';
+    if (MESURE.opts && MESURE.opts.length)
+      h += '<div class="chips" id="mesOpts" style="margin-top:6px">' +
+           MESURE.opts.map(function(o){ return chip("mopt", o.k, o.l, MESURE.optLabel); }).join("") + '</div>';
+    h += '<div class="row" style="margin-top:9px">' + MESURE.champs.map(function(c){
+      return '<div class="field"><label for="m_' + c.id + '">' + esc(c.label) + '</label>' +
+             '<input type="number" id="m_' + c.id + '" min="' + c.min + '" max="' + c.max +
+             '" step="' + c.step + '" inputmode="decimal" placeholder="—"></div>';
+    }).join("") + '</div>';
+    $("mesure").innerHTML = h;
+    $("vMesure").hidden = false;
+    $("vMesure").querySelector("b").textContent = MESURE.titre;
+  }
+
+  $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
+
+  $("signes").innerHTML = SIGNES.map(function(x){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+      (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
+      '</div>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="normal">Normal</button>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="anormal">Anormal</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("foeto").innerHTML = FOETO.sections.map(function(s){
+    return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
+           s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
+  }).join("") || '<p class="note">Aucun terme FOETO rattaché à cette fiche.</p>';
+  if (FOETO.sections.length){
+    $("foetoPlus").hidden = false; $("foetoRech").hidden = false;
+    $("foetoPlus").textContent = "▸ tous les termes attestés (" + nbFoeto() + ")";
+  }
+
+  $("negatifs").innerHTML = NEGATIFS.map(function(n){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(n.l) +
+      '<span class="meta">' + esc(n.p) + '</span></div>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="absent">Vérifié</button>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="present">EN DÉFAUT</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("techNote").textContent = TECH_NOTE;
+  $("techniques").innerHTML = TECHNIQUES.map(function(t){ return chip("tech", t.k, t.l, t.q); }).join("");
+}
+
+function nbFoeto(){ return FOETO.sections.reduce(function(a, s){ return a + s.termes.length; }, 0); }
+function foetoLabel(id){
+  var l = null;
+  FOETO.sections.forEach(function(s){ s.termes.forEach(function(t){ if (t.id === id) l = t.l; }); });
+  return l || (FOETO.formes[id] || [id])[0];
+}
+/* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
+function foetoAjouter(id){
+  if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
+    var box = $("foeto").querySelector(".chips");
+    if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
+    box.insertAdjacentHTML("beforeend", chip("foeto", id, foetoLabel(id)));
+  }
+  E.foeto[id] = true;
+  peindre(); enregistrer();
+}
+function rechercherFoeto(q){
+  var sg = $("sgFoeto");
+  q = q.trim().toLowerCase();
+  if (q.length < 3){ sg.classList.remove("on"); return; }
+  var hits = [];
+  Object.keys(FOETO.formes).some(function(id){
+    var f = FOETO.formes[id].filter(function(x){ return x.toLowerCase().indexOf(q) >= 0; })[0];
+    if (f) hits.push({ id:id, l:foetoLabel(id), f:f, hf:FOETO.formes[id].indexOf("(hors fiche)") >= 0 });
+    return hits.length >= 10;
+  });
+  sg.innerHTML = hits.length ? hits.map(function(x){
+    return '<div data-pick="' + esc(x.id) + '">' + esc(x.l) +
+           (x.f !== x.l ? ' <small>— ' + esc(x.f) + '</small>' : '') + (x.hf ? ' <small>(hors fiche)</small>' : '') + '</div>';
+  }).join("") : '<div><small>aucun terme</small></div>';
+  sg.classList.add("on");
+}
+
+/* ── Associations ─────────────────────────────────────────────────────────────
+   Un diagnostic ne se coche pas : il se lit dans l'association des signes. Les
+   faisceaux incomplets sont affichés aussi — 2 signes sur 4 se dit, et dire
+   combien manquent est le seul moyen de distinguer « non trouvé » de « non
+   regardé ». */
+function seuil(d){ return d.min || d.signes.length; }
+function associations(){
+  return DIAGS.map(function(d){
+    var pris  = d.signes.filter(function(k){ return E.signes[k] === "anormal"; });
+    var muets = d.signes.filter(function(k){ return !E.signes[k]; });
+    /* Un signe pivot ne se remplace pas par le nombre : sans lui, le compte peut
+       être atteint sans que l'association tienne. */
+    var pivot = !d.cle || E.signes[d.cle] === "anormal";
+    return { d:d, pris:pris, muets:muets, pivot:pivot,
+             tenu: pivot && pris.length >= seuil(d) };
+  }).filter(function(a){ return a.pris.length; })
+    .sort(function(a, b){ return (b.tenu - a.tenu) || (b.pris.length - a.pris.length); });
+}
+function nomSigne(k){ var s = par(SIGNES, k); return s ? s.l : k; }
+
+/* ── Verdicts communs ─────────────────────────────────────────────────────── */
+function verdictPrelevement(){
+  var n = Object.keys(E.prelev).length, res = [], grave = false;
+  PRELEV.forEach(function(p){
+    if (p.manque && !E.prelev[p.k]){ res.push(p.manque); if (p.grave) grave = true; }
+  });
+  if (PAIR && !E.cote) res.push("côté non déclaré — organe pair");
+  return { n:n, res:res,
+    cls: res.length ? (grave ? "bad" : "warn") : (n === PRELEV.length ? "ok" : ""),
+    txt: n === 0 ? "—"
+       : (n + "/" + PRELEV.length + " item(s) confirmé(s)" +
+          (PAIR && E.cote ? ", " + par(COTES, E.cote).l.toLowerCase().split(" —")[0] : "") + ".") +
+         (res.length ? " Réserves : " + res.join(" ; ") + "." : " Prélèvement complet.") };
+}
+function verdictRetention(){
+  if (E.kcl) return { cls:"bad", borne:null, txt:KCL_TXT };
+  var pres = RETENTION.filter(function(r){ return E.retention[r.k] === "present"; });
+  if (!pres.length) return { cls:"", borne:null,
+    txt: Object.keys(E.retention).length ? "Aucun critère de rétention positif." : "—" };
+  var notes = [];
+  pres.forEach(function(r){ if (r.note) notes.push(r.note); });
+  var bons = pres.filter(function(r){ return r.q !== "mauvais"; });
+  if (!bons.length) return { cls:"warn", borne:null,
+    txt:"Seuls des prédicteurs MAUVAIS sont positifs — aucune borne recevable. " + notes.join(" ; ") + "." };
+  var top = bons.reduce(function(a, b){ return b.h > a.h ? b : a; });
+  if (top.alerte) notes.push(top.alerte);
+  return { cls:"ok", borne:top,
+    txt:"Rétention " + top.b + " — critère : " + top.l.toLowerCase() + " (" + top.d + ")." +
+        (notes.length ? " Réserves : " + notes.join(" ; ") + "." : "") };
+}
+function verdictMaturation(){
+  var sa = num("sa"), att = stadeAttendu(sa), obs = E.stade ? par(STADES, E.stade) : null;
+  if (!obs) return { cls:"", att:att, txt: att
+    ? "Stade attendu à " + sa + " SA : " + att.l.toLowerCase() + ". Confirmer ou choisir."
+    : "Saisir le terme pour afficher le stade attendu." };
+  if (!att) return { cls:"warn", att:null,
+    txt:"Stade " + obs.l.toLowerCase() + " — sans terme, aucune discordance n'est calculable." };
+  var io = STADES.indexOf(obs), ia = STADES.indexOf(att), t, cls;
+  if (io === ia){ cls = "ok"; t = "Maturation conforme au terme : " + obs.l.toLowerCase() + " à " + sa + " SA."; }
+  else if (io < ia){ cls = "warn";
+    t = "Retard de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (RETARD_NOTE ? " " + RETARD_NOTE : ""); }
+  else { cls = "warn";
+    t = "Avance de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (AVANCE_NOTE ? " " + AVANCE_NOTE : ""); }
+  if (obs.note) t += " (" + obs.note + ")";
+  return { cls:cls, att:att, txt:t };
+}
+
+/* ── Peinture ─────────────────────────────────────────────────────────────── */
+function classe(act, v){
+  if (act === "neg") return v === "present" ? "no" : "on";
+  if (act === "les") return v === "anormal" ? "no" : "on";
+  return "on";
+}
+function poser(id, v){
+  var e = $(id), t = e.querySelector("b").textContent;
+  e.className = "verdict" + (v.cls ? " " + v.cls : "");
+  e.innerHTML = "<b>" + esc(t) + "</b>" + esc(v.txt);
+}
+function tally(id, n, sur){ $(id).textContent = n ? n + "/" + sur : "—"; }
+
+function peindreDiags(){
+  var A = associations();
+  if (!A.length){
+    $("diags").innerHTML = '<p class="note" style="margin:0">Aucun signe anormal coché : rien à associer.</p>';
+    return;
+  }
+  $("diags").innerHTML = A.map(function(a){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(a.d.l) +
+      '<span class="meta">' + a.pris.length + "/" + a.d.signes.length + " signe(s), seuil " + seuil(a.d) +
+      (a.muets.length ? " · " + a.muets.length + " non regardé(s)" : "") + '</span></div>' +
+      '<span class="chip ' + (a.tenu ? "on" : "") + '" style="cursor:default">' +
+      (a.tenu ? "association tenue" : "faisceau incomplet") + '</span></div>' +
+      '<div class="unfold">' +
+      '<div class="note" style="margin:0">' +
+      (a.pivot ? "" : "Signe pivot non coché : " + esc(nomSigne(a.d.cle)) + ".<br>") +
+      esc(a.pris.map(nomSigne).join(" · ")) +
+      (a.muets.length ? "<br>Non regardés : " + esc(a.muets.map(nomSigne).join(" · ")) + "." : "") +
+      '</div>' +
+      '<div class="stop"><b>Ce qu\'il ne faut pas conclure</b>' + esc(a.d.stop) + '</div></div></div>';
+  }).join("");
+}
+
+function peindre(){
+  if (PAIR) document.querySelectorAll("#cote .chip").forEach(function(b){
+    b.className = "chip" + (E.cote === b.dataset.k ? " on" : "");
+  });
+  document.querySelectorAll("#prelevement .chip").forEach(function(b){
+    b.className = "chip" + (E.prelev[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#retention .chip").forEach(function(b){
+    b.className = "chip" + (E.retention[b.dataset.k] === b.dataset.v ? " on" : "");
+  });
+  $("kcl").firstChild.className = "chip" + (E.kcl ? " no" : "");
+  document.querySelectorAll("#stades .chip").forEach(function(b){
+    var att = stadeAttendu(num("sa"));
+    b.className = "chip" + (E.stade === b.dataset.k ? " on"
+                          : (att && att.k === b.dataset.k ? " sugg" : ""));
+  });
+  if (MESURE){
+    document.querySelectorAll("#mesDefs .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.def === b.dataset.k ? " on" : "");
+    });
+    if ($("mesOpts")) document.querySelectorAll("#mesOpts .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.opt === b.dataset.k ? " on" : "");
+    });
+  }
+  document.querySelectorAll("#variantes .chip").forEach(function(b){
+    b.className = "chip" + (E.variantes[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#signes .chip").forEach(function(b){
+    b.className = "chip" + (E.signes[b.dataset.k] === b.dataset.v
+                            ? " " + classe("les", b.dataset.v) : "");
+  });
+  peindreDiags();
+  document.querySelectorAll('[data-act="foeto"]').forEach(function(b){
+    b.className = "chip" + (E.foeto[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#negatifs .chip").forEach(function(b){
+    b.className = "chip" + (E.negatifs[b.dataset.k] === b.dataset.v
+                            ? " " + classe("neg", b.dataset.v) : "");
+  });
+  var sug = suggerer();
+  document.querySelectorAll("#techniques .chip").forEach(function(b){
+    b.className = "chip" + (E.techniques[b.dataset.k] ? " on" : (sug[b.dataset.k] ? " sugg" : ""));
+  });
+
+  tally("tPrelevement", Object.keys(E.prelev).length, PRELEV.length);
+  tally("tRetention",   Object.keys(E.retention).length, RETENTION.length);
+  tally("tMaturation",  (E.stade ? 1 : 0) + (MESURE && E.mesure.def ? 1 : 0), MESURE ? 2 : 1);
+  tally("tVariantes",   Object.keys(E.variantes).length, VARIANTES.length);
+  tally("tSignes",     Object.keys(E.signes).length, SIGNES.length);
+  tally("tFoeto",       Object.keys(E.foeto).length, nbFoeto());
+  tally("tNegatifs",    Object.keys(E.negatifs).length, NEGATIFS.length);
+  tally("tTechniques",  Object.keys(E.techniques).length, TECHNIQUES.length);
+
+  poser("vPrelevement", verdictPrelevement());
+  poser("vRetention",   verdictRetention());
+  poser("vMaturation",  verdictMaturation());
+  if (MESURE) poser("vMesure", verdictMesure());
+
+  var cr = composer();
+  $("cr").textContent = cr;
+  $("tCR").textContent = cr.split("\n").length + " lignes";
+}
+
+/* ── Compte rendu — la sortie du module, écrite par les clics ─────────────── */
+function composer(){
+  var sa = num("sa"), L = [];
+  L.push(TITRE_CR + " — grille de lecture");
+  L.push((dossier || "dossier —") + " · " + (sa != null ? sa + " SA" : "terme —") +
+         " · " + ($("operateur").value.trim() || "lecteur —") +
+         (PAIR ? " · " + (E.cote ? par(COTES, E.cote).l : "côté non déclaré") : ""));
+  L.push("");
+
+  L.push("PRÉLÈVEMENT");
+  L.push("  " + verdictPrelevement().txt);
+
+  L.push("");
+  L.push("RÉTENTION");
+  L.push("  " + verdictRetention().txt);
+
+  L.push("");
+  L.push("MATURATION");
+  L.push("  " + verdictMaturation().txt);
+  if (MESURE) L.push("  " + verdictMesure().txt);
+
+  var vus = VARIANTES.filter(function(v){ return E.variantes[v.k]; });
+  if (vus.length){
+    L.push("");
+    L.push("VARIANTES NORMALES VUES ET ÉCARTÉES");
+    L.push("  " + vus.map(function(v){ return v.l.toLowerCase(); }).join(" · "));
+  }
+
+  var anormales = SIGNES.filter(function(x){ return E.signes[x.k] === "anormal"; });
+  var normales  = SIGNES.filter(function(x){ return E.signes[x.k] === "normal"; });
+  L.push("");
+  L.push("SIGNES");
+  if (!anormales.length && !normales.length) L.push("  aucun axe exploré.");
+  anormales.forEach(function(x){ L.push("  " + x.l + " — ANORMAL"); });
+  if (normales.length)
+    L.push("  Normaux : " + normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  var muets = SIGNES.filter(function(x){ return !E.signes[x.k]; });
+  if (muets.length)
+    L.push("  Non explorés : " + muets.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+
+  var fo = Object.keys(E.foeto);
+  if (fo.length){
+    L.push("");
+    L.push("TERMES FOETO");
+    fo.forEach(function(id){ L.push("  " + foetoLabel(id) + " [" + id + "]"); });
+  }
+
+  var A = associations();
+  L.push("");
+  L.push("ASSOCIATIONS LUES");
+  if (!A.length) L.push("  aucune : les signes cochés ne dessinent aucune association.");
+  A.forEach(function(a){
+    L.push("  " + a.d.l + " — " + (a.tenu ? "association tenue" : "faisceau incomplet") +
+           " (" + a.pris.length + "/" + a.d.signes.length + ", seuil " + seuil(a.d) + ")");
+    L.push("      · " + a.pris.map(nomSigne).join(" · "));
+    if (!a.pivot) L.push("      · signe pivot non coché : " + nomSigne(a.d.cle));
+    if (a.muets.length) L.push("      · non regardés : " + a.muets.map(nomSigne).join(" · "));
+    L.push("      · ne pas conclure : " + a.d.stop);
+  });
+
+  L.push("");
+  L.push("NÉGATIFS OBLIGATOIRES");
+  NEGATIFS.forEach(function(n){
+    var v = E.negatifs[n.k];
+    L.push("  " + (v === "absent" ? "· " + n.l
+                 : v === "present" ? "! " + n.ko
+                 : "? " + n.l + " — non vérifié"));
+  });
+
+  var t = TECHNIQUES.filter(function(x){ return E.techniques[x.k]; });
+  if (t.length){
+    L.push("");
+    L.push("TECHNIQUES DEMANDÉES");
+    t.forEach(function(x){ L.push("  · " + x.l + " — " + x.q); });
+  }
+
+  if (E.libre.trim()){
+    L.push("");
+    L.push("REMARQUE");
+    E.libre.trim().split("\n").forEach(function(x){ L.push("  " + x); });
+  }
+
+  L.push("");
+  L.push("— La micro décrit ; la conclusion nomme. Grille v" + VERSION + " issue de " + SOURCE + ".");
+  return L.join("\n");
+}
+
+/* ── Clics ────────────────────────────────────────────────────────────────── */
+document.addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest("button[data-act]") : null;
+  if (!b || b.closest("section.off")) return;
+  var k = b.dataset.k, v = b.dataset.v, a = b.dataset.act;
+  if (a === "cote"){ E.cote = E.cote === k ? null : k; }
+  else if (a === "prelev"){ if (E.prelev[k]) delete E.prelev[k]; else E.prelev[k] = true; }
+  else if (a === "ret"){ if (E.retention[k] === v) delete E.retention[k]; else E.retention[k] = v; }
+  else if (a === "kcl"){ E.kcl = !E.kcl; }
+  else if (a === "stade"){ E.stade = E.stade === k ? null : k; }
+  else if (a === "mdef"){ E.mesure.def = E.mesure.def === k ? null : k; }
+  else if (a === "mopt"){ E.mesure.opt = E.mesure.opt === k ? null : k; }
+  else if (a === "var"){ if (E.variantes[k]) delete E.variantes[k]; else E.variantes[k] = true; }
+  else if (a === "les"){ if (E.signes[k] === v) delete E.signes[k]; else E.signes[k] = v; }
+  else if (a === "neg"){ if (E.negatifs[k] === v) delete E.negatifs[k]; else E.negatifs[k] = v; }
+  else if (a === "tech"){ if (E.techniques[k]) delete E.techniques[k]; else E.techniques[k] = true; }
+  else if (a === "foeto"){ if (E.foeto[k]) delete E.foeto[k]; else E.foeto[k] = true; }
+  else return;
+  peindre(); enregistrer();
+});
+document.addEventListener("click", function(ev){
+  var t = ev.target.closest ? ev.target.closest("[data-pick]") : null;
+  if (t){ foetoAjouter(t.dataset.pick); $("rqFoeto").value = ""; $("sgFoeto").classList.remove("on"); }
+});
+$("foetoPlus").onclick = function(){
+  var box = $("foetoTous");
+  if (!box.children.length) box.innerHTML = FOETO.sections.map(function(s){
+    return s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("");
+  }).join("");
+  box.hidden = !box.hidden; peindre();
+};
+$("rqFoeto").addEventListener("input", function(){ rechercherFoeto(this.value); });
+$("btnNegAll").onclick = function(){
+  NEGATIFS.forEach(function(n){ if (!E.negatifs[n.k]) E.negatifs[n.k] = "absent"; });
+  peindre(); enregistrer();
+};
+$("btnCopie").onclick = function(){
+  var t = composer();
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(t).then(function(){ flash("Compte rendu copié."); },
+                                          function(){ flash("Copie refusée par le navigateur."); });
+  else flash("Presse-papiers indisponible en file://.");
+};
+document.addEventListener("input", function(e){
+  var id = e.target.id;
+  if (id.indexOf("m_") === 0) E.mesure.v[id.slice(2)] = num(id);
+  else if (id === "libre") E.libre = e.target.value;
+  else if (id === "sa") majSa();
+  else return;
+  peindre(); enregistrer();
+});
+function majSa(){
+  var sa = num("sa"), att = stadeAttendu(sa), h = $("saHint");
+  h.className = "hint" + (att ? " good" : "");
+  h.textContent = att ? "Stade attendu : " + att.l.toLowerCase() + " (" + bornesTxt(att) + ")."
+                      : "SA = semaines de gestation + 2. Commande le stade attendu.";
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────────
+   localStorage est erratique en file:// et cloisonné par fichier sur certains
+   navigateurs : la saisie va en IndexedDB, y compris les champs texte.       */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction("saisies", mode), out = fn(t.objectStore("saisies"));
+    t.oncomplete = function(){ res(out && out.result !== undefined ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("readonly",  function(s){ return s.get(d); }); }
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  ["secPrelevement","secRetention","secMaturation","secVariantes","secSignes","secFoeto",
+   "secNegatifs","secTechniques","secCR","secSortie"].forEach(function(id){
+    $(id).classList.toggle("off", !ouvert);
+  });
+}
+
+/* ── Collecte / restitution ───────────────────────────────────────────────── */
+function collecter(){
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    organe: ORGANE,
+    source: SOURCE,
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    terme_sa: num("sa"),
+    grille: JSON.parse(JSON.stringify(E)),
+    compte_rendu: composer()
+  };
+}
+function appliquer(o){
+  var g = o.grille || {};
+  E = neuf();
+  ["prelev","retention","variantes","signes","negatifs","techniques","foeto"].forEach(function(c){
+    if (g[c]) E[c] = g[c];
+  });
+  Object.keys(E.foeto).forEach(function(id){
+    if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')) foetoAjouter(id);
+  });
+  E.kcl = !!g.kcl; E.stade = g.stade || null; E.cote = g.cote || null;
+  if (g.mesure){
+    E.mesure.def = g.mesure.def || null;
+    E.mesure.opt = g.mesure.opt || null;
+    champs().forEach(function(c){
+      E.mesure.v[c.id] = (g.mesure.v && g.mesure.v[c.id] != null) ? g.mesure.v[c.id] : null;
+    });
+  }
+  E.libre = g.libre || "";
+  $("sa").value = o.terme_sa != null ? o.terme_sa : "";
+  champs().forEach(function(c){ $("m_" + c.id).value = E.mesure.v[c.id] != null ? E.mesure.v[c.id] : ""; });
+  $("libre").value = E.libre;
+  majSa(); peindre();
+}
+function vider(){
+  E = neuf();
+  ["sa","libre"].forEach(function(id){ $(id).value = ""; });
+  champs().forEach(function(c){ $("m_" + c.id).value = ""; });
+  majSa(); peindre();
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, ok1 = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = ok1 && op, h = $("dossierHint");
+  h.className = "hint" + (v && !ok1 ? " bad" : ok1 ? " good" : "");
+  h.textContent = !v ? "Deux chiffres, P, puis le numéro. Conditionne l'enregistrement."
+                : ok1 ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                      : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la grille.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json."
+    : ok1 ? "Saisir le lecteur pour activer l'export."
+          : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){
+    dossier = v;
+    vider();
+    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    if (rec){ appliquer(rec); flash("Grille du " + dossier + " restituée."); }
+  } else if (!ok && dossier){
+    dossier = ""; vider();
+  }
+  peindre();
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+$("btnExport").onclick = function(){
+  if (!dossierOk(dossier)) return;
+  var out = collecter();
+  telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+              dossier + "_" + MODULE + ".json");
+  var n = NEGATIFS.filter(function(x){ return E.negatifs[x.k]; }).length;
+  flash("Grille exportée." + (n < NEGATIFS.length ? " ⚠ " + (NEGATIFS.length - n) + " négatif(s) non vérifié(s)." : ""));
+};
+function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.grille) throw new Error("aucune clé « grille »");
+  if (o.dossier) $("dossier").value = normDossier(o.dossier);
+  if (o.operateur) $("operateur").value = o.operateur;
+  return majDossier().then(function(){
+    if (!dossier) throw new Error("numéro de dossier absent ou lecteur manquant");
+    appliquer(o); enregistrer();
+    return true;
+  });
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    Promise.resolve().then(function(){ return relire(JSON.parse(String(fr.result))); })
+      .then(function(){ flash("Grille relue."); })
+      .catch(function(e){ flash("Relecture impossible : " + e.message); });
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la grille du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    await tx("readwrite", function(s){ return s.delete(dossier); });
+    vider(); flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les grilles de TOUS les dossiers sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("readwrite", function(s){ return s.clear(); });
+  vider(); flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Axes de la grille", PRELEV.length + " prélèvement · " + RETENTION.length + " rétention · " +
+                             STADES.length + " stades · " + SIGNES.length + " signes · " +
+                             DIAGS.length + " associations · " +
+                             NEGATIFS.length + " négatifs · " + TECHNIQUES.length + " techniques");
+  ligne("Source", SOURCE + " — la fiche est la source, ce module en est la sortie");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+(async function(){
+  $("ver").textContent = "v" + VERSION;
+  E = neuf();
+  batir(); majSa(); peindre();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — aucune saisie ne sera conservée. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir le fichier avec ?selftest=1 ───────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+  function clic(act, k, v){
+    var s = '[data-act="' + act + '"][data-k="' + k + '"]' + (v ? '[data-v="' + v + '"]' : "");
+    var b = document.querySelector(s);
+    if (!b){ ko.push("bouton introuvable : " + s); return null; }
+    b.click(); return b;
+  }
+  function crTient(t){ return $("cr").textContent.indexOf(t) >= 0; }
+  var pause = function(){ return new Promise(function(r){ setTimeout(r, 30); }); };
+
+  /* Intégrité des tableaux — pure, sans DOM */
+  ["PRELEV","RETENTION","STADES","VARIANTES","SIGNES","DIAGS","NEGATIFS","TECHNIQUES"].forEach(function(nom){
+    var t = { PRELEV:PRELEV, RETENTION:RETENTION, STADES:STADES, VARIANTES:VARIANTES,
+              SIGNES:SIGNES, DIAGS:DIAGS, NEGATIFS:NEGATIFS, TECHNIQUES:TECHNIQUES }[nom];
+    chk("clés uniques dans " + nom, new Set(t.map(function(x){ return x.k; })).size === t.length);
+  });
+  chk("stades ordonnés",      STADES.every(function(s, i){ return !i || s.max > STADES[i-1].max; }));
+  chk("dernier stade ouvert", STADES[STADES.length-1].max === 99);
+  chk("sans terme, pas de stade", stadeAttendu(null) === null);
+  chk("chaque association a son « ne pas conclure »",
+      DIAGS.every(function(d){ return d.stop && d.signes.length >= 2; }));
+  chk("chaque association ne cite que des signes déclarés",
+      DIAGS.every(function(d){ return d.signes.every(function(k){ return !!par(SIGNES, k); }); }));
+  chk("le signe pivot fait partie de l'association",
+      DIAGS.every(function(d){ return !d.cle || d.signes.indexOf(d.cle) >= 0; }));
+  chk("seuil d'association atteignable",
+      DIAGS.every(function(d){ return seuil(d) >= 1 && seuil(d) <= d.signes.length; }));
+  chk("chaque négatif a son défaut", NEGATIFS.every(function(n){ return n.ko && n.p; }));
+  chk("une borne de rétention au moins est bonne",
+      RETENTION.some(function(r){ return r.q === "bon"; }));
+
+  /* Verrou */
+  chk("verrouillé au départ",  $("secSignes").classList.contains("off"));
+  clic("prelev", PRELEV[0].k);
+  chk("clic ignoré sous verrou", !E.prelev[PRELEV[0].k]);
+  set("dossier", "26p0123");
+  chk("lecteur manquant",      $("secSignes").classList.contains("off"));
+  set("operateur", "RM");
+  await pause();
+  chk("déverrouillé",         !$("secSignes").classList.contains("off"));
+  chk("dossier normalisé",     $("dossier").value === "26P0123");
+  chk("export activé",        !$("btnExport").disabled);
+
+  /* Chips */
+  clic("prelev", PRELEV[0].k);
+  chk("chip prélèvement posée", E.prelev[PRELEV[0].k] === true &&
+      document.querySelector('[data-act="prelev"][data-k="' + PRELEV[0].k + '"]').className.indexOf("on") >= 0);
+  clic("prelev", PRELEV[0].k);
+  chk("chip retirée au 2e clic", !E.prelev[PRELEV[0].k]);
+
+  /* Rétention — le fœticide prime sur toute borne */
+  var bon = RETENTION.filter(function(r){ return r.q === "bon"; })[0];
+  clic("ret", bon.k, "present");
+  chk("borne posée",           $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("kcl", "kcl");
+  chk("KCl invalide la datation", $("vRetention").className.indexOf("bad") >= 0);
+  clic("kcl", "kcl");
+  chk("KCl levé, borne revenue", $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("ret", bon.k, "present");
+
+  /* Côté — organe pair */
+  if (PAIR){
+    chk("bloc côté visible",   !$("coteBloc").hidden);
+    chk("côté manquant en réserve",
+        verdictPrelevement().res.indexOf("côté non déclaré — organe pair") >= 0);
+    clic("cote", "droit");
+    chk("côté posé",            E.cote === "droit" && crTient("Droit — 1/2"));
+    clic("cote", "droit");
+    chk("2e clic retire le côté", E.cote === null);
+    clic("cote", "deux");
+  } else {
+    chk("pas de bloc côté sur organe impair", $("coteBloc").hidden);
+  }
+
+  /* Signes et associations */
+  var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
+  chk("rien à associer au départ", $("diags").textContent.indexOf("Aucun signe anormal") >= 0);
+  clic("les", l0.k, "anormal");
+  chk("signe posé anormal",    E.signes[l0.k] === "anormal");
+  chk("association esquissée",  $("diags").textContent.indexOf(d0.l) >= 0);
+  clic("les", l0.k, "anormal");
+  chk("2e clic remet à non exploré", !E.signes[l0.k]);
+  clic("les", l0.k, "normal");
+  chk("normal ne nourrit pas l'association", associations().length === 0);
+  clic("les", l0.k, "normal");
+
+  /* L'association complète se tient, et elle seule */
+  d0.signes.forEach(function(k){ clic("les", k, "anormal"); });
+  var a0 = associations().filter(function(a){ return a.d.k === d0.k; })[0];
+  chk("association tenue",     a0 && a0.tenu);
+  chk("CR : association écrite", crTient(d0.l + " — association tenue"));
+  chk("CR : ne pas conclure",  crTient("ne pas conclure : " + d0.stop));
+  d0.signes.slice(1).forEach(function(k){ clic("les", k, "anormal"); });
+  chk("retirer les signes défait l'association",
+      (associations().filter(function(a){ return a.d.k === d0.k; })[0] || {}).pris.length === 1);
+
+  /* Négatifs */
+  $("btnNegAll").click();
+  chk("tous les négatifs posés", Object.keys(E.negatifs).length === NEGATIFS.length);
+  clic("neg", NEGATIFS[0].k, "present");
+  chk("négatif retourné en rouge", E.negatifs[NEGATIFS[0].k] === "present" &&
+      document.querySelector('[data-act="neg"][data-k="' + NEGATIFS[0].k + '"][data-v="present"]').className.indexOf("no") >= 0);
+  chk("CR : défaut écrit",     crTient("! " + NEGATIFS[0].ko));
+  clic("neg", NEGATIFS[0].k, "absent");
+
+  /* Compte rendu */
+  clic("tech", TECHNIQUES[0].k);
+  set("libre", "Bloc non parvenu.");
+  chk("CR : en-tête dossier",  crTient("26P0123") && crTient("RM"));
+  chk("CR : signe anormal",    crTient(l0.l + " — ANORMAL"));
+  chk("CR : non explorés dits", crTient("Non explorés :"));
+  chk("CR : technique demandée", crTient(TECHNIQUES[0].l));
+  chk("CR : remarque libre",   crTient("Bloc non parvenu."));
+  chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
+
+  /* Contrôles propres à l'organe */
+  await testsOrgane(chk, clic, set, crTient, pause);
+
+  /* Termes FOETO — seulement si la fiche en rattache */
+  if (FOETO.sections.length){
+    var f0 = FOETO.sections[0].termes[0].id;
+    chk("FOETO : sections rendues", $("foeto").querySelectorAll(".sousTitre").length === FOETO.sections.length);
+    clic("foeto", f0);
+    chk("FOETO : terme coché",      E.foeto[f0] === true && $("tFoeto").textContent.indexOf("1/") === 0);
+    chk("FOETO : CR le porte",      crTient("[" + f0 + "]"));
+    chk("FOETO : exporté",          collecter().grille.foeto[f0] === true);
+    set("rqFoeto", foetoLabel(f0).slice(0, 4));
+    chk("FOETO : recherche",        $("sgFoeto").querySelectorAll("[data-pick]").length >= 1);
+    $("sgFoeto").querySelector("[data-pick]").click();
+    chk("FOETO : recherche vidée",  $("rqFoeto").value === "" && !$("sgFoeto").classList.contains("on"));
+    chk("FOETO : id lisible",       /^FOETO:/.test(f0));
+    clic("foeto", f0);
+    Object.keys(E.foeto).forEach(function(id){ delete E.foeto[id]; }); peindre();
+  }
+
+  /* Enveloppe, persistance, relecture — l'organe a pu reposer ses propres signes */
+  if (E.signes[l0.k] !== "anormal"){
+    if (E.signes[l0.k]) clic("les", l0.k, E.signes[l0.k]);
+    clic("les", l0.k, "anormal");
+  }
+  var snap = collecter();
+  chk("enveloppe conforme",    snap.schema_version === SCHEMA && snap.module === MODULE &&
+                               snap.module_version === VERSION && snap.dossier === "26P0123" &&
+                               snap.organe === ORGANE && !!snap.exported_at);
+  chk("version en entête",     $("ver").textContent === "v" + VERSION);
+  chk("CR dans le JSON",       snap.compte_rendu.indexOf(TITRE_CR + " — grille de lecture") === 0);
+
+  await putSaisie(snap);
+  vider();
+  chk("vider efface la grille", Object.keys(E.signes).length === 0);
+  var relu = await getSaisie("26P0123");
+  appliquer(relu);
+  chk("IndexedDB restitue",    E.signes[l0.k] === "anormal" &&
+                               $("sa").value === String(snap.terme_sa));
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+  chk("banc remis à zéro",     Object.keys(E.signes).length === 0 && $("secSignes").classList.contains("off"));
+  await relire(snap);
+  chk("relecture d'un JSON",   E.signes[l0.k] === "anormal" && dossier === "26P0123");
+  var refus = false;
+  try { await relire({module:"autopsie", grille:{}}); } catch(e){ refus = /module/.test(e.message); }
+  chk("JSON d'un autre module refusé", refus);
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>

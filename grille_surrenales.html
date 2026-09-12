@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grille de lecture — surrénales fœtales</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --alert-soft:#F7EAE7;
+  --amber:#8A6A18; --amber-soft:#F6F0DE;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off button,section.off input,section.off select{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 170px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],input[type=number],textarea{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+input[type=number]{font-family:var(--mono);letter-spacing:.03em}
+textarea{resize:vertical;min-height:60px;font-size:15px}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+/* ── Boutons-clics : toute la saisie sémantique passe par là ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font-family:var(--sans);font-size:14px;line-height:1.25;
+  border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+  border-radius:2px;padding:8px 11px;cursor:pointer;min-height:38px;text-align:left}
+.chip:hover{background:var(--drape-soft)}
+.chip:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.chip.on{background:var(--drape);border-color:var(--drape);color:#fff;font-weight:600}
+.chip.no{background:var(--alert-soft);border-color:var(--alert);color:var(--alert);font-weight:600}
+.chip.sugg{border-color:var(--amber);border-style:dashed}
+.chip[data-act=foeto]::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;background:var(--drape);opacity:.55}
+.chip.on[data-act=foeto]::after{background:#fff}
+.plus{font-size:13px;color:var(--drape);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline dotted}
+.rech{position:relative;margin-top:8px}
+.rech input{font:inherit;font-size:14px;padding:6px 10px;border:1px solid #bbb;border-radius:8px;width:min(100%,24rem)}
+.sugg{position:absolute;z-index:5;background:#fff;border:1px solid #bbb;border-radius:8px;max-height:12rem;overflow:auto;width:min(100%,24rem);display:none}
+.sugg.on{display:block}
+.sugg div{padding:5px 10px;cursor:pointer;font-size:14px}
+.sugg div:hover{background:var(--drape-soft)}
+.sugg small{color:#777}
+.chip .k{font-family:var(--mono);font-size:10px;letter-spacing:.07em;opacity:.75;
+         display:block;text-transform:uppercase}
+
+.item{border-top:1px solid var(--rule);padding:10px 0}
+.item:first-child{border-top:0}
+.item .head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.item .lbl{flex:1 1 240px;min-width:0;font-size:15px}
+.item .meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-soft);
+            display:block;margin-top:2px}
+.item .meta.bon{color:var(--drape)} .item .meta.mauvais{color:var(--alert)}
+.item .meta.moyen{color:var(--amber)}
+.unfold{margin:9px 0 0 0;padding:9px 0 0;border-top:1px dashed var(--rule)}
+.unfold[hidden]{display:none}
+.stop{font-size:13px;line-height:1.35;color:var(--alert);background:var(--alert-soft);
+      border-left:2px solid var(--alert);padding:6px 9px;margin-top:8px}
+.stop b{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+
+.verdict{font-size:14px;line-height:1.4;border-left:3px solid var(--rule);
+         padding:7px 10px;margin-top:11px;background:var(--paper)}
+.verdict.ok{border-color:var(--drape);background:var(--drape-soft)}
+.verdict.warn{border-color:var(--amber);background:var(--amber-soft)}
+.verdict.bad{border-color:var(--alert);background:var(--alert-soft)}
+.verdict b{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+           display:block;color:var(--ink-soft)}
+
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+.sousTitre:first-child{margin-top:0}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:var(--alert-soft)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+pre.cr{font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;
+  padding:12px;margin:0 0 10px;max-height:44vh;overflow:auto}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · lecture microscopique</p>
+  <h1>Grille de lecture — surrénales fœtales <span class="ver" id="ver"></span></h1>
+  <p class="sub">Sortie de <code>fiche_surrenales.md</code>. Tout se clique ; seuls le dossier, le terme et les comptes se tapent. Document autonome : rien n'est transmis.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Deux chiffres, P, puis le numéro. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Lecteur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la grille.</div>
+    </div>
+    <div class="field">
+      <label for="sa">Terme (SA)</label>
+      <input type="number" id="sa" min="8" max="45" step="1" inputmode="numeric" placeholder="—">
+      <div class="hint" id="saHint">SA = semaines de gestation + 2. Commande le stade attendu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — Prélèvement -->
+<section id="secPrelevement" class="off">
+  <h2><span class="n">02</span>Prélèvement<span class="tally" id="tPrelevement">—</span></h2>
+  <div id="coteBloc" hidden>
+    <div class="sousTitre">Côté prélevé</div>
+    <div class="chips" id="cote" style="margin-bottom:11px"></div>
+  </div>
+  <div class="chips" id="prelevement"></div>
+  <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
+</section>
+
+<!-- 03 — Rétention -->
+<section id="secRetention" class="off">
+  <h2><span class="n">03</span>Rétention<span class="tally" id="tRetention">—</span></h2>
+  <div id="retention"></div>
+  <div class="chips" id="kcl" style="margin-top:11px"></div>
+  <div class="verdict" id="vRetention"><b>Borne inférieure</b>—</div>
+</section>
+
+<!-- 04 — Maturation -->
+<section id="secMaturation" class="off">
+  <h2><span class="n">04</span>Maturation<span class="tally" id="tMaturation">—</span></h2>
+  <div class="sousTitre" id="stTitre">Stade observé</div>
+  <div class="chips" id="stades"></div>
+  <div id="mesure"></div>
+  <div class="verdict" id="vMaturation"><b>Lecture</b>—</div>
+  <div class="verdict" id="vMesure" hidden><b>Mesure</b>—</div>
+</section>
+
+<!-- 05 — Variantes normales -->
+<section id="secVariantes" class="off">
+  <h2><span class="n">05</span>Variantes normales<span class="tally" id="tVariantes">—</span></h2>
+  <p class="note" style="margin-top:0">Cliquer ce qui est vu et écarté comme normal. Rien de coché ne veut pas dire absent : ça veut dire non regardé.</p>
+  <div class="chips" id="variantes" style="margin-top:10px"></div>
+</section>
+
+<!-- 06 — Signes -->
+<section id="secSignes" class="off">
+  <h2><span class="n">06</span>Signes<span class="tally" id="tSignes">—</span></h2>
+  <p class="note" style="margin-top:0">On coche des signes, pas des diagnostics. Les associations en dessous se déduisent de ce qui est coché : elles s'affichent, elles ne se choisissent pas.</p>
+  <div id="signes" style="margin-top:10px"></div>
+  <div class="sousTitre" style="margin-top:16px">Associations lues</div>
+  <div id="diags"></div>
+</section>
+
+<!-- 07 — Termes FOETO attestés par la fiche -->
+<section id="secFoeto" class="off">
+  <h2><span class="n">07</span>Termes FOETO<span class="tally" id="tFoeto">—</span></h2>
+  <p class="note" style="margin-top:0">Les termes du vocabulaire FOETO que la fiche de l'organe retient comme lésions, par sous-section. Un terme coché est présent ; rien de coché ne veut pas dire absent.</p>
+  <div id="foeto"></div>
+  <button type="button" class="plus" id="foetoPlus" hidden>▸ tous les termes attestés</button>
+  <div class="chips" id="foetoTous" hidden style="margin-top:6px"></div>
+  <div class="rech" id="foetoRech" hidden><input type="text" id="rqFoeto" placeholder="rechercher un terme (3 lettres)…" autocomplete="off"><div class="sugg" id="sgFoeto"></div></div>
+</section>
+
+<!-- 08 — Négatifs obligatoires -->
+<section id="secNegatifs" class="off">
+  <h2><span class="n">08</span>Négatifs obligatoires<span class="tally" id="tNegatifs">—</span></h2>
+  <div class="btns" style="margin-bottom:11px">
+    <button class="btn" id="btnNegAll">Tous vérifiés</button>
+  </div>
+  <div id="negatifs"></div>
+</section>
+
+<!-- 08 — Techniques -->
+<section id="secTechniques" class="off">
+  <h2><span class="n">09</span>Techniques<span class="tally" id="tTechniques">—</span></h2>
+  <p class="note" style="margin-top:0" id="techNote"></p>
+  <div class="chips" id="techniques" style="margin-top:10px"></div>
+</section>
+
+<!-- 09 — Compte rendu -->
+<section id="secCR" class="off">
+  <h2><span class="n">10</span>Compte rendu<span class="tally" id="tCR">—</span></h2>
+  <pre class="cr" id="cr">—</pre>
+  <div class="row">
+    <div class="field" style="flex:1 1 100%">
+      <label for="libre">Remarque libre</label>
+      <textarea id="libre" placeholder="Ce que la grille ne prévoit pas."></textarea>
+    </div>
+  </div>
+  <div class="btns" style="margin-top:10px">
+    <button class="btn" id="btnCopie">Copier le compte rendu</button>
+  </div>
+</section>
+
+<!-- 10 — Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n">11</span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Vider le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- 11 — Diagnostic -->
+<section>
+  <h2><span class="n">12</span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante, aucun fetch : doit fonctionner par double-clic hors réseau.
+
+   Ce module est la SORTIE de fiche_surrenales.md, jamais l'inverse. Les bornes, les
+   spécificités et les « ce qu'il ne faut pas conclure » sont recopiés de la
+   fiche ; ils ne se corrigent pas ici mais dans la fiche.
+
+   La grille ne conclut pas : elle contraint la description et rend ses
+   réserves visibles. Un critère non cliqué n'est pas un négatif — c'est un
+   non-regardé, et le compte rendu le dit.
+
+   Fichier ENGENDRÉ par gen_grille.py depuis grilles/surrenales.js.
+   Corriger le fragment, pas ce fichier.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  FRAGMENT D'ORGANE — grilles/surrenales.js                            ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+/* Grille de lecture — surrénales fœtales.
+   Fond : ~/Bureau/fiches_lecture/fiche_surrenales.md (§1 à §9).
+   Forme : gen_grille.py, calquée sur grille_poumon.html.
+   Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées.
+
+   Deux inversions propres à cet organe, et elles commandent tout le fragment :
+   1. la maturation tombe AVANT la datation — le cortex définitif perd sa
+      cohésion dès moins de deux jours, alors que la basophilie tient jusqu'au
+      rang 9 sur 10 de la Table 15.6. La glande est donc longtemps DATANTE ET
+      NON MESURABLE. C'est l'inverse du poumon ;
+   2. l'axe de maturation n'est pas une séquence de stades nommés mais un
+      RAPPORT entre deux cortex — et aucune source ouverte ne le donne par
+      semaine. Le champ existe, la norme par terme n'existe pas. */
+
+var ORGANE  = "surrenales";
+var TITRE   = "surrénales fœtales";
+var SOURCE  = "fiche_surrenales.md";
+var MODULE  = "grille_surrenales";
+var VERSION = "1.0.0";
+
+/* La fiche latéralise : « droite et gauche sur des blocs séparés », parce que
+   l'hémorragie est « often unilateral » et que la galette d'agénésie rénale
+   peut l'être aussi. */
+var PAIR = true;
+
+var TITRE_CR    = "SURRÉNALES";
+var STADE_TITRE = "Fenêtres en SA — ordre chronologique strict, aucune source n'énonce de stades nommés";
+
+var KCL_TXT = "Fœticide par KCl déclaré. La surrénale est un organe abdominal rétropéritonéal, donc " +
+              "exposée : « KCl solutions used for intracardiac injection to induce fetal demise are " +
+              "extremely hypertonic, and the effects on fetal tissues mimic maceration changes », et " +
+              "« other sites commonly affected include the abdomen, liver, and pleural spaces or lung » " +
+              "avec pour résultat une « accelerated tissue destruction » [ernst, ch. 37]. Aucune borne " +
+              "de rétention n'est recevable, et l'hémorragie centrale de cette glande devient d'abord " +
+              "un geste : le corpus l'écrit ainsi — « on note une importante hémorragie récente de la " +
+              "médullaire de l'une des surrénales liée au foeticide » [corpus CR].";
+
+/* Le retard porte sur le cortex fœtal, et il se PÈSE avant de se voir. */
+var RETARD_NOTE = "Sur cet organe, un retard est d'abord un cortex fœtal réduit — et trois choses le " +
+                  "miment : la lyse (« Hypoplasie surrénalienne (secondaire à la lyse ?) » [corpus CR]), " +
+                  "le plan de coupe, et le poids non fait. La vraie hypoplasie se pèse : 137 phrases " +
+                  "macro du corpus portent un percentile ou un écart-type, aucune ne mesure le rapport " +
+                  "CF/CP [corpus CR]. Et la borne d'entrée du signe anencéphalique est tardive : " +
+                  "l'hypoplasie « n'apparaît qu'au-delà de 16 SA » [soffoet, ch. 8].";
+
+/* L'avance a deux formes, et la seconde n'est pas arbitrée par les livres. */
+var AVANCE_NOTE = "Deux avances possibles, à ne pas confondre. (a) La médullaire peut être en avance " +
+                  "quand le cortex est en retard : « Paradoxalement la médullosurrénale paraît un peu " +
+                  "plus mature pour l'âge, avec des phéochromocytes bien visibles » [soffoet, ch. 8] — " +
+                  "c'est pourquoi l'axe médullaire est coté séparément. (b) La zonation du cortex " +
+                  "définitif est en DIVERGENCE FRONTALE et non tranchée : « near term, the beginnings " +
+                  "of this zonation may be seen » [ernst, ch. 20] contre « Differentiation of the DZ " +
+                  "into the zona glomerulosa and zona fasciculata occurs between the second and fourth " +
+                  "week of postnatal life » [keeling, ch. 26]. Une glomérulée en amas à 40 SA est donc " +
+                  "soit normale, soit précoce : ne pas la coder comme critère de maturation (§ 9-1).";
+
+var TECH_NOTE = "Les pointillés sont des propositions déduites des clics, jamais des prescriptions. " +
+                "Deux réserves de méthode : les clones et dilutions de CD31, MIB-1, caspase-3, Bcl-2, " +
+                "GFAP, CD56 et adipophiline ne sont donnés par aucune source ouverte, ils restent à " +
+                "renseigner par le service ; et le Perls sur la surrénale est proposé par DÉDUCTION — " +
+                "le corpus ne l'emploie jamais sur cet organe et aucun livre ne le mentionne pour lui.";
+
+/* ── 01 · Prélèvement ─────────────────────────────────────────────────────── */
+var PRELEV = [
+  { k:"veineCentrale", l:"Coupe transversale passant par la veine centrale", grave:true,
+    manque:"c'est le seul plan qui montre en même temps les deux cortex et la médullaire ; sans lui, " +
+           "l'absence d'amas neuroblastiques est un artefact de plan et non un constat" },
+  { k:"deuxCortex", l:"Les deux cortex sur la même coupe", grave:true,
+    manque:"une coupe à un seul cortex interdit le rapport CF/CP, qui EST l'axe de maturation de " +
+           "l'organe" },
+  { k:"deuxBlocs", l:"Droite et gauche sur des blocs séparés", grave:true,
+    manque:"l'hémorragie surrénalienne est « often unilateral » [keeling, ch. 26] et la galette " +
+           "d'agénésie rénale peut l'être — sans latéralité, l'asymétrie n'est pas nommable" },
+  { k:"medullaire", l:"Médullaire et amas neuroblastiques centraux sur la coupe",
+    manque:"les nodules sont centraux en fin de gestation : une coupe périphérique ne les montre pas" },
+  { k:"reinHomolateral", l:"Rein homolatéral sur le bloc composite",
+    manque:"la surrénale est presque toujours listée avec le rein dans le corpus, et la galette se lit " +
+           "avec l'agénésie rénale, pas sans elle" },
+  { k:"pesee", l:"Surrénales pesées, percentile ou écart-type rapporté", grave:true,
+    manque:"la maturation surrénalienne est pesée en macro, pas mesurée en micro — 137 des 318 phrases " +
+           "macro portent un percentile ou un écart-type [corpus CR]" },
+  { k:"masseCorporelle", l:"Poids rapporté à la masse corporelle",
+    manque:"le second chiffre peut normaliser ce que le premier signale — le corpus écrit les deux" },
+  { k:"congele", l:"Fragment congelé pour la question lipidique",
+    manque:"sans coupe congelée, Oil Red O et Noir Soudan sont fermés d'avance, donc la gradation " +
+           "I/II/III de la surcharge et la distinction mort aiguë / mort chronique aussi" },
+  { k:"foeticide", l:"Geste de fœticide et délai fœticide-extraction tracés",
+    manque:"le fœticide n'est mentionné que dans 3 CR sur 200, alors qu'il modifie la lecture de la " +
+           "macération [corpus CR]" },
+  { k:"snc", l:"Examen du SNC disponible",
+    manque:"l'hypoplasie secondaire et les formes idiopathiques ne se séparent que sur le SNC" }
+];
+
+/* ── 02 · Rétention ───────────────────────────────────────────────────────────
+   La surrénale est l'un des quatre organes de datation d'[ernst, ch. 37] :
+   « the myocardium, the liver, the adrenal gland ». Elle est au rang 9 sur 10
+   de la Table 15.6 [keeling, ch. 15], juste avant le rein.
+   ⚠️ La colonne des délais horaires de cette table est PERDUE à l'extraction et
+   la Table 37.1 ne laisse que des lignes orphelines. Aucune heure n'est donc
+   attribuable à la surrénale par les livres : la seule valeur défendable est un
+   PLANCHER ≥ 1 semaine, par monotonie du rang. Toute autre valeur serait une
+   interpolation, et ce fragment n'en porte aucune. */
+var MODIF = "modificateurs de l'horloge : « accelerated by fetal hydrops and delivery-autopsy interval " +
+            "of >24 h, and decelerated by fetal gestational age <25/40 » [keeling, ch. 15]";
+
+var PAS_HEURE = "aucune heure n'est attribuable à la surrénale : la colonne des délais de la Table 15.6 " +
+                "est perdue à l'extraction et le rang seul est conservé. Le plancher ≥ 1 semaine vient " +
+                "de la MONOTONIE du rang (le cartilage trachéal, rang antérieur, est coté ≥ 1 semaine " +
+                "dans la Table 37.1 d'[ernst, ch. 37]) — interpoler une heure entre deux tables serait " +
+                "une fabrication";
+
+var RETENTION = [
+  { k:"perteComplete", l:"Perte complète de la basophilie nucléaire surrénalienne",
+    b:"≥ 1 semaine", d:"borne BASSE — rang 9 sur 10 atteint", h:168, q:"bon",
+    note:PAS_HEURE + " ; le service mesure la même charnière et ne descend jamais en dessous — " +
+         "« Macération estimée à plus de une semaine par perte complète de la basophilie nucléaire " +
+         "surrénalienne » [corpus CR]",
+    alerte:MODIF },
+  { k:"basoCFPersistante", l:"Basophilie nucléaire persistante dans le cortex fœtal",
+    b:"< 1 semaine", d:"borne HAUTE — rang 9 non atteint, rangs 1 à 8 déjà tombés", h:120, q:"bon",
+    note:"c'est l'autre moitié de l'encadrement : le corpus écrit systématiquement deux bornes et " +
+         "jamais un point — « Examen limité par la macération évaluée à entre 72h et une semaine par " +
+         "persistance d'une basophilie nucléaire du cortex fœtal surrénalien et du tractus digestif » " +
+         "[corpus CR]",
+    alerte:MODIF },
+  { k:"murAlveolaire", l:"Surrénale ayant tout perdu, basophilie persistant dans les murs alvéolaires",
+    b:"encadrée par le haut", d:"le poumon perd après la surrénale", h:169, q:"moyen",
+    note:"partenaire d'encadrement, pas une borne propre : la surrénale donne l'une des deux bornes, " +
+         "l'autre organe donne la seconde. Les partenaires les plus fréquents du corpus sont le tube " +
+         "digestif, le cartilage trachéal et les murs alvéolaires [corpus CR]" },
+  { k:"cohesionCP", l:"Perte de cohésion et d'architecture du cortex définitif, noyaux encore détaillés",
+    b:"≲ 2 jours", d:"le PREMIER axe qui tombe — et il emporte la maturation", h:48, q:"moyen",
+    note:"légende de figure, pas ligne de table : « loss of tissue integrity and architecture in the " +
+         "definitive cortex » sur un fœtus dont la mort est estimée « less than 2 days » avant la " +
+         "délivrance [ernst, ch. 37]. Conséquence : à ce stade la cytologie est encore lisible et le " +
+         "rapport CF/CP ne l'est déjà plus — la glande est DATANTE MAIS NON MESURABLE" },
+  { k:"mulberry", l:"Masses basophiles sphérulaires intravasculaires (aspect en mûre)",
+    b:"≈ 2–3 jours", d:"« usually apparent at 2–3 days after intrauterine death »", h:60, q:"moyen",
+    note:"artefact de coloration des hématies, « basophilic masses apparently comprising multiple small " +
+         "spherules, which are seen in fetal blood vessels » [keeling, ch. 15] — et collision de " +
+         "vocabulaire : la calcification en mûre du syndrome néphrotique finlandais porte le même mot" },
+  { k:"debrisGranuleux", l:"Débris granuleux péri-surrénaliens", b:"—",
+    d:"artefact qui mime une colonisation bactérienne", h:0, q:"mauvais",
+    note:"« Degeneration of soft tissues results in granular debris which may be mistaken for bacterial " +
+         "colonisation » [keeling, ch. 15] ; le discriminant est « evidence of an inflammatory response " +
+         "or focus of infection », la vraie bactériémie étant « very dense and predominantly limited to " +
+         "vessels ». Doublement piégeux ici : la surrénale est la cible élective de la listériose" },
+  { k:"vacuolesFantomes", l:"Vacuoles claires dans des fantômes cellulaires dépourvus de tout noyau",
+    b:"—", d:"lyse avancée — ce n'est PAS une stéatose", h:0, q:"mauvais",
+    note:"« La surrénale a perdu toute sa basophilie nucléaire, on note de fréquentes et nombreuses " +
+         "vacuoles claires dans le cytoplasme des fantômes cellulaires » [corpus CR] : chercher les " +
+         "noyaux — la stéatose vraie en a" },
+  { k:"cerveauRefoule", l:"Masse à petites cellules dans le rétropéritoine", b:"—",
+    d:"cerveau liquéfié refoulé — ne date rien", h:0, q:"mauvais",
+    note:"« should not be confused with a neuroblastic tumor in the retroperitoneum » [ernst, ch. 37] — " +
+         "se tranche en GFAP / CD56, pas à l'œil" },
+  { k:"petiteEtLysee", l:"Glande petite ET lysée", b:"—", d:"ambigu : hypoplasie OU lyse", h:0, q:"mauvais",
+    note:"le corpus écrit le doute plutôt que la conclusion — « Hypoplasie surrénalienne (secondaire à " +
+         "la lyse ?) » [corpus CR]. Peser avant de conclure" },
+  { k:"nonAnalysable", l:"Surrénales non analysables — problème technique", b:"—",
+    d:"recevabilité, pas rétention", h:0, q:"mauvais",
+    note:"« Les reins et surrénales n'ont pas pu être analysés du fait d'un problème technique » " +
+         "[corpus CR] — l'écrire, ne pas laisser vide" }
+];
+
+/* ── 03 · Maturation — fenêtres en SA ─────────────────────────────────────────
+   SA = semaines de gestation + 2. Les trois livres anglophones comptent en
+   gestation ; chaque intervalle converti est marqué ⟨conv⟩. Aucune des sources
+   n'énonce de STADES : ce qui suit est l'ordre chronologique strict du § 3.b,
+   découpé en fenêtres. Ce sont des repères, pas des seuils. */
+var STADES = [
+  { k:"ebaucheCoelomique", max:9,
+    l:"≈ 6–7 SA · ébauche cœlomique — deux vagues mésothéliales, cortex fœtal puis cortex définitif",
+    note:"les cellules corticales fœtales sont d'emblée de « large, polygonal cells with abundant " +
+         "eosinophilic cytoplasm », la seconde vague donnant des cellules « generally smaller and less " +
+         "eosinophilic » [ernst, ch. 20] [keeling, ch. 26]" },
+  { k:"steroidogeneseCF", max:16,
+    l:"≈ 9–15 SA · stéroïdogenèse du cortex fœtal, médullaire peuplée, premiers nodules neuroblastiques",
+    note:"« the FZ… shows evidence of steroidogenic activity from the seventh week » et « By 7 weeks, " +
+         "cells from the neural crest (phaeochromoblasts) migrate into the center of the early cortex " +
+         "to form the medulla » [keeling, ch. 26] = ≈ 9 SA ⟨conv⟩" },
+  { k:"nodulesConstants", max:19,
+    l:"≈ 16–18 SA · nodules neuroblastiques chez TOUS les fœtus, entrée de la dépendance à l'axe hypothalamo-hypophysaire",
+    note:"« They appear from around 7 weeks gestation, increasing in size and number until they are " +
+         "identifiable in all fetuses by 14–18 weeks » = ≈ 16–20 SA ⟨conv⟩ [keeling, ch. 26]. C'est " +
+         "aussi la date d'entrée du signe anencéphalique : « An intact hypothalamic/pituitary/adrenal " +
+         "axis is necessary for FZ maintenance after about 16 weeks' gestation » = ≈ 18 SA ⟨conv⟩, " +
+         "confirmé nativement en SA — l'hypoplasie « n'apparaît qu'au-delà de 16 SA » [soffoet, ch. 8]" },
+  { k:"picNodulaire", max:27,
+    l:"≈ 19–26 SA · pic de taille des nodules, neuroblastes superficiels qui se raréfient",
+    note:"« [size] peaks between 17 and 20 weeks » = ≈ 19–22 SA ⟨conv⟩, puis décroît ; « Superficial " +
+         "neuroblasts are rare after 20 weeks of gestation, but deep groups are seen throughout " +
+         "gestation » [ernst, ch. 20]. ⚠️ l'échelle de ces deux valeurs n'est pas énoncée par la " +
+         "source : la conversion suppose des semaines de gestation (§ 9-12)" },
+  { k:"cpFonctionnel", max:36,
+    l:"≈ 27–35 SA · le cortex définitif s'épaissit et entre en stéroïdogenèse, la zone transitionnelle se différencie",
+    note:"« From about the 25th week of gestation, the DZ thickens and begins steroidogenesis » = " +
+         "≈ 27 SA ⟨conv⟩ ; la zone transitionnelle était « functionally identical [to the FZ] until " +
+         "about 25–30 weeks » = ≈ 27–32 SA ⟨conv⟩ avant de produire le cortisol de fin de grossesse " +
+         "[keeling, ch. 26]" },
+  { k:"procheTerme", max:99,
+    l:"≳ 36 SA · nodules migrés au centre, maturation chromaffine, cortex fœtal à ≈ 80 % du volume cortical",
+    note:"« Later in gestation, the neuroblastic nodules are present in the center of the gland, " +
+         "surrounding central veins of the medulla » et « medullary cells appear less neuroblastic and " +
+         "take on a more chromaffin-like appearance » [ernst, ch. 20]. L'involution du cortex fœtal est " +
+         "POST-NATALE : elle n'entre pas dans une échelle en SA" }
+];
+
+/* ── 03 bis · Lisibilité du rapport CF/CP, axe médullaire, chiffres consignés ──
+   Les deux axes catégoriels de cet organe ne sont pas des barèmes. Le premier
+   BLOQUE : sans les deux cortex sur une coupe passant par la veine centrale,
+   aucun stade coché ne veut dire quoi que ce soit. Le second existe parce
+   qu'une seule case « maturation surrénalienne » est structurellement fausse —
+   la médullaire peut être en avance quand le cortex est en retard (§ 8.d-5). */
+var LISIBILITE = [
+  { k:"deuxCortex",    l:"Les deux cortex identifiables, veine centrale sur la coupe" },
+  { k:"unSeulCortex",  l:"Un seul cortex sur la coupe — plan tangentiel" },
+  { k:"cpDesorganise", l:"Cortex définitif désorganisé, noyaux encore détaillés" },
+  { k:"fantomes",      l:"Fantômes cellulaires — glande lysée" },
+  { k:"nonExaminee",   l:"Surrénale non prélevée ou non examinée" }
+];
+
+var MEDULLAIRE = [
+  { k:"medConforme", l:"Médullaire conforme au terme" },
+  { k:"medAvance",   l:"Médullaire en AVANCE — phéochromocytes bien visibles" },
+  { k:"medRetard",   l:"Médullaire en retard — amas neuroblastiques restés centraux, pas de cortex fœtal" },
+  { k:"medNonLue",   l:"Médullaire non lue — veine centrale hors coupe" }
+];
+
+var MESURE = {
+  titre:"Lisibilité du rapport CF/CP, axe médullaire, chiffres consignés",
+  defLabel:"lisibilité du rapport CF/CP — à déclarer AVANT tout stade",
+  optLabel:"axe médullaire, coté SÉPARÉMENT de l'axe cortical",
+  defs:LISIBILITE, opts:MEDULLAIRE,
+  champs:[{ id:"cf",     label:"Part du cortex fœtal (%)",                min:0, max:100, step:1 },
+          { id:"cp",     label:"Épaisseur du cortex définitif (cellules)", min:0, max:100, step:1 },
+          { id:"poids",  label:"Poids combiné des surrénales (g)",        min:0, max:40,  step:0.01 },
+          { id:"nodule", label:"Plus grand nodule neuroblastique (mm)",   min:0, max:50,  step:0.1 }]
+};
+
+function verdictMesure(){
+  var lis = E.mesure.def, med = E.mesure.opt, sa = num("sa");
+  var pcf = E.mesure.v.cf, ncp = E.mesure.v.cp, pds = E.mesure.v.poids, nod = E.mesure.v.nodule;
+  if (!lis && !med && pcf == null && ncp == null && pds == null && nod == null && !E.stade)
+    return { cls:"", txt:"Ni lisibilité du rapport CF/CP, ni axe médullaire, ni chiffre — la glande " +
+                         "n'est pas encore lue." };
+
+  var t = [], cls = "ok", res = [];
+
+  /* 1 — Le blocage. Le rapport entre les deux cortex EST l'axe de maturation. */
+  if (!lis){
+    cls = "bad";
+    t.push("Lisibilité du rapport CF/CP NON déclarée : c'est l'axe de maturation de cet organe et il ne " +
+           "se présume pas. Le rapport se lit sur une coupe passant par la veine centrale, entre un " +
+           "cortex définitif « recognizable by its basophilic appearance », « thin (10–20 cells thick) », " +
+           "et un cortex fœtal fait de « large, polygonal cells with abundant eosinophilic cytoplasm » " +
+           "[ernst, ch. 20]. Tant que ce champ est vide, un stade coché n'est pas une lecture.");
+  } else if (lis === "nonExaminee"){
+    cls = "bad";
+    t.push("Surrénale non prélevée ou non examinée : l'écrire fait la différence entre une omission et " +
+           "une normalité — « Les reins et surrénales n'ont pas pu être analysés du fait d'un problème " +
+           "technique » [corpus CR].");
+  } else if (lis === "unSeulCortex"){
+    cls = "bad";
+    t.push("Un seul cortex sur la coupe : ce n'est PAS une agénésie corticale, c'est un plan de coupe " +
+           "tangentiel. Le repère de bon plan est la veine centrale. Le rapport CF/CP est " +
+           "INDÉTERMINABLE — dire pourquoi, ne pas laisser le champ vide.");
+  } else if (lis === "cpDesorganise" || lis === "fantomes"){
+    cls = "bad";
+    t.push("Glande DATANTE MAIS NON MESURABLE : sur cet organe le cortex définitif perd sa cohésion " +
+           "AVANT que les noyaux ne perdent leur basophilie — « loss of tissue integrity and " +
+           "architecture in the definitive cortex » sur un fœtus mort « less than 2 days » avant la " +
+           "délivrance [ernst, ch. 37]. Le rapport CF/CP est donc perdu alors que la datation tient " +
+           "encore jusqu'au rang 9. Écrire la borne de rétention, pas un rapport.");
+    if (lis === "fantomes")
+      t.push("Sur des fantômes cellulaires, une petite glande n'est pas une hypoplasie et des vacuoles " +
+             "ne sont pas une stéatose : le corpus écrit le doute — « Hypoplasie surrénalienne " +
+             "(secondaire à la lyse ?) » [corpus CR].");
+  } else {
+    t.push("Les deux cortex identifiables sur une coupe passant par la veine centrale : le rapport " +
+           "CF/CP est mesurable.");
+  }
+  if (lis && lis !== "deuxCortex" && E.stade)
+    t.push("Un stade est pourtant coché : il se lit alors sur une glande dont l'axe de maturation " +
+           "n'est plus rendu. Le retirer, ou écrire à côté pourquoi il est maintenu.");
+
+  /* 2 — L'axe médullaire, coté séparément : c'est le point du § 8.d-5. */
+  if (!med){
+    res.push("axe médullaire non coté — une seule case « maturation surrénalienne » est " +
+             "structurellement fausse : la glande peut être en retard sur un axe et en avance sur " +
+             "l'autre");
+  } else if (med === "medAvance"){
+    if (cls === "ok") cls = "warn";
+    t.push("Médullaire en avance sur le cortex : « Paradoxalement la médullosurrénale paraît un peu " +
+           "plus mature pour l'âge, avec des phéochromocytes bien visibles » [soffoet, ch. 8] — décrit " +
+           "dans l'anencéphalie. Deux termes histologiques estimés, l'un cortical l'autre médullaire, " +
+           "et ils peuvent différer.");
+  } else if (med === "medRetard"){
+    if (cls === "ok") cls = "warn";
+    t.push("Médullaire en retard : « Les surrénales présentent un défaut de migration des ilôts " +
+           "neuroblastiques qui restent centraux résultant en une absence de formation de cortex " +
+           "foetal (observé dans les anencéphalies) » [corpus CR].");
+  } else if (med === "medNonLue"){
+    res.push("médullaire non lue faute de veine centrale — l'absence d'amas neuroblastiques est alors " +
+             "un artefact de plan, pas un défaut de migration");
+  }
+  if (med && med !== "medNonLue")
+    t.push("Rappel de norme : « La médullosurrénale reste peu développée pendant la vie fœtale » " +
+           "[soffoet, ch. 8] — la petite taille de la médullaire EST la norme, pas un défaut.");
+
+  /* 3 — Part du cortex fœtal. Le chiffre existe, la norme par terme n'existe pas. */
+  if (pcf != null){
+    t.push("Part du cortex fœtal = " + pcf + " %. Les seules valeurs sourçables sont des PLATEAUX, pas " +
+           "une courbe : « le cortex fœtal (CF) qui forme les 4/5e de l'épaisseur de la glande » " +
+           "[soffoet, ch. 8] et « The FZ comprises ~80 % of the entire adrenal cortex at term » " +
+           "[keeling, ch. 26]. AUCUNE SOURCE OUVERTE NE DONNE CE RAPPORT PAR SEMAINE : écrire " +
+           "« CF = 60 % à 24 SA » serait une invention (§ 9-9). La seule courbe chiffrée est " +
+           "pathologique — « from 80 % of cortical volume to only 20 % of the cortical volume by 33 " +
+           "weeks' gestation » dans l'anencéphalie, soit ≈ 35 SA ⟨conv⟩.");
+    if (pcf < 50){
+      if (cls === "ok") cls = "warn";
+      t.push("Part du cortex fœtal sous la moitié : c'est l'ordre de grandeur de la chute " +
+             "anencéphalique, mais le chiffre ne se lit qu'avec le SNC, le poids et l'état de " +
+             "conservation — et l'hypoplasie « n'apparaît qu'au-delà de 16 SA » [soffoet, ch. 8].");
+      if (sa != null && sa < 18)
+        t.push("À " + sa + " SA, la réduction du cortex fœtal n'est PAS opposable : la dépendance à " +
+               "l'axe hypothalamo-hypophysaire ne commence qu'après ≈ 18 SA ⟨conv⟩.");
+    }
+    if (!E.prelev.veineCentrale)
+      res.push("coupe passant par la veine centrale non confirmée — le rapport n'est pas qualifié");
+  }
+
+  /* 4 — Épaisseur du cortex définitif : une borne SANS son terme. */
+  if (ncp != null){
+    t.push("Cortex définitif = " + ncp + " cellules d'épaisseur ; borne sourcée « thin (10–20 cells " +
+           "thick) » [ernst, ch. 20] — ⚠️ SANS TERME ASSOCIÉ : on ignore si c'est une valeur de plateau " +
+           "ou une valeur de terme (§ 9-12). La zone transitionnelle a « similar thickness (10–20 " +
+           "cells) as the definitive zone » et ne se sépare qu'en IHC, pas en HES.");
+    if (ncp > 0 && ncp < 10){ if (cls === "ok") cls = "warn";
+      t.push("Sous la borne basse : un cortex permanent pratiquement absent est le versant DAX1 du " +
+             "couple du § 5.5 — encore faut-il que le cortex fœtal, lui, soit développé."); }
+    if (ncp > 20){ if (cls === "ok") cls = "warn";
+      t.push("Au-dessus de la borne haute : un cortex permanent plus développé et invaginant est l'une " +
+             "des deux descriptions de l'HCS, et elles divergent entre les livres."); }
+  }
+
+  /* 5 — Le poids : le vrai outil du service, et sa seule normale sourçable. */
+  if (pds != null){
+    t.push("Poids combiné = " + pds + " g. Seule normale sourçable dans les livres : « the normal " +
+           "combined weight of 9 g » au terme [keeling, ch. 26]. Le référentiel réellement employé — " +
+           "Mitropoulos et al., 1992 — n'est PAS dans le corpus indexé, et la Table 20.1 d'[ernst, " +
+           "ch. 20], qui donnerait le poids par âge gestationnel, est absente de l'extraction " +
+           "(§ 9-5, § 9-6). Un chiffre sans son normal pour le terme ne vaut rien : écrire le " +
+           "percentile ou l'écart-type, et le rapport à la masse corporelle.");
+    if (pds >= 15){ if (cls === "ok") cls = "warn";
+      t.push("À ce poids, la famille HCS entre dans la description : « The adrenals, in all forms, are " +
+             "greatly enlarged (average ~ 15 g) » [keeling, ch. 26] — une HCS se voit d'abord à la " +
+             "balance et au couteau, pas au microscope."); }
+    if (!E.prelev.masseCorporelle)
+      res.push("rapport à la masse corporelle non calculé — il peut normaliser ce que le percentile " +
+               "signale, le corpus écrit les deux");
+  }
+
+  /* 6 — Le nodule neuroblastique : la seule borne chiffrée, et son support est ouvert. */
+  if (nod != null){
+    t.push("Plus grand nodule neuroblastique = " + nod + " mm ; seule borne chiffrée séparant " +
+           "l'incidentel du reste : « Nodules of these cells (typically measuring less than 3,5 mm in " +
+           "maximum size) may persist in the center of the gland and be found incidentally » " +
+           "[keeling, ch. 26]. ⚠️ La source ne dit pas si la mesure se prend sur la lame ou sur la " +
+           "pièce — sur une coupe, 3,5 mm est une taille macroscopique (§ 9-19).");
+    if (nod > 3.5){ if (cls === "ok") cls = "warn";
+      t.push("Au-dessus de 3,5 mm : la description cytologique du nodule et celle du neuroblastome " +
+             "congénital sont SUPERPOSABLES — seules la taille et la masse les séparent."); }
+    else t.push("Sous la borne : nodule attendu, d'autant que les nodules sont présents chez tous les " +
+                "fœtus entre ≈ 16 et 20 SA ⟨conv⟩ et que « deep groups are seen throughout gestation ».");
+  }
+
+  if (!E.prelev.pesee)
+    res.push("glande non pesée — la maturation surrénalienne se pèse en macro avant de se mesurer en " +
+             "micro, et le cortex permanent n'est écrit nulle part dans le corpus (§ 9-17)");
+  if (res.length){ if (cls === "ok") cls = "warn"; t.push("Réserves : " + res.join(" ; ") + "."); }
+  return { cls:cls, txt:t.join(" ") };
+}
+
+/* ── 05 · Variantes normales ─────────────────────────────────────────────────
+   Sur cet organe la liste est longue et rentable : plusieurs de ces images sont
+   explicitement désignées comme non pathologiques par les sources. */
+var VARIANTES = [
+  { k:"nodulesPeri", l:"Nodules corticaux péri-surrénaliens — « frequently seen adjacent to the adrenal gland and are generally not considered to represent an abnormality »" },
+  { k:"heterotopie", l:"Hétérotopie surrénalienne à distance (gonades, épididyme, foie) — « usually consists only of cortical tissue »" },
+  { k:"neuroIsoles", l:"Cellules neuroblastiques isolées dans le cortex fœtal — « throughout fetal life and even into the neonatal period »" },
+  { k:"nodulesTerme", l:"Nodules neuroblastiques persistant au terme — « deep groups are seen throughout gestation »" },
+  { k:"adenoide", l:"Aspect adénoïde / pseudo-folliculaire du cortex définitif — « may represent a normal developmental process, especially in very immature fetuses »" },
+  { k:"hematopoiese", l:"Foyers d'hématopoïèse — « Foci of hemopoietic activity may be present in the adrenals of infants with no clinical evidence of increased hemopoiesis »" },
+  { k:"lobulees", l:"« Surrénales lobulées » — décrites telles quelles en macro, sans commentaire lésionnel" },
+  { k:"medullairePetite", l:"Médullaire peu développée — « La médullosurrénale reste peu développée pendant la vie fœtale »" },
+  { k:"clustersChromaffines", l:"Médullaire en « scattered clusters of chromaffin cells », sans masse constituée" },
+  { k:"roseCharnue", l:"Glande « pink and fleshy », conique, « presque aussi hautes que larges »" }
+];
+
+/* ── 06 · Signes ─────────────────────────────────────────────────────────────
+   On coche des SIGNES, pas des diagnostics. Les associations de la § 07 sont
+   dérivées de ces cases et ne se cliquent pas. Aucune clé ci-dessous ne porte
+   un nom de maladie. */
+var SIGNES = [
+  /* Hémorragie, nécrose, calcification — le différentiel central de l'organe */
+  { k:"hemoCF", l:"Sang extravasé dans le CORTEX FŒTAL",
+    meta:"« The hemorrhages usually occur in the FZ cortex » — le siège de l'hémorragie anoxique" },
+  { k:"hemoCentrale", l:"Hémorragie CENTRALE / médullaire",
+    meta:"siège de l'hémorragie de fœticide et de l'hémorragie « habituelle » du corpus — disqualifiée par défaut" },
+  { k:"hemoSousCapsulaire", l:"Hémorragie « subcapsular or predominantly periadrenal »" },
+  { k:"necroseGlandulaire", l:"Nécrose glandulaire étendue accompagnant l'hémorragie" },
+  { k:"unilateral", l:"Atteinte hémorragique UNILATÉRALE",
+    meta:"« often unilateral » — vaut pour le contexte obstétrical comme pour le geste" },
+  { k:"foeticide", l:"Geste de fœticide connu / délai fœticide–extraction renseigné",
+    meta:"3 CR sur 200 seulement le tracent — le cocher est déjà un gain" },
+  { k:"calcifInterne", l:"Calcifications de la corticale interne et de la médullaire",
+    meta:"« the outer cortex being well preserved » ; « This dystrophic calcification can be apparent as early as 9 days post hemorrhage »" },
+  { k:"calcifMure", l:"Calcification en mûre — « an unusual mulberry shape »",
+    meta:"forme du syndrome néphrotique congénital finlandais, à ne pas confondre avec les mulberry-like bodies de macération" },
+
+  /* Surcharge lipidique réactionnelle */
+  { k:"vacuolesCF", l:"« clear, round, lipid vacuoles within the eosinophilic cytoplasm of the fetal cortical cells »",
+    meta:"noyaux PRÉSENTS — la lyse, elle, laisse des « fantômes cellulaires »" },
+  { k:"vacuolesPeriVeine", l:"Vacuolisation bordant la veine centrale seulement",
+    meta:"l'étendue radiale est l'axe de la gradation I/II/III, qui vit dans foeto_grades" },
+  { k:"vacuolesDiffuses", l:"« lipid accumulation throughout the entire fetal zone »" },
+  { k:"glandeJaune", l:"Glande jaune au lieu de rose, ou « liseré blanchâtre au centre de la glande, à la partie profonde du cortex fœtal »" },
+  { k:"pasNegatif", l:"PAS négatif sur la vacuole",
+    meta:"« la coloration PAS est négative » — usage du service pour trancher la nature de la vacuole" },
+
+  /* Surcharge constitutionnelle */
+  { k:"aspectStrie", l:"Surcharge cellulaire lipidique prenant un « aspect strié » dans les cellules du cortex fœtal",
+    meta:"Zellweger — attendu « dès le deuxième trimestre », et sur foie + Leydig en même temps" },
+  { k:"inclusionsLamellaires", l:"Cellules ballonnisées, petites striations ou « inclusions lamellaires »" },
+  { k:"perteArchiCF", l:"« l'architecture générale du cortex fœtal a disparu »" },
+  { k:"petiteBlanche", l:"Glandes « anormalement petites, blanches »" },
+  { k:"atteinteMultiorgane", l:"Même surcharge retrouvée sur un autre organe (foie, cellules de Leydig)",
+    meta:"« L'atteinte multi-organe est le critère » — rien de chiffré dans les sources" },
+
+  /* Hyperplasie congénitale */
+  { k:"glandeVolumineuse", l:"Glande volumineuse et cérébriforme, poids très au-dessus du repère",
+    meta:"« average ~ 15 g » contre « the normal combined weight of 9 g »" },
+  { k:"cortexEpais", l:"Cortex épais avec « l'architecture générale est conservée »" },
+  { k:"hyperplasieNodulaire", l:"« nodular hyperplasia of the cortex » avec cellules compactes qui « stream outward toward the surface »",
+    meta:"divergence avec soffoet, qui décrit au contraire une architecture conservée — non tranchée" },
+  { k:"cpInvaginant", l:"« Le cortex permanent est plus développé et s'invagine dans le cortex fœtal »" },
+  { k:"lipidiquesRarefiees", l:"« Lipid-containing cells of the zona fasciculata are greatly reduced »" },
+  { k:"ambiguite", l:"Ambiguïté génitale constatée",
+    meta:"« more than 90 % of cases of 46,XX individuals with male or ambiguous genitalia » — fait peser et couper les surrénales" },
+
+  /* Hypoplasies — les deux cortex se cotent SÉPARÉMENT */
+  { k:"cfReduit", l:"Cortex FŒTAL réduit sans être absent",
+    meta:"« a progressive reduction of the FZ » — anencéphalie, T18, hypoxie/toxémie, triploïdie" },
+  { k:"cfAbsent", l:"Cortex FŒTAL « pratiquement absent »" },
+  { k:"cpAbsent", l:"Cortex PERMANENT « pratiquement absent » — « The DZ fails to develop »" },
+  { k:"cfEtCpReduits", l:"« both the FZ and DZ are severely reduced or absent »" },
+  { k:"cortexDesorganise", l:"« the adrenal cortex to be disorganized »" },
+  { k:"cytomegalieEosino", l:"« marked cytomegaly of intensely eosinophilic FZ cortical cells »" },
+  { k:"cytoplasmeVitreux", l:"Cytoplasme vitreux abondant avec noyaux de taille normale",
+    meta:"« excessive, glassy cytoplasm and normal-sized nuclei » — seul critère qui sépare l'hypoplasie cytomégalique de la cytomégalie ordinaire" },
+  { k:"snc", l:"Anomalie du SNC constatée (anencéphalie, NTD)" },
+  { k:"sncNormal", l:"Examen du SNC normal malgré une glande minuscule" },
+  { k:"medullaireMature", l:"Médullaire « un peu plus mature pour l'âge, avec des phéochromocytes bien visibles »",
+    meta:"paradoxe de l'anencéphalie — la médullaire peut être en avance quand le cortex est en retard" },
+  { k:"poidsBas", l:"Poids en dessous du repère, glande pesée",
+    meta:"« the glands typically weigh only 10 % of normal at term » ; la vraie hypoplasie se pèse avant de se voir" },
+
+  /* Cytomégalie du cortex fœtal */
+  { k:"noyauxGeants", l:"« nuclear gigantism » avec « occasional nuclear pseudoinclusions »" },
+  { k:"taille3a4", l:"Cellules « 3 à 4 fois plus volumineuses que la moyenne »",
+    meta:"seule valeur chiffrée disponible pour cette lésion" },
+  { k:"plurifocal", l:"Atteinte plurifocale du cortex fœtal" },
+  { k:"inclusionsVraies", l:"Inclusions « nucléaires et cytoplasmiques, spécifiques » de ce virus",
+    meta:"vraies inclusions ≠ pseudo-inclusions ; elles survivent à la macération" },
+
+  /* Nodules neuroblastiques */
+  { k:"amasDenses", l:"« unencapsulated groups of densely packed cells with high nuclear/cytoplasmic ratios »" },
+  { k:"rosettes", l:"« Some are quite large aggregates with rosette formation »" },
+  { k:"nodulesCentraux", l:"Amas neuroblastiques centraux, autour des veines médullaires",
+    meta:"attendus chez tous les fœtus vers 16–20 SA ; une coupe périphérique ne les montre pas" },
+  { k:"nodulePlus35", l:"Nodule dépassant 3,5 mm",
+    meta:"« typically measuring less than 3,5 mm in maximum size » — seule borne qui sépare l'incidentel du reste" },
+  { k:"masseExpansive", l:"Masse constituée, expansive, refoulant le parenchyme",
+    meta:"« description cytologiquement superposable » au nodule : seules la taille et la masse séparent" },
+
+  /* Infection et inflammation */
+  { k:"microAbces", l:"Microabcès arrondis, « bien délimités, mais non encapsulés », à polynucléaires altérés",
+    meta:"« white abscesses, the size of pinheads » — visibles à l'œil nu" },
+  { k:"gramPositif", l:"Bâtonnets Gram (+) vus sur la coupe",
+    meta:"« rarement visibles » sur les coupes histologiques — un Gram négatif n'exclut pas" },
+  { k:"necroseMultifocale", l:"« multifocal, punctate cortical necrosis with surrounding hyperemia or hemorrhage »" },
+  { k:"infiltrat", l:"Infiltrat leucocytaire dans le parenchyme",
+    meta:"« La réaction inflammatoire n'apparaît que dans un deuxième temps » — son absence n'exclut pas le CMV" },
+  { k:"kysteToxo", l:"« kyste (cellule ballonnisée), à distance de l'infiltrat inflammatoire »" },
+  { k:"amasBasophilesPeri", l:"Amas basophiles granuleux au contact de la glande, SANS polynucléaires",
+    meta:"« Degeneration of soft tissues results in granular debris which may be mistaken for bacterial colonisation »" },
+
+  /* Position, forme, contexte */
+  { k:"galette", l:"Surrénale en galette, glande aplatie" },
+  { k:"agenesieRenale", l:"Agénésie rénale homolatérale ou bilatérale" },
+  { k:"poidsNormal", l:"Poids normal malgré une forme anormale",
+    meta:"« mais leur poids reste normal » — une galette ne se conclut pas hypoplasie" },
+  { k:"hematopoieseFoyer", l:"Foyer d'hématopoïèse",
+    meta:"peut exister sans contexte hématologique — le noter, ne pas le conclure" },
+  { k:"masseRetroperit", l:"Masse à petites cellules dans le rétropéritoine, hors glande",
+    meta:"peut être du cerveau liquéfié refoulé — « should not be confused with a neuroblastic tumor in the retroperitoneum »" }
+];
+
+/* ── 07 · Associations lues ──────────────────────────────────────────────────
+   Dérivées des signes cochés, jamais cliquables. Clés préfixées « d » pour
+   qu'aucune ne puisse entrer en collision avec une clé de SIGNES. Le « stop »
+   dit ce que l'association NE permet pas de conclure. */
+var DIAGS = [
+  { k:"dHemoAnoxique", l:"Hémorragie de siège cortical fœtal, à rattacher au contexte", cle:"hemoCF", min:2,
+    signes:["hemoCF","necroseGlandulaire","unilateral","calcifInterne","hemoSousCapsulaire"],
+    stop:" — le siège cortical fœtal est le seul appui de livre pour une hémorragie anoxique, et c'est un appui " +
+         "faible. Aucune source ouverte n'énonce de critère de réaction cellulaire, de fibrine, d'hémosidérine " +
+         "ou d'organisation appliqué à la surrénale : le différentiel lésion/artefact de cet organe n'est PAS " +
+         "résolu par les livres. Une hémorragie sans calcification ni organisation ne prouve rien, la " +
+         "calcification n'apparaissant qu'à partir de 9 jours." },
+
+  { k:"dHemoGeste", l:"Hémorragie centrale — qualifier avant de retenir", cle:"hemoCentrale", min:2,
+    signes:["hemoCentrale","unilateral","foeticide","necroseGlandulaire"],
+    stop:" — c'est le piège central de cet organe. Le service qualifie cette image d'emblée : « liée au " +
+         "foeticide », « (habituel) », « artéfactuelle ». Ne pas écrire « hémorragie surrénalienne » comme " +
+         "lésion sans qualifier le siège et sans exclure le geste. Le fœticide n'apparaît que dans 3 CR du " +
+         "corpus : son absence dans le dossier ne vaut pas absence de geste." },
+
+  { k:"dSteatose", l:"Surcharge lipidique du cortex fœtal", cle:"vacuolesCF", min:2,
+    signes:["vacuolesCF","vacuolesPeriVeine","vacuolesDiffuses","glandeJaune","pasNegatif"],
+    stop:" — ne pas écrire « souffrance chronique » dans la micro : la micro décrit la surcharge et son type, " +
+         "la conclusion relie. Le type I/II/III se cote dans la gradation, pas dans la liste des lésions. " +
+         "La confirmation exige une coupe congelée, donc une décision prise à la table d'autopsie : elle est " +
+         "structurellement inaccessible en routine différée et aucune congélation surrénalienne n'existe dans " +
+         "le corpus. Chercher les noyaux avant de conclure : la lyse laisse des « fantômes cellulaires »." },
+
+  { k:"dMetabolique", l:"Surcharge évocatrice d'une maladie constitutionnelle", cle:"aspectStrie", min:2,
+    signes:["aspectStrie","inclusionsLamellaires","perteArchiCF","petiteBlanche","atteinteMultiorgane"],
+    stop:" — ne pas nommer la maladie sur la lame. Une surrénale petite et blanche avec inclusions lamellaires " +
+         "appelle un bilan peroxysomal, elle ne le remplace pas. Aucune coloration n'est nommée dans les " +
+         "sources pour cet organe : le diagnostic est biochimique et génétique, la lame oriente." },
+
+  { k:"dHcs", l:"Aspect d'hyperplasie corticosurrénalienne", cle:"glandeVolumineuse", min:2,
+    signes:["glandeVolumineuse","cortexEpais","hyperplasieNodulaire","cpInvaginant","lipidiquesRarefiees","ambiguite"],
+    stop:" — ne pas écrire « HCS » dans la micro : écrire glande volumineuse, cortex épais, hyperplasie ou " +
+         "invagination du cortex permanent, raréfaction des cellules lipidiques, et poser la question en " +
+         "conclusion. Le diagnostic est biochimique et génétique, aucune technique ne tranche sur la lame. " +
+         "Les deux livres divergent sur l'image : hyperplasie nodulaire d'un côté, architecture conservée " +
+         "avec invagination du cortex permanent de l'autre — divergence portée, non arbitrée. " +
+         "Se voit d'abord à la balance et au couteau, pas au microscope." },
+
+  { k:"dHypoSecondaire", l:"Réduction du cortex fœtal en contexte de SNC anormal", cle:"cfReduit", min:2,
+    signes:["cfReduit","snc","poidsBas","medullaireMature","vacuolesCF"],
+    stop:" — la réduction du cortex fœtal n'est pas propre à l'anencéphalie : trisomie 18, restriction de " +
+         "croissance sévère, hypoxie et toxémie, triploïdie donnent la même image, et pour l'hypoxie « Cette " +
+         "hypoplasie n'est pas constante et jamais majeure ». Elle « n'apparaît qu'au-delà de 16 SA » : avant, " +
+         "l'absence de réduction ne réfute rien. Sur une glande lysée, écrire le doute et non la conclusion. " +
+         "Cette lecture est macro et pondérale avant d'être micro." },
+
+  { k:"dDax1", l:"Cortex fœtal développé, cortex permanent absent — moitié cytomégalique du miroir", cle:"cpAbsent", min:2,
+    signes:["cpAbsent","cytomegalieEosino","cortexDesorganise","cfReduit"],
+    stop:" — le couple avec la forme miniature est un miroir exact et c'est le seul discriminant " +
+         "morphologique disponible : cette moitié-ci a le cortex fœtal présent et le cortex permanent absent. " +
+         "Un seul cortex sur la coupe peut n'être qu'un plan tangentiel : sans veine centrale, ne pas conclure " +
+         "à l'absence d'un cortex. Ne pas nommer le gène sur la lame. Le repère pondéral donné par soffoet " +
+         "pour cette forme est douteux et n'est pas repris ici." },
+
+  { k:"dMiniature", l:"Cortex fœtal absent, cortex permanent conservé — moitié miniature du miroir", cle:"cfAbsent", min:2,
+    signes:["cfAbsent","sncNormal","poidsBas"],
+    stop:" — miroir exact de la forme précédente. Le SNC normal est ce qui la sépare de l'hypoplasie " +
+         "secondaire, et il doit avoir été examiné pour être opposable. Même réserve de plan de coupe : " +
+         "l'absence d'un cortex ne se lit que sur une coupe passant par la veine centrale." },
+
+  { k:"dRecessive", l:"Les deux cortex sévèrement réduits", cle:"cfEtCpReduits", min:2,
+    signes:["cfEtCpReduits","poidsBas","sncNormal"],
+    stop:" — l'atteinte des deux cortex ne discrimine plus le couple cytomégalique/miniature : elle sort du " +
+         "miroir. Ne pas nommer l'entité familiale sur la lame. Sur glande lysée, le cortex permanent est " +
+         "le premier détruit — la réduction peut être une lecture de l'autolyse." },
+
+  { k:"dCytomegalie", l:"Cytomégalie du cortex fœtal", cle:"noyauxGeants", min:2,
+    signes:["noyauxGeants","taille3a4","plurifocal"],
+    stop:" — non spécifique : « described in patients with Beckwith-Wiedemann syndrome, the cytomegalic type " +
+         "of congenital adrenal hypoplasia, trisomy 13 and in infants of diabetic mothers », et « may be seen " +
+         "as an unexpected finding without any clinical correlation ». Ne pas écrire Beckwith-Wiedemann. " +
+         "Trois choses portent ce mot : gros noyaux ici, cytoplasme vitreux à noyaux normaux dans " +
+         "l'hypoplasie cytomégalique, inclusions vraies dans la cytomégalie virale. Fréquence de base " +
+         "divergente selon les sources (≈ 3 % contre « 0,1–6,5 % »), divergence portée. L'âge d'apparition " +
+         "dans le syndrome de Beckwith-Wiedemann diverge aussi entre les livres, non arbitré." },
+
+  { k:"dHypoCytomegalique", l:"Cytomégalie à noyaux de taille normale — l'autre cytomégalie", cle:"cytoplasmeVitreux", min:2,
+    signes:["cytoplasmeVitreux","cortexDesorganise","poidsBas","cfReduit"],
+    stop:" — cette association existe pour empêcher la confusion, pas pour nommer une maladie. Le seul " +
+         "critère morphologique écrit est la taille du noyau : gros noyau = cytomégalie ordinaire, cytoplasme " +
+         "vitreux avec noyau normal = hypoplasie cytomégalique. Il n'y a pas d'autre discriminant sourcé." },
+
+  { k:"dNeuroblastique", l:"Amas neuroblastiques", cle:"amasDenses", min:2,
+    signes:["amasDenses","rosettes","nodulesCentraux","nodulePlus35","masseExpansive"],
+    stop:" — ne pas écrire « neuroblastome in situ » : le terme est contesté et le corpus ne l'emploie jamais, " +
+         "il écrit une description. Ces amas sont NORMAUX à leur âge, et « no clonal proliferation has been " +
+         "demonstrated in these lesions ». La description cytologique du neuroblastome congénital est " +
+         "superposable : seules la taille et la masse séparent, et 3,5 mm est la seule borne écrite. " +
+         "Leur absence sur une coupe périphérique ne veut rien dire, ils sont centraux en fin de gestation." },
+
+  { k:"dListeriose", l:"Abcédation à polynucléaires du cortex", cle:"microAbces", min:2,
+    signes:["microAbces","gramPositif","infiltrat","necroseGlandulaire"],
+    stop:" — sur une surrénale macérée, des amas basophiles péri-glandulaires sans polynucléaires ne sont pas " +
+         "une listériose. Le discriminant est « evidence of an inflammatory response or focus of infection », " +
+         "la vraie bactériémie étant « very dense and predominantly limited to vessels ». Un Gram négatif " +
+         "n'exclut rien : les bacilles sont « rarement visibles » sur les coupes." },
+
+  { k:"dViral", l:"Aspect évocateur d'une infection virale", cle:"inclusionsVraies", min:2,
+    signes:["inclusionsVraies","necroseMultifocale","infiltrat","kysteToxo","calcifInterne"],
+    stop:" — une surrénale à inclusions sans infiltrat n'exclut rien, la réaction inflammatoire venant dans " +
+         "un second temps. Ne pas nommer l'agent sur la seule morphologie ; le kyste toxoplasmique et " +
+         "l'inclusion virale ne sont pas la même chose. Les inclusions virales survivent à la macération, " +
+         "ce qui en fait un des rares signes encore lisibles sur glande rétenue." },
+
+  { k:"dGalette", l:"Surrénale en galette", cle:"galette", min:2,
+    signes:["galette","agenesieRenale","poidsNormal"],
+    stop:" — une glande aplatie n'est pas une hypoplasie : « leur poids reste normal ». Et gare à l'inverse, " +
+         "le corpus décrit des galettes « sphérisées par une probable hémorragie artéfactuelle ». Une glande " +
+         "de poids normal peut être profondément anormale de forme, et une glande de forme normale peut " +
+         "être très en dessous du repère pondéral." },
+
+  { k:"dCalcif", l:"Calcifications surrénaliennes", cle:"calcifInterne", min:2,
+    signes:["calcifInterne","calcifMure","hemoCF","hemoCentrale","necroseGlandulaire"],
+    stop:" — « When no mass or other adrenal disease is identified, it can be presumed that calcifications " +
+         "represent the resolution of previous adrenal hemorrhage » : c'est une présomption, à écrire comme " +
+         "telle. Les autres causes sont l'infection in utero, l'anasarque et les maladies de surcharge. " +
+         "Ne pas confondre avec les artefacts pigmentaires de macération, qui « should not be confused with " +
+         "calcifications, bacteria, viral inclusions, hemosiderin deposits, or formalin pigment »." },
+
+  { k:"dMasse", l:"Masse rétropéritonéale à petites cellules", cle:"masseRetroperit", min:2,
+    signes:["masseRetroperit","masseExpansive","amasDenses","rosettes"],
+    stop:" — avant de parler de tumeur, éliminer le cerveau liquéfié refoulé par GFAP et CD56. Et pour les " +
+         "tumeurs corticosurrénaliennes, « The histological criteria used to predict malignant behavior in " +
+         "adults are not reliable in children » : la mesure décisive est le poids de la tumeur, pas la lame." }
+];
+
+/* ── 08 · Négatifs ───────────────────────────────────────────────────────────
+   Sur 68 phrases micro surrénaliennes du corpus, 4 seulement énoncent un
+   négatif, contre 8 qui écrivent une normalité globale sans dire ce qui a été
+   cherché. Un seul négatif nommé existe réellement dans la pratique : la
+   cytomégalie. Le reste de cette liste est une proposition normative, et le
+   champ « p » le dit. */
+var NEGATIFS = [
+  { k:"cytomegalie", l:"Absence de cytomégalie du cortex fœtal énoncée",
+    p:"le seul négatif réellement attesté dans le corpus, en micro comme en conclusion",
+    ko:"cytomégalie NON recherchée — le seul négatif que le service écrit vraiment" },
+  { k:"pas", l:"Absence de surcharge PAS positive du cortex énoncée",
+    p:"attesté : « Absence de surcharge PAS positive du cortex surrénalien »",
+    ko:"surcharge PAS NON recherchée" },
+  { k:"deuxCortexNeg", l:"Les deux cortex cotés SÉPARÉMENT (CF présent/absent, CP présent/absent)",
+    p:"sans quoi le couple cytomégalique / miniature est indiscernable",
+    ko:"cortex cotés en bloc — le miroir CF/CP ne peut plus être lu" },
+  { k:"veineNeg", l:"Cytoarchitecture énoncée : deux cortex identifiables, veine centrale présente",
+    p:"attesté dans le corpus, et c'est le garant du plan de coupe",
+    ko:"cytoarchitecture non énoncée — le plan de coupe n'est pas documenté" },
+  { k:"basoNeg", l:"Perte de basophilie nucléaire : complète / partielle / absente",
+    p:"« c'est le négatif le plus utile de cet organe » — il donne l'une des deux bornes de la datation",
+    ko:"basophilie nucléaire NON cotée — la borne de datation de cet organe est perdue" },
+  { k:"hemoNeg", l:"Hémorragie : présente/absente, et si présente son SIÈGE",
+    p:"cortical fœtal / central-médullaire / sous-capsulaire / péri-surrénalien",
+    ko:"hémorragie non cotée ou siège non précisé — le différentiel de l'organe repose sur le siège" },
+  { k:"lipideNeg", l:"Absence de surcharge lipidique du cortex fœtal, et si présente son type",
+    p:"proposé par les livres, non attesté dans le corpus",
+    ko:"surcharge lipidique NON recherchée" },
+  { k:"calcifNeg", l:"Absence de calcification",
+    p:"proposé par les livres — seul marqueur chronologique post-hémorragique de l'organe",
+    ko:"calcification NON recherchée — le seul repère de datation post-hémorragique manque" },
+  { k:"noduleNeg", l:"Absence de nodule neuroblastique de plus de 3,5 mm",
+    p:"proposé par les livres — la seule borne chiffrée qui sépare l'incidentel du reste",
+    ko:"taille des nodules neuroblastiques NON évaluée" },
+  { k:"viralNeg", l:"Absence d'inclusion virale (CMV, herpès, parvovirus)",
+    p:"d'autant plus utile que ces inclusions survivent à la macération",
+    ko:"inclusions virales NON recherchées — elles restent lisibles là où le reste ne l'est plus" },
+  { k:"abcesNeg", l:"Absence de microabcès à polynucléaires",
+    p:"proposé par les livres, non attesté dans le corpus",
+    ko:"microabcès NON recherchés" },
+  { k:"hematoNeg", l:"Absence de foyer d'hématopoïèse",
+    p:"à énoncer parce qu'il peut exister sans contexte hématologique et donc ne rien vouloir dire",
+    ko:"foyers d'hématopoïèse NON cotés" }
+];
+
+/* ── 09 · Techniques ─────────────────────────────────────────────────────────
+   Une ligne par QUESTION, pas par coloration. */
+var TECHNIQUES = [
+  { k:"hes",       l:"HES", q:"les deux cortex sont-ils identifiables et dans quel rapport ?" },
+  { k:"trichrome", l:"Trichrome de Masson ou réticuline", q:"l'architecture est-elle conservée malgré la macération ?" },
+  { k:"oro",       l:"Oil Red O ou Noir Soudan sur COUPE CONGELÉE", q:"surcharge lipidique du cortex fœtal, et de quel type ? — la paraffine ne le permet pas" },
+  { k:"pas",       l:"PAS", q:"la vacuolisation est-elle lipidique ou glycogénique/mucineuse ?" },
+  { k:"adipo",     l:"IHC adipophiline", q:"alternative en paraffine à la question lipidique — « optional »" },
+  { k:"cd31",      l:"IHC CD31", q:"les colonnes du cortex fœtal sont-elles bien séparées par des sinusoïdes ?" },
+  { k:"mib1",      l:"IHC MIB-1, caspase-3, Bcl-2", q:"cette cytomégalie est-elle proliférative ou apoptotique ? — les trois sont négatifs" },
+  { k:"gfap",      l:"IHC GFAP et CD56", q:"cette masse rétropéritonéale est-elle du tissu neuroblastique ou du cerveau liquéfié ?" },
+  { k:"gram",      l:"HES d'abord, Gram ensuite", q:"listériose ou débris de macération ? — chercher les polynucléaires avant les bacilles" },
+  { k:"perls",     l:"Perls", q:"hémosidérine — PROPOSÉ PAR DÉDUCTION, non sourcé sur cet organe, non employé par le service" }
+];
+
+/* Les propositions suivent les SIGNES cochés : une technique se demande sur ce
+   qu'on a vu, pas sur le nom qu'on lui donnerait. */
+function suggerer(){
+  var s = {};
+  function anormal(k){ return E.signes[k] === "anormal"; }
+  function ret(k){ return E.retention[k] === "present"; }
+
+  if (anormal("vacuolesCF") || anormal("vacuolesPeriVeine") || anormal("vacuolesDiffuses") ||
+      anormal("glandeJaune")){ s.pas = 1; s.oro = 1; s.adipo = 1; }
+  if (anormal("aspectStrie") || anormal("inclusionsLamellaires") || anormal("perteArchiCF")) s.pas = 1;
+  if (anormal("noyauxGeants") || anormal("taille3a4") || anormal("plurifocal")) s.mib1 = 1;
+  if (anormal("cytoplasmeVitreux")) s.mib1 = 1;
+  if (anormal("inclusionsVraies") || anormal("necroseMultifocale") || anormal("kysteToxo")) s.hes = 1;
+  if (anormal("microAbces") || anormal("infiltrat") || anormal("amasBasophilesPeri")){ s.hes = 1; s.gram = 1; }
+  if (anormal("masseRetroperit") || anormal("masseExpansive")) s.gfap = 1;
+  if (anormal("hemoCF") || anormal("hemoCentrale") || anormal("hemoSousCapsulaire")) s.perls = 1;
+  if (anormal("cfReduit") || anormal("cfAbsent") || anormal("cpAbsent") || anormal("cfEtCpReduits") ||
+      anormal("cortexDesorganise")){ s.hes = 1; s.cd31 = 1; }
+  if (anormal("cortexEpais") || anormal("cpInvaginant") || anormal("hyperplasieNodulaire")) s.hes = 1;
+
+  /* La rétention change la question posée : sur glande lysée on ne demande plus
+     un rapport, on demande s'il reste une architecture. */
+  if (ret("cohesionCP") || ret("vacuolesFantomes") || ret("petiteEtLysee")) s.trichrome = 1;
+  if (ret("debrisGranuleux") || ret("murAlveolaire")){ s.hes = 1; s.gram = 1; }
+  if (ret("perteComplete") || ret("basoCFPersistante")) s.trichrome = 1;
+
+  return s;
+}
+
+/* ── 10 · Contrôles propres à l'organe ───────────────────────────────────────
+   Le banc commun tourne AVANT et laisse des signes posés, un côté et une
+   technique : on part d'un état voulu, pas supposé. */
+async function testsOrgane(chk, clic, set, crTient, pause){
+  function pose(k, v){ if (E.signes[k] !== v) clic("les", k, v); }
+  function ote(k){ if (E.signes[k]) clic("les", k, E.signes[k]); }
+  function tenue(k){ return associations().some(function(a){ return a.d.k === k && a.tenu; }); }
+  function mdef(k){ if (E.mesure.def !== k) clic("mdef", k); }
+  function mopt(k){ if (E.mesure.opt !== k) clic("mopt", k); }
+
+  SIGNES.forEach(function(x){ ote(x.k); });
+  if (PAIR && E.cote !== "deux") clic("cote", "deux");
+
+  /* La table de datation : le rang existe, l'heure n'existe pas. */
+  chk("rang 9 : plancher ≥ 1 semaine", par(RETENTION, "perteComplete").b === "≥ 1 semaine");
+  chk("borne haute symétrique",        par(RETENTION, "basoCFPersistante").b === "< 1 semaine");
+  chk("aucune heure interpolée",       par(RETENTION, "perteComplete").note.indexOf("MONOTONIE") >= 0 &&
+      par(RETENTION, "perteComplete").note.indexOf("fabrication") >= 0);
+  chk("modificateurs portés",          par(RETENTION, "perteComplete").alerte.indexOf("hydrops") >= 0);
+  chk("deux bornes bonnes, l'organe date",
+      RETENTION.filter(function(r){ return r.q === "bon"; }).length === 2);
+  chk("collision de vocabulaire « mûre » signalée",
+      par(RETENTION, "mulberry").note.indexOf("collision de vocabulaire") >= 0);
+
+  /* L'inversion de l'organe : la maturation tombe avant la datation. */
+  chk("le cortex définitif tombe le premier",
+      par(RETENTION, "cohesionCP").h < par(RETENTION, "perteComplete").h &&
+      par(RETENTION, "cohesionCP").note.indexOf("DATANTE MAIS NON MESURABLE") >= 0);
+
+  /* La lisibilité du rapport CF/CP BLOQUE : elle ne se présume pas.
+     L'axe médullaire est posé d'abord, sinon le bloc mesure est encore muet. */
+  mopt("medConforme");
+  if (E.mesure.def) clic("mdef", E.mesure.def);
+  chk("rapport CF/CP non déclaré = blocage", $("vMesure").className.indexOf("bad") >= 0 &&
+      crTient("un stade coché n'est pas une lecture"));
+
+  mdef("unSeulCortex");
+  chk("un seul cortex n'est pas une agénésie", $("vMesure").className.indexOf("bad") >= 0 &&
+      crTient("ce n'est PAS une agénésie corticale") && crTient("INDÉTERMINABLE"));
+
+  mdef("cpDesorganise");
+  chk("datante mais non mesurable", crTient("Glande DATANTE MAIS NON MESURABLE") &&
+      crTient("rapport CF/CP est donc perdu alors que la datation tient"));
+
+  mdef("fantomes");
+  chk("sur fantômes, ni hypoplasie ni stéatose", crTient("une petite glande n'est pas une hypoplasie"));
+
+  mdef("deuxCortex");
+  chk("les deux cortex : le rapport devient mesurable",
+      $("vMesure").className.indexOf("bad") < 0 && crTient("le rapport CF/CP est mesurable"));
+
+  /* Le chiffre s'entre ; c'est son barème par terme qui n'existe pas. */
+  set("sa", "24");
+  set("m_cf", "60");
+  chk("le rapport CF/CP s'entre sans norme", crTient("Part du cortex fœtal = 60 %"));
+  chk("aucune norme par semaine", crTient("AUCUNE SOURCE OUVERTE NE DONNE CE RAPPORT PAR SEMAINE"));
+  chk("les seules valeurs sourçables sont des plateaux", crTient("PLATEAUX, pas") &&
+      crTient("4/5e de l'épaisseur de la glande") && crTient("~80 % of the entire adrenal cortex at term"));
+  set("m_cf", "25");
+  chk("chute anencéphalique évoquée, pas conclue", crTient("l'ordre de grandeur de la chute"));
+  set("sa", "15");
+  chk("avant 16 SA la réduction n'est pas opposable", crTient("n'est PAS opposable"));
+  set("sa", "24");
+  set("m_cf", "");
+
+  /* Une borne sans son terme reste une borne sans son terme. */
+  set("m_cp", "14");
+  chk("borne du CP sans terme associé", crTient("thin (10–20 cells thick)") &&
+      crTient("SANS TERME ASSOCIÉ"));
+  set("m_cp", "4");
+  chk("CP effondré renvoie au miroir", crTient("encore faut-il que le cortex fœtal, lui, soit développé"));
+  set("m_cp", "");
+
+  /* Le poids : le vrai outil du service, et son référentiel manquant. */
+  set("m_poids", "16");
+  chk("normale pondérale sourçable", crTient("the normal combined weight of 9 g"));
+  chk("référentiel réel hors index", crTient("Mitropoulos"));
+  chk("HCS entre par la balance", crTient("greatly enlarged (average ~ 15 g)"));
+  set("m_poids", "");
+
+  /* Le nodule : la seule borne chiffrée de l'organe, et son support est ouvert. */
+  set("m_nodule", "2");
+  chk("sous 3,5 mm, nodule attendu", crTient("nodule attendu"));
+  set("m_nodule", "6");
+  chk("au-dessus, descriptions superposables", crTient("SUPERPOSABLES"));
+  chk("support de la mesure non tranché", crTient("ne dit pas si la mesure se prend sur la lame ou sur la pièce"));
+  set("m_nodule", "");
+
+  /* Deux axes, parce qu'une seule case « maturation surrénalienne » est fausse. */
+  mopt("medAvance");
+  chk("médullaire en avance sur cortex en retard",
+      crTient("Paradoxalement la médullosurrénale paraît un peu plus mature pour l'âge"));
+  chk("norme de la médullaire rappelée", crTient("la petite taille de la médullaire EST la norme"));
+  mopt("medNonLue");
+  chk("pas de veine centrale, pas de lecture médullaire", crTient("un artefact de plan"));
+  mopt("medConforme");
+
+  /* Divergences portées, jamais arbitrées */
+  chk("zonation du CP en divergence frontale", AVANCE_NOTE.indexOf("DIVERGENCE FRONTALE") >= 0);
+  chk("HCS : deux descriptions non arbitrées",
+      par(DIAGS, "dHcs").stop.indexOf("divergence portée, non arbitrée") >= 0);
+  chk("cytomégalie : fréquence de base divergente",
+      par(DIAGS, "dCytomegalie").stop.indexOf("0,1–6,5 %") >= 0);
+  chk("la gradation de la stéatose n'est pas un terme",
+      par(SIGNES, "vacuolesPeriVeine").meta.indexOf("foeto_grades") >= 0);
+  chk("Perls proposé par déduction seulement",
+      par(TECHNIQUES, "perls").q.indexOf("PROPOSÉ PAR DÉDUCTION") >= 0);
+  chk("clones et dilutions non sourcés", TECH_NOTE.indexOf("aucune source ouverte") >= 0 &&
+      TECH_NOTE.indexOf("restent à") >= 0);
+
+  /* Le nom se déduit des signes — il ne se coche pas */
+  chk("aucun bouton ne porte un diagnostic",
+      DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
+
+  /* Le miroir CF/CP : c'est le seul discriminant morphologique disponible. */
+  pose("cpAbsent", "anormal");
+  pose("cytomegalieEosino", "anormal");
+  chk("moitié cytomégalique du miroir", tenue("dDax1") && !tenue("dMiniature"));
+  chk("le miroir est nommé dans le stop", crTient("miroir exact"));
+  ote("cpAbsent"); ote("cytomegalieEosino");
+
+  pose("cfAbsent", "anormal");
+  pose("sncNormal", "anormal");
+  chk("moitié miniature du miroir", tenue("dMiniature") && !tenue("dDax1"));
+  ote("cfAbsent"); ote("sncNormal");
+
+  /* Sans le pivot, l'association ne tient pas. */
+  pose("taille3a4", "anormal");
+  pose("plurifocal", "anormal");
+  chk("cytomégalie sans le pivot ne tient pas", !tenue("dCytomegalie") &&
+      crTient("signe pivot non coché : « nuclear gigantism »"));
+  pose("noyauxGeants", "anormal");
+  chk("le pivot fait tenir la cytomégalie", tenue("dCytomegalie"));
+  chk("cytomégalie propose MIB-1", suggerer().mib1 === 1);
+  chk("Beckwith-Wiedemann refusé sur la lame",
+      crTient("Ne pas écrire Beckwith-Wiedemann"));
+  ote("noyauxGeants"); ote("taille3a4"); ote("plurifocal");
+
+  /* Le piège central : l'hémorragie centrale se qualifie avant de se retenir. */
+  pose("hemoCentrale", "anormal");
+  pose("foeticide", "anormal");
+  chk("hémorragie centrale = famille geste", tenue("dHemoGeste") &&
+      crTient("liée au foeticide") && crTient("sans exclure le geste"));
+  chk("hémorragie propose le Perls", suggerer().perls === 1);
+  ote("hemoCentrale"); ote("foeticide");
+
+  /* La stéatose se juge sur les noyaux, pas sur les vacuoles. */
+  pose("vacuolesCF", "anormal");
+  pose("glandeJaune", "anormal");
+  chk("surcharge lipidique lue", tenue("dSteatose"));
+  chk("la congélation est un préalable, pas un rattrapage",
+      crTient("structurellement inaccessible en routine différée"));
+  chk("stéatose propose PAS, Oil Red O et adipophiline",
+      suggerer().pas === 1 && suggerer().oro === 1 && suggerer().adipo === 1);
+  ote("vacuolesCF"); ote("glandeJaune");
+
+  /* La galette : forme anormale, poids normal. */
+  pose("galette", "anormal");
+  pose("agenesieRenale", "anormal");
+  chk("galette lue", tenue("dGalette") && crTient("leur poids reste normal"));
+  ote("galette"); ote("agenesieRenale");
+
+  /* Débris de macération contre listériose. */
+  clic("ret", "debrisGranuleux", "present");
+  chk("débris granuleux proposent HES puis Gram",
+      suggerer().hes === 1 && suggerer().gram === 1);
+  clic("ret", "debrisGranuleux", "present");
+  pose("amasBasophilesPeri", "anormal");
+  chk("amas sans polynucléaires ne font pas une listériose", !tenue("dListeriose"));
+  ote("amasBasophilesPeri");
+
+  /* Le négatif le plus utile de cet organe. */
+  chk("basophilie : négatif le plus utile", par(NEGATIFS, "basoNeg").p.indexOf("le négatif le plus utile") >= 0);
+  chk("les deux cortex cotés séparément est un négatif",
+      par(NEGATIFS, "deuxCortexNeg").ko.indexOf("miroir") >= 0);
+
+  set("sa", "34");
+  chk("le terme reste posé en fin de tests", num("sa") === 34);
+}
+
+/* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
+var FOETO = {"sections":[{"t":"5.10 Anomalies de position et de forme","termes":[{"id":"FOETO:PF.END-MAL-054","l":"Surrénale en galette (aplatie)"}]},{"t":"5.2 Stéatose du cortex fœtal (surcharge lipidique)","termes":[{"id":"FOETO:PF.END-MAL-051","l":"Stéatose du cortex surrénalien"}]},{"t":"5.3 Surcharges de maladie métabolique","termes":[{"id":"FOETO:PF.END-MAL-004","l":"Cellules ballonnisées à contenu lipidique dans le cortex surrénalien"},{"id":"FOETO:PF.END-MAL-022","l":"Inclusions lamellaires dans les cellules corticosurrénaliennes"},{"id":"FOETO:PF.END-MAL-047","l":"Perte d'architecture du cortex surrénalien"},{"id":"FOETO:PF.END-MAL-052","l":"Surcharge en esters de cholestérol dans les cellules surrénaliennes"},{"id":"FOETO:PF.END-MAL-053","l":"Surcharge lipidique striée du cortex surrénalien"}]},{"t":"5.4 Hyperplasie congénitale des surrénales (HCS / CAH)","termes":[{"id":"FOETO:PF.END-MAL-011","l":"Hyperplasie congénitale des surrénales (aspect histologique)"},{"id":"FOETO:PF.END-MAL-013","l":"Hyperplasie du cortex permanent surrénalien"},{"id":"FOETO:PF.END-MAL-015","l":"Hyperplasie nodulaire corticosurrénalienne"}]},{"t":"5.5 Hypoplasies surrénaliennes — **cinq entités distinctes, à ne pas fondre en un seul terme**","termes":[{"id":"FOETO:PF.END-MAL-002","l":"Absence du cortex permanent surrénalien"},{"id":"FOETO:PF.END-MAL-018","l":"Hypoplasie de la zone fœtale surrénalienne"},{"id":"FOETO:PF.END-MAL-019","l":"Hypoplasie du cortex fœtal surrénalien"},{"id":"FOETO:PF.END-MAL-020","l":"Hypoplasie surrénalienne congénitale cytomégalique"}]},{"t":"5.6 Cytomégalie du cortex fœtal","termes":[{"id":"FOETO:PF.END-MAL-006","l":"Cytomégalie du cortex fœtal surrénalien"}]},{"t":"5.8 Calcifications","termes":[{"id":"FOETO:PF.END-MAL-003","l":"Calcifications surrénaliennes"}]},{"t":"5.9 Lésions inflammatoires et infectieuses","termes":[{"id":"FOETO:PF.END-MAL-024","l":"Inclusions virales de type CMV dans le cortex surrénalien"},{"id":"FOETO:PF.END-MAL-026","l":"Inclusions virales nucléaires dans les cellules surrénaliennes"},{"id":"FOETO:PF.END-MAL-027","l":"Inclusions virales nucléaires et cytoplasmiques à CMV dans la surrénale"},{"id":"FOETO:PF.END-MAL-028","l":"Infiltrat inflammatoire surrénalien"},{"id":"FOETO:PF.END-MAL-033","l":"Kyste à toxoplasme dans la surrénale"},{"id":"FOETO:PF.END-MAL-035","l":"Microabcès listériens surrénaliens"},{"id":"FOETO:PF.END-MAL-036","l":"Microabcès surrénaliens à listeria"},{"id":"FOETO:PF.END-MAL-039","l":"Nécrose corticale multifocale surrénalienne"},{"id":"FOETO:PF.END-MAL-041","l":"Nécrose diffuse avec hémorragie de la surrénale"},{"id":"FOETO:PF.END-MAL-042","l":"Nécrose du cortex surrénalien"}]}],"formes":{"FOETO:PF.END-MAL-054":["Surrénale en galette (aplatie)","Flattened adrenal gland"],"FOETO:PF.END-MAL-051":["Stéatose du cortex surrénalien","Adrenocortical steatosis"],"FOETO:PF.END-MAL-004":["Cellules ballonnisées à contenu lipidique dans le cortex surrénalien","Ballooned lipid-laden adrenocortical cells"],"FOETO:PF.END-MAL-022":["Inclusions lamellaires dans les cellules corticosurrénaliennes","Lamellar inclusions in adrenocortical cells"],"FOETO:PF.END-MAL-047":["Perte d'architecture du cortex surrénalien","Loss of adrenocortical architecture"],"FOETO:PF.END-MAL-052":["Surcharge en esters de cholestérol dans les cellules surrénaliennes","Cholesterol ester storage in adrenal cells"],"FOETO:PF.END-MAL-053":["Surcharge lipidique striée du cortex surrénalien","Striated lipid storage in adrenal cortex"],"FOETO:PF.END-MAL-011":["Hyperplasie congénitale des surrénales (aspect histologique)","Congenital adrenal hyperplasia (histological pattern)"],"FOETO:PF.END-MAL-013":["Hyperplasie du cortex permanent surrénalien","Permanent adrenal cortex hyperplasia"],"FOETO:PF.END-MAL-015":["Hyperplasie nodulaire corticosurrénalienne","Nodular adrenocortical hyperplasia"],"FOETO:PF.END-MAL-002":["Absence du cortex permanent surrénalien","Absent permanent adrenal cortex"],"FOETO:PF.END-MAL-018":["Hypoplasie de la zone fœtale surrénalienne","Fetal zone hypoplasia of adrenal cortex"],"FOETO:PF.END-MAL-019":["Hypoplasie du cortex fœtal surrénalien","Fetal adrenal cortex hypoplasia"],"FOETO:PF.END-MAL-020":["Hypoplasie surrénalienne congénitale cytomégalique","Cytomegalic congenital adrenal hypoplasia"],"FOETO:PF.END-MAL-006":["Cytomégalie du cortex fœtal surrénalien","Cytomegaly of fetal adrenal cortex"],"FOETO:PF.END-MAL-003":["Calcifications surrénaliennes","Adrenal calcifications"],"FOETO:PF.END-MAL-024":["Inclusions virales de type CMV dans le cortex surrénalien","CMV viral inclusions in adrenal cortex"],"FOETO:PF.END-MAL-026":["Inclusions virales nucléaires dans les cellules surrénaliennes","Nuclear viral inclusions in adrenal cells"],"FOETO:PF.END-MAL-027":["Inclusions virales nucléaires et cytoplasmiques à CMV dans la surrénale","CMV nuclear and cytoplasmic inclusions in adrenal gland"],"FOETO:PF.END-MAL-028":["Infiltrat inflammatoire surrénalien","Adrenal inflammatory infiltrate"],"FOETO:PF.END-MAL-033":["Kyste à toxoplasme dans la surrénale","Toxoplasma cyst in adrenal gland"],"FOETO:PF.END-MAL-035":["Microabcès listériens surrénaliens","Listeria microabscesses of adrenal gland"],"FOETO:PF.END-MAL-036":["Microabcès surrénaliens à listeria","Adrenal microabscesses in listeriosis"],"FOETO:PF.END-MAL-039":["Nécrose corticale multifocale surrénalienne","Multifocal adrenal cortical necrosis"],"FOETO:PF.END-MAL-041":["Nécrose diffuse avec hémorragie de la surrénale","Diffuse adrenal necrosis with hemorrhage"],"FOETO:PF.END-MAL-042":["Nécrose du cortex surrénalien","Adrenocortical necrosis"]}};
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+
+var DB_NAME = "foeto-" + MODULE, DB_VER = 1, db = null;
+
+/* Organe pair : le côté fait partie de la donnée, pas du commentaire. Un rein
+   lu sans son côté n'est pas rattachable à l'imagerie ni à l'autre rein. */
+var COTES = [{ k:"droit", l:"Droit — 1/2" }, { k:"gauche", l:"Gauche — 1/2" },
+             { k:"deux", l:"Les deux — 2/2" }];
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function normDossier(v){ return v.toUpperCase().replace(/\s+/g, ""); }
+function dossierOk(v){ return /^\d{2}P\d+$/.test(v); }
+function num(id){ var e = $(id); if (!e) return null; var v = parseFloat(e.value); return isFinite(v) ? v : null; }
+function par(liste, k){ return liste.filter(function(x){ return x.k === k; })[0] || null; }
+function champs(){ return MESURE ? MESURE.champs : []; }
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", E = null;
+function neuf(){
+  var e = { cote:null, prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
+            negatifs:{}, techniques:{}, foeto:{}, mesure:{ def:null, opt:null, v:{} }, libre:"" };
+  champs().forEach(function(c){ e.mesure.v[c.id] = null; });
+  return e;
+}
+
+/* Le stade attendu au terme saisi. Bornes reconstruites depuis la prose des
+   sources : ce sont des repères, pas des seuils. */
+function stadeAttendu(sa){
+  if (sa == null || !isFinite(sa)) return null;
+  for (var i = 0; i < STADES.length; i++) if (sa < STADES[i].max) return STADES[i];
+  return STADES[STADES.length - 1];
+}
+function bornesTxt(s){
+  var i = STADES.indexOf(s), min = i ? STADES[i-1].max : 0;
+  return s.max === 99 ? "≳ " + min + " SA" : min + "–" + s.max + " SA";
+}
+
+/* ── Construction du DOM — une seule fois, le clic ne fait que repeindre ──── */
+function chip(act, k, l, sous){
+  return '<button type="button" class="chip" data-act="' + act + '" data-k="' + esc(k) + '">' +
+         (sous ? '<span class="k">' + esc(sous) + '</span>' : '') + esc(l) + '</button>';
+}
+function batir(){
+  if (PAIR){
+    $("coteBloc").hidden = false;
+    $("cote").innerHTML = COTES.map(function(c){ return chip("cote", c.k, c.l); }).join("");
+  }
+  $("prelevement").innerHTML = PRELEV.map(function(p){ return chip("prelev", p.k, p.l); }).join("");
+
+  $("retention").innerHTML = RETENTION.map(function(r){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(r.l) +
+      '<span class="meta ' + r.q + '">' + esc(r.b) + " · " + esc(r.d) +
+      " · prédicteur " + r.q + '</span></div>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="present">Présent</button>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="absent">Absent</button>' +
+      '</div></div>';
+  }).join("");
+  $("kcl").innerHTML = chip("kcl", "kcl", "Fœticide par KCl", "geste à déclarer avant toute datation");
+
+  $("stTitre").textContent = STADE_TITRE;
+  $("stades").innerHTML = STADES.map(function(s){ return chip("stade", s.k, s.l); }).join("");
+
+  if (MESURE){
+    var h = '<div class="sousTitre">' + esc(MESURE.titre) + '</div>';
+    h += '<div class="chips" id="mesDefs">' +
+         MESURE.defs.map(function(d){ return chip("mdef", d.k, d.l, MESURE.defLabel); }).join("") + '</div>';
+    if (MESURE.opts && MESURE.opts.length)
+      h += '<div class="chips" id="mesOpts" style="margin-top:6px">' +
+           MESURE.opts.map(function(o){ return chip("mopt", o.k, o.l, MESURE.optLabel); }).join("") + '</div>';
+    h += '<div class="row" style="margin-top:9px">' + MESURE.champs.map(function(c){
+      return '<div class="field"><label for="m_' + c.id + '">' + esc(c.label) + '</label>' +
+             '<input type="number" id="m_' + c.id + '" min="' + c.min + '" max="' + c.max +
+             '" step="' + c.step + '" inputmode="decimal" placeholder="—"></div>';
+    }).join("") + '</div>';
+    $("mesure").innerHTML = h;
+    $("vMesure").hidden = false;
+    $("vMesure").querySelector("b").textContent = MESURE.titre;
+  }
+
+  $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
+
+  $("signes").innerHTML = SIGNES.map(function(x){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+      (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
+      '</div>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="normal">Normal</button>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="anormal">Anormal</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("foeto").innerHTML = FOETO.sections.map(function(s){
+    return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
+           s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
+  }).join("") || '<p class="note">Aucun terme FOETO rattaché à cette fiche.</p>';
+  if (FOETO.sections.length){
+    $("foetoPlus").hidden = false; $("foetoRech").hidden = false;
+    $("foetoPlus").textContent = "▸ tous les termes attestés (" + nbFoeto() + ")";
+  }
+
+  $("negatifs").innerHTML = NEGATIFS.map(function(n){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(n.l) +
+      '<span class="meta">' + esc(n.p) + '</span></div>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="absent">Vérifié</button>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="present">EN DÉFAUT</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("techNote").textContent = TECH_NOTE;
+  $("techniques").innerHTML = TECHNIQUES.map(function(t){ return chip("tech", t.k, t.l, t.q); }).join("");
+}
+
+function nbFoeto(){ return FOETO.sections.reduce(function(a, s){ return a + s.termes.length; }, 0); }
+function foetoLabel(id){
+  var l = null;
+  FOETO.sections.forEach(function(s){ s.termes.forEach(function(t){ if (t.id === id) l = t.l; }); });
+  return l || (FOETO.formes[id] || [id])[0];
+}
+/* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
+function foetoAjouter(id){
+  if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
+    var box = $("foeto").querySelector(".chips");
+    if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
+    box.insertAdjacentHTML("beforeend", chip("foeto", id, foetoLabel(id)));
+  }
+  E.foeto[id] = true;
+  peindre(); enregistrer();
+}
+function rechercherFoeto(q){
+  var sg = $("sgFoeto");
+  q = q.trim().toLowerCase();
+  if (q.length < 3){ sg.classList.remove("on"); return; }
+  var hits = [];
+  Object.keys(FOETO.formes).some(function(id){
+    var f = FOETO.formes[id].filter(function(x){ return x.toLowerCase().indexOf(q) >= 0; })[0];
+    if (f) hits.push({ id:id, l:foetoLabel(id), f:f, hf:FOETO.formes[id].indexOf("(hors fiche)") >= 0 });
+    return hits.length >= 10;
+  });
+  sg.innerHTML = hits.length ? hits.map(function(x){
+    return '<div data-pick="' + esc(x.id) + '">' + esc(x.l) +
+           (x.f !== x.l ? ' <small>— ' + esc(x.f) + '</small>' : '') + (x.hf ? ' <small>(hors fiche)</small>' : '') + '</div>';
+  }).join("") : '<div><small>aucun terme</small></div>';
+  sg.classList.add("on");
+}
+
+/* ── Associations ─────────────────────────────────────────────────────────────
+   Un diagnostic ne se coche pas : il se lit dans l'association des signes. Les
+   faisceaux incomplets sont affichés aussi — 2 signes sur 4 se dit, et dire
+   combien manquent est le seul moyen de distinguer « non trouvé » de « non
+   regardé ». */
+function seuil(d){ return d.min || d.signes.length; }
+function associations(){
+  return DIAGS.map(function(d){
+    var pris  = d.signes.filter(function(k){ return E.signes[k] === "anormal"; });
+    var muets = d.signes.filter(function(k){ return !E.signes[k]; });
+    /* Un signe pivot ne se remplace pas par le nombre : sans lui, le compte peut
+       être atteint sans que l'association tienne. */
+    var pivot = !d.cle || E.signes[d.cle] === "anormal";
+    return { d:d, pris:pris, muets:muets, pivot:pivot,
+             tenu: pivot && pris.length >= seuil(d) };
+  }).filter(function(a){ return a.pris.length; })
+    .sort(function(a, b){ return (b.tenu - a.tenu) || (b.pris.length - a.pris.length); });
+}
+function nomSigne(k){ var s = par(SIGNES, k); return s ? s.l : k; }
+
+/* ── Verdicts communs ─────────────────────────────────────────────────────── */
+function verdictPrelevement(){
+  var n = Object.keys(E.prelev).length, res = [], grave = false;
+  PRELEV.forEach(function(p){
+    if (p.manque && !E.prelev[p.k]){ res.push(p.manque); if (p.grave) grave = true; }
+  });
+  if (PAIR && !E.cote) res.push("côté non déclaré — organe pair");
+  return { n:n, res:res,
+    cls: res.length ? (grave ? "bad" : "warn") : (n === PRELEV.length ? "ok" : ""),
+    txt: n === 0 ? "—"
+       : (n + "/" + PRELEV.length + " item(s) confirmé(s)" +
+          (PAIR && E.cote ? ", " + par(COTES, E.cote).l.toLowerCase().split(" —")[0] : "") + ".") +
+         (res.length ? " Réserves : " + res.join(" ; ") + "." : " Prélèvement complet.") };
+}
+function verdictRetention(){
+  if (E.kcl) return { cls:"bad", borne:null, txt:KCL_TXT };
+  var pres = RETENTION.filter(function(r){ return E.retention[r.k] === "present"; });
+  if (!pres.length) return { cls:"", borne:null,
+    txt: Object.keys(E.retention).length ? "Aucun critère de rétention positif." : "—" };
+  var notes = [];
+  pres.forEach(function(r){ if (r.note) notes.push(r.note); });
+  var bons = pres.filter(function(r){ return r.q !== "mauvais"; });
+  if (!bons.length) return { cls:"warn", borne:null,
+    txt:"Seuls des prédicteurs MAUVAIS sont positifs — aucune borne recevable. " + notes.join(" ; ") + "." };
+  var top = bons.reduce(function(a, b){ return b.h > a.h ? b : a; });
+  if (top.alerte) notes.push(top.alerte);
+  return { cls:"ok", borne:top,
+    txt:"Rétention " + top.b + " — critère : " + top.l.toLowerCase() + " (" + top.d + ")." +
+        (notes.length ? " Réserves : " + notes.join(" ; ") + "." : "") };
+}
+function verdictMaturation(){
+  var sa = num("sa"), att = stadeAttendu(sa), obs = E.stade ? par(STADES, E.stade) : null;
+  if (!obs) return { cls:"", att:att, txt: att
+    ? "Stade attendu à " + sa + " SA : " + att.l.toLowerCase() + ". Confirmer ou choisir."
+    : "Saisir le terme pour afficher le stade attendu." };
+  if (!att) return { cls:"warn", att:null,
+    txt:"Stade " + obs.l.toLowerCase() + " — sans terme, aucune discordance n'est calculable." };
+  var io = STADES.indexOf(obs), ia = STADES.indexOf(att), t, cls;
+  if (io === ia){ cls = "ok"; t = "Maturation conforme au terme : " + obs.l.toLowerCase() + " à " + sa + " SA."; }
+  else if (io < ia){ cls = "warn";
+    t = "Retard de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (RETARD_NOTE ? " " + RETARD_NOTE : ""); }
+  else { cls = "warn";
+    t = "Avance de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (AVANCE_NOTE ? " " + AVANCE_NOTE : ""); }
+  if (obs.note) t += " (" + obs.note + ")";
+  return { cls:cls, att:att, txt:t };
+}
+
+/* ── Peinture ─────────────────────────────────────────────────────────────── */
+function classe(act, v){
+  if (act === "neg") return v === "present" ? "no" : "on";
+  if (act === "les") return v === "anormal" ? "no" : "on";
+  return "on";
+}
+function poser(id, v){
+  var e = $(id), t = e.querySelector("b").textContent;
+  e.className = "verdict" + (v.cls ? " " + v.cls : "");
+  e.innerHTML = "<b>" + esc(t) + "</b>" + esc(v.txt);
+}
+function tally(id, n, sur){ $(id).textContent = n ? n + "/" + sur : "—"; }
+
+function peindreDiags(){
+  var A = associations();
+  if (!A.length){
+    $("diags").innerHTML = '<p class="note" style="margin:0">Aucun signe anormal coché : rien à associer.</p>';
+    return;
+  }
+  $("diags").innerHTML = A.map(function(a){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(a.d.l) +
+      '<span class="meta">' + a.pris.length + "/" + a.d.signes.length + " signe(s), seuil " + seuil(a.d) +
+      (a.muets.length ? " · " + a.muets.length + " non regardé(s)" : "") + '</span></div>' +
+      '<span class="chip ' + (a.tenu ? "on" : "") + '" style="cursor:default">' +
+      (a.tenu ? "association tenue" : "faisceau incomplet") + '</span></div>' +
+      '<div class="unfold">' +
+      '<div class="note" style="margin:0">' +
+      (a.pivot ? "" : "Signe pivot non coché : " + esc(nomSigne(a.d.cle)) + ".<br>") +
+      esc(a.pris.map(nomSigne).join(" · ")) +
+      (a.muets.length ? "<br>Non regardés : " + esc(a.muets.map(nomSigne).join(" · ")) + "." : "") +
+      '</div>' +
+      '<div class="stop"><b>Ce qu\'il ne faut pas conclure</b>' + esc(a.d.stop) + '</div></div></div>';
+  }).join("");
+}
+
+function peindre(){
+  if (PAIR) document.querySelectorAll("#cote .chip").forEach(function(b){
+    b.className = "chip" + (E.cote === b.dataset.k ? " on" : "");
+  });
+  document.querySelectorAll("#prelevement .chip").forEach(function(b){
+    b.className = "chip" + (E.prelev[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#retention .chip").forEach(function(b){
+    b.className = "chip" + (E.retention[b.dataset.k] === b.dataset.v ? " on" : "");
+  });
+  $("kcl").firstChild.className = "chip" + (E.kcl ? " no" : "");
+  document.querySelectorAll("#stades .chip").forEach(function(b){
+    var att = stadeAttendu(num("sa"));
+    b.className = "chip" + (E.stade === b.dataset.k ? " on"
+                          : (att && att.k === b.dataset.k ? " sugg" : ""));
+  });
+  if (MESURE){
+    document.querySelectorAll("#mesDefs .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.def === b.dataset.k ? " on" : "");
+    });
+    if ($("mesOpts")) document.querySelectorAll("#mesOpts .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.opt === b.dataset.k ? " on" : "");
+    });
+  }
+  document.querySelectorAll("#variantes .chip").forEach(function(b){
+    b.className = "chip" + (E.variantes[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#signes .chip").forEach(function(b){
+    b.className = "chip" + (E.signes[b.dataset.k] === b.dataset.v
+                            ? " " + classe("les", b.dataset.v) : "");
+  });
+  peindreDiags();
+  document.querySelectorAll('[data-act="foeto"]').forEach(function(b){
+    b.className = "chip" + (E.foeto[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#negatifs .chip").forEach(function(b){
+    b.className = "chip" + (E.negatifs[b.dataset.k] === b.dataset.v
+                            ? " " + classe("neg", b.dataset.v) : "");
+  });
+  var sug = suggerer();
+  document.querySelectorAll("#techniques .chip").forEach(function(b){
+    b.className = "chip" + (E.techniques[b.dataset.k] ? " on" : (sug[b.dataset.k] ? " sugg" : ""));
+  });
+
+  tally("tPrelevement", Object.keys(E.prelev).length, PRELEV.length);
+  tally("tRetention",   Object.keys(E.retention).length, RETENTION.length);
+  tally("tMaturation",  (E.stade ? 1 : 0) + (MESURE && E.mesure.def ? 1 : 0), MESURE ? 2 : 1);
+  tally("tVariantes",   Object.keys(E.variantes).length, VARIANTES.length);
+  tally("tSignes",     Object.keys(E.signes).length, SIGNES.length);
+  tally("tFoeto",       Object.keys(E.foeto).length, nbFoeto());
+  tally("tNegatifs",    Object.keys(E.negatifs).length, NEGATIFS.length);
+  tally("tTechniques",  Object.keys(E.techniques).length, TECHNIQUES.length);
+
+  poser("vPrelevement", verdictPrelevement());
+  poser("vRetention",   verdictRetention());
+  poser("vMaturation",  verdictMaturation());
+  if (MESURE) poser("vMesure", verdictMesure());
+
+  var cr = composer();
+  $("cr").textContent = cr;
+  $("tCR").textContent = cr.split("\n").length + " lignes";
+}
+
+/* ── Compte rendu — la sortie du module, écrite par les clics ─────────────── */
+function composer(){
+  var sa = num("sa"), L = [];
+  L.push(TITRE_CR + " — grille de lecture");
+  L.push((dossier || "dossier —") + " · " + (sa != null ? sa + " SA" : "terme —") +
+         " · " + ($("operateur").value.trim() || "lecteur —") +
+         (PAIR ? " · " + (E.cote ? par(COTES, E.cote).l : "côté non déclaré") : ""));
+  L.push("");
+
+  L.push("PRÉLÈVEMENT");
+  L.push("  " + verdictPrelevement().txt);
+
+  L.push("");
+  L.push("RÉTENTION");
+  L.push("  " + verdictRetention().txt);
+
+  L.push("");
+  L.push("MATURATION");
+  L.push("  " + verdictMaturation().txt);
+  if (MESURE) L.push("  " + verdictMesure().txt);
+
+  var vus = VARIANTES.filter(function(v){ return E.variantes[v.k]; });
+  if (vus.length){
+    L.push("");
+    L.push("VARIANTES NORMALES VUES ET ÉCARTÉES");
+    L.push("  " + vus.map(function(v){ return v.l.toLowerCase(); }).join(" · "));
+  }
+
+  var anormales = SIGNES.filter(function(x){ return E.signes[x.k] === "anormal"; });
+  var normales  = SIGNES.filter(function(x){ return E.signes[x.k] === "normal"; });
+  L.push("");
+  L.push("SIGNES");
+  if (!anormales.length && !normales.length) L.push("  aucun axe exploré.");
+  anormales.forEach(function(x){ L.push("  " + x.l + " — ANORMAL"); });
+  if (normales.length)
+    L.push("  Normaux : " + normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  var muets = SIGNES.filter(function(x){ return !E.signes[x.k]; });
+  if (muets.length)
+    L.push("  Non explorés : " + muets.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+
+  var fo = Object.keys(E.foeto);
+  if (fo.length){
+    L.push("");
+    L.push("TERMES FOETO");
+    fo.forEach(function(id){ L.push("  " + foetoLabel(id) + " [" + id + "]"); });
+  }
+
+  var A = associations();
+  L.push("");
+  L.push("ASSOCIATIONS LUES");
+  if (!A.length) L.push("  aucune : les signes cochés ne dessinent aucune association.");
+  A.forEach(function(a){
+    L.push("  " + a.d.l + " — " + (a.tenu ? "association tenue" : "faisceau incomplet") +
+           " (" + a.pris.length + "/" + a.d.signes.length + ", seuil " + seuil(a.d) + ")");
+    L.push("      · " + a.pris.map(nomSigne).join(" · "));
+    if (!a.pivot) L.push("      · signe pivot non coché : " + nomSigne(a.d.cle));
+    if (a.muets.length) L.push("      · non regardés : " + a.muets.map(nomSigne).join(" · "));
+    L.push("      · ne pas conclure : " + a.d.stop);
+  });
+
+  L.push("");
+  L.push("NÉGATIFS OBLIGATOIRES");
+  NEGATIFS.forEach(function(n){
+    var v = E.negatifs[n.k];
+    L.push("  " + (v === "absent" ? "· " + n.l
+                 : v === "present" ? "! " + n.ko
+                 : "? " + n.l + " — non vérifié"));
+  });
+
+  var t = TECHNIQUES.filter(function(x){ return E.techniques[x.k]; });
+  if (t.length){
+    L.push("");
+    L.push("TECHNIQUES DEMANDÉES");
+    t.forEach(function(x){ L.push("  · " + x.l + " — " + x.q); });
+  }
+
+  if (E.libre.trim()){
+    L.push("");
+    L.push("REMARQUE");
+    E.libre.trim().split("\n").forEach(function(x){ L.push("  " + x); });
+  }
+
+  L.push("");
+  L.push("— La micro décrit ; la conclusion nomme. Grille v" + VERSION + " issue de " + SOURCE + ".");
+  return L.join("\n");
+}
+
+/* ── Clics ────────────────────────────────────────────────────────────────── */
+document.addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest("button[data-act]") : null;
+  if (!b || b.closest("section.off")) return;
+  var k = b.dataset.k, v = b.dataset.v, a = b.dataset.act;
+  if (a === "cote"){ E.cote = E.cote === k ? null : k; }
+  else if (a === "prelev"){ if (E.prelev[k]) delete E.prelev[k]; else E.prelev[k] = true; }
+  else if (a === "ret"){ if (E.retention[k] === v) delete E.retention[k]; else E.retention[k] = v; }
+  else if (a === "kcl"){ E.kcl = !E.kcl; }
+  else if (a === "stade"){ E.stade = E.stade === k ? null : k; }
+  else if (a === "mdef"){ E.mesure.def = E.mesure.def === k ? null : k; }
+  else if (a === "mopt"){ E.mesure.opt = E.mesure.opt === k ? null : k; }
+  else if (a === "var"){ if (E.variantes[k]) delete E.variantes[k]; else E.variantes[k] = true; }
+  else if (a === "les"){ if (E.signes[k] === v) delete E.signes[k]; else E.signes[k] = v; }
+  else if (a === "neg"){ if (E.negatifs[k] === v) delete E.negatifs[k]; else E.negatifs[k] = v; }
+  else if (a === "tech"){ if (E.techniques[k]) delete E.techniques[k]; else E.techniques[k] = true; }
+  else if (a === "foeto"){ if (E.foeto[k]) delete E.foeto[k]; else E.foeto[k] = true; }
+  else return;
+  peindre(); enregistrer();
+});
+document.addEventListener("click", function(ev){
+  var t = ev.target.closest ? ev.target.closest("[data-pick]") : null;
+  if (t){ foetoAjouter(t.dataset.pick); $("rqFoeto").value = ""; $("sgFoeto").classList.remove("on"); }
+});
+$("foetoPlus").onclick = function(){
+  var box = $("foetoTous");
+  if (!box.children.length) box.innerHTML = FOETO.sections.map(function(s){
+    return s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("");
+  }).join("");
+  box.hidden = !box.hidden; peindre();
+};
+$("rqFoeto").addEventListener("input", function(){ rechercherFoeto(this.value); });
+$("btnNegAll").onclick = function(){
+  NEGATIFS.forEach(function(n){ if (!E.negatifs[n.k]) E.negatifs[n.k] = "absent"; });
+  peindre(); enregistrer();
+};
+$("btnCopie").onclick = function(){
+  var t = composer();
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(t).then(function(){ flash("Compte rendu copié."); },
+                                          function(){ flash("Copie refusée par le navigateur."); });
+  else flash("Presse-papiers indisponible en file://.");
+};
+document.addEventListener("input", function(e){
+  var id = e.target.id;
+  if (id.indexOf("m_") === 0) E.mesure.v[id.slice(2)] = num(id);
+  else if (id === "libre") E.libre = e.target.value;
+  else if (id === "sa") majSa();
+  else return;
+  peindre(); enregistrer();
+});
+function majSa(){
+  var sa = num("sa"), att = stadeAttendu(sa), h = $("saHint");
+  h.className = "hint" + (att ? " good" : "");
+  h.textContent = att ? "Stade attendu : " + att.l.toLowerCase() + " (" + bornesTxt(att) + ")."
+                      : "SA = semaines de gestation + 2. Commande le stade attendu.";
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────────
+   localStorage est erratique en file:// et cloisonné par fichier sur certains
+   navigateurs : la saisie va en IndexedDB, y compris les champs texte.       */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction("saisies", mode), out = fn(t.objectStore("saisies"));
+    t.oncomplete = function(){ res(out && out.result !== undefined ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("readonly",  function(s){ return s.get(d); }); }
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  ["secPrelevement","secRetention","secMaturation","secVariantes","secSignes","secFoeto",
+   "secNegatifs","secTechniques","secCR","secSortie"].forEach(function(id){
+    $(id).classList.toggle("off", !ouvert);
+  });
+}
+
+/* ── Collecte / restitution ───────────────────────────────────────────────── */
+function collecter(){
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    organe: ORGANE,
+    source: SOURCE,
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    terme_sa: num("sa"),
+    grille: JSON.parse(JSON.stringify(E)),
+    compte_rendu: composer()
+  };
+}
+function appliquer(o){
+  var g = o.grille || {};
+  E = neuf();
+  ["prelev","retention","variantes","signes","negatifs","techniques","foeto"].forEach(function(c){
+    if (g[c]) E[c] = g[c];
+  });
+  Object.keys(E.foeto).forEach(function(id){
+    if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')) foetoAjouter(id);
+  });
+  E.kcl = !!g.kcl; E.stade = g.stade || null; E.cote = g.cote || null;
+  if (g.mesure){
+    E.mesure.def = g.mesure.def || null;
+    E.mesure.opt = g.mesure.opt || null;
+    champs().forEach(function(c){
+      E.mesure.v[c.id] = (g.mesure.v && g.mesure.v[c.id] != null) ? g.mesure.v[c.id] : null;
+    });
+  }
+  E.libre = g.libre || "";
+  $("sa").value = o.terme_sa != null ? o.terme_sa : "";
+  champs().forEach(function(c){ $("m_" + c.id).value = E.mesure.v[c.id] != null ? E.mesure.v[c.id] : ""; });
+  $("libre").value = E.libre;
+  majSa(); peindre();
+}
+function vider(){
+  E = neuf();
+  ["sa","libre"].forEach(function(id){ $(id).value = ""; });
+  champs().forEach(function(c){ $("m_" + c.id).value = ""; });
+  majSa(); peindre();
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, ok1 = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = ok1 && op, h = $("dossierHint");
+  h.className = "hint" + (v && !ok1 ? " bad" : ok1 ? " good" : "");
+  h.textContent = !v ? "Deux chiffres, P, puis le numéro. Conditionne l'enregistrement."
+                : ok1 ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                      : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la grille.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json."
+    : ok1 ? "Saisir le lecteur pour activer l'export."
+          : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){
+    dossier = v;
+    vider();
+    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    if (rec){ appliquer(rec); flash("Grille du " + dossier + " restituée."); }
+  } else if (!ok && dossier){
+    dossier = ""; vider();
+  }
+  peindre();
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+$("btnExport").onclick = function(){
+  if (!dossierOk(dossier)) return;
+  var out = collecter();
+  telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+              dossier + "_" + MODULE + ".json");
+  var n = NEGATIFS.filter(function(x){ return E.negatifs[x.k]; }).length;
+  flash("Grille exportée." + (n < NEGATIFS.length ? " ⚠ " + (NEGATIFS.length - n) + " négatif(s) non vérifié(s)." : ""));
+};
+function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.grille) throw new Error("aucune clé « grille »");
+  if (o.dossier) $("dossier").value = normDossier(o.dossier);
+  if (o.operateur) $("operateur").value = o.operateur;
+  return majDossier().then(function(){
+    if (!dossier) throw new Error("numéro de dossier absent ou lecteur manquant");
+    appliquer(o); enregistrer();
+    return true;
+  });
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    Promise.resolve().then(function(){ return relire(JSON.parse(String(fr.result))); })
+      .then(function(){ flash("Grille relue."); })
+      .catch(function(e){ flash("Relecture impossible : " + e.message); });
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la grille du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    await tx("readwrite", function(s){ return s.delete(dossier); });
+    vider(); flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les grilles de TOUS les dossiers sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("readwrite", function(s){ return s.clear(); });
+  vider(); flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Axes de la grille", PRELEV.length + " prélèvement · " + RETENTION.length + " rétention · " +
+                             STADES.length + " stades · " + SIGNES.length + " signes · " +
+                             DIAGS.length + " associations · " +
+                             NEGATIFS.length + " négatifs · " + TECHNIQUES.length + " techniques");
+  ligne("Source", SOURCE + " — la fiche est la source, ce module en est la sortie");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+(async function(){
+  $("ver").textContent = "v" + VERSION;
+  E = neuf();
+  batir(); majSa(); peindre();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — aucune saisie ne sera conservée. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir le fichier avec ?selftest=1 ───────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+  function clic(act, k, v){
+    var s = '[data-act="' + act + '"][data-k="' + k + '"]' + (v ? '[data-v="' + v + '"]' : "");
+    var b = document.querySelector(s);
+    if (!b){ ko.push("bouton introuvable : " + s); return null; }
+    b.click(); return b;
+  }
+  function crTient(t){ return $("cr").textContent.indexOf(t) >= 0; }
+  var pause = function(){ return new Promise(function(r){ setTimeout(r, 30); }); };
+
+  /* Intégrité des tableaux — pure, sans DOM */
+  ["PRELEV","RETENTION","STADES","VARIANTES","SIGNES","DIAGS","NEGATIFS","TECHNIQUES"].forEach(function(nom){
+    var t = { PRELEV:PRELEV, RETENTION:RETENTION, STADES:STADES, VARIANTES:VARIANTES,
+              SIGNES:SIGNES, DIAGS:DIAGS, NEGATIFS:NEGATIFS, TECHNIQUES:TECHNIQUES }[nom];
+    chk("clés uniques dans " + nom, new Set(t.map(function(x){ return x.k; })).size === t.length);
+  });
+  chk("stades ordonnés",      STADES.every(function(s, i){ return !i || s.max > STADES[i-1].max; }));
+  chk("dernier stade ouvert", STADES[STADES.length-1].max === 99);
+  chk("sans terme, pas de stade", stadeAttendu(null) === null);
+  chk("chaque association a son « ne pas conclure »",
+      DIAGS.every(function(d){ return d.stop && d.signes.length >= 2; }));
+  chk("chaque association ne cite que des signes déclarés",
+      DIAGS.every(function(d){ return d.signes.every(function(k){ return !!par(SIGNES, k); }); }));
+  chk("le signe pivot fait partie de l'association",
+      DIAGS.every(function(d){ return !d.cle || d.signes.indexOf(d.cle) >= 0; }));
+  chk("seuil d'association atteignable",
+      DIAGS.every(function(d){ return seuil(d) >= 1 && seuil(d) <= d.signes.length; }));
+  chk("chaque négatif a son défaut", NEGATIFS.every(function(n){ return n.ko && n.p; }));
+  chk("une borne de rétention au moins est bonne",
+      RETENTION.some(function(r){ return r.q === "bon"; }));
+
+  /* Verrou */
+  chk("verrouillé au départ",  $("secSignes").classList.contains("off"));
+  clic("prelev", PRELEV[0].k);
+  chk("clic ignoré sous verrou", !E.prelev[PRELEV[0].k]);
+  set("dossier", "26p0123");
+  chk("lecteur manquant",      $("secSignes").classList.contains("off"));
+  set("operateur", "RM");
+  await pause();
+  chk("déverrouillé",         !$("secSignes").classList.contains("off"));
+  chk("dossier normalisé",     $("dossier").value === "26P0123");
+  chk("export activé",        !$("btnExport").disabled);
+
+  /* Chips */
+  clic("prelev", PRELEV[0].k);
+  chk("chip prélèvement posée", E.prelev[PRELEV[0].k] === true &&
+      document.querySelector('[data-act="prelev"][data-k="' + PRELEV[0].k + '"]').className.indexOf("on") >= 0);
+  clic("prelev", PRELEV[0].k);
+  chk("chip retirée au 2e clic", !E.prelev[PRELEV[0].k]);
+
+  /* Rétention — le fœticide prime sur toute borne */
+  var bon = RETENTION.filter(function(r){ return r.q === "bon"; })[0];
+  clic("ret", bon.k, "present");
+  chk("borne posée",           $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("kcl", "kcl");
+  chk("KCl invalide la datation", $("vRetention").className.indexOf("bad") >= 0);
+  clic("kcl", "kcl");
+  chk("KCl levé, borne revenue", $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("ret", bon.k, "present");
+
+  /* Côté — organe pair */
+  if (PAIR){
+    chk("bloc côté visible",   !$("coteBloc").hidden);
+    chk("côté manquant en réserve",
+        verdictPrelevement().res.indexOf("côté non déclaré — organe pair") >= 0);
+    clic("cote", "droit");
+    chk("côté posé",            E.cote === "droit" && crTient("Droit — 1/2"));
+    clic("cote", "droit");
+    chk("2e clic retire le côté", E.cote === null);
+    clic("cote", "deux");
+  } else {
+    chk("pas de bloc côté sur organe impair", $("coteBloc").hidden);
+  }
+
+  /* Signes et associations */
+  var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
+  chk("rien à associer au départ", $("diags").textContent.indexOf("Aucun signe anormal") >= 0);
+  clic("les", l0.k, "anormal");
+  chk("signe posé anormal",    E.signes[l0.k] === "anormal");
+  chk("association esquissée",  $("diags").textContent.indexOf(d0.l) >= 0);
+  clic("les", l0.k, "anormal");
+  chk("2e clic remet à non exploré", !E.signes[l0.k]);
+  clic("les", l0.k, "normal");
+  chk("normal ne nourrit pas l'association", associations().length === 0);
+  clic("les", l0.k, "normal");
+
+  /* L'association complète se tient, et elle seule */
+  d0.signes.forEach(function(k){ clic("les", k, "anormal"); });
+  var a0 = associations().filter(function(a){ return a.d.k === d0.k; })[0];
+  chk("association tenue",     a0 && a0.tenu);
+  chk("CR : association écrite", crTient(d0.l + " — association tenue"));
+  chk("CR : ne pas conclure",  crTient("ne pas conclure : " + d0.stop));
+  d0.signes.slice(1).forEach(function(k){ clic("les", k, "anormal"); });
+  chk("retirer les signes défait l'association",
+      (associations().filter(function(a){ return a.d.k === d0.k; })[0] || {}).pris.length === 1);
+
+  /* Négatifs */
+  $("btnNegAll").click();
+  chk("tous les négatifs posés", Object.keys(E.negatifs).length === NEGATIFS.length);
+  clic("neg", NEGATIFS[0].k, "present");
+  chk("négatif retourné en rouge", E.negatifs[NEGATIFS[0].k] === "present" &&
+      document.querySelector('[data-act="neg"][data-k="' + NEGATIFS[0].k + '"][data-v="present"]').className.indexOf("no") >= 0);
+  chk("CR : défaut écrit",     crTient("! " + NEGATIFS[0].ko));
+  clic("neg", NEGATIFS[0].k, "absent");
+
+  /* Compte rendu */
+  clic("tech", TECHNIQUES[0].k);
+  set("libre", "Bloc non parvenu.");
+  chk("CR : en-tête dossier",  crTient("26P0123") && crTient("RM"));
+  chk("CR : signe anormal",    crTient(l0.l + " — ANORMAL"));
+  chk("CR : non explorés dits", crTient("Non explorés :"));
+  chk("CR : technique demandée", crTient(TECHNIQUES[0].l));
+  chk("CR : remarque libre",   crTient("Bloc non parvenu."));
+  chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
+
+  /* Contrôles propres à l'organe */
+  await testsOrgane(chk, clic, set, crTient, pause);
+
+  /* Termes FOETO — seulement si la fiche en rattache */
+  if (FOETO.sections.length){
+    var f0 = FOETO.sections[0].termes[0].id;
+    chk("FOETO : sections rendues", $("foeto").querySelectorAll(".sousTitre").length === FOETO.sections.length);
+    clic("foeto", f0);
+    chk("FOETO : terme coché",      E.foeto[f0] === true && $("tFoeto").textContent.indexOf("1/") === 0);
+    chk("FOETO : CR le porte",      crTient("[" + f0 + "]"));
+    chk("FOETO : exporté",          collecter().grille.foeto[f0] === true);
+    set("rqFoeto", foetoLabel(f0).slice(0, 4));
+    chk("FOETO : recherche",        $("sgFoeto").querySelectorAll("[data-pick]").length >= 1);
+    $("sgFoeto").querySelector("[data-pick]").click();
+    chk("FOETO : recherche vidée",  $("rqFoeto").value === "" && !$("sgFoeto").classList.contains("on"));
+    chk("FOETO : id lisible",       /^FOETO:/.test(f0));
+    clic("foeto", f0);
+    Object.keys(E.foeto).forEach(function(id){ delete E.foeto[id]; }); peindre();
+  }
+
+  /* Enveloppe, persistance, relecture — l'organe a pu reposer ses propres signes */
+  if (E.signes[l0.k] !== "anormal"){
+    if (E.signes[l0.k]) clic("les", l0.k, E.signes[l0.k]);
+    clic("les", l0.k, "anormal");
+  }
+  var snap = collecter();
+  chk("enveloppe conforme",    snap.schema_version === SCHEMA && snap.module === MODULE &&
+                               snap.module_version === VERSION && snap.dossier === "26P0123" &&
+                               snap.organe === ORGANE && !!snap.exported_at);
+  chk("version en entête",     $("ver").textContent === "v" + VERSION);
+  chk("CR dans le JSON",       snap.compte_rendu.indexOf(TITRE_CR + " — grille de lecture") === 0);
+
+  await putSaisie(snap);
+  vider();
+  chk("vider efface la grille", Object.keys(E.signes).length === 0);
+  var relu = await getSaisie("26P0123");
+  appliquer(relu);
+  chk("IndexedDB restitue",    E.signes[l0.k] === "anormal" &&
+                               $("sa").value === String(snap.terme_sa));
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+  chk("banc remis à zéro",     Object.keys(E.signes).length === 0 && $("secSignes").classList.contains("off"));
+  await relire(snap);
+  chk("relecture d'un JSON",   E.signes[l0.k] === "anormal" && dossier === "26P0123");
+  var refus = false;
+  try { await relire({module:"autopsie", grille:{}}); } catch(e){ refus = /module/.test(e.message); }
+  chk("JSON d'un autre module refusé", refus);
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>

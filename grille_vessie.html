@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grille de lecture — vessie et voies urinaires basses — urètre, ouraque</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --alert-soft:#F7EAE7;
+  --amber:#8A6A18; --amber-soft:#F6F0DE;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off button,section.off input,section.off select{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 170px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],input[type=number],textarea{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+input[type=number]{font-family:var(--mono);letter-spacing:.03em}
+textarea{resize:vertical;min-height:60px;font-size:15px}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+/* ── Boutons-clics : toute la saisie sémantique passe par là ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font-family:var(--sans);font-size:14px;line-height:1.25;
+  border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+  border-radius:2px;padding:8px 11px;cursor:pointer;min-height:38px;text-align:left}
+.chip:hover{background:var(--drape-soft)}
+.chip:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.chip.on{background:var(--drape);border-color:var(--drape);color:#fff;font-weight:600}
+.chip.no{background:var(--alert-soft);border-color:var(--alert);color:var(--alert);font-weight:600}
+.chip.sugg{border-color:var(--amber);border-style:dashed}
+.chip[data-act=foeto]::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;background:var(--drape);opacity:.55}
+.chip.on[data-act=foeto]::after{background:#fff}
+.plus{font-size:13px;color:var(--drape);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline dotted}
+.rech{position:relative;margin-top:8px}
+.rech input{font:inherit;font-size:14px;padding:6px 10px;border:1px solid #bbb;border-radius:8px;width:min(100%,24rem)}
+.sugg{position:absolute;z-index:5;background:#fff;border:1px solid #bbb;border-radius:8px;max-height:12rem;overflow:auto;width:min(100%,24rem);display:none}
+.sugg.on{display:block}
+.sugg div{padding:5px 10px;cursor:pointer;font-size:14px}
+.sugg div:hover{background:var(--drape-soft)}
+.sugg small{color:#777}
+.chip .k{font-family:var(--mono);font-size:10px;letter-spacing:.07em;opacity:.75;
+         display:block;text-transform:uppercase}
+
+.item{border-top:1px solid var(--rule);padding:10px 0}
+.item:first-child{border-top:0}
+.item .head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.item .lbl{flex:1 1 240px;min-width:0;font-size:15px}
+.item .meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-soft);
+            display:block;margin-top:2px}
+.item .meta.bon{color:var(--drape)} .item .meta.mauvais{color:var(--alert)}
+.item .meta.moyen{color:var(--amber)}
+.unfold{margin:9px 0 0 0;padding:9px 0 0;border-top:1px dashed var(--rule)}
+.unfold[hidden]{display:none}
+.stop{font-size:13px;line-height:1.35;color:var(--alert);background:var(--alert-soft);
+      border-left:2px solid var(--alert);padding:6px 9px;margin-top:8px}
+.stop b{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+
+.verdict{font-size:14px;line-height:1.4;border-left:3px solid var(--rule);
+         padding:7px 10px;margin-top:11px;background:var(--paper)}
+.verdict.ok{border-color:var(--drape);background:var(--drape-soft)}
+.verdict.warn{border-color:var(--amber);background:var(--amber-soft)}
+.verdict.bad{border-color:var(--alert);background:var(--alert-soft)}
+.verdict b{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+           display:block;color:var(--ink-soft)}
+
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+.sousTitre:first-child{margin-top:0}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:var(--alert-soft)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+pre.cr{font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;
+  padding:12px;margin:0 0 10px;max-height:44vh;overflow:auto}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · lecture microscopique</p>
+  <h1>Grille de lecture — vessie et voies urinaires basses — urètre, ouraque <span class="ver" id="ver"></span></h1>
+  <p class="sub">Sortie de <code>fiche_vessie.md</code>. Tout se clique ; seuls le dossier, le terme et les comptes se tapent. Document autonome : rien n'est transmis.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Deux chiffres, P, puis le numéro. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Lecteur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la grille.</div>
+    </div>
+    <div class="field">
+      <label for="sa">Terme (SA)</label>
+      <input type="number" id="sa" min="8" max="45" step="1" inputmode="numeric" placeholder="—">
+      <div class="hint" id="saHint">SA = semaines de gestation + 2. Commande le stade attendu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — Prélèvement -->
+<section id="secPrelevement" class="off">
+  <h2><span class="n">02</span>Prélèvement<span class="tally" id="tPrelevement">—</span></h2>
+  <div id="coteBloc" hidden>
+    <div class="sousTitre">Côté prélevé</div>
+    <div class="chips" id="cote" style="margin-bottom:11px"></div>
+  </div>
+  <div class="chips" id="prelevement"></div>
+  <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
+</section>
+
+<!-- 03 — Rétention -->
+<section id="secRetention" class="off">
+  <h2><span class="n">03</span>Rétention<span class="tally" id="tRetention">—</span></h2>
+  <div id="retention"></div>
+  <div class="chips" id="kcl" style="margin-top:11px"></div>
+  <div class="verdict" id="vRetention"><b>Borne inférieure</b>—</div>
+</section>
+
+<!-- 04 — Maturation -->
+<section id="secMaturation" class="off">
+  <h2><span class="n">04</span>Maturation<span class="tally" id="tMaturation">—</span></h2>
+  <div class="sousTitre" id="stTitre">Stade observé</div>
+  <div class="chips" id="stades"></div>
+  <div id="mesure"></div>
+  <div class="verdict" id="vMaturation"><b>Lecture</b>—</div>
+  <div class="verdict" id="vMesure" hidden><b>Mesure</b>—</div>
+</section>
+
+<!-- 05 — Variantes normales -->
+<section id="secVariantes" class="off">
+  <h2><span class="n">05</span>Variantes normales<span class="tally" id="tVariantes">—</span></h2>
+  <p class="note" style="margin-top:0">Cliquer ce qui est vu et écarté comme normal. Rien de coché ne veut pas dire absent : ça veut dire non regardé.</p>
+  <div class="chips" id="variantes" style="margin-top:10px"></div>
+</section>
+
+<!-- 06 — Signes -->
+<section id="secSignes" class="off">
+  <h2><span class="n">06</span>Signes<span class="tally" id="tSignes">—</span></h2>
+  <p class="note" style="margin-top:0">On coche des signes, pas des diagnostics. Les associations en dessous se déduisent de ce qui est coché : elles s'affichent, elles ne se choisissent pas.</p>
+  <div id="signes" style="margin-top:10px"></div>
+  <div class="sousTitre" style="margin-top:16px">Associations lues</div>
+  <div id="diags"></div>
+</section>
+
+<!-- 07 — Termes FOETO attestés par la fiche -->
+<section id="secFoeto" class="off">
+  <h2><span class="n">07</span>Termes FOETO<span class="tally" id="tFoeto">—</span></h2>
+  <p class="note" style="margin-top:0">Les termes du vocabulaire FOETO que la fiche de l'organe retient comme lésions, par sous-section. Un terme coché est présent ; rien de coché ne veut pas dire absent.</p>
+  <div id="foeto"></div>
+  <button type="button" class="plus" id="foetoPlus" hidden>▸ tous les termes attestés</button>
+  <div class="chips" id="foetoTous" hidden style="margin-top:6px"></div>
+  <div class="rech" id="foetoRech" hidden><input type="text" id="rqFoeto" placeholder="rechercher un terme (3 lettres)…" autocomplete="off"><div class="sugg" id="sgFoeto"></div></div>
+</section>
+
+<!-- 08 — Négatifs obligatoires -->
+<section id="secNegatifs" class="off">
+  <h2><span class="n">08</span>Négatifs obligatoires<span class="tally" id="tNegatifs">—</span></h2>
+  <div class="btns" style="margin-bottom:11px">
+    <button class="btn" id="btnNegAll">Tous vérifiés</button>
+  </div>
+  <div id="negatifs"></div>
+</section>
+
+<!-- 08 — Techniques -->
+<section id="secTechniques" class="off">
+  <h2><span class="n">09</span>Techniques<span class="tally" id="tTechniques">—</span></h2>
+  <p class="note" style="margin-top:0" id="techNote"></p>
+  <div class="chips" id="techniques" style="margin-top:10px"></div>
+</section>
+
+<!-- 09 — Compte rendu -->
+<section id="secCR" class="off">
+  <h2><span class="n">10</span>Compte rendu<span class="tally" id="tCR">—</span></h2>
+  <pre class="cr" id="cr">—</pre>
+  <div class="row">
+    <div class="field" style="flex:1 1 100%">
+      <label for="libre">Remarque libre</label>
+      <textarea id="libre" placeholder="Ce que la grille ne prévoit pas."></textarea>
+    </div>
+  </div>
+  <div class="btns" style="margin-top:10px">
+    <button class="btn" id="btnCopie">Copier le compte rendu</button>
+  </div>
+</section>
+
+<!-- 10 — Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n">11</span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Vider le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- 11 — Diagnostic -->
+<section>
+  <h2><span class="n">12</span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante, aucun fetch : doit fonctionner par double-clic hors réseau.
+
+   Ce module est la SORTIE de fiche_vessie.md, jamais l'inverse. Les bornes, les
+   spécificités et les « ce qu'il ne faut pas conclure » sont recopiés de la
+   fiche ; ils ne se corrigent pas ici mais dans la fiche.
+
+   La grille ne conclut pas : elle contraint la description et rend ses
+   réserves visibles. Un critère non cliqué n'est pas un négatif — c'est un
+   non-regardé, et le compte rendu le dit.
+
+   Fichier ENGENDRÉ par gen_grille.py depuis grilles/vessie.js.
+   Corriger le fragment, pas ce fichier.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  FRAGMENT D'ORGANE — grilles/vessie.js                            ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+/* Grille de lecture — vessie et voies urinaires basses (urètre, ouraque).
+   Fond : ~/Bureau/fiches_lecture/fiche_vessie.md (§1 à §10).
+   Forme : gen_grille.py, calquée sur grille_poumon.html.
+   Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées.
+   Aucune page n'est citée : page_start est vide sur tout le corpus.
+
+   La fiche est mince et sa minceur EST le résultat : 8 chunks de source
+   histologique, 5 CR sur 176 décrivant l'organe en micro, aucun rang de
+   macération, aucune norme d'épaisseur pariétale. Rien n'est comblé ici. */
+
+var ORGANE  = "vessie";
+var TITRE   = "vessie et voies urinaires basses — urètre, ouraque";
+var SOURCE  = "fiche_vessie.md";
+var MODULE  = "grille_vessie";
+var VERSION = "1.0.0";
+
+/* La vessie est MÉDIANE : elle n'a pas de côté. Ce qui se latéralise dans ce
+   territoire, ce sont les uretères — et la fiche les laisse au rein, dont la
+   grille porte déjà les voies hautes et l'uretère dilaté. L'axe de variation
+   n'est donc pas droite/gauche : c'est le SITE du bloc et les COUCHES présentes
+   sur la coupe, et les deux vivent au § 04. */
+var PAIR = false;
+
+var TITRE_CR    = "VESSIE";
+var STADE_TITRE = "Densité de la musculeuse propre — seul axe de maturation de l'organe, et il n'est jamais mesuré";
+
+var KCL_TXT = "Fœticide par KCl déclaré. Aucune borne n'était de toute façon recevable ici : la vessie n'a " +
+              "AUCUN rang de macération — elle est absente de la Table 15.6 de [keeling, ch. 15] et de " +
+              "[ernst, ch. 37], zéro occurrence mesurée. Le geste se consigne ; il ne retire rien, il n'y " +
+              "avait rien à retirer. Reste que l'heure du décès est alors connue : la datation se lit sur " +
+              "les autres organes, avec cette heure pour étalon.";
+
+/* Sur cet organe, un « retard » est presque toujours un effet de site ou de réplétion. */
+var RETARD_NOTE = "Avant de parler de retard : l'organe ne date pas. « This full-thickness view of the " +
+                  "bladder wall near term illustrates how little the microscopic features of the bladder " +
+                  "wall change during the second and third trimesters of gestation, except for an increase " +
+                  "in smooth muscle in the muscularis propria » [ernst, ch. 9, légende Fig. 9.6]. Une " +
+                  "musculeuse jugée pauvre est d'abord un effet de SITE — hors col, « three distinct layers " +
+                  "cannot be identified » — et de RÉPLÉTION, avant d'être un retard. Et les légendes des " +
+                  "Fig. 9.3, 9.4 et 9.5, celles de l'urothélium mûr et de la musculeuse du 3e trimestre, " +
+                  "sont perdues à l'extraction : le repère visuel n'est pas consultable (§ 9-11).";
+
+var AVANCE_NOTE = "Une musculeuse jugée dense avant le terme n'est pas une avance de maturation : c'est la " +
+                  "lecture d'une paroi de lutte qui se pose alors, et elle ne se conclut pas ici. « the " +
+                  "fetal bladder becomes enlarged and hypertrophic in the presence of prolonged obstruction " +
+                  "of the bladder outlet or urethra. These pathologic changes should be distinguished from " +
+                  "the normal variability of physiologic dilatation, which will also affect the thickness " +
+                  "of the wall and its histological appearance. » [ernst, ch. 9]. Aucune mesure n'existe : " +
+                  "ni épaisseur pariétale par terme, ni ratio muscle/paroi, ni compte de faisceaux (§ 9-3).";
+
+var TECH_NOTE = "Les pointillés sont des propositions déduites des clics, jamais des prescriptions. Deux " +
+                "faits bornent ce paragraphe : aucune immunohistochimie de la vessie ou de l'urètre n'est " +
+                "décrite dans les trois sources, et le corpus n'en pratique aucune (§ 9-10) — la case " +
+                "absente ici n'est donc pas un oubli. La seule technique histologique explicitement " +
+                "prescrite pour ce territoire est la coupe étagée de l'urètre ; tout le reste est " +
+                "macroscopique, et c'est le résultat du § 5.7.";
+
+/* ── 01 · Prélèvement ─────────────────────────────────────────────────────────
+   En routine, rien : le temps vésical du manuel d'autopsie est entièrement
+   macroscopique et 4 CR sur 152 seulement citent la vessie en prélèvements. Ce
+   § n'est donc pas une liste de vœux, c'est le relevé de ce qui décide de la
+   lisibilité de la lame quand une lame existe. */
+var PRELEV = [
+  { k:"tempsVesical", l:"Temps vésical fait — pression au méat, ouverture, aspect de l'urine et de la muqueuse notés", grave:true,
+    manque:"« La vessie est ensuite ouverte. L'aspect de l'urine et de la muqueuse vésicale sont notés. » " +
+           "[soffoet, ch. 3] : c'est tout le temps vésical du manuel, et il ne comporte aucun prélèvement. " +
+           "Sans lui, la lame arrive sans son observation d'origine" },
+  { k:"repletion", l:"État de réplétion noté AVANT l'ouverture de la vessie", grave:true,
+    manque:"c'est le piège central de la fiche : la réplétion commande À LA FOIS le nombre de couches " +
+           "urothéliales, l'épaisseur du chorion et l'épaisseur pariétale globale [ernst, ch. 9]. Et la " +
+           "pièce examinée est une vessie VIDÉE par le geste — trois lectures dépendent d'une variable que " +
+           "le compte rendu ne note jamais" },
+  { k:"col", l:"Col vésical inclus dans le bloc",
+    manque:"« Similar to the adult bladder, the layers of smooth muscle that constitute the muscularis " +
+           "propria frequently have no definite orientation, and three distinct layers cannot be " +
+           "identified, with the exception of the area of the bladder neck » [ernst, ch. 9] : un bloc de " +
+           "dôme ou de face latérale ne donne pas d'architecture musculaire lisible. Aucune source ne " +
+           "prescrit pourtant de site — décision de service, non documentée (§ 9-4)" },
+  { k:"uretreTotalite", l:"Urètre prélevé en totalité, coupes étagées", grave:true,
+    manque:"« Le très jeune âge des fœtus concernés ajoute une difficulté supplémentaire à la dissection " +
+           "qui n'est pas toujours possible. » et alors « Dans ce cas on peut essayer de mettre en évidence " +
+           "l'obstacle en faisant des coupes histologiques étagées de l'urètre prélevé en totalité. » " +
+           "[soffoet, ch. 9] — la seule technique histologique prescrite pour ce territoire" },
+  { k:"monobloc", l:"Bloc vésico-génito-digestif disséqué monobloc", grave:true,
+    manque:"« Une section des branches ilio-pubiennes et des branches ischio-pubiennes permet de disséquer " +
+           "de façon monobloc l'ensemble vésico-génito-digestif » [soffoet, ch. 8] : c'est le bloc de toute " +
+           "anomalie génitale ou cloacale, et son objet n'est pas la paroi vésicale mais la CONTINUITÉ " +
+           "vésico-urétrale" },
+  { k:"veru", l:"Urètre postérieur ouvert jusqu'au veru montanum",
+    manque:"« can be seen in most fetal specimens » [ernst, ch. 14] — le veru est le repère qui donne sa " +
+           "valeur au négatif de valves ; sans lui, écrire l'absence de repli valvulaire ne dit rien" },
+  { k:"ouraqueRespecte", l:"Incision en Y renversé — ouraque et artères ombilicales respectés",
+    manque:"« l'insertion fœtale du cordon occupant l'angle formé par les deux branches de l'Y afin de bien " +
+           "respecter les deux artères ombilicales et l'ouraque » [soffoet, ch. 3] : l'incision existe pour " +
+           "épargner l'ouraque, une médiane mal conduite le détruit" },
+  { k:"cordon", l:"Coupe de cordon prise entre les deux artères ombilicales",
+    manque:"résultat contre-intuitif du § 5.6 : l'urothélium que la lame de routine rencontre n'est presque " +
+           "jamais dans un bloc de vessie, il est dans le cordon — « The remains of this connection in the " +
+           "umbilical cord are always located centrally between the two umbilical arteries, and they " +
+           "usually consist of a collection of epithelial cells without lumens. » [benirschke, ch. 16]" },
+  { k:"reinPoumon", l:"Lames de REIN et de POUMON du même fœtus disponibles", grave:true,
+    manque:"la vessie ne s'interprète jamais seule : la gravité de l'obstruction se lit sur le rein, sa " +
+           "conséquence létale sur le poumon. Sans ces deux lames, la séquence obstructive n'est ni " +
+           "retenue ni écartée — elle est seulement esquissée" },
+  { k:"sexeGonadique", l:"Sexe gonadique établi",
+    manque:"« Certaines mégavessies rentrent dans le cadre d'une dysgénésie cloacale. C'est pratiquement " +
+           "toujours le cas lorsque le fœtus est de sexe féminin. » [soffoet, ch. 9] — et un phénotype " +
+           "masculin ne suffit pas : le § 5.4 décrit un fœtus de « phénotype masculin mais de sexe " +
+           "gonadique féminin »" },
+  { k:"gesteConsigne", l:"Cathétérisme et ouverture antérieure de l'urètre consignés",
+    manque:"« Wigglesworth suggests that this appearance might be transformed to the more classically " +
+           "described one by the passage of a catheter or by opening the urethra anteriorly at necropsy. » " +
+           "[keeling, ch. 24] : l'aspect classique des valves peut être un artefact de dissection. Un geste " +
+           "non consigné devient une morphologie" }
+];
+
+/* ── 02 · Rétention ───────────────────────────────────────────────────────────
+   Ce bloc ne date rien, et c'est son contenu. Mesuré, non supposé : bladder,
+   urinary et urothelium ne renvoient rien dans [keeling, ch. 15] ni dans
+   [ernst, ch. 37]. Aucun rang, donc aucune heure. Le seul prédicteur BON est
+   un REPORT depuis les autres organes ; tout le reste ordonne ou ne dit rien. */
+var HORS_BAREME = "la vessie est absente de la Table 15.6 et de [ernst, ch. 37], zéro occurrence mesurée : " +
+                  "lui attribuer un rang par analogie — urothélium comme épithélium bronchique, muscle " +
+                  "lisse comme myocarde — serait une invention, et la fiche refuse l'analogie (§ 9-2)";
+
+var MODIF = "modificateurs communs de l'horloge, valables ici comme ailleurs : « accelerated by fetal " +
+            "hydrops and delivery-autopsy interval of >24 h, and decelerated by fetal gestational age " +
+            "<25/40 » [keeling, ch. 15]";
+
+var RETENTION = [
+  { k:"reportAutresOrganes", l:"Délai lu sur les AUTRES organes de la même autopsie — rein, foie, myocarde, tube digestif",
+    b:"reportée des autres organes", d:"report, jamais mesuré sur la vessie", h:1, q:"bon",
+    note:HORS_BAREME, alerte:MODIF },
+
+  { k:"musculeuseSeule", l:"Musculeuse encore identifiable alors que l'urothélium est nécrosé", b:"compartiment résistant encore là",
+    d:"ordre structurel, non chiffré", h:2, q:"moyen",
+    note:"le muscle lisse est la structure qui survit, et le corpus le confirme dans son cas le plus " +
+         "délabré : « La vessie est composée d'une épaisse couche scléreuse à l'intérieur de laquelle se " +
+         "trouve un urothélium nécrosé » [corpus CR]. Cela ORDONNE sans DATER : " + HORS_BAREME },
+
+  { k:"urotheliumAbsent", l:"Urothélium incomplet ou totalement absent", b:"—", d:"artefact d'autopsie de base", h:0, q:"mauvais",
+    note:"c'est le seul fait de lisibilité sourcé, et il est catégorique : « The urothelium is usually up " +
+         "to six to seven layers thick in the contracted bladder, but in autopsy specimens, the urothelium " +
+         "often is poorly preserved, and its layers may be incomplete or completely absent » [ernst, " +
+         "ch. 9]. Le constat est fait sur des spécimens d'autopsie EN GÉNÉRAL, pas sur des fœtus macérés : " +
+         "la desquamation urothéliale ne date rien et ne permet jamais de conclure à une nécrose ni à une " +
+         "desquamation lésionnelle" },
+
+  { k:"chorionEpais", l:"Chorion épais, conjonctif dense conservé", b:"—", d:"non interprétable — dépend de la réplétion", h:0, q:"mauvais",
+    note:"« The underlying lamina propria is relatively thick, depending on the degree of dilatation » " +
+         "[ernst, ch. 9] : l'épaisseur du chorion mesure la réplétion, pas le temps" },
+
+  { k:"basophiliePerdue", l:"Perte de la basophilie nucléaire dans la paroi vésicale", b:"—", d:"aucun rang attribuable", h:0, q:"mauvais",
+    note:"« There is a predictable pattern of loss of nuclear basophilia in the internal organs which " +
+         "should not be mistaken for necrosis » [keeling, ch. 15] — la règle générale s'applique, la " +
+         "séquence chiffrée non : " + HORS_BAREME },
+
+  { k:"sediment", l:"Sédiment intravésical ancien, débris en suspension", b:"—", d:"origine post-mortem non départageable", h:0, q:"mauvais",
+    note:"le corpus décrit un « sédiment hémorragique ancien » et des débris méconiaux [corpus CR] ; rien " +
+         "ne permet d'en dater ni d'en trancher l'origine post-mortem" },
+
+  { k:"vessieVidee", l:"Vessie vidée par la pression au méat avant l'ouverture", b:"—", d:"geste, pas rétention", h:0, q:"mauvais",
+    note:"« La vessie est ensuite ouverte. L'aspect de l'urine et de la muqueuse vésicale sont notés. » " +
+         "[soffoet, ch. 3] : la pièce examinée est une vessie vidée PAR LE GESTE. Ce qui en découle — " +
+         "couches urothéliales, épaisseur pariétale — est une conséquence de manipulation, à ne lire ni " +
+         "comme un délai ni comme une lésion" }
+];
+
+/* ── 03 · Maturation ──────────────────────────────────────────────────────────
+   Quatre rangs, pas un de plus, et la fiche dit d'emblée qu'ils ne datent pas :
+   « how little the microscopic features of the bladder wall change during the
+   second and third trimesters of gestation ». L'urothélium, lui, est mûr tôt et
+   sort de l'échelle. Les bornes 10, 20 et 28 SA sont les seules sourçables ;
+   celle de 28 est une MISE EN FORME du mot « third trimester », pas une date. */
+var STADES = [
+  { k:"mesenchyme", l:"Mésenchyme indifférencié — musculeuse non encore séparée du chorion", max:10,
+    note:"« During the eighth week, beginning at the dome of the bladder, the undifferentiated mesenchyme " +
+         "begins to differentiate into lamina propria and muscularis propria » [ernst, ch. 9] — la " +
+         "différenciation commence AU DÔME : un bloc de col peut être en retard sur un bloc de dôme sans " +
+         "que rien ne soit anormal" },
+  { k:"peuDeveloppee", l:"Musculeuse présente mais relativement peu développée", max:20,
+    note:"« the muscularis propria, which is relatively poorly developed in the early midtrimester » " +
+         "[ernst, ch. 9, renvoi Fig. 9.1, 16 semaines du livre] — qualitatif, jamais mesuré" },
+  { k:"faisceauxSepares", l:"Faisceaux musculaires encore séparés par un stroma abondant", max:28,
+    note:"« The muscularis propria is better developed than in Fig. 9.1, but the smooth muscle fascicles " +
+         "still remain separated by relatively abundant stroma » [ernst, ch. 9, légende Fig. 9.2, " +
+         "19 semaines du livre]. La borne haute de 28 SA MET EN FORME le mot « third trimester » : aucune " +
+         "source ne place de repère entre ce rang et le suivant, et les deux légendes qui le feraient sont " +
+         "perdues (§ 9-11)" },
+  { k:"epaississement", l:"Musculeuse progressivement épaissie, maturation achevée", max:99,
+    note:"« becomes progressively thicker during the third trimester » et « Full maturation of the " +
+         "epithelium and muscularis propria is completed in fetal life. » [ernst, ch. 9] — achevée avant " +
+         "la naissance, sans date. L'urothélium, lui, est hors échelle : « The urothelium becomes well " +
+         "differentiated early in the midtrimester and has a similar appearance to the adult urothelium »" }
+];
+
+/* ── 03 bis · Les deux axes catégoriels ───────────────────────────────────────
+   1) Le SITE du bloc, qui décide de ce que la musculeuse peut montrer : seul le
+      col donne trois couches identifiables.
+   2) Les COUCHES présentes sur la coupe, c'est-à-dire paroi complète ou non.
+      Sur une paroi incomplète, l'épaisseur de la musculeuse — le signe qui
+      compterait, celui de l'obstruction sous-vésicale — NE SE JUGE PAS : le
+      verdict est bloquant, et il l'est aussi quand le site n'est pas déclaré. */
+var PLANS = [
+  { k:"col",        l:"Col vésical", trois:true },
+  { k:"dome",       l:"Dôme", trois:false },
+  { k:"lateral",    l:"Paroi latérale", trois:false },
+  { k:"superieure", l:"Vessie supérieure, adventice recouverte de péritoine", trois:false },
+  { k:"uretrePost", l:"Urètre postérieur et veru montanum, coupes étagées", trois:false },
+  { k:"monobloc",   l:"Bloc vésico-génito-digestif, coupes sériées", trois:false },
+  { k:"cordon",     l:"Cordon ombilical, entre les deux artères", trois:false },
+  { k:"siteNonDeclare", l:"Site du bloc NON déclaré", trois:false }
+];
+
+var COUCHES = [
+  { k:"quatre",          l:"Les quatre couches — urothélium, chorion, musculeuse, adventice", c:4 },
+  { k:"sansUrothelium",  l:"Paroi sans urothélium — chorion, musculeuse, adventice", c:3 },
+  { k:"sansAdventice",   l:"Paroi sans adventice — urothélium, chorion, musculeuse", c:3 },
+  { k:"musculeuseSeuleC", l:"Musculeuse seule identifiable", c:1 },
+  { k:"tangentielle",    l:"Coupe tangentielle — aucune couche traversée de part en part", c:0 },
+  { k:"couchesNonDeclarees", l:"Couches présentes NON déclarées", c:null }
+];
+
+var MESURE = {
+  titre:"Site du bloc, couches présentes, comptes et épaisseurs",
+  defLabel:"site du bloc — seul le col donne trois couches musculaires",
+  optLabel:"couches présentes — paroi complète ou incomplète",
+  defs:PLANS, opts:COUCHES,
+  champs:[
+    { id:"couches",    label:"Couches urothéliales comptées", min:0, max:20, step:1 },
+    { id:"musculeuse", label:"Épaisseur de la musculeuse (mm)", min:0, max:15, step:0.1 },
+    { id:"paroi",      label:"Épaisseur pariétale totale à la coupe (mm)", min:0, max:30, step:0.1 }
+  ]
+};
+
+var SANS_NORME = "Aucune norme d'épaisseur de paroi vésicale par terme n'existe, ni ratio muscle/paroi, ni " +
+                 "compte de faisceaux : les seules mesures du corpus sont macroscopiques et sans normal " +
+                 "associé — « 2 mm à la coupe », « mesure 6 x 3 x 3 cm », « globulaire d'environ 3 cm de " +
+                 "diamètre » [corpus CR] (§ 9-3). Le chiffre se consigne, il ne se rapporte à rien.";
+
+function trois(k){ var p = k ? par(PLANS, k) : null; return !!(p && p.trois); }
+function nbCouches(k){ var o = k ? par(COUCHES, k) : null; return o ? o.c : null; }
+
+function verdictMesure(){
+  var site = E.mesure.def, cou = E.mesure.opt;
+  var nc = E.mesure.v.couches, mus = E.mesure.v.musculeuse, ep = E.mesure.v.paroi;
+  if (!site && !cou && nc == null && mus == null && ep == null)
+    return { cls:"", txt:"Ni site de bloc, ni couches déclarées, ni mesure — la lame n'est pas située." };
+
+  var t = [], res = [], cls = "ok";
+  var c = nbCouches(cou);
+  var complete = (c === 4);
+  var siteVrai = site && site !== "siteNonDeclare";
+
+  if (!siteVrai){
+    cls = "warn";
+    res.push("site du bloc non déclaré — « three distinct layers cannot be identified, with the exception " +
+             "of the area of the bladder neck » [ernst, ch. 9] : sans site, une musculeuse jugée pauvre " +
+             "peut n'être qu'un bloc de dôme");
+  } else {
+    t.push("Site : " + par(PLANS, site).l.toLowerCase() + ".");
+    if (site === "col")
+      t.push("C'est le seul site où l'architecture musculaire est lisible.");
+    else if (site === "dome" || site === "lateral" || site === "superieure")
+      t.push("Hors col, les faisceaux « frequently have no definite orientation » : l'organisation " +
+             "musculaire ne se juge pas sur ce bloc.");
+    if (site === "superieure")
+      t.push("Un péritoine sur l'adventice est attendu ici — « The adventitia consists of a thin layer of " +
+             "connective tissue, which may be covered by peritoneum in sections of the superior bladder » " +
+             "[ernst, ch. 9, légende Fig. 9.1] — et ne se lit pas comme une couche surnuméraire.");
+    if (site === "cordon")
+      t.push("Sur le cordon, l'objet n'est pas une paroi vésicale mais un reliquat allantoïdien, et le " +
+             "critère est la POSITION : « always located centrally between the two umbilical arteries ». " +
+             "Présent dans 14,6 % des cordons — c'est une variante, pas une lésion.");
+    if (site === "uretrePost" || site === "monobloc")
+      t.push("Sur ce bloc, la question lisible est la CONTINUITÉ vésico-urétrale, pas la paroi.");
+  }
+
+  if (!cou || cou === "couchesNonDeclarees"){
+    cls = "warn";
+    res.push("couches présentes non déclarées — paroi complète ou incomplète non établie");
+  } else {
+    t.push("Couches lues : " + par(COUCHES, cou).l.toLowerCase() + ".");
+    if (!complete)
+      t.push("Paroi INCOMPLÈTE : la lecture pariétale est partielle.");
+  }
+
+  /* Le verdict bloquant de l'organe. */
+  if (mus != null){
+    if (!complete){
+      cls = "bad";
+      t.push("Épaisseur de musculeuse saisie sur une paroi incomplète ou non déclarée : elle NE SE JUGE " +
+             "PAS. C'est pourtant le seul chiffre qui aurait un sens ici — celui de l'obstruction " +
+             "sous-vésicale — et il exige les quatre couches sur la même coupe pour savoir de quoi la " +
+             "mesure est la fraction. Le chiffre est consigné ; il n'est pas interprété.");
+    } else {
+      if (!trois(site)){
+        if (cls === "ok") cls = "warn";
+        res.push("épaisseur de musculeuse mesurée hors col — « three distinct layers cannot be identified » " +
+                 "ailleurs, la mesure porte sur des faisceaux sans orientation définie");
+      }
+      t.push("Musculeuse : " + mus + " mm sur paroi complète. " + SANS_NORME);
+    }
+    if (!E.prelev.repletion)
+      res.push("réplétion non notée — « the normal variability of physiologic dilatation, which will also " +
+               "affect the thickness of the wall and its histological appearance » [ernst, ch. 9] : sans " +
+               "elle l'épaisseur n'a pas de dénominateur");
+  }
+
+  if (nc != null){
+    t.push("Couches urothéliales comptées : " + nc + ". Six à sept couches est une valeur d'ÉTAT DE " +
+           "RÉPLÉTION, pas de terme — « consisting of a variable number of cellular layers depending on " +
+           "the degree of bladder dilatation » [ernst, ch. 9].");
+    if (nc === 0)
+      t.push("Zéro couche n'est pas une nécrose : « in autopsy specimens, the urothelium often is poorly " +
+             "preserved » — c'est le régime ordinaire de la pièce d'autopsie.");
+    if (cou === "sansUrothelium" && nc > 0){
+      if (cls === "ok") cls = "warn";
+      res.push("couches comptées alors que l'axe déclare une paroi sans urothélium — l'un des deux est faux");
+    }
+    if (!E.prelev.repletion)
+      res.push("réplétion non notée — le compte des couches urothéliales n'est alors rapportable à rien");
+  }
+
+  if (ep != null){
+    t.push("Épaisseur pariétale : " + ep + " mm. " + SANS_NORME);
+    t.push("Et l'épaisseur ne signe rien dans un sens ni dans l'autre : l'obstruction basse donne « either " +
+           "thin or very thick » [keeling, ch. 24].");
+  }
+
+  if (E.stade && !complete){
+    if (cls !== "bad") cls = "bad";
+    res.push("stade de maturation coché sur une paroi incomplète ou non déclarée — le rang du § 04 EST la " +
+             "densité de la musculeuse : il n'est pas jugeable ici");
+  }
+  if (!E.prelev.tempsVesical)
+    res.push("temps vésical non confirmé — la lame arrive sans l'observation macroscopique qui la précède");
+
+  if (res.length){
+    if (cls === "ok") cls = "warn";
+    t.push("Réserves : " + res.join(" ; ") + ".");
+  }
+  return { cls:cls, txt:t.join(" ") };
+}
+
+/* ── 05 · Variantes normales ──────────────────────────────────────────────────
+   Sur cet organe la liste est longue et ce n'est pas un ornement : la quasi-
+   totalité de ce que la lame de routine montre ici est une variante, et le
+   reliquat allantoïdien du cordon — 14,6 % — est de loin l'urothélium le plus
+   souvent rencontré. « C'est une variante, pas une lésion » [benirschke, ch. 16]. */
+var VARIANTES = [
+  { k:"desquamation", l:"Urothélium desquamé ou absent — « in autopsy specimens, the urothelium often is poorly preserved »" },
+  { k:"sixSept",      l:"Six à sept couches urothéliales — « six to seven layers thick in the contracted bladder », valeur de réplétion" },
+  { k:"urotheliumMur", l:"Urothélium d'aspect adulte dès le milieu de grossesse — « fully differentiated prenatally »" },
+  { k:"chorionVariable", l:"Chorion d'épaisseur relative, fonction de la dilatation" },
+  { k:"muscMuqIndistincte", l:"Musculaire muqueuse indistincte — « may be indistinct and composed of a thin, discontinuous layer of smooth muscle », existence contestée" },
+  { k:"faisceauxSansOrientation", l:"Faisceaux musculaires sans orientation définie hors du col" },
+  { k:"peritoine",    l:"Péritoine recouvrant l'adventice sur une coupe de vessie supérieure" },
+  { k:"amande",       l:"Vessie haut située, flanquée des deux artères ombilicales, en amande vers l'ouraque" },
+  { k:"metaplasieUretrale", l:"Métaplasie malpighienne de l'urètre, « especially along the posterior wall » — normale, hormonale, décroissante" },
+  { k:"utricule",     l:"Utricule prostatique au veru montanum, épithélium malpighien stratifié" },
+  { k:"veruU",        l:"Lumière urétrale en U inversé au niveau du veru montanum" },
+  { k:"morgagniLittre", l:"Lacunes de Morgagni et glandes de Littre de l'urètre pénien" },
+  { k:"fosseNaviculaire", l:"Fosse naviculaire à épithélium malpighien non kératinisant" },
+  { k:"reliquatCordon", l:"Amas d'épithélium transitionnel sans lumière dans le cordon, central entre les deux artères — 14,6 %" },
+  { k:"cryptorchidie", l:"Testicules non descendus chez le jeune fœtus — « une cryptorchidie qui, chez le jeune fœtus, est physiologique » [soffoet]" }
+];
+
+/* ── 06 · Signes ──────────────────────────────────────────────────────────────
+   On coche ce qu'on VOIT. Aucun diagnostic ici : ils sont dérivés au § 07.
+   Beaucoup de ces signes ne sont pas des signes de lame — ils viennent de la
+   macro, de la dissection, de l'opacification, ou d'un autre organe. C'est
+   voulu : § 5-7 de la fiche, l'obstruction basse ne se diagnostique pas sur la
+   lame, et une grille qui n'accueillerait que du microscopique ne pourrait
+   jamais assembler la séquence. Le champ meta dit d'où vient le signe. */
+var SIGNES = [
+  /* Paroi et contenu */
+  { k:"paroiEpaisse",   l:"Paroi vésicale épaissie", meta:"macro — « thick-walled, although usually not trabeculated »" },
+  { k:"paroiMince",     l:"Paroi vésicale mince, vessie de grande capacité", meta:"macro — « very large capacity, thin-walled bladder »" },
+  { k:"paroiFibreuse",  l:"Paroi fibreuse, scléreuse ou fibrino-musculaire à la lame", meta:"vocabulaire du service, sans répondant livre — § 9-7" },
+  { k:"urotheliumNecrose", l:"Urothélium nécrosé, au-delà de la desquamation d'autopsie", meta:"la desquamation simple est une variante" },
+  { k:"rosettesUrotheliales", l:"« multiples rosettes urothéliales réparties sans organisation » au sein d'un tissu fibro-musculaire", meta:"observation du service, aucun répondant livre" },
+  { k:"proliferationCanaliculaire", l:"« prolifération canaliculaire urothéliale tant anarchique qu'anastomotique »", meta:"observation du service, aucun répondant livre" },
+  { k:"calcificationsVesicales", l:"« gros foyers calcifiés à proximité du départ de l'urètre »", meta:"observation du service" },
+  { k:"urolithiase",    l:"« des urolithiases composées de matériel protéique éosinophile grumeleux et de débris méconiaux, parsemés de calcifications »", meta:"observation du service" },
+  { k:"sedimentIntravesical", l:"Sédiment, méconium ou débris dans la lumière vésicale", meta:"nature du contenu : la lame répond" },
+
+  /* Taille et forme */
+  { k:"megavessie",     l:"Mégavessie", meta:"macro — 0 occurrence en micro dans le corpus" },
+  { k:"microvessie",    l:"Microvessie ou vessie non identifiable", meta:"même séquence de Potter que la mégavessie, par l'autre bout" },
+  { k:"vessieTubulaire", l:"Vessie tubulaire", meta:"signe fonctionnel : absence de flux urinaire" },
+  { k:"sablier",        l:"Vessie en sablier", meta:"« The so-called hourglass bladder probably reflects a partial persistence of the urachus »" },
+  { k:"asciteUrineuse", l:"Ascite urineuse, urinome ou rupture vésicale", meta:"macro" },
+
+  /* Urètre et obstacle */
+  { k:"discontinuiteVesicoUretrale", l:"« on ne trouve pas de continuité vésico-urétrale en coupes sériées »", meta:"le seul énoncé histologique qui compte sur ce territoire" },
+  { k:"replisVeru",     l:"Deux replis semi-lunaires au bord inférieur du veru montanum", meta:"macro/dissection — valves, urètre restant franchissable" },
+  { k:"veruNonIdentifie", l:"Veru montanum non identifié sur les coupes", meta:"« can be seen in most fetal specimens » : son absence est d'abord un défaut de prélèvement" },
+  { k:"uretrePostDilate", l:"Dilatation de l'urètre postérieur, aspect de « trou de serrure »", meta:"macro/imagerie" },
+  { k:"orificePunctiforme", l:"Orifice urétral punctiforme, sténose", meta:"macro/dissection" },
+  { k:"obstacleInfranchissable", l:"« l'obstacle est infranchissable, le crin de Florence introduit dans la vessie butte au niveau du veru montanum, l'urètre distal n'est pas cathétérisable par voie haute »", meta:"macro — atrésie" },
+  { k:"colBorgne",      l:"Col vésical borgne, aucun passage à l'opacification", meta:"« à l'opacification vésicale, absence de passage urétral »" },
+  { k:"hypoplasieProstatique", l:"Hypo/aplasie prostatique", meta:"critère prune belly selon soffoet, absent de keeling — § 9-8" },
+
+  /* Amont : ce que la vessie seule ne montre pas */
+  { k:"uretereDilate",  l:"Uretère dilaté, urétéro-hydronéphrose", meta:"amont — bloc rein/voies" },
+  { k:"hydronephrose",  l:"Hydronéphrose", meta:"amont" },
+  { k:"reinDysplasique", l:"Rein dysplasique sur la lame de rein", meta:"amont — c'est là que se juge la gravité" },
+  { k:"kysteSousCapsulaire", l:"Kyste sous-capsulaire cortical rénal", meta:"amont — « hallmark of obstruction » sur la grille rein" },
+  { k:"oligoamnios",    l:"Oligoamnios ou anamnios", meta:"clinique" },
+  { k:"hypoplasiePulmonaire", l:"Hypoplasie pulmonaire", meta:"aval de la séquence — se juge sur la lame de poumon et le rapport poids" },
+  { k:"faciesPotter",   l:"Faciès de Potter, déformations positionnelles", meta:"externe" },
+
+  /* Paroi abdominale, génital, digestif */
+  { k:"defautMusculatureAbdo", l:"Défaut ou aplasie de la musculature abdominale antérieure", meta:"macro" },
+  { k:"testiculesNonDescendus", l:"Testicules non descendus", meta:"critère prune belly pour keeling ; non retenu chez le jeune fœtus par soffoet — § 9-8" },
+  { k:"sexeFemininOuAmbigu", l:"Sexe gonadique féminin ou ambigu devant une mégavessie", meta:"les VUP n'existent que chez le garçon" },
+  { k:"microcolon",     l:"Microcôlon", meta:"mégavessie-microcôlon" },
+  { k:"refluxTrigone",  l:"Trigone anormalement large, orifices urétéraux dilatés", meta:"« subject to vesicoureteric reflux »" },
+
+  /* Exstrophie */
+  { k:"plaqueVesicale", l:"« Cette plaque vésicale constitue une masse charnue, rougeâtre, ovalaire, en continuité avec le revêtement cutané. »", meta:"macro" },
+  { k:"pubisSepares",   l:"Os pubiens séparés, diastasis", meta:"macro — à mesurer" },
+  { k:"imperforationAnale", l:"Imperforation anale", meta:"« pratiquement constante » dans l'exstrophie" },
+  { k:"deuxHemivessies", l:"« deux hémivessies exstrophiées, séparées par un intestin également exstrophié »", meta:"forme majeure, cloacale" },
+  { k:"omphalocele",    l:"Omphalocèle", meta:"spectre OEIS" },
+  { k:"defectSpinal",   l:"Défect spinal", meta:"spectre OEIS" },
+
+  /* Ouraque et cordon */
+  { k:"ouraquePermeable", l:"Ouraque perméable, fistule vésico-ombilicale", meta:"« once in 200,000 births », plus fréquent chez le garçon" },
+  { k:"ouraqueMuscle",  l:"Reliquat allantoïdien accompagné de musculature", meta:"« Rarely is the allantoic tissue accompanied by muscle »" },
+  { k:"cordonGeant",    l:"« giant umbilical cord »", meta:"peut révéler un ouraque perméable" },
+  { k:"kysteOuraquien", l:"Kyste ou diverticule ouraquien", meta:"persistance partielle, moyenne ou distale" },
+  { k:"reliquatExcentre", l:"Reliquat épithélial du cordon NON central entre les deux artères", meta:"la position est le critère : hors du centre, penser omphalomésentérique" },
+
+  /* Gestes et artefacts */
+  { k:"catheterismePasse", l:"Cathétérisme urétral passé, urine obtenue au méat", meta:"geste — exclut l'atrésie, à cocher comme fait accompli" },
+  { k:"eviscerationArtefactuelle", l:"Perforation ou déchirure vésicale rapportable au geste", meta:"artefact — « pour éviter une perforation »" },
+  { k:"ouraqueSectionne", l:"Ouraque sectionné à l'ouverture, continuité dôme-ombilic perdue", meta:"artefact de dissection" }
+];
+
+/* ── 07 · Associations lues ───────────────────────────────────────────────────
+   Ces lignes s'AFFICHENT, elles ne se cochent pas. Sur cet organe plus que sur
+   tout autre, le ne-pas-conclure porte l'essentiel : la vessie ne s'inter-
+   prète jamais seule, et « lui seul permet l'identification précise du type
+   d'obstacle » se dit de la MACRO, pas de la lame. */
+var DIAGS = [
+  { k:"seqObstructive", l:"Séquence d'obstruction du bas appareil", cle:"megavessie", min:3,
+    signes:["megavessie","uretrePostDilate","uretereDilate","hydronephrose","reinDysplasique",
+            "oligoamnios","hypoplasiePulmonaire"],
+    stop:" — la lame de vessie n'ajoute RIEN de spécifique à cette séquence, et c'est mesuré : " +
+         "aucune des trois sources ne donne de critère histologique vésical d'obstruction. La lame " +
+         "qui date et qui gradue l'obstruction basse est la lame de REIN, pas la lame de vessie. Ne " +
+         "pas nommer le TYPE d'obstacle depuis un bloc de vessie : « L'examen macroscopique de ces " +
+         "uropathies obstructives basses représente une réelle difficulté technique, mais lui seul " +
+         "permet l'identification précise du type d'obstacle pouvant correspondre à des valves, une " +
+         "atrésie ou une sténose de l'urètre postérieur. » [soffoet, ch. 9]. Sans lame de rein et " +
+         "sans poumon pesé, la séquence n'est ni graduée ni close — et la micro décrit, la conclusion " +
+         "nomme : « agénésie vésicale » et « dysplasie rénale kystique de type obstructif et " +
+         "primitif » sont des libellés de CONCLUSION, jamais de description microscopique." },
+
+  { k:"vessieDeLutte", l:"Vessie de lutte", cle:"paroiEpaisse", min:2,
+    signes:["paroiEpaisse","megavessie","uretrePostDilate","refluxTrigone","hydronephrose"],
+    stop:" — fait MACROSCOPIQUE, jamais décrit au microscope par aucune des trois sources. Et " +
+         "l'épaisseur ne tranche pas dans un sens : « the bladder wall is either thin or very thick » " +
+         "[keeling, ch. 24]. Surtout, sans état de réplétion noté, l'épaississement n'est pas " +
+         "séparable du normal : « These pathologic changes should be distinguished from the normal " +
+         "variability of physiologic dilatation, which will also affect the thickness of the wall and " +
+         "its histological appearance. » [ernst, ch. 9]." },
+
+  { k:"obstacleUretral", l:"Obstacle urétral, niveau à préciser en macro", cle:"discontinuiteVesicoUretrale", min:2,
+    signes:["discontinuiteVesicoUretrale","obstacleInfranchissable","colBorgne","orificePunctiforme",
+            "replisVeru","uretrePostDilate","megavessie"],
+    stop:" — la lame établit la CONTINUITÉ vésico-urétrale ou son absence, pas le type d'obstacle. " +
+         "Valves, sténose et atrésie se départagent au cathétérisme et à l'opacification, non sur " +
+         "coupe. Un veru montanum non identifié n'est pas un argument : c'est d'abord un défaut de " +
+         "prélèvement, puisqu'il « can be seen in most fetal specimens ». Le terme de l'apparition " +
+         "compte : « Lorsque la mégavessie est dépistée plus précocement dès le 1er trimestre on " +
+         "suspectera plus volontiers une atrésie de l'urètre » [soffoet, ch. 9]." },
+
+  { k:"megavessieSansObstacle", l:"Mégavessie sans obstacle anatomique — prune belly, mégavessie-microcôlon, dysgénésie cloacale",
+    cle:"megavessie", min:2,
+    signes:["megavessie","defautMusculatureAbdo","testiculesNonDescendus","hypoplasieProstatique",
+            "microcolon","sexeFemininOuAmbigu","paroiMince","refluxTrigone"],
+    stop:" — divergence de critères non tranchée : soffoet ajoute l'hypo/aplasie prostatique au " +
+         "tableau prune belly et refuse la cryptorchidie comme critère chez le jeune fœtus, où elle " +
+         "est physiologique ; keeling compte les « undescended testes » parmi les critères. La grille " +
+         "porte les deux. Le défaut de musculature abdominale ne signe pas la vessie : il est " +
+         "« retrouvé autant en cas de mégavessie qu'en cas de distension d'origine non vésicale ». " +
+         "Et devant un sexe gonadique féminin ou ambigu, ce ne sont PAS des valves — les VUP " +
+         "n'existent que chez le garçon : « C'est pratiquement toujours le cas lorsque le fœtus est " +
+         "de sexe féminin. » Le bloc utile devient alors le bloc vésico-génito-digestif monobloc." },
+
+  { k:"potterDeuxSens", l:"Séquence de Potter — par rétention ou par absence de formation d'urine",
+    min:2,
+    signes:["oligoamnios","hypoplasiePulmonaire","faciesPotter","megavessie","microvessie","reinDysplasique"],
+    stop:" — mégavessie et microvessie mènent au MÊME aboutissement par deux chemins opposés : " +
+         "« absence de formation d'urine (agénésie rénale bilatérale, reins kystiques ou hypoplasiques " +
+         "non fonctionnels avec microvessie) ou rétention d'urine (valve urétrale, mégavessie) » " +
+         "[soffoet, ch. 23]. Le sens de la séquence ne se lit donc pas sur la vessie : il se lit sur " +
+         "le rein. L'hypoplasie pulmonaire ne se conclut pas non plus ici — elle se pèse." },
+
+  { k:"exstrophie", l:"Exstrophie vésicale ou cloacale", cle:"plaqueVesicale", min:2,
+    signes:["plaqueVesicale","pubisSepares","imperforationAnale","deuxHemivessies","omphalocele","defectSpinal"],
+    stop:" — rien ne se conclut depuis la lame : c'est la lésion la moins microscopique de toutes. " +
+         "Ce qui se mesure est la brèche pariétale et le diastasis pubien, en macro. Noter que " +
+         "l'exstrophie va « sans urétéro-hydronéphrose sus-jacente » : son absence n'est pas " +
+         "rassurante, elle est attendue. Le seul apport histologique documenté est hors période " +
+         "fœtale — « There is a long-term risk of squamous cell carcinoma of the bladder in " +
+         "survivors. »" },
+
+  { k:"reliquatOuraquien", l:"Reliquat ouraquien ou allantoïdien", min:2,
+    signes:["ouraquePermeable","ouraqueMuscle","cordonGeant","kysteOuraquien","sablier","reliquatExcentre"],
+    stop:" — un amas d'épithélium transitionnel dans le cordon est présent dans 14,6 % des cordons : " +
+         "c'est une VARIANTE, pas une lésion. Le critère qui sépare le reliquat allantoïdien de " +
+         "l'omphalomésentérique est la POSITION : « always located centrally between the two " +
+         "umbilical arteries ». L'ouraque véritablement perméable est estimé « once in 200,000 " +
+         "births » : ne pas le conclure d'un simple amas épithélial." },
+
+  { k:"urotheliumRemanie", l:"Urothélium remanié sans grille de lecture publiée", min:2,
+    signes:["rosettesUrotheliales","proliferationCanaliculaire","urotheliumNecrose","paroiFibreuse"],
+    stop:" — ces constats sont écrits par le service et n'ont AUCUN répondant dans les trois livres : " +
+         "aucune occurrence de rosette associée à l'urothélium dans le corpus livre. Ils se " +
+         "consignent comme observations, jamais comme entités, et ne peuvent pas servir de critère. " +
+         "Et la desquamation banale ne se lit pas comme une nécrose : « in autopsy specimens, the " +
+         "urothelium often is poorly preserved »." },
+
+  { k:"contenuVesical", l:"Contenu vésical anormal — lithiase, méconium, sédiment", min:2,
+    signes:["urolithiase","calcificationsVesicales","sedimentIntravesical","paroiEpaisse"],
+    stop:" — c'est l'une des rares questions auxquelles la lame répond vraiment ; elle ne dit " +
+         "cependant ni la cause ni l'ancienneté. Du méconium dans la vessie oriente vers une " +
+         "communication, mais celle-ci se démontre en coupes sériées du bloc, pas sur un bloc de " +
+         "paroi." },
+
+  { k:"artefactDeGeste", l:"Aspect rapportable au geste d'autopsie", min:2,
+    signes:["eviscerationArtefactuelle","ouraqueSectionne","catheterismePasse","urotheliumNecrose"],
+    stop:" — ne pas lire comme lésion ce que la dissection a produit. Le cathétérisme « devra " +
+         "utiliser chez le très jeune fœtus un matériel très fin et non traumatisant » : une " +
+         "perforation est un risque connu du geste. Mais un cathétérisme passé est aussi une " +
+         "INFORMATION — il exclut l'atrésie ; le noter comme fait, pas seulement comme artefact." }
+];
+
+/* ── 08 · Négatifs ────────────────────────────────────────────────────────────
+   Un seul CR du corpus écrit un négatif nu sur la vessie. Le meilleur énoncé du
+   corpus est celui qui joint le constat et sa portée fonctionnelle.
+   Ce qui NE figure PAS ici, délibérément : « paroi vésicale d'épaisseur
+   normale ». Aucune norme d'épaisseur par terme n'existe et l'épaisseur dépend
+   de la réplétion : le négatif serait faux par construction (fiche § 6). */
+var NEGATIFS = [
+  { k:"nonTubulisee", l:"Vessie non tubulisée", p:"« la vessie n'est pas tubulaire (fonction urinaire résiduelle) »",
+    ko:"vessie TUBULAIRE — absence de flux urinaire" },
+  { k:"urineAuMeat", l:"Urine obtenue au méat à la pression vésicale", p:"premier geste du temps vésical ; sa positivité exclut l'atrésie",
+    ko:"aucune urine au méat, ou pression vésicale non faite" },
+  { k:"continuiteVesicoUretrale", l:"Continuité vésico-urétrale vérifiée, méthode énoncée", p:"le seul énoncé histologique qui compte sur ce territoire",
+    ko:"continuité vésico-urétrale NON vérifiée, ou méthode non dite" },
+  { k:"urotheliumStatut", l:"Urothélium dit conservé ou dit desquamé non interprétable", p:"« in autopsy specimens, the urothelium often is poorly preserved » : ne pas l'énoncer laisse croire à un constat",
+    ko:"statut de l'urothélium NON énoncé" },
+  { k:"veruIdentifie", l:"Veru montanum identifié, sans repli valvulaire", p:"« can be seen in most fetal specimens » — c'est son identification qui donne sa valeur au négatif",
+    ko:"veru montanum NON identifié — le négatif valvulaire ne vaut rien" },
+  { k:"ouraqueCentral", l:"Reliquat ouraquien central entre les deux artères, sans lumière", p:"négatif de banalité — 14,6 % des cordons",
+    ko:"reliquat non central, ou position non décrite" },
+  { k:"sexeGonadique", l:"Sexe gonadique vérifié devant une mégavessie", p:"conditionne tout le raisonnement étiologique",
+    ko:"sexe gonadique NON vérifié — les VUP n'existent que chez le garçon" },
+  { k:"repletionNotee", l:"État de réplétion de la vessie noté", p:"sans lui, ni l'épaisseur ni le compte de couches n'ont de dénominateur",
+    ko:"état de réplétion NON noté — le confondeur central de l'organe reste ouvert" }
+];
+
+/* ── 09 · Techniques ──────────────────────────────────────────────────────────
+   Aucune immunohistochimie n'est décrite pour ce territoire dans aucune des
+   trois sources (§ 9-10). La liste est donc dominée par de la macro et de la
+   dissection : c'est le constat de la fiche, pas une lacune de la grille. */
+var TECHNIQUES = [
+  { k:"coupesEtagees", l:"Coupes histologiques étagées de l'urètre prélevé en totalité",
+    q:"la seule technique histologique explicitement prescrite pour ce territoire — « mettre en évidence l'obstacle en faisant des coupes histologiques étagées de l'urètre prélevé en totalité »" },
+  { k:"coupesSeriees", l:"Coupes sériées du bloc vésico-génito-digestif",
+    q:"continuités vésico-urétrale et utéro-vaginale, trajets fistuleux" },
+  { k:"opacification", l:"Opacification vésicale sus-pubienne, cliché de profil",
+    q:"macro — « le siège rétro-symphysaire de l'obstacle », valves ou sténose parfois visibles" },
+  { k:"crin", l:"Cathétérisme urétral au crin de Florence",
+    q:"macro — départage valves, sténose et atrésie ; matériel fin et non traumatisant" },
+  { k:"pressionMeat", l:"Pression vésicale et recueil d'urine au méat",
+    q:"premier temps, avant toute dissection" },
+  { k:"blocMonobloc", l:"Prélèvement en bloc vésico-génito-digestif, sans ouverture",
+    q:"devant un sexe féminin ou ambigu, ou une malformation cloacale" },
+  { k:"caryotype", l:"Caryotype",
+    q:"« une malformation unique a priori isolée (cardiopathie, mégavessie, anasarque) »" },
+  { k:"urinesCaryotype", l:"Urines vésicales comme matériel de caryotype",
+    q:"en cas d'anamnios, on préfère prélever les urines « s'il existe une mégavessie » — la mégavessie devient un prélèvement" },
+  { k:"lameRein", l:"Lame de rein, avec SMA et comptage des générations de néphrons",
+    q:"c'est là que la gravité et l'irréversibilité de la séquence se jugent, pas sur la vessie" },
+  { k:"lamePoumon", l:"Poumons pesés et lame de poumon",
+    q:"l'hypoplasie pulmonaire se pèse, elle ne se déduit pas d'une mégavessie" },
+  { k:"cordonUrothelium", l:"Coupe de cordon à l'extrémité placentaire",
+    q:"c'est là que l'urothélium de routine se trouve, et la position centrale est le critère" },
+  { k:"radioPubis", l:"Radiographie du bassin, mesure du diastasis pubien",
+    q:"exstrophie — la mesure est osseuse, pas histologique" },
+  { k:"genetique", l:"Envoi du congelé en génétique",
+    q:"mégavessie-microcôlon « récessif autosomique », prune belly syndromique" }
+];
+
+function suggerer(){
+  var s = {};
+  function anormal(k){ return E.signes[k] === "anormal"; }
+
+  if (anormal("megavessie")){ s.opacification = 1; s.crin = 1; s.caryotype = 1; s.lameRein = 1; }
+  if (anormal("megavessie") && anormal("oligoamnios")) s.urinesCaryotype = 1;
+  if (anormal("microvessie") || anormal("vessieTubulaire")) s.lameRein = 1;
+  if (anormal("uretrePostDilate") || anormal("replisVeru") || anormal("orificePunctiforme") ||
+      anormal("obstacleInfranchissable") || anormal("colBorgne")){ s.crin = 1; s.opacification = 1; s.coupesEtagees = 1; }
+  if (anormal("veruNonIdentifie")) s.coupesEtagees = 1;
+  if (anormal("discontinuiteVesicoUretrale")){ s.coupesSeriees = 1; s.opacification = 1; }
+  if (anormal("sexeFemininOuAmbigu")){ s.blocMonobloc = 1; s.coupesSeriees = 1; s.caryotype = 1; }
+  if (anormal("microcolon")){ s.blocMonobloc = 1; s.genetique = 1; }
+  if (anormal("defautMusculatureAbdo") || anormal("hypoplasieProstatique") ||
+      anormal("testiculesNonDescendus")) s.genetique = 1;
+  if (anormal("uretereDilate") || anormal("hydronephrose") || anormal("reinDysplasique") ||
+      anormal("kysteSousCapsulaire") || anormal("refluxTrigone")) s.lameRein = 1;
+  if (anormal("oligoamnios") || anormal("faciesPotter") || anormal("hypoplasiePulmonaire")) s.lamePoumon = 1;
+  if (anormal("plaqueVesicale") || anormal("pubisSepares") || anormal("deuxHemivessies") ||
+      anormal("omphalocele") || anormal("defectSpinal")) s.radioPubis = 1;
+  if (anormal("imperforationAnale")) s.coupesSeriees = 1;
+  if (anormal("ouraquePermeable") || anormal("ouraqueMuscle") || anormal("cordonGeant") ||
+      anormal("kysteOuraquien") || anormal("reliquatExcentre") || anormal("sablier")) s.cordonUrothelium = 1;
+  if (anormal("paroiEpaisse") || anormal("paroiMince")) s.opacification = 1;
+  if (anormal("eviscerationArtefactuelle") || anormal("ouraqueSectionne")) s.coupesSeriees = 1;
+  if (!anormal("catheterismePasse") && (anormal("megavessie") || anormal("uretrePostDilate"))) s.pressionMeat = 1;
+
+  /* Le report des autres organes n'est pas une option : la vessie ne se conclut
+     pas seule. Dès qu'un signe d'amont ou d'aval est coché, les deux lames
+     partenaires sont demandées. */
+  if (E.retention.reportAutresOrganes === "present"){ s.lameRein = 1; s.lamePoumon = 1; }
+
+  return s;
+}
+
+/* ── Banc propre à l'organe ─────────────────────────────────────────────────── */
+async function testsOrgane(chk, clic, set, crTient, pause){
+  /* Le banc commun laisse DIAGS[0] posé : on part d'un état voulu. */
+  function pose(k, v){ if (E.signes[k] !== v) clic("les", k, v); }
+  function ote(k){ if (E.signes[k]) clic("les", k, E.signes[k]); }
+  function propre(){ SIGNES.forEach(function(x){ ote(x.k); }); }
+  function tenue(k){ return associations().some(function(a){ return a.d.k === k && a.tenu; }); }
+  function lue(k){ return associations().some(function(a){ return a.d.k === k; }); }
+  function site(k){ if (E.mesure.def !== k) clic("mdef", k); }
+  function couche(k){ if (E.mesure.opt !== k) clic("mopt", k); }
+
+  propre();
+  set("sa", "28");
+
+  /* La vessie est médiane : ce qui se latéralise, ce sont les uretères, et ils
+     restent avec le rein. L'axe de variation ici est le SITE du bloc. */
+  chk("aucune latéralité de coquille sur cet organe", PAIR === false);
+  chk("le site du bloc est porté par l'axe catégoriel",
+      MESURE.defs === PLANS && MESURE.opts === COUCHES);
+  chk("deux axes catégoriels, pas trois", MESURE.champs.length === 3 && !!MESURE.defs && !!MESURE.opts);
+
+  /* Le verdict bloquant de l'organe : la musculeuse sur paroi incomplète. */
+  site("col"); couche("quatre");
+  set("m_musculeuse", "1.2");
+  chk("musculeuse jugeable sur paroi complète au col", verdictMesure().cls !== "bad");
+  couche("sansUrothelium");
+  chk("paroi incomplète : la musculeuse NE SE JUGE PAS", verdictMesure().cls === "bad");
+  chk("et la formule le dit sans détour", verdictMesure().txt.indexOf("NE SE JUGE PAS") >= 0);
+  couche("couchesNonDeclarees");
+  chk("couches non déclarées : même blocage", verdictMesure().cls === "bad");
+  couche("quatre");
+  site("dome");
+  chk("hors col, la mesure est réservée, pas bloquée",
+      verdictMesure().cls === "warn" && verdictMesure().txt.indexOf("hors col") >= 0);
+  site("siteNonDeclare");
+  chk("site non déclaré : réserve explicite", verdictMesure().txt.indexOf("site du bloc non déclaré") >= 0);
+  site("col");
+  set("m_musculeuse", "");
+
+  /* Aucun chiffre n'a de normal : ça se dit à chaque mesure. */
+  set("m_paroi", "3");
+  chk("aucune norme d'épaisseur pariétale par terme", crTient("Aucune norme d'épaisseur de paroi vésicale par terme"));
+  chk("l'épaisseur ne tranche dans aucun sens", crTient("either thin or very thick"));
+  set("m_paroi", "");
+  set("m_couches", "7");
+  chk("six à sept couches est une valeur de réplétion", crTient("pas de terme"));
+  chk("sans réplétion notée le compte n'est rapportable à rien",
+      verdictMesure().txt.indexOf("réplétion non notée") >= 0);
+  clic("prelev", "repletion");
+  chk("réplétion notée : la réserve tombe", verdictMesure().txt.indexOf("réplétion non notée") < 0);
+  clic("prelev", "repletion");
+  set("m_couches", "0");
+  chk("zéro couche n'est pas une nécrose", verdictMesure().txt.indexOf("régime ordinaire") >= 0);
+  set("m_couches", "");
+
+  /* Le stade EST la densité de la musculeuse : il tombe avec elle. */
+  couche("tangentielle");
+  clic("stade", "faisceauxSepares");
+  chk("stade coché sur paroi incomplète : bloqué", verdictMesure().cls === "bad");
+  clic("stade", "faisceauxSepares");
+  couche("quatre");
+
+  /* L'organe ne date rien par lui-même, et son seul rang « bon » est un report. */
+  chk("la rétention est reportée des autres organes",
+      par(RETENTION, "reportAutresOrganes").q === "bon" &&
+      par(RETENTION, "reportAutresOrganes").d.indexOf("jamais mesuré sur la vessie") >= 0);
+  chk("vessie absente de la table de macération", HORS_BAREME.indexOf("absente") >= 0);
+  clic("ret", "reportAutresOrganes", "present");
+  chk("le report appelle rein ET poumon", suggerer().lameRein === 1 && suggerer().lamePoumon === 1);
+  clic("ret", "reportAutresOrganes", "present");
+
+  /* La séquence obstructive : elle se tient, et elle ne conclut pas. */
+  propre();
+  pose("megavessie", "anormal");
+  chk("un signe ne tient pas la séquence", !tenue("seqObstructive") && lue("seqObstructive"));
+  pose("uretereDilate", "anormal"); pose("hydronephrose", "anormal");
+  chk("trois signes tiennent la séquence", tenue("seqObstructive"));
+  chk("la lame de vessie n'y ajoute rien de spécifique",
+      par(DIAGS, "seqObstructive").stop.indexOf("n'ajoute RIEN de spécifique") >= 0);
+  chk("le type d'obstacle reste à la macro",
+      par(DIAGS, "seqObstructive").stop.indexOf("lui seul permet l'identification précise") >= 0);
+  chk("la gravité se juge sur le rein", suggerer().lameRein === 1);
+  chk("la micro décrit, la conclusion nomme",
+      par(DIAGS, "seqObstructive").stop.indexOf("libellés de CONCLUSION") >= 0);
+
+  /* Mégavessie et microvessie mènent au même Potter par deux chemins opposés. */
+  propre();
+  pose("microvessie", "anormal"); pose("oligoamnios", "anormal");
+  chk("la microvessie ouvre aussi le Potter", lue("potterDeuxSens"));
+  chk("les deux sens sont portés",
+      par(DIAGS, "potterDeuxSens").stop.indexOf("deux chemins opposés") >= 0);
+  chk("l'hypoplasie pulmonaire se pèse", suggerer().lamePoumon === 1);
+
+  /* Le piège de sexe : sourcé, et il change le bloc à demander. */
+  propre();
+  pose("megavessie", "anormal"); pose("sexeFemininOuAmbigu", "anormal");
+  chk("sexe féminin : ce ne sont pas des VUP",
+      par(DIAGS, "megavessieSansObstacle").stop.indexOf("n'existent que chez le garçon") >= 0);
+  chk("le bloc monobloc est proposé", suggerer().blocMonobloc === 1);
+  chk("la divergence prune belly est portée, pas tranchée",
+      par(DIAGS, "megavessieSansObstacle").stop.indexOf("keeling compte") >= 0 &&
+      par(SIGNES, "testiculesNonDescendus").meta.indexOf("soffoet") >= 0);
+  chk("la cryptorchidie physiologique reste une variante",
+      VARIANTES.some(function(v){ return v.k === "cryptorchidie"; }));
+
+  /* Le reliquat du cordon : 14,6 %, variante et non lésion. */
+  propre();
+  pose("reliquatExcentre", "anormal"); pose("kysteOuraquien", "anormal");
+  chk("la position est le critère",
+      par(DIAGS, "reliquatOuraquien").stop.indexOf("always located centrally") >= 0);
+  chk("un amas transitionnel du cordon est une variante",
+      par(DIAGS, "reliquatOuraquien").stop.indexOf("14,6 %") >= 0);
+  chk("le cordon est demandé", suggerer().cordonUrothelium === 1);
+  site("cordon");
+  chk("sur le cordon, l'objet n'est pas une paroi vésicale",
+      verdictMesure().txt.indexOf("reliquat allantoïdien") >= 0);
+  site("col");
+
+  /* Les trois observations du service restent des observations. */
+  propre();
+  pose("rosettesUrotheliales", "anormal"); pose("proliferationCanaliculaire", "anormal");
+  chk("l'urothélium remanié se lit", tenue("urotheliumRemanie"));
+  chk("aucun répondant livre, donc aucun critère",
+      par(DIAGS, "urotheliumRemanie").stop.indexOf("AUCUN répondant dans les trois livres") >= 0);
+  chk("la desquamation banale reste une variante",
+      VARIANTES.some(function(v){ return v.k === "desquamation"; }));
+
+  /* Le négatif interdit n'a pas été écrit. */
+  chk("aucun négatif d'épaisseur pariétale normale",
+      NEGATIFS.every(function(n){ return !/épaisseur.*normale/i.test(n.l); }));
+  chk("le meilleur négatif du corpus est repris",
+      par(NEGATIFS, "nonTubulisee").p.indexOf("fonction urinaire résiduelle") >= 0);
+  chk("l'urothélium a un statut à énoncer, dans les deux sens",
+      par(NEGATIFS, "urotheliumStatut").l.indexOf("desquamé") >= 0);
+
+  /* Aucune IHC n'est décrite pour ce territoire : rien n'a été inventé. */
+  chk("aucune immunohistochimie inventée",
+      TECHNIQUES.every(function(t){ return !/anti-|CD\d|immuno/i.test(t.l); }));
+  chk("l'absence d'IHC est dite", TECH_NOTE.indexOf("aucune immunohistochimie") >= 0);
+  chk("la seule technique histologique prescrite est nommée",
+      par(TECHNIQUES, "coupesEtagees").q.indexOf("la seule technique histologique") >= 0);
+
+  /* Rien n'a été comblé là où la fiche s'arrête. */
+  chk("aucun grade vésical inventé",
+      SIGNES.concat(DIAGS).every(function(x){ return !/grade/i.test(x.l); }));
+  chk("aucune norme dans les libellés de mesure",
+      MESURE.champs.every(function(c){ return !/normal|norme/i.test(c.label); }));
+  chk("aucun diagnostic n'est cliquable",
+      DIAGS.every(function(d){ return !par(SIGNES, d.k); }));
+
+  propre();
+  site("col"); couche("quatre");
+  set("sa", "28");
+}
+
+/* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
+var FOETO = {"sections":[{"t":"5.1 Obstruction du bas appareil — la séquence, et ce que la lame de vessie y ajoute","termes":[{"id":"FOETO:PF.REN-MAL-016","l":"Désorganisation architecturale cortico-médullaire"},{"id":"FOETO:PF.REN-MAL-039","l":"Mésenchyme intercystique lâche"}]}],"formes":{"FOETO:PF.REN-MAL-016":["Désorganisation architecturale cortico-médullaire","Corticomedullary architectural disorganization"],"FOETO:PF.REN-MAL-039":["Mésenchyme intercystique lâche","Loose intercystic mesenchyme"]}};
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+
+var DB_NAME = "foeto-" + MODULE, DB_VER = 1, db = null;
+
+/* Organe pair : le côté fait partie de la donnée, pas du commentaire. Un rein
+   lu sans son côté n'est pas rattachable à l'imagerie ni à l'autre rein. */
+var COTES = [{ k:"droit", l:"Droit — 1/2" }, { k:"gauche", l:"Gauche — 1/2" },
+             { k:"deux", l:"Les deux — 2/2" }];
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function normDossier(v){ return v.toUpperCase().replace(/\s+/g, ""); }
+function dossierOk(v){ return /^\d{2}P\d+$/.test(v); }
+function num(id){ var e = $(id); if (!e) return null; var v = parseFloat(e.value); return isFinite(v) ? v : null; }
+function par(liste, k){ return liste.filter(function(x){ return x.k === k; })[0] || null; }
+function champs(){ return MESURE ? MESURE.champs : []; }
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", E = null;
+function neuf(){
+  var e = { cote:null, prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
+            negatifs:{}, techniques:{}, foeto:{}, mesure:{ def:null, opt:null, v:{} }, libre:"" };
+  champs().forEach(function(c){ e.mesure.v[c.id] = null; });
+  return e;
+}
+
+/* Le stade attendu au terme saisi. Bornes reconstruites depuis la prose des
+   sources : ce sont des repères, pas des seuils. */
+function stadeAttendu(sa){
+  if (sa == null || !isFinite(sa)) return null;
+  for (var i = 0; i < STADES.length; i++) if (sa < STADES[i].max) return STADES[i];
+  return STADES[STADES.length - 1];
+}
+function bornesTxt(s){
+  var i = STADES.indexOf(s), min = i ? STADES[i-1].max : 0;
+  return s.max === 99 ? "≳ " + min + " SA" : min + "–" + s.max + " SA";
+}
+
+/* ── Construction du DOM — une seule fois, le clic ne fait que repeindre ──── */
+function chip(act, k, l, sous){
+  return '<button type="button" class="chip" data-act="' + act + '" data-k="' + esc(k) + '">' +
+         (sous ? '<span class="k">' + esc(sous) + '</span>' : '') + esc(l) + '</button>';
+}
+function batir(){
+  if (PAIR){
+    $("coteBloc").hidden = false;
+    $("cote").innerHTML = COTES.map(function(c){ return chip("cote", c.k, c.l); }).join("");
+  }
+  $("prelevement").innerHTML = PRELEV.map(function(p){ return chip("prelev", p.k, p.l); }).join("");
+
+  $("retention").innerHTML = RETENTION.map(function(r){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(r.l) +
+      '<span class="meta ' + r.q + '">' + esc(r.b) + " · " + esc(r.d) +
+      " · prédicteur " + r.q + '</span></div>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="present">Présent</button>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="absent">Absent</button>' +
+      '</div></div>';
+  }).join("");
+  $("kcl").innerHTML = chip("kcl", "kcl", "Fœticide par KCl", "geste à déclarer avant toute datation");
+
+  $("stTitre").textContent = STADE_TITRE;
+  $("stades").innerHTML = STADES.map(function(s){ return chip("stade", s.k, s.l); }).join("");
+
+  if (MESURE){
+    var h = '<div class="sousTitre">' + esc(MESURE.titre) + '</div>';
+    h += '<div class="chips" id="mesDefs">' +
+         MESURE.defs.map(function(d){ return chip("mdef", d.k, d.l, MESURE.defLabel); }).join("") + '</div>';
+    if (MESURE.opts && MESURE.opts.length)
+      h += '<div class="chips" id="mesOpts" style="margin-top:6px">' +
+           MESURE.opts.map(function(o){ return chip("mopt", o.k, o.l, MESURE.optLabel); }).join("") + '</div>';
+    h += '<div class="row" style="margin-top:9px">' + MESURE.champs.map(function(c){
+      return '<div class="field"><label for="m_' + c.id + '">' + esc(c.label) + '</label>' +
+             '<input type="number" id="m_' + c.id + '" min="' + c.min + '" max="' + c.max +
+             '" step="' + c.step + '" inputmode="decimal" placeholder="—"></div>';
+    }).join("") + '</div>';
+    $("mesure").innerHTML = h;
+    $("vMesure").hidden = false;
+    $("vMesure").querySelector("b").textContent = MESURE.titre;
+  }
+
+  $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
+
+  $("signes").innerHTML = SIGNES.map(function(x){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+      (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
+      '</div>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="normal">Normal</button>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="anormal">Anormal</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("foeto").innerHTML = FOETO.sections.map(function(s){
+    return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
+           s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
+  }).join("") || '<p class="note">Aucun terme FOETO rattaché à cette fiche.</p>';
+  if (FOETO.sections.length){
+    $("foetoPlus").hidden = false; $("foetoRech").hidden = false;
+    $("foetoPlus").textContent = "▸ tous les termes attestés (" + nbFoeto() + ")";
+  }
+
+  $("negatifs").innerHTML = NEGATIFS.map(function(n){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(n.l) +
+      '<span class="meta">' + esc(n.p) + '</span></div>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="absent">Vérifié</button>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="present">EN DÉFAUT</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("techNote").textContent = TECH_NOTE;
+  $("techniques").innerHTML = TECHNIQUES.map(function(t){ return chip("tech", t.k, t.l, t.q); }).join("");
+}
+
+function nbFoeto(){ return FOETO.sections.reduce(function(a, s){ return a + s.termes.length; }, 0); }
+function foetoLabel(id){
+  var l = null;
+  FOETO.sections.forEach(function(s){ s.termes.forEach(function(t){ if (t.id === id) l = t.l; }); });
+  return l || (FOETO.formes[id] || [id])[0];
+}
+/* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
+function foetoAjouter(id){
+  if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
+    var box = $("foeto").querySelector(".chips");
+    if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
+    box.insertAdjacentHTML("beforeend", chip("foeto", id, foetoLabel(id)));
+  }
+  E.foeto[id] = true;
+  peindre(); enregistrer();
+}
+function rechercherFoeto(q){
+  var sg = $("sgFoeto");
+  q = q.trim().toLowerCase();
+  if (q.length < 3){ sg.classList.remove("on"); return; }
+  var hits = [];
+  Object.keys(FOETO.formes).some(function(id){
+    var f = FOETO.formes[id].filter(function(x){ return x.toLowerCase().indexOf(q) >= 0; })[0];
+    if (f) hits.push({ id:id, l:foetoLabel(id), f:f, hf:FOETO.formes[id].indexOf("(hors fiche)") >= 0 });
+    return hits.length >= 10;
+  });
+  sg.innerHTML = hits.length ? hits.map(function(x){
+    return '<div data-pick="' + esc(x.id) + '">' + esc(x.l) +
+           (x.f !== x.l ? ' <small>— ' + esc(x.f) + '</small>' : '') + (x.hf ? ' <small>(hors fiche)</small>' : '') + '</div>';
+  }).join("") : '<div><small>aucun terme</small></div>';
+  sg.classList.add("on");
+}
+
+/* ── Associations ─────────────────────────────────────────────────────────────
+   Un diagnostic ne se coche pas : il se lit dans l'association des signes. Les
+   faisceaux incomplets sont affichés aussi — 2 signes sur 4 se dit, et dire
+   combien manquent est le seul moyen de distinguer « non trouvé » de « non
+   regardé ». */
+function seuil(d){ return d.min || d.signes.length; }
+function associations(){
+  return DIAGS.map(function(d){
+    var pris  = d.signes.filter(function(k){ return E.signes[k] === "anormal"; });
+    var muets = d.signes.filter(function(k){ return !E.signes[k]; });
+    /* Un signe pivot ne se remplace pas par le nombre : sans lui, le compte peut
+       être atteint sans que l'association tienne. */
+    var pivot = !d.cle || E.signes[d.cle] === "anormal";
+    return { d:d, pris:pris, muets:muets, pivot:pivot,
+             tenu: pivot && pris.length >= seuil(d) };
+  }).filter(function(a){ return a.pris.length; })
+    .sort(function(a, b){ return (b.tenu - a.tenu) || (b.pris.length - a.pris.length); });
+}
+function nomSigne(k){ var s = par(SIGNES, k); return s ? s.l : k; }
+
+/* ── Verdicts communs ─────────────────────────────────────────────────────── */
+function verdictPrelevement(){
+  var n = Object.keys(E.prelev).length, res = [], grave = false;
+  PRELEV.forEach(function(p){
+    if (p.manque && !E.prelev[p.k]){ res.push(p.manque); if (p.grave) grave = true; }
+  });
+  if (PAIR && !E.cote) res.push("côté non déclaré — organe pair");
+  return { n:n, res:res,
+    cls: res.length ? (grave ? "bad" : "warn") : (n === PRELEV.length ? "ok" : ""),
+    txt: n === 0 ? "—"
+       : (n + "/" + PRELEV.length + " item(s) confirmé(s)" +
+          (PAIR && E.cote ? ", " + par(COTES, E.cote).l.toLowerCase().split(" —")[0] : "") + ".") +
+         (res.length ? " Réserves : " + res.join(" ; ") + "." : " Prélèvement complet.") };
+}
+function verdictRetention(){
+  if (E.kcl) return { cls:"bad", borne:null, txt:KCL_TXT };
+  var pres = RETENTION.filter(function(r){ return E.retention[r.k] === "present"; });
+  if (!pres.length) return { cls:"", borne:null,
+    txt: Object.keys(E.retention).length ? "Aucun critère de rétention positif." : "—" };
+  var notes = [];
+  pres.forEach(function(r){ if (r.note) notes.push(r.note); });
+  var bons = pres.filter(function(r){ return r.q !== "mauvais"; });
+  if (!bons.length) return { cls:"warn", borne:null,
+    txt:"Seuls des prédicteurs MAUVAIS sont positifs — aucune borne recevable. " + notes.join(" ; ") + "." };
+  var top = bons.reduce(function(a, b){ return b.h > a.h ? b : a; });
+  if (top.alerte) notes.push(top.alerte);
+  return { cls:"ok", borne:top,
+    txt:"Rétention " + top.b + " — critère : " + top.l.toLowerCase() + " (" + top.d + ")." +
+        (notes.length ? " Réserves : " + notes.join(" ; ") + "." : "") };
+}
+function verdictMaturation(){
+  var sa = num("sa"), att = stadeAttendu(sa), obs = E.stade ? par(STADES, E.stade) : null;
+  if (!obs) return { cls:"", att:att, txt: att
+    ? "Stade attendu à " + sa + " SA : " + att.l.toLowerCase() + ". Confirmer ou choisir."
+    : "Saisir le terme pour afficher le stade attendu." };
+  if (!att) return { cls:"warn", att:null,
+    txt:"Stade " + obs.l.toLowerCase() + " — sans terme, aucune discordance n'est calculable." };
+  var io = STADES.indexOf(obs), ia = STADES.indexOf(att), t, cls;
+  if (io === ia){ cls = "ok"; t = "Maturation conforme au terme : " + obs.l.toLowerCase() + " à " + sa + " SA."; }
+  else if (io < ia){ cls = "warn";
+    t = "Retard de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (RETARD_NOTE ? " " + RETARD_NOTE : ""); }
+  else { cls = "warn";
+    t = "Avance de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (AVANCE_NOTE ? " " + AVANCE_NOTE : ""); }
+  if (obs.note) t += " (" + obs.note + ")";
+  return { cls:cls, att:att, txt:t };
+}
+
+/* ── Peinture ─────────────────────────────────────────────────────────────── */
+function classe(act, v){
+  if (act === "neg") return v === "present" ? "no" : "on";
+  if (act === "les") return v === "anormal" ? "no" : "on";
+  return "on";
+}
+function poser(id, v){
+  var e = $(id), t = e.querySelector("b").textContent;
+  e.className = "verdict" + (v.cls ? " " + v.cls : "");
+  e.innerHTML = "<b>" + esc(t) + "</b>" + esc(v.txt);
+}
+function tally(id, n, sur){ $(id).textContent = n ? n + "/" + sur : "—"; }
+
+function peindreDiags(){
+  var A = associations();
+  if (!A.length){
+    $("diags").innerHTML = '<p class="note" style="margin:0">Aucun signe anormal coché : rien à associer.</p>';
+    return;
+  }
+  $("diags").innerHTML = A.map(function(a){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(a.d.l) +
+      '<span class="meta">' + a.pris.length + "/" + a.d.signes.length + " signe(s), seuil " + seuil(a.d) +
+      (a.muets.length ? " · " + a.muets.length + " non regardé(s)" : "") + '</span></div>' +
+      '<span class="chip ' + (a.tenu ? "on" : "") + '" style="cursor:default">' +
+      (a.tenu ? "association tenue" : "faisceau incomplet") + '</span></div>' +
+      '<div class="unfold">' +
+      '<div class="note" style="margin:0">' +
+      (a.pivot ? "" : "Signe pivot non coché : " + esc(nomSigne(a.d.cle)) + ".<br>") +
+      esc(a.pris.map(nomSigne).join(" · ")) +
+      (a.muets.length ? "<br>Non regardés : " + esc(a.muets.map(nomSigne).join(" · ")) + "." : "") +
+      '</div>' +
+      '<div class="stop"><b>Ce qu\'il ne faut pas conclure</b>' + esc(a.d.stop) + '</div></div></div>';
+  }).join("");
+}
+
+function peindre(){
+  if (PAIR) document.querySelectorAll("#cote .chip").forEach(function(b){
+    b.className = "chip" + (E.cote === b.dataset.k ? " on" : "");
+  });
+  document.querySelectorAll("#prelevement .chip").forEach(function(b){
+    b.className = "chip" + (E.prelev[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#retention .chip").forEach(function(b){
+    b.className = "chip" + (E.retention[b.dataset.k] === b.dataset.v ? " on" : "");
+  });
+  $("kcl").firstChild.className = "chip" + (E.kcl ? " no" : "");
+  document.querySelectorAll("#stades .chip").forEach(function(b){
+    var att = stadeAttendu(num("sa"));
+    b.className = "chip" + (E.stade === b.dataset.k ? " on"
+                          : (att && att.k === b.dataset.k ? " sugg" : ""));
+  });
+  if (MESURE){
+    document.querySelectorAll("#mesDefs .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.def === b.dataset.k ? " on" : "");
+    });
+    if ($("mesOpts")) document.querySelectorAll("#mesOpts .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.opt === b.dataset.k ? " on" : "");
+    });
+  }
+  document.querySelectorAll("#variantes .chip").forEach(function(b){
+    b.className = "chip" + (E.variantes[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#signes .chip").forEach(function(b){
+    b.className = "chip" + (E.signes[b.dataset.k] === b.dataset.v
+                            ? " " + classe("les", b.dataset.v) : "");
+  });
+  peindreDiags();
+  document.querySelectorAll('[data-act="foeto"]').forEach(function(b){
+    b.className = "chip" + (E.foeto[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#negatifs .chip").forEach(function(b){
+    b.className = "chip" + (E.negatifs[b.dataset.k] === b.dataset.v
+                            ? " " + classe("neg", b.dataset.v) : "");
+  });
+  var sug = suggerer();
+  document.querySelectorAll("#techniques .chip").forEach(function(b){
+    b.className = "chip" + (E.techniques[b.dataset.k] ? " on" : (sug[b.dataset.k] ? " sugg" : ""));
+  });
+
+  tally("tPrelevement", Object.keys(E.prelev).length, PRELEV.length);
+  tally("tRetention",   Object.keys(E.retention).length, RETENTION.length);
+  tally("tMaturation",  (E.stade ? 1 : 0) + (MESURE && E.mesure.def ? 1 : 0), MESURE ? 2 : 1);
+  tally("tVariantes",   Object.keys(E.variantes).length, VARIANTES.length);
+  tally("tSignes",     Object.keys(E.signes).length, SIGNES.length);
+  tally("tFoeto",       Object.keys(E.foeto).length, nbFoeto());
+  tally("tNegatifs",    Object.keys(E.negatifs).length, NEGATIFS.length);
+  tally("tTechniques",  Object.keys(E.techniques).length, TECHNIQUES.length);
+
+  poser("vPrelevement", verdictPrelevement());
+  poser("vRetention",   verdictRetention());
+  poser("vMaturation",  verdictMaturation());
+  if (MESURE) poser("vMesure", verdictMesure());
+
+  var cr = composer();
+  $("cr").textContent = cr;
+  $("tCR").textContent = cr.split("\n").length + " lignes";
+}
+
+/* ── Compte rendu — la sortie du module, écrite par les clics ─────────────── */
+function composer(){
+  var sa = num("sa"), L = [];
+  L.push(TITRE_CR + " — grille de lecture");
+  L.push((dossier || "dossier —") + " · " + (sa != null ? sa + " SA" : "terme —") +
+         " · " + ($("operateur").value.trim() || "lecteur —") +
+         (PAIR ? " · " + (E.cote ? par(COTES, E.cote).l : "côté non déclaré") : ""));
+  L.push("");
+
+  L.push("PRÉLÈVEMENT");
+  L.push("  " + verdictPrelevement().txt);
+
+  L.push("");
+  L.push("RÉTENTION");
+  L.push("  " + verdictRetention().txt);
+
+  L.push("");
+  L.push("MATURATION");
+  L.push("  " + verdictMaturation().txt);
+  if (MESURE) L.push("  " + verdictMesure().txt);
+
+  var vus = VARIANTES.filter(function(v){ return E.variantes[v.k]; });
+  if (vus.length){
+    L.push("");
+    L.push("VARIANTES NORMALES VUES ET ÉCARTÉES");
+    L.push("  " + vus.map(function(v){ return v.l.toLowerCase(); }).join(" · "));
+  }
+
+  var anormales = SIGNES.filter(function(x){ return E.signes[x.k] === "anormal"; });
+  var normales  = SIGNES.filter(function(x){ return E.signes[x.k] === "normal"; });
+  L.push("");
+  L.push("SIGNES");
+  if (!anormales.length && !normales.length) L.push("  aucun axe exploré.");
+  anormales.forEach(function(x){ L.push("  " + x.l + " — ANORMAL"); });
+  if (normales.length)
+    L.push("  Normaux : " + normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  var muets = SIGNES.filter(function(x){ return !E.signes[x.k]; });
+  if (muets.length)
+    L.push("  Non explorés : " + muets.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+
+  var fo = Object.keys(E.foeto);
+  if (fo.length){
+    L.push("");
+    L.push("TERMES FOETO");
+    fo.forEach(function(id){ L.push("  " + foetoLabel(id) + " [" + id + "]"); });
+  }
+
+  var A = associations();
+  L.push("");
+  L.push("ASSOCIATIONS LUES");
+  if (!A.length) L.push("  aucune : les signes cochés ne dessinent aucune association.");
+  A.forEach(function(a){
+    L.push("  " + a.d.l + " — " + (a.tenu ? "association tenue" : "faisceau incomplet") +
+           " (" + a.pris.length + "/" + a.d.signes.length + ", seuil " + seuil(a.d) + ")");
+    L.push("      · " + a.pris.map(nomSigne).join(" · "));
+    if (!a.pivot) L.push("      · signe pivot non coché : " + nomSigne(a.d.cle));
+    if (a.muets.length) L.push("      · non regardés : " + a.muets.map(nomSigne).join(" · "));
+    L.push("      · ne pas conclure : " + a.d.stop);
+  });
+
+  L.push("");
+  L.push("NÉGATIFS OBLIGATOIRES");
+  NEGATIFS.forEach(function(n){
+    var v = E.negatifs[n.k];
+    L.push("  " + (v === "absent" ? "· " + n.l
+                 : v === "present" ? "! " + n.ko
+                 : "? " + n.l + " — non vérifié"));
+  });
+
+  var t = TECHNIQUES.filter(function(x){ return E.techniques[x.k]; });
+  if (t.length){
+    L.push("");
+    L.push("TECHNIQUES DEMANDÉES");
+    t.forEach(function(x){ L.push("  · " + x.l + " — " + x.q); });
+  }
+
+  if (E.libre.trim()){
+    L.push("");
+    L.push("REMARQUE");
+    E.libre.trim().split("\n").forEach(function(x){ L.push("  " + x); });
+  }
+
+  L.push("");
+  L.push("— La micro décrit ; la conclusion nomme. Grille v" + VERSION + " issue de " + SOURCE + ".");
+  return L.join("\n");
+}
+
+/* ── Clics ────────────────────────────────────────────────────────────────── */
+document.addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest("button[data-act]") : null;
+  if (!b || b.closest("section.off")) return;
+  var k = b.dataset.k, v = b.dataset.v, a = b.dataset.act;
+  if (a === "cote"){ E.cote = E.cote === k ? null : k; }
+  else if (a === "prelev"){ if (E.prelev[k]) delete E.prelev[k]; else E.prelev[k] = true; }
+  else if (a === "ret"){ if (E.retention[k] === v) delete E.retention[k]; else E.retention[k] = v; }
+  else if (a === "kcl"){ E.kcl = !E.kcl; }
+  else if (a === "stade"){ E.stade = E.stade === k ? null : k; }
+  else if (a === "mdef"){ E.mesure.def = E.mesure.def === k ? null : k; }
+  else if (a === "mopt"){ E.mesure.opt = E.mesure.opt === k ? null : k; }
+  else if (a === "var"){ if (E.variantes[k]) delete E.variantes[k]; else E.variantes[k] = true; }
+  else if (a === "les"){ if (E.signes[k] === v) delete E.signes[k]; else E.signes[k] = v; }
+  else if (a === "neg"){ if (E.negatifs[k] === v) delete E.negatifs[k]; else E.negatifs[k] = v; }
+  else if (a === "tech"){ if (E.techniques[k]) delete E.techniques[k]; else E.techniques[k] = true; }
+  else if (a === "foeto"){ if (E.foeto[k]) delete E.foeto[k]; else E.foeto[k] = true; }
+  else return;
+  peindre(); enregistrer();
+});
+document.addEventListener("click", function(ev){
+  var t = ev.target.closest ? ev.target.closest("[data-pick]") : null;
+  if (t){ foetoAjouter(t.dataset.pick); $("rqFoeto").value = ""; $("sgFoeto").classList.remove("on"); }
+});
+$("foetoPlus").onclick = function(){
+  var box = $("foetoTous");
+  if (!box.children.length) box.innerHTML = FOETO.sections.map(function(s){
+    return s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("");
+  }).join("");
+  box.hidden = !box.hidden; peindre();
+};
+$("rqFoeto").addEventListener("input", function(){ rechercherFoeto(this.value); });
+$("btnNegAll").onclick = function(){
+  NEGATIFS.forEach(function(n){ if (!E.negatifs[n.k]) E.negatifs[n.k] = "absent"; });
+  peindre(); enregistrer();
+};
+$("btnCopie").onclick = function(){
+  var t = composer();
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(t).then(function(){ flash("Compte rendu copié."); },
+                                          function(){ flash("Copie refusée par le navigateur."); });
+  else flash("Presse-papiers indisponible en file://.");
+};
+document.addEventListener("input", function(e){
+  var id = e.target.id;
+  if (id.indexOf("m_") === 0) E.mesure.v[id.slice(2)] = num(id);
+  else if (id === "libre") E.libre = e.target.value;
+  else if (id === "sa") majSa();
+  else return;
+  peindre(); enregistrer();
+});
+function majSa(){
+  var sa = num("sa"), att = stadeAttendu(sa), h = $("saHint");
+  h.className = "hint" + (att ? " good" : "");
+  h.textContent = att ? "Stade attendu : " + att.l.toLowerCase() + " (" + bornesTxt(att) + ")."
+                      : "SA = semaines de gestation + 2. Commande le stade attendu.";
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────────
+   localStorage est erratique en file:// et cloisonné par fichier sur certains
+   navigateurs : la saisie va en IndexedDB, y compris les champs texte.       */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction("saisies", mode), out = fn(t.objectStore("saisies"));
+    t.oncomplete = function(){ res(out && out.result !== undefined ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("readonly",  function(s){ return s.get(d); }); }
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  ["secPrelevement","secRetention","secMaturation","secVariantes","secSignes","secFoeto",
+   "secNegatifs","secTechniques","secCR","secSortie"].forEach(function(id){
+    $(id).classList.toggle("off", !ouvert);
+  });
+}
+
+/* ── Collecte / restitution ───────────────────────────────────────────────── */
+function collecter(){
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    organe: ORGANE,
+    source: SOURCE,
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    terme_sa: num("sa"),
+    grille: JSON.parse(JSON.stringify(E)),
+    compte_rendu: composer()
+  };
+}
+function appliquer(o){
+  var g = o.grille || {};
+  E = neuf();
+  ["prelev","retention","variantes","signes","negatifs","techniques","foeto"].forEach(function(c){
+    if (g[c]) E[c] = g[c];
+  });
+  Object.keys(E.foeto).forEach(function(id){
+    if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')) foetoAjouter(id);
+  });
+  E.kcl = !!g.kcl; E.stade = g.stade || null; E.cote = g.cote || null;
+  if (g.mesure){
+    E.mesure.def = g.mesure.def || null;
+    E.mesure.opt = g.mesure.opt || null;
+    champs().forEach(function(c){
+      E.mesure.v[c.id] = (g.mesure.v && g.mesure.v[c.id] != null) ? g.mesure.v[c.id] : null;
+    });
+  }
+  E.libre = g.libre || "";
+  $("sa").value = o.terme_sa != null ? o.terme_sa : "";
+  champs().forEach(function(c){ $("m_" + c.id).value = E.mesure.v[c.id] != null ? E.mesure.v[c.id] : ""; });
+  $("libre").value = E.libre;
+  majSa(); peindre();
+}
+function vider(){
+  E = neuf();
+  ["sa","libre"].forEach(function(id){ $(id).value = ""; });
+  champs().forEach(function(c){ $("m_" + c.id).value = ""; });
+  majSa(); peindre();
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, ok1 = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = ok1 && op, h = $("dossierHint");
+  h.className = "hint" + (v && !ok1 ? " bad" : ok1 ? " good" : "");
+  h.textContent = !v ? "Deux chiffres, P, puis le numéro. Conditionne l'enregistrement."
+                : ok1 ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                      : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la grille.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json."
+    : ok1 ? "Saisir le lecteur pour activer l'export."
+          : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){
+    dossier = v;
+    vider();
+    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    if (rec){ appliquer(rec); flash("Grille du " + dossier + " restituée."); }
+  } else if (!ok && dossier){
+    dossier = ""; vider();
+  }
+  peindre();
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+$("btnExport").onclick = function(){
+  if (!dossierOk(dossier)) return;
+  var out = collecter();
+  telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+              dossier + "_" + MODULE + ".json");
+  var n = NEGATIFS.filter(function(x){ return E.negatifs[x.k]; }).length;
+  flash("Grille exportée." + (n < NEGATIFS.length ? " ⚠ " + (NEGATIFS.length - n) + " négatif(s) non vérifié(s)." : ""));
+};
+function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.grille) throw new Error("aucune clé « grille »");
+  if (o.dossier) $("dossier").value = normDossier(o.dossier);
+  if (o.operateur) $("operateur").value = o.operateur;
+  return majDossier().then(function(){
+    if (!dossier) throw new Error("numéro de dossier absent ou lecteur manquant");
+    appliquer(o); enregistrer();
+    return true;
+  });
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    Promise.resolve().then(function(){ return relire(JSON.parse(String(fr.result))); })
+      .then(function(){ flash("Grille relue."); })
+      .catch(function(e){ flash("Relecture impossible : " + e.message); });
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la grille du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    await tx("readwrite", function(s){ return s.delete(dossier); });
+    vider(); flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les grilles de TOUS les dossiers sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("readwrite", function(s){ return s.clear(); });
+  vider(); flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Axes de la grille", PRELEV.length + " prélèvement · " + RETENTION.length + " rétention · " +
+                             STADES.length + " stades · " + SIGNES.length + " signes · " +
+                             DIAGS.length + " associations · " +
+                             NEGATIFS.length + " négatifs · " + TECHNIQUES.length + " techniques");
+  ligne("Source", SOURCE + " — la fiche est la source, ce module en est la sortie");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+(async function(){
+  $("ver").textContent = "v" + VERSION;
+  E = neuf();
+  batir(); majSa(); peindre();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — aucune saisie ne sera conservée. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir le fichier avec ?selftest=1 ───────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+  function clic(act, k, v){
+    var s = '[data-act="' + act + '"][data-k="' + k + '"]' + (v ? '[data-v="' + v + '"]' : "");
+    var b = document.querySelector(s);
+    if (!b){ ko.push("bouton introuvable : " + s); return null; }
+    b.click(); return b;
+  }
+  function crTient(t){ return $("cr").textContent.indexOf(t) >= 0; }
+  var pause = function(){ return new Promise(function(r){ setTimeout(r, 30); }); };
+
+  /* Intégrité des tableaux — pure, sans DOM */
+  ["PRELEV","RETENTION","STADES","VARIANTES","SIGNES","DIAGS","NEGATIFS","TECHNIQUES"].forEach(function(nom){
+    var t = { PRELEV:PRELEV, RETENTION:RETENTION, STADES:STADES, VARIANTES:VARIANTES,
+              SIGNES:SIGNES, DIAGS:DIAGS, NEGATIFS:NEGATIFS, TECHNIQUES:TECHNIQUES }[nom];
+    chk("clés uniques dans " + nom, new Set(t.map(function(x){ return x.k; })).size === t.length);
+  });
+  chk("stades ordonnés",      STADES.every(function(s, i){ return !i || s.max > STADES[i-1].max; }));
+  chk("dernier stade ouvert", STADES[STADES.length-1].max === 99);
+  chk("sans terme, pas de stade", stadeAttendu(null) === null);
+  chk("chaque association a son « ne pas conclure »",
+      DIAGS.every(function(d){ return d.stop && d.signes.length >= 2; }));
+  chk("chaque association ne cite que des signes déclarés",
+      DIAGS.every(function(d){ return d.signes.every(function(k){ return !!par(SIGNES, k); }); }));
+  chk("le signe pivot fait partie de l'association",
+      DIAGS.every(function(d){ return !d.cle || d.signes.indexOf(d.cle) >= 0; }));
+  chk("seuil d'association atteignable",
+      DIAGS.every(function(d){ return seuil(d) >= 1 && seuil(d) <= d.signes.length; }));
+  chk("chaque négatif a son défaut", NEGATIFS.every(function(n){ return n.ko && n.p; }));
+  chk("une borne de rétention au moins est bonne",
+      RETENTION.some(function(r){ return r.q === "bon"; }));
+
+  /* Verrou */
+  chk("verrouillé au départ",  $("secSignes").classList.contains("off"));
+  clic("prelev", PRELEV[0].k);
+  chk("clic ignoré sous verrou", !E.prelev[PRELEV[0].k]);
+  set("dossier", "26p0123");
+  chk("lecteur manquant",      $("secSignes").classList.contains("off"));
+  set("operateur", "RM");
+  await pause();
+  chk("déverrouillé",         !$("secSignes").classList.contains("off"));
+  chk("dossier normalisé",     $("dossier").value === "26P0123");
+  chk("export activé",        !$("btnExport").disabled);
+
+  /* Chips */
+  clic("prelev", PRELEV[0].k);
+  chk("chip prélèvement posée", E.prelev[PRELEV[0].k] === true &&
+      document.querySelector('[data-act="prelev"][data-k="' + PRELEV[0].k + '"]').className.indexOf("on") >= 0);
+  clic("prelev", PRELEV[0].k);
+  chk("chip retirée au 2e clic", !E.prelev[PRELEV[0].k]);
+
+  /* Rétention — le fœticide prime sur toute borne */
+  var bon = RETENTION.filter(function(r){ return r.q === "bon"; })[0];
+  clic("ret", bon.k, "present");
+  chk("borne posée",           $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("kcl", "kcl");
+  chk("KCl invalide la datation", $("vRetention").className.indexOf("bad") >= 0);
+  clic("kcl", "kcl");
+  chk("KCl levé, borne revenue", $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("ret", bon.k, "present");
+
+  /* Côté — organe pair */
+  if (PAIR){
+    chk("bloc côté visible",   !$("coteBloc").hidden);
+    chk("côté manquant en réserve",
+        verdictPrelevement().res.indexOf("côté non déclaré — organe pair") >= 0);
+    clic("cote", "droit");
+    chk("côté posé",            E.cote === "droit" && crTient("Droit — 1/2"));
+    clic("cote", "droit");
+    chk("2e clic retire le côté", E.cote === null);
+    clic("cote", "deux");
+  } else {
+    chk("pas de bloc côté sur organe impair", $("coteBloc").hidden);
+  }
+
+  /* Signes et associations */
+  var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
+  chk("rien à associer au départ", $("diags").textContent.indexOf("Aucun signe anormal") >= 0);
+  clic("les", l0.k, "anormal");
+  chk("signe posé anormal",    E.signes[l0.k] === "anormal");
+  chk("association esquissée",  $("diags").textContent.indexOf(d0.l) >= 0);
+  clic("les", l0.k, "anormal");
+  chk("2e clic remet à non exploré", !E.signes[l0.k]);
+  clic("les", l0.k, "normal");
+  chk("normal ne nourrit pas l'association", associations().length === 0);
+  clic("les", l0.k, "normal");
+
+  /* L'association complète se tient, et elle seule */
+  d0.signes.forEach(function(k){ clic("les", k, "anormal"); });
+  var a0 = associations().filter(function(a){ return a.d.k === d0.k; })[0];
+  chk("association tenue",     a0 && a0.tenu);
+  chk("CR : association écrite", crTient(d0.l + " — association tenue"));
+  chk("CR : ne pas conclure",  crTient("ne pas conclure : " + d0.stop));
+  d0.signes.slice(1).forEach(function(k){ clic("les", k, "anormal"); });
+  chk("retirer les signes défait l'association",
+      (associations().filter(function(a){ return a.d.k === d0.k; })[0] || {}).pris.length === 1);
+
+  /* Négatifs */
+  $("btnNegAll").click();
+  chk("tous les négatifs posés", Object.keys(E.negatifs).length === NEGATIFS.length);
+  clic("neg", NEGATIFS[0].k, "present");
+  chk("négatif retourné en rouge", E.negatifs[NEGATIFS[0].k] === "present" &&
+      document.querySelector('[data-act="neg"][data-k="' + NEGATIFS[0].k + '"][data-v="present"]').className.indexOf("no") >= 0);
+  chk("CR : défaut écrit",     crTient("! " + NEGATIFS[0].ko));
+  clic("neg", NEGATIFS[0].k, "absent");
+
+  /* Compte rendu */
+  clic("tech", TECHNIQUES[0].k);
+  set("libre", "Bloc non parvenu.");
+  chk("CR : en-tête dossier",  crTient("26P0123") && crTient("RM"));
+  chk("CR : signe anormal",    crTient(l0.l + " — ANORMAL"));
+  chk("CR : non explorés dits", crTient("Non explorés :"));
+  chk("CR : technique demandée", crTient(TECHNIQUES[0].l));
+  chk("CR : remarque libre",   crTient("Bloc non parvenu."));
+  chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
+
+  /* Contrôles propres à l'organe */
+  await testsOrgane(chk, clic, set, crTient, pause);
+
+  /* Termes FOETO — seulement si la fiche en rattache */
+  if (FOETO.sections.length){
+    var f0 = FOETO.sections[0].termes[0].id;
+    chk("FOETO : sections rendues", $("foeto").querySelectorAll(".sousTitre").length === FOETO.sections.length);
+    clic("foeto", f0);
+    chk("FOETO : terme coché",      E.foeto[f0] === true && $("tFoeto").textContent.indexOf("1/") === 0);
+    chk("FOETO : CR le porte",      crTient("[" + f0 + "]"));
+    chk("FOETO : exporté",          collecter().grille.foeto[f0] === true);
+    set("rqFoeto", foetoLabel(f0).slice(0, 4));
+    chk("FOETO : recherche",        $("sgFoeto").querySelectorAll("[data-pick]").length >= 1);
+    $("sgFoeto").querySelector("[data-pick]").click();
+    chk("FOETO : recherche vidée",  $("rqFoeto").value === "" && !$("sgFoeto").classList.contains("on"));
+    chk("FOETO : id lisible",       /^FOETO:/.test(f0));
+    clic("foeto", f0);
+    Object.keys(E.foeto).forEach(function(id){ delete E.foeto[id]; }); peindre();
+  }
+
+  /* Enveloppe, persistance, relecture — l'organe a pu reposer ses propres signes */
+  if (E.signes[l0.k] !== "anormal"){
+    if (E.signes[l0.k]) clic("les", l0.k, E.signes[l0.k]);
+    clic("les", l0.k, "anormal");
+  }
+  var snap = collecter();
+  chk("enveloppe conforme",    snap.schema_version === SCHEMA && snap.module === MODULE &&
+                               snap.module_version === VERSION && snap.dossier === "26P0123" &&
+                               snap.organe === ORGANE && !!snap.exported_at);
+  chk("version en entête",     $("ver").textContent === "v" + VERSION);
+  chk("CR dans le JSON",       snap.compte_rendu.indexOf(TITRE_CR + " — grille de lecture") === 0);
+
+  await putSaisie(snap);
+  vider();
+  chk("vider efface la grille", Object.keys(E.signes).length === 0);
+  var relu = await getSaisie("26P0123");
+  appliquer(relu);
+  chk("IndexedDB restitue",    E.signes[l0.k] === "anormal" &&
+                               $("sa").value === String(snap.terme_sa));
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+  chk("banc remis à zéro",     Object.keys(E.signes).length === 0 && $("secSignes").classList.contains("off"));
+  await relire(snap);
+  chk("relecture d'un JSON",   E.signes[l0.k] === "anormal" && dossier === "26P0123");
+  var refus = false;
+  try { await relire({module:"autopsie", grille:{}}); } catch(e){ refus = /module/.test(e.message); }
+  chk("JSON d'un autre module refusé", refus);
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>

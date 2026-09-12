@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grille de lecture — foie et voies biliaires</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --alert-soft:#F7EAE7;
+  --amber:#8A6A18; --amber-soft:#F6F0DE;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off button,section.off input,section.off select{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 170px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],input[type=number],textarea{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+input[type=number]{font-family:var(--mono);letter-spacing:.03em}
+textarea{resize:vertical;min-height:60px;font-size:15px}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+/* ── Boutons-clics : toute la saisie sémantique passe par là ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font-family:var(--sans);font-size:14px;line-height:1.25;
+  border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+  border-radius:2px;padding:8px 11px;cursor:pointer;min-height:38px;text-align:left}
+.chip:hover{background:var(--drape-soft)}
+.chip:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.chip.on{background:var(--drape);border-color:var(--drape);color:#fff;font-weight:600}
+.chip.no{background:var(--alert-soft);border-color:var(--alert);color:var(--alert);font-weight:600}
+.chip.sugg{border-color:var(--amber);border-style:dashed}
+.chip[data-act=foeto]::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;background:var(--drape);opacity:.55}
+.chip.on[data-act=foeto]::after{background:#fff}
+.plus{font-size:13px;color:var(--drape);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline dotted}
+.rech{position:relative;margin-top:8px}
+.rech input{font:inherit;font-size:14px;padding:6px 10px;border:1px solid #bbb;border-radius:8px;width:min(100%,24rem)}
+.sugg{position:absolute;z-index:5;background:#fff;border:1px solid #bbb;border-radius:8px;max-height:12rem;overflow:auto;width:min(100%,24rem);display:none}
+.sugg.on{display:block}
+.sugg div{padding:5px 10px;cursor:pointer;font-size:14px}
+.sugg div:hover{background:var(--drape-soft)}
+.sugg small{color:#777}
+.chip .k{font-family:var(--mono);font-size:10px;letter-spacing:.07em;opacity:.75;
+         display:block;text-transform:uppercase}
+
+.item{border-top:1px solid var(--rule);padding:10px 0}
+.item:first-child{border-top:0}
+.item .head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.item .lbl{flex:1 1 240px;min-width:0;font-size:15px}
+.item .meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-soft);
+            display:block;margin-top:2px}
+.item .meta.bon{color:var(--drape)} .item .meta.mauvais{color:var(--alert)}
+.item .meta.moyen{color:var(--amber)}
+.unfold{margin:9px 0 0 0;padding:9px 0 0;border-top:1px dashed var(--rule)}
+.unfold[hidden]{display:none}
+.stop{font-size:13px;line-height:1.35;color:var(--alert);background:var(--alert-soft);
+      border-left:2px solid var(--alert);padding:6px 9px;margin-top:8px}
+.stop b{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+
+.verdict{font-size:14px;line-height:1.4;border-left:3px solid var(--rule);
+         padding:7px 10px;margin-top:11px;background:var(--paper)}
+.verdict.ok{border-color:var(--drape);background:var(--drape-soft)}
+.verdict.warn{border-color:var(--amber);background:var(--amber-soft)}
+.verdict.bad{border-color:var(--alert);background:var(--alert-soft)}
+.verdict b{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+           display:block;color:var(--ink-soft)}
+
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+.sousTitre:first-child{margin-top:0}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:var(--alert-soft)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+pre.cr{font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;
+  padding:12px;margin:0 0 10px;max-height:44vh;overflow:auto}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · lecture microscopique</p>
+  <h1>Grille de lecture — foie et voies biliaires <span class="ver" id="ver"></span></h1>
+  <p class="sub">Sortie de <code>fiche_foie.md</code>. Tout se clique ; seuls le dossier, le terme et les comptes se tapent. Document autonome : rien n'est transmis.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Deux chiffres, P, puis le numéro. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Lecteur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la grille.</div>
+    </div>
+    <div class="field">
+      <label for="sa">Terme (SA)</label>
+      <input type="number" id="sa" min="8" max="45" step="1" inputmode="numeric" placeholder="—">
+      <div class="hint" id="saHint">SA = semaines de gestation + 2. Commande le stade attendu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — Prélèvement -->
+<section id="secPrelevement" class="off">
+  <h2><span class="n">02</span>Prélèvement<span class="tally" id="tPrelevement">—</span></h2>
+  <div id="coteBloc" hidden>
+    <div class="sousTitre">Côté prélevé</div>
+    <div class="chips" id="cote" style="margin-bottom:11px"></div>
+  </div>
+  <div class="chips" id="prelevement"></div>
+  <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
+</section>
+
+<!-- 03 — Rétention -->
+<section id="secRetention" class="off">
+  <h2><span class="n">03</span>Rétention<span class="tally" id="tRetention">—</span></h2>
+  <div id="retention"></div>
+  <div class="chips" id="kcl" style="margin-top:11px"></div>
+  <div class="verdict" id="vRetention"><b>Borne inférieure</b>—</div>
+</section>
+
+<!-- 04 — Maturation -->
+<section id="secMaturation" class="off">
+  <h2><span class="n">04</span>Maturation<span class="tally" id="tMaturation">—</span></h2>
+  <div class="sousTitre" id="stTitre">Stade observé</div>
+  <div class="chips" id="stades"></div>
+  <div id="mesure"></div>
+  <div class="verdict" id="vMaturation"><b>Lecture</b>—</div>
+  <div class="verdict" id="vMesure" hidden><b>Mesure</b>—</div>
+</section>
+
+<!-- 05 — Variantes normales -->
+<section id="secVariantes" class="off">
+  <h2><span class="n">05</span>Variantes normales<span class="tally" id="tVariantes">—</span></h2>
+  <p class="note" style="margin-top:0">Cliquer ce qui est vu et écarté comme normal. Rien de coché ne veut pas dire absent : ça veut dire non regardé.</p>
+  <div class="chips" id="variantes" style="margin-top:10px"></div>
+</section>
+
+<!-- 06 — Signes -->
+<section id="secSignes" class="off">
+  <h2><span class="n">06</span>Signes<span class="tally" id="tSignes">—</span></h2>
+  <p class="note" style="margin-top:0">On coche des signes, pas des diagnostics. Les associations en dessous se déduisent de ce qui est coché : elles s'affichent, elles ne se choisissent pas.</p>
+  <div id="signes" style="margin-top:10px"></div>
+  <div class="sousTitre" style="margin-top:16px">Associations lues</div>
+  <div id="diags"></div>
+</section>
+
+<!-- 07 — Termes FOETO attestés par la fiche -->
+<section id="secFoeto" class="off">
+  <h2><span class="n">07</span>Termes FOETO<span class="tally" id="tFoeto">—</span></h2>
+  <p class="note" style="margin-top:0">Les termes du vocabulaire FOETO que la fiche de l'organe retient comme lésions, par sous-section. Un terme coché est présent ; rien de coché ne veut pas dire absent.</p>
+  <div id="foeto"></div>
+  <button type="button" class="plus" id="foetoPlus" hidden>▸ tous les termes attestés</button>
+  <div class="chips" id="foetoTous" hidden style="margin-top:6px"></div>
+  <div class="rech" id="foetoRech" hidden><input type="text" id="rqFoeto" placeholder="rechercher un terme (3 lettres)…" autocomplete="off"><div class="sugg" id="sgFoeto"></div></div>
+</section>
+
+<!-- 08 — Négatifs obligatoires -->
+<section id="secNegatifs" class="off">
+  <h2><span class="n">08</span>Négatifs obligatoires<span class="tally" id="tNegatifs">—</span></h2>
+  <div class="btns" style="margin-bottom:11px">
+    <button class="btn" id="btnNegAll">Tous vérifiés</button>
+  </div>
+  <div id="negatifs"></div>
+</section>
+
+<!-- 08 — Techniques -->
+<section id="secTechniques" class="off">
+  <h2><span class="n">09</span>Techniques<span class="tally" id="tTechniques">—</span></h2>
+  <p class="note" style="margin-top:0" id="techNote"></p>
+  <div class="chips" id="techniques" style="margin-top:10px"></div>
+</section>
+
+<!-- 09 — Compte rendu -->
+<section id="secCR" class="off">
+  <h2><span class="n">10</span>Compte rendu<span class="tally" id="tCR">—</span></h2>
+  <pre class="cr" id="cr">—</pre>
+  <div class="row">
+    <div class="field" style="flex:1 1 100%">
+      <label for="libre">Remarque libre</label>
+      <textarea id="libre" placeholder="Ce que la grille ne prévoit pas."></textarea>
+    </div>
+  </div>
+  <div class="btns" style="margin-top:10px">
+    <button class="btn" id="btnCopie">Copier le compte rendu</button>
+  </div>
+</section>
+
+<!-- 10 — Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n">11</span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Vider le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- 11 — Diagnostic -->
+<section>
+  <h2><span class="n">12</span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante, aucun fetch : doit fonctionner par double-clic hors réseau.
+
+   Ce module est la SORTIE de fiche_foie.md, jamais l'inverse. Les bornes, les
+   spécificités et les « ce qu'il ne faut pas conclure » sont recopiés de la
+   fiche ; ils ne se corrigent pas ici mais dans la fiche.
+
+   La grille ne conclut pas : elle contraint la description et rend ses
+   réserves visibles. Un critère non cliqué n'est pas un négatif — c'est un
+   non-regardé, et le compte rendu le dit.
+
+   Fichier ENGENDRÉ par gen_grille.py depuis grilles/foie.js.
+   Corriger le fragment, pas ce fichier.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  FRAGMENT D'ORGANE — grilles/foie.js                            ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+/* Grille de lecture — foie et voies biliaires.
+   Fond : ~/Bureau/fiches_lecture/fiche_foie.md (§1 à §9).
+   Forme : gen_grille.py, calquée sur grille_poumon.html.
+   Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
+
+var ORGANE  = "foie";
+var TITRE   = "foie et voies biliaires";
+var SOURCE  = "fiche_foie.md";
+var MODULE  = "grille_foie";
+var VERSION = "1.1.0";
+var PAIR    = false;
+
+var TITRE_CR    = "FOIE";
+var STADE_TITRE = "Érythropoïèse sinusoïdale (horloge décroissante)";
+
+var KCL_TXT = "Fœticide par KCl déclaré — la perte de basophilie induite par le geste ne se distingue " +
+              "pas de celle de la rétention. Aucune borne n'est recevable.";
+
+/* Le foie ne date pas le fœtus : il date sa rétention. */
+var RETARD_NOTE = "Aucune des trois horloges hépatiques ne borne mieux que ± 4 SA. Ne pas rendre un " +
+                  "terme sur le foie quand le poumon ou le rein sont disponibles.";
+var AVANCE_NOTE = "Une érythropoïèse plus éteinte qu'attendue peut n'être que la perte des noyaux " +
+                  "hématopoïétiques par macération, pas une donnée du fœtus. " +
+                  "Le foie ne date pas le fœtus : il date sa rétention.";
+
+var TECH_NOTE = "Les quatre dernières lignes sont hors de la lame : c'est en lisant la lame qu'on " +
+                "découvre qu'il aurait fallu prélever, et il est alors trop tard. Réticuline, orcéine " +
+                "et rouge Sirius sont absentes du corpus du service, mais aucune source ouverte ne les " +
+                "recommande pour le foie fœtal : l'absence peut être un alignement correct, pas un manque.";
+
+/* ── 01 · Prélèvement ─────────────────────────────────────────────────────── */
+var PRELEV = [
+  { k:"epaisseur", l:"Toute l'épaisseur du parenchyme, du hile à la périphérie", grave:true,
+    manque:"le gradient de maturation biliaire est hile→périphérie ; un prélèvement périphérique seul " +
+           "fait conclure à tort à une paucité [keeling, ch. 23]" },
+  { k:"pasSousCapsulaire", l:"Prélèvement non parallèle à la capsule", grave:true,
+    manque:"un prélèvement superficiel ne ramène que du sous-capsulaire, sans espace porte évaluable — " +
+           "le CR du service l'observe lui-même : « 3 fragments de parenchyme hépatique sous-capsulaire »" },
+  { k:"dixEP", l:"Au moins 10 espaces portes évaluables", grave:true,
+    manque:"seuil explicite du comptage canal/espace porte [keeling, ch. 23] — sans lui, ni la paucité " +
+           "ni son absence ne se concluent" },
+  { k:"deuxLobes", l:"Les deux lobes échantillonnés",
+    manque:"les malformations de plaque ductale peuvent être segmentaires [soffoet, ch. 7]" },
+  { k:"hile", l:"Région hilaire présente sur la coupe",
+    manque:"au hile le remodelage est achevé bien avant le terme : c'est la topographie qui sépare " +
+           "l'immaturité de la paucité vraie" },
+  { k:"vbeh", l:"Voies biliaires extra-hépatiques et vésicule en bloc",
+    manque:"l'oblitération est extra-hépatique ; le foie seul ne tranche pas l'atrésie [keeling, ch. 23]" },
+  { k:"congele", l:"Fragment de foie congelé",
+    manque:"la paraffine dissout les lipides et ferme le diagnostic métabolique — « Fresh/frozen liver " +
+           "and muscle assays » [keeling, ch. 11]" },
+  { k:"peauCulture", l:"Biopsie de peau en milieu de culture",
+    manque:"« trying to establish fibroblast growth from the decedent is a priority » [keeling, ch. 11]" },
+  { k:"autresViscere", l:"Cœur, thyroïde, pancréas, glandes salivaires disponibles pour Perls",
+    manque:"le critère qui fait le diagnostic de GALD n'est pas dans le foie" }
+];
+
+/* ── 02 · Rétention — le foie porte DEUX paliers, séparés par ~72 h ───────── */
+var MODIF = "horloge accélérée par l'anasarque et par un intervalle délivrance-autopsie > 24 h, " +
+            "ralentie par un terme < 25 SA — « Development of these features accelerated by fetal " +
+            "hydrops and delivery-autopsy interval of > 24 h, and decelerated by fetal gestational " +
+            "age < 25/40 » [keeling, ch. 15, Table 15.6]";
+
+var RETENTION = [
+  { k:"basoIsoles", l:"Perte de basophilie de quelques hépatocytes isolés", b:"≥ 24 h",
+    d:"« Individual cells in liver »", h:24, q:"bon", alerte:MODIF,
+    note:"la base porte une entrée concurrente à 4—12 h, sans source et sans description ; les livres " +
+         "et la pratique du service donnent tous ≥ 24 h — trois valeurs, une seule sourcée. " +
+         "Le palier 4–24 h appartient au REIN, pas au foie" },
+  { k:"basoPartielle", l:"Perte de basophilie hépatocytaire partielle", b:"≈ 24–48 h",
+    d:"pratique du service", h:36, q:"bon",
+    note:"gradation partielle/complète propre au service, que la base ne porte pas" },
+  { k:"basoTous", l:"Perte de basophilie de TOUS les hépatocytes", b:"≥ 96 h",
+    d:"« All cells in the liver »", h:96, q:"bon", alerte:MODIF,
+    note:"le rattachement de la ligne orpheline « Maximal ≥ 96 h » d'ernst au foie s'appuie sur " +
+         "l'alignement des deux tables ; elles n'ont pas le même nombre de lignes (9 contre 10) — " +
+         "l'alignement est CONCORDANT sur trois sources, pas démontré ligne à ligne" },
+  { k:"basoComplete", l:"Perte complète, persistance dans le tube digestif", b:"96 h – 1 semaine",
+    d:"pratique du service", h:120, q:"bon",
+    note:"le foie n'est jamais lu seul : il s'encadre d'un organe plus rapide (tubes rénaux) et d'un " +
+         "plus lent (tube digestif, surrénale). La règle d'arbitrage quand les deux divergent n'est " +
+         "écrite nulle part" },
+  { k:"epithBiliaire", l:"Épithélium biliaire effacé", b:"—", d:"le premier perdu", h:0, q:"moyen",
+    note:"« Biliary epithelium is lost quickly with maceration, so assessment of bile duct development " +
+         "could be hindered » [ernst, ch. 37] — une paucité biliaire ne se conclut pas sur foie macéré" },
+  { k:"noyauxHemato", l:"Noyaux hématopoïétiques perdus", b:"—", d:"perdus avec ceux des hépatocytes",
+    h:0, q:"moyen",
+    note:"une hématopoïèse « effondrée » sur macéré est un artefact, pas une anémie ni une aplasie" },
+  { k:"archTrichrome", l:"Architecture conservée au trichrome", b:"—", d:"indicateur de lisibilité",
+    h:0, q:"mauvais",
+    note:"« Trichrome can be helpful to determine if the structure of the liver is normal or abnormal » " +
+         "[ernst, ch. 37] — l'architecture tombe en dernier et reste rattrapable" },
+  { k:"calcifDystro", l:"Calcifications dystrophiques", b:"—", d:"non datable", h:0, q:"mauvais",
+    note:"« Dystrophic calcification may develop in autolysed liver tissue » [keeling, ch. 15] — " +
+         "ne pas y lire une infection, une tumeur ou une thrombose" },
+  { k:"debrisGranulaires", l:"Débris granulaires", b:"—", d:"non datable", h:0, q:"mauvais",
+    note:"« Degeneration of soft tissues results in granular debris which may be mistaken for " +
+         "bacterial colonisation » [keeling, ch. 15]" }
+];
+
+/* ── 03 · Maturation — l'érythropoïèse sinusoïdale décroît de 24 à 36 SA ──── */
+var STADES = [
+  { k:"erythroMax", l:"Érythropoïèse sinusoïdale maximale", max:24,
+    note:"maximale au 2ᵉ trimestre [ernst, ch. 5] ; la myélopoïèse portale est parallèlement active " +
+         "de 20 à 32 SA — un excès à 24 SA et à 38 SA ne sont pas la même donnée" },
+  { k:"erythroDecroit", l:"Érythropoïèse en décroissance", max:36,
+    note:"l'hémosidérose périportale croît en miroir : elle est la conséquence de l'extinction de " +
+         "l'érythropoïèse, pas une surcharge" },
+  { k:"erythroResiduelle", l:"Îlots résiduels d'érythropoïèse", max:99,
+    note:"le remodelage de la plaque ductale n'est PAS achevé au terme en périphérie — l'anneau " +
+         "ductal périphérique persistant reste normal" }
+];
+
+/* ── 03 bis · Comptage canal biliaire / espace porte ──────────────────────── */
+/* La seule mesure chiffrée solide de la fiche. Le compte s'entre nu ; déclarer
+   la topographie et la technique est l'interprétation, elle vient après. */
+var MESURE = {
+  titre:"Comptage canal biliaire / espace porte",
+  defLabel:"topographie du comptage",
+  optLabel:"technique du comptage",
+  defs:[{ k:"hile",       l:"Hile inclus" },
+        { k:"peripherie", l:"Périphérie seule" }],
+  opts:[{ k:"hes", l:"HES seul" },
+        { k:"ck",  l:"CK7 / CK19" }],
+  champs:[{ id:"ep",    label:"Espaces portes évaluables", min:0, max:100, step:1 },
+          { id:"ratio", label:"Ratio canal / espace porte", min:0, max:3, step:0.1 }]
+};
+
+function verdictMesure(){
+  var ep = E.mesure.v.ep, r = E.mesure.v.ratio, sa = num("sa");
+  if (ep == null && r == null) return { cls:"",
+    txt:"Comptage non fait — sans nombre d'espaces portes évaluables, toute mention de paucité ou " +
+        "d'absence de paucité est ininterprétable. C'est le négatif que le service n'écrit jamais." };
+
+  var t = "", cls = "ok", res = [];
+  if (ep != null){
+    t += ep + " espace(s) porte(s) évaluable(s).";
+    if (ep < 10){ cls = "bad";
+      t += " Le seuil de 10 exigé par [keeling, ch. 23] n'est pas atteint : ni la paucité ni son " +
+           "absence ne se concluent."; }
+  } else { cls = "warn"; res.push("nombre d'espaces portes évaluables non compté"); }
+
+  if (r != null){
+    t += " Ratio canal/espace porte = " + r + ".";
+    if (r < 0.4){ if (cls !== "bad") cls = "bad";
+      t += " Sous le seuil de paucité (0,4)."; }
+    else if (r < 0.9){ if (cls === "ok") cls = "warn";
+      t += " Entre le seuil de paucité (0,4) et la borne basse du normal (0,9) — zone que les sources " +
+           "ne qualifient pas."; }
+    else if (r <= 1.8){ t += " Dans l'intervalle normal (0,9–1,8)."; }
+    else { if (cls === "ok") cls = "warn"; t += " Au-dessus de l'intervalle normal (0,9–1,8)."; }
+    /* La borne est néonatale et la fiche ne sait pas ce qu'elle vaut à 22 SA. */
+    t += " Réserve de barème : l'intervalle 0,9–1,8 et le seuil de 0,4 sont NÉONATALS ; aucune valeur " +
+         "normale du ratio par âge gestationnel n'existe dans les sources ouvertes.";
+    if (sa != null && sa < 30)
+      res.push("barème néonatal appliqué à un fœtus de " + sa + " SA — la fiche ne sait pas ce qu'est " +
+               "un ratio normal à ce terme, qui est pourtant le terme médian du service");
+  }
+
+  if (!E.mesure.def) res.push("topographie du comptage non déclarée — hile et périphérie ne se comptent pas ensemble");
+  else if (E.mesure.def === "peripherie")
+    res.push("comptage en périphérie seule : faux positif documenté — « as the most peripheral portal " +
+             "tracts are the last to undergo ductal plate remodeling an apparent paucity may be seen in " +
+             "biopsies from premature neonates or even close to term » [keeling, ch. 23]");
+  if (!E.mesure.opt) res.push("technique du comptage non déclarée");
+  else if (E.mesure.opt === "hes")
+    res.push("HES seul : un canal effacé en HES peut rester marqué en CK7/CK19");
+  if (E.retention.epithBiliaire === "present")
+    res.push("épithélium biliaire effacé par la macération — le comptage n'est pas recevable");
+  if (!E.prelev.dixEP) res.push("les 10 espaces portes ne sont pas confirmés au prélèvement");
+
+  if (res.length){ if (cls === "ok") cls = "warn"; t += " Réserves : " + res.join(" ; ") + "."; }
+  return { cls:cls, txt:t };
+}
+
+/* ── 05 · Variantes normales ──────────────────────────────────────────────── */
+var VARIANTES = [
+  { k:"travees",     l:"Travées hépatocytaires épaisses, pluristratifiées" },
+  { k:"glycogene",   l:"Glycogénisation hépatocytaire, cytoplasme clair" },
+  { k:"bessis",      l:"Îlots de Bessis, érythropoïèse sinusoïdale" },
+  { k:"myelo",       l:"Myélopoïèse portale dans et autour des espaces portes" },
+  { k:"hemosiderose",l:"Hémosidérose périportale croissant avec le terme" },
+  { k:"plaqueDuct",  l:"Plaque ductale périphérique encore présente au terme" },
+  { k:"cuivre",      l:"Protéine associée au cuivre périportale néonatale physiologique" },
+  { k:"bileFine",    l:"Immaturité physiologique de la sécrétion biliaire" },
+  { k:"epFetal",     l:"Espace porte fœtal lâche et mésenchymateux" }
+];
+
+/* ── 06 · Signes ──────────────────────────────────────────────────────────────
+   On coche ce qu'on voit, un signe à la fois. Aucun nom de maladie ici : les
+   noms se lisent en dessous, dans DIAGS, par association des signes cochés.
+   Les exigences de consignation (compter ≥ 10 EP, nommer la lignée, préciser la
+   zonation) ne sont pas des signes : elles vivent dans les négatifs et dans les
+   avertissements des associations. */
+var SIGNES = [
+  /* Plaque ductale et canaux */
+  { k:"profilDuctal",   l:"Profil ductal circonférentiel persistant en couronne autour de l'espace porte" },
+  { k:"canauxAnastomoses", l:"Canaux dilatés et anastomosés" },
+  { k:"atteinteHilaire", l:"Atteinte des espaces portes HILAIRES",
+    meta:"le critère qui sépare l'immaturité périphérique de la lésion" },
+  { k:"ratioBas",       l:"Ratio canal / espace porte < 0,4 sur ≥ 10 espaces portes" },
+  { k:"ckConfirme",     l:"Raréfaction confirmée en CK7 / CK19" },
+
+  /* Voies biliaires extra-hépatiques */
+  { k:"obliterationVBEH", l:"Oblitération fibreuse du canal extra-hépatique" },
+  { k:"lumiereResiduelle", l:"Lumière résiduelle réduite, calibre mesuré" },
+  { k:"epithResiduel",  l:"Épithélium résiduel altéré ou absent" },
+  { k:"situs",          l:"Contexte syndromique (situs, polysplénie)" },
+
+  /* Cholestase */
+  { k:"bouchonsCanalic", l:"Bouchons biliaires canaliculaires" },
+  { k:"bouchonsDuctul", l:"Bouchons biliaires ductulaires" },
+  { k:"cholestaseHepato", l:"Cholestase hépatocytaire" },
+  { k:"pseudoglandulaire", l:"Forme pseudoglandulaire / rosettoïde" },
+
+  /* Fer */
+  { k:"perlsHepatoDuctul", l:"Dépôts Perls+ massifs dans les hépatocytes ET les cellules ductulaires" },
+  { k:"predominanceParench", l:"Prédominance parenchymateuse nette sur les dépôts macrophagiques" },
+  { k:"epargneSRE",     l:"Épargne du système réticulo-endothélial" },
+  { k:"ferExtraHep",    l:"Dépôts de fer extra-hépatiques parenchymateux (cœur, thyroïde, pancréas, salivaires)",
+    meta:"le critère du GALD n'est pas dans le foie" },
+
+  /* Hématopoïèse */
+  { k:"erythroAugmentee", l:"Érythropoïèse sinusoïdale augmentée (CD71)" },
+  { k:"myeloAugmentee", l:"Myélopoïèse portale augmentée (MPO)" },
+  { k:"erythroDiminuee", l:"Érythropoïèse diminuée" },
+
+  /* Nécrose */
+  { k:"foyersBordureNette", l:"Foyers focaux à bordure nette",
+    meta:"le contraste local, pas l'état de la cellule" },
+  { k:"reactionCellulaire", l:"Réaction cellulaire en regard des foyers" },
+  { k:"necrosePeriveineuse", l:"Nécrose périveineuse hémorragique" },
+  { k:"emportePiece",   l:"Distribution aléatoire à emporte-pièce" },
+
+  /* Infection */
+  { k:"oeilDeHibou",    l:"Inclusions intranucléaires en œil-de-hibou",
+    meta:"survit à la macération" },
+  { k:"inclusionsCytopl", l:"Inclusions cytoplasmiques" },
+  { k:"cytomegaliqueBiliaire", l:"Cellules cytomégaliques dans les canaux biliaires" },
+  { k:"inflamPortale",  l:"Inflammation portale, endothéliite, hémophagocytose sinusoïdale" },
+  { k:"geantocellulaire", l:"Transformation géantocellulaire",
+    meta:"réponse stéréotypée du foie fœtal, pas une signature" },
+
+  /* Surcharge */
+  { k:"ballooning",     l:"Ballooning hépatocytaire" },
+  { k:"verreDepoli",    l:"Inclusions en verre dépoli / corps polyglucosaniques" },
+  { k:"globulesDPAS",   l:"Inclusions DPAS+ en globules" },
+  { k:"amylopectine",   l:"Matériel amylopectine-like" },
+  { k:"microvesiculationDPAS", l:"Microvésiculation DPAS+" },
+  { k:"macrophagesDPAS", l:"Macrophages DPAS+" },
+
+  /* Stéatose */
+  { k:"steatosePeriportale", l:"Stéatose périportale" },
+  { k:"steatoseMicro",  l:"Stéatose microvésiculaire" },
+  { k:"steatoseMassive", l:"Stéatose dominante ou massive" },
+  { k:"steatosePanlobulaire", l:"Stéatose panlobulaire" },
+
+  /* Fibrose */
+  { k:"fibrosePortale", l:"Fibrose portale au trichrome" },
+  { k:"proliferationDuctulaire", l:"Prolifération ductulaire" },
+  { k:"pontsPortoPortaux", l:"Ponts fibreux porto-portaux" },
+  { k:"fibroseDissequante", l:"Fibrose lobulaire disséquante",
+    meta:"critère d'exclusion du GALD" },
+  { k:"fibrosePeriDuctale", l:"Fibrose péri-ductale en manchon" },
+  { k:"fibrosePericell", l:"Fibrose péricellulaire ou périsinusoïdale" },
+  { k:"fibrosePeriveineuse", l:"Fibrose périveineuse" },
+  { k:"cirrhose",       l:"Nodules de régénération, cirrhose" },
+
+  /* Vaisseaux */
+  { k:"shuntAbernethy", l:"Shunt porto-systémique congénital (Abernethy)" },
+  { k:"cavernome",      l:"Cavernome portal" },
+  { k:"ductusVenosus",  l:"Agénésie du ductus venosus" },
+  { k:"agenesieVeines", l:"Agénésie des veines portes ou hépatiques, trajet anormal de la VCI" },
+  { k:"thrombiFibrineux", l:"Thrombi fibrineux intravasculaires" },
+  { k:"hematomeSC",     l:"Hématome sous-capsulaire" },
+
+  /* Hétérotopies et rares */
+  { k:"pancreasEctopique", l:"Tissu pancréatique ectopique périductal" },
+  { k:"cartilagePeriductal", l:"Cartilage hyalin périductal" },
+  { k:"kysteForegut",   l:"Kyste cilié d'origine foregut, kyste cholédoque" },
+  { k:"ectasieCaroli",  l:"Ectasie ductale de type Caroli" },
+  { k:"granulomes",     l:"Granulomes caséeux" },
+  { k:"megacaryocytes", l:"Mégacaryocytes en excès" }
+];
+
+/* ── 06 bis · Associations — affichées, jamais cochées ────────────────────────
+   Le nom se déduit des signes. « cle » est le signe pivot : sans lui le compte
+   peut être atteint sans que l'association tienne. */
+var DIAGS = [
+  { k:"mpd", l:"Malformation de la plaque ductale / fibrose hépatique congénitale",
+    cle:"atteinteHilaire", min:2,
+    signes:["profilDuctal","canauxAnastomoses","fibrosePortale","atteinteHilaire"],
+    stop:" — le remodelage physiologique non achevé en périphérie donne le même anneau : sans atteinte " +
+         "hilaire, ce n'est pas une donnée. Aucune gradation validée n'existe (0 ligne hépatique dans " +
+         "foeto_grades) : ne pas grader. Et pas de syndrome (Meckel, ARPKD, Joubert, Ivemark) sur le " +
+         "foie seul — la MPD est un motif partagé, pas un diagnostic." },
+
+  { k:"paucite", l:"Paucité des canaux biliaires interlobulaires", cle:"ratioBas", min:2,
+    signes:["ratioBas","ckConfirme","atteinteHilaire"],
+    stop:" — ni Alagille ni atrésie ne se concluent sur le compte intra-hépatique. Trois faux positifs " +
+         "documentés : prématurité ou proche du terme, prélèvement sous-capsulaire, et macération, " +
+         "l'épithélium biliaire tombant le premier. Le ratio EST la mesure : il n'y a pas de grade au-dessus." },
+
+  { k:"avbeh", l:"Atrésie des voies biliaires extra-hépatiques", cle:"obliterationVBEH", min:2,
+    signes:["obliterationVBEH","lumiereResiduelle","epithResiduel","situs"],
+    stop:" — essentiellement pas de diagnostic en anténatal : « L'atrésie des voies biliaires " +
+         "extra-hépatiques (AVBEH) est très rarement découverte en période fœtale » et " +
+         "« il s'agit d'une lésion acquise car on ne connaît pas de cas familiaux » [soffoet, ch. 7]. " +
+         "Sur un fœtus, prolifération ductulaire + cholestase N'AUTORISENT PAS ce diagnostic." },
+
+  { k:"cholestase", l:"Cholestase", min:1,
+    signes:["bouchonsCanalic","bouchonsDuctul","cholestaseHepato","pseudoglandulaire"],
+    stop:" — trois différentiels avant de nommer : l'immaturité physiologique de la sécrétion biliaire, " +
+         "le pigment formolique (biréfringent, Perls négatif — le CR du service pose lui-même la " +
+         "question « pigment formolique ? sels biliaires ? »), et l'hémosidérine. La cholestase est un " +
+         "syndrome commun : « Specific features of IEM are not often seen in biopsy reports » " +
+         "[keeling, ch. 11]. Elle oriente le bilan, elle ne nomme pas la maladie. Compter les " +
+         "compartiments atteints, ne pas grader." },
+
+  { k:"gald", l:"Surcharge en fer / hémochromatose néonatale (GALD)", cle:"ferExtraHep", min:3,
+    signes:["perlsHepatoDuctul","predominanceParench","epargneSRE","ferExtraHep"],
+    stop:" — jamais d'hémochromatose néonatale sur le foie seul : « pattern évocateur d'hémochromatose " +
+         "néonatale (GALD) mais non diagnostique en l'absence de preuve de dépôts extra-hépatiques " +
+         "parenchymateux ». Ce qui tranche entre physiologique et pathologique est le COMPARTIMENT et " +
+         "la distribution, pas l'intensité : périportal et macrophagique = physiologique. Le Perls des " +
+         "foyers d'hématopoïèse est normal — « Le Perls est positif au niveau des zones d'hématopoïèse ». " +
+         "Une fibrose disséquante EXCLUT le GALD." },
+
+  { k:"emh", l:"Hématopoïèse extra-médullaire déplacée — physiologique ou réactive", min:1,
+    signes:["erythroAugmentee","myeloAugmentee","erythroDiminuee"],
+    stop:" — ne jamais écrire « hématopoïèse extra-médullaire augmentée » sans dire QUELLE lignée. " +
+         "L'érythropoïèse monte dans « chronic fetal hypoxia or anemia and in infants of diabetic " +
+         "mothers » et descend en prééclampsie ; la myélopoïèse monte sur infection et « may help " +
+         "confirm a diagnosis of chorioamnionitis when the placenta is unavailable » [ernst, ch. 5]. " +
+         "Aucune échelle de quantification n'existe dans aucune source : le seuil de « myélopoïèse " +
+         "portale disproportionnée » est une compétence de lecteur, pas une donnée de livre. Le corpus n'a que " +
+         "quatre modalités implicites, jamais définies." },
+
+  { k:"necrose", l:"Nécrose hépatique", cle:"foyersBordureNette", min:2,
+    signes:["foyersBordureNette","reactionCellulaire","necrosePeriveineuse","emportePiece"],
+    stop:" — « There is a predictable pattern of loss of nuclear basophilia in the internal organs " +
+         "which should not be mistaken for necrosis » [keeling, ch. 15] : sur foie macéré tout " +
+         "ressemble à une nécrose de coagulation. Ce qui distingue la nécrose, c'est le CONTRASTE " +
+         "LOCAL — bordure et réaction — pas la cellule ; l'autolyse est homogène sur toute la lame. " +
+         "Jamais de nécrose sur un foie dont TOUS les hépatocytes ont perdu leur basophilie : l'un " +
+         "explique l'autre. Le corpus du service porte 0 nécrose hépatique sur 63. La zonation et la " +
+         "fraction du parenchyme se consignent, elles ne se déduisent pas." },
+
+  { k:"cmv", l:"Infection à CMV et autres infections", cle:"oeilDeHibou", min:2,
+    signes:["oeilDeHibou","inclusionsCytopl","cytomegaliqueBiliaire","inflamPortale","geantocellulaire"],
+    stop:" — une transformation géantocellulaire n'est PAS une signature virale : c'est la réponse " +
+         "stéréotypée du foie fœtal et néonatal à toute agression. Les hépatocytes oncocytaires et les " +
+         "noyaux hypertrophiés de l'hématopoïèse simulent une cytomégalie. Les inclusions survivent à " +
+         "la macération et « immunohistochemistry could be performed should there be diagnostic " +
+         "uncertainty » [keeling, ch. 15]." },
+
+  { k:"surcharge", l:"Surcharge métabolique", min:2,
+    signes:["ballooning","verreDepoli","globulesDPAS","amylopectine","microvesiculationDPAS","macrophagesDPAS"],
+    stop:" — aucun nom de maladie sur la morphologie seule : s'arrêter à « surcharge de type X, " +
+         "compartiment Y ». La paraffine perd les lipides, « Oil-red-O staining may be useful to " +
+         "document microvesicular steatosis » exige du congelé, et « Alcian blue stains failed to " +
+         "convincingly demonstrate MPS in any of the liver sections » [pubmed] — un alcian bleu négatif " +
+         "n'exclut rien. Préciser le compartiment (hépatocyte vs Kupffer) et la texture de la vacuole." },
+
+  { k:"steatose", l:"Stéatose", min:1,
+    signes:["steatosePeriportale","steatoseMicro","steatoseMassive","steatosePanlobulaire"],
+    stop:" — « Steatosis in general should arouse suspicion of a metabolic disorder » [keeling, ch. 23], " +
+         "et le côté artefact est VIDE : aucune source ouverte ne documente une stéatose induite par la " +
+         "technique, le jeûne ou l'agonie. Toute stéatose est donc à lire comme potentiellement " +
+         "significative — inconfortable, mais sourcé. Le différentiel est la glycogénisation fœtale : " +
+         "le PAS avec et sans diastase tranche, le glycogène est PAS+ digestible. Chez un mort-né de " +
+         "mère diabétique, « Hepatic steatosis is significantly more severe in stillborns of diabetic " +
+         "mothers than in controls »." },
+
+  { k:"fibrose", l:"Fibrose", min:1,
+    signes:["fibrosePortale","proliferationDuctulaire","pontsPortoPortaux","fibroseDissequante",
+            "fibrosePeriDuctale","fibrosePericell","fibrosePeriveineuse","cirrhose"],
+    stop:" — l'espace porte fœtal est NORMALEMENT lâche et mésenchymateux : « fibreux » en HES seul " +
+         "n'est pas une donnée, il faut le trichrome. La fibrose disséquante est le critère d'exclusion " +
+         "du GALD, que le service énonce déjà comme négatif : « sans fibrose disséquante ». Le " +
+         "compartiment oriente, pas la quantité." },
+
+  { k:"vasculaire", l:"Anomalies vasculaires", min:1,
+    signes:["shuntAbernethy","cavernome","ductusVenosus","agenesieVeines","thrombiFibrineux","hematomeSC"],
+    stop:" — le foie est un ACTEUR de l'anasarque, pas seulement une victime : « Immature liver " +
+         "produces low amounts of albumin, resulting in low protein levels » [keeling, ch. 13]. " +
+         "Trois des causes vasculaires d'hydrops listées par le livre n'ont aucun terme dans " +
+         "foeto_terms : ne pas conclure à leur absence parce que le champ manque." },
+
+  { k:"rares", l:"Hétérotopies et lésions rares", min:1,
+    signes:["pancreasEctopique","cartilagePeriductal","kysteForegut","ectasieCaroli",
+            "granulomes","megacaryocytes"],
+    stop:" — aucune de ces entités n'appelle de mesure ni de gradation. Un foie autolysé faisant hernie " +
+         "par la paroi n'est pas une hétérotopie : « the softness of the autolysed liver may result in " +
+         "protrusion of the autolysed liver mass through the anterior abdominal wall, mimicking " +
+         "omphalocele » [keeling, ch. 15]." }
+];
+
+/* ── 07 · Négatifs obligatoires ───────────────────────────────────────────── */
+var NEGATIFS = [
+  { k:"nbEP", l:"Nombre d'espaces portes évaluables énoncé", p:"jamais écrit dans le corpus",
+    ko:"nombre d'espaces portes NON énoncé — toute mention de paucité devient ininterprétable" },
+  { k:"hileInclus", l:"Hile inclus ou non, précisé", p:"c'est la topographie qui sépare immaturité et paucité",
+    ko:"topographie du comptage NON précisée" },
+  { k:"macerationSignes", l:"Absence de signe de macération", p:"c'est ce qui autorise à lire la paucité et l'hématopoïèse",
+    ko:"signes de macération PRÉSENTS — paucité biliaire et compte hématopoïétique non rendus" },
+  { k:"fer", l:"Absence de surcharge en fer, Perls fait", p:"déjà pratiqué, 3 occurrences",
+    ko:"surcharge en fer PRÉSENTE — étendre le Perls hors du foie avant de conclure" },
+  { k:"ferExtra", l:"Perls négatif sur les autres viscères",
+    p:"« absence de surcharge d'autres viscères (cœur, thyroïde et parathyroïdes, glandes paratrachéales, pancréas Perls négatifs) »",
+    ko:"Perls extra-hépatique POSITIF ou non fait — le GALD ne se conclut pas sans lui" },
+  { k:"bile", l:"Absence de surcharge en bile", p:"déjà pratiqué",
+    ko:"surcharge en bile PRÉSENTE" },
+  { k:"inflam", l:"Absence d'élément inflammatoire portal", p:"déjà pratiqué",
+    ko:"inflammation portale PRÉSENTE — distinguer de la myélopoïèse portale physiologique" },
+  { k:"inclusions", l:"Absence d'inclusion nucléaire", p:"déjà pratiqué",
+    ko:"inclusions nucléaires PRÉSENTES" },
+  { k:"fibroseDiss", l:"Absence de fibrose disséquante", p:"critère d'exclusion du GALD",
+    ko:"fibrose disséquante PRÉSENTE" },
+  { k:"vbehVues", l:"Voies biliaires extra-hépatiques examinées", p:"sans elles l'atrésie est indécidable",
+    ko:"voies biliaires extra-hépatiques NON examinées" }
+];
+
+/* ── 08 · Techniques — une question par ligne ─────────────────────────────── */
+var TECHNIQUES = [
+  { k:"ck",       l:"CK7 / CK19", q:"y a-t-il assez de canaux biliaires ? — inutile sur foie macéré" },
+  { k:"trichrome",l:"Trichrome", q:"l'architecture est-elle normale ? — reste valide sur foie macéré" },
+  { k:"perls",    l:"Perls, foie", q:"ce pigment est-il du fer ?" },
+  { k:"perlsExtra",l:"Perls, cœur / thyroïde / pancréas / salivaires", q:"le fer est-il extra-hépatique ? — le critère du GALD" },
+  { k:"pasDiast", l:"PAS ± digestion diastasique", q:"ce cytoplasme clair est-il du glycogène ?" },
+  { k:"dpas",     l:"DPAS", q:"y a-t-il des globules d'α1-antitrypsine ?" },
+  { k:"oilred",   l:"Oil-red-O", q:"y a-t-il une stéatose ? — exige du congelé" },
+  { k:"ferColl",  l:"Fer colloïdal, FFPE et coupe congelée", q:"y a-t-il des mucopolysaccharides ? — l'alcian bleu ne suffit pas" },
+  { k:"mpo",      l:"MPO", q:"la lignée myéloïde est-elle augmentée ?" },
+  { k:"cd71",     l:"CD71", q:"la lignée érythroïde est-elle augmentée ?" },
+  { k:"ihcCmv",   l:"IHC anti-CMV", q:"est-ce un CMV ? — reste faisable sur macéré" },
+  { k:"congeleAssay",l:"Dosages sur foie et muscle congelés", q:"cytopathie mitochondriale — rien en histologie" },
+  { k:"fibroblastes",l:"Fibroblastes en culture, enzymes leucocytaires, ME", q:"surcharge lysosomale — rien en histologie" }
+];
+
+/* ── Propositions de techniques — déduites des clics, jamais imposées ─────── */
+function suggerer(){
+  var s = {};
+  function anormal(k){ return E.signes[k] === "anormal"; }
+  function ret(k){ return E.retention[k] === "present"; }
+
+  function un(){ for (var i = 0; i < arguments.length; i++) if (anormal(arguments[i])) return true;
+                 return false; }
+
+  /* Les propositions suivent les SIGNES : une technique se demande sur ce qu'on
+     a vu, pas sur le nom qu'on lui donnerait. */
+  if (un("profilDuctal","canauxAnastomoses","atteinteHilaire")){ s.trichrome = 1; s.ck = 1; }
+  if (un("ratioBas","ckConfirme")) s.ck = 1;
+  if (un("obliterationVBEH","lumiereResiduelle","epithResiduel")){ s.ck = 1; s.trichrome = 1; }
+  if (un("bouchonsCanalic","bouchonsDuctul","cholestaseHepato","pseudoglandulaire")) s.perls = 1;
+  if (un("perlsHepatoDuctul","predominanceParench","epargneSRE","ferExtraHep")){
+    s.perls = 1; s.perlsExtra = 1; s.trichrome = 1; }
+  if (un("erythroAugmentee","myeloAugmentee","erythroDiminuee")){ s.mpo = 1; s.cd71 = 1; }
+  if (un("foyersBordureNette","reactionCellulaire","necrosePeriveineuse","emportePiece")) s.trichrome = 1;
+  if (un("oeilDeHibou","inclusionsCytopl","cytomegaliqueBiliaire","geantocellulaire","inflamPortale")) s.ihcCmv = 1;
+  if (un("ballooning","verreDepoli","globulesDPAS","amylopectine","microvesiculationDPAS","macrophagesDPAS")){
+    s.dpas = 1; s.pasDiast = 1; s.oilred = 1; s.ferColl = 1; s.fibroblastes = 1; }
+  if (un("steatosePeriportale","steatoseMicro","steatoseMassive","steatosePanlobulaire")){
+    s.oilred = 1; s.pasDiast = 1; s.congeleAssay = 1; }
+  if (un("fibrosePortale","proliferationDuctulaire","pontsPortoPortaux","fibroseDissequante",
+         "fibrosePeriDuctale","fibrosePericell","fibrosePeriveineuse","cirrhose")) s.trichrome = 1;
+  if (un("shuntAbernethy","cavernome","ductusVenosus","agenesieVeines","thrombiFibrineux","hematomeSC"))
+    s.trichrome = 1;
+
+  /* Sur macéré le trichrome est la seule technique qui tienne encore. */
+  if (RETENTION.some(function(r){ return E.retention[r.k] === "present" && r.q === "bon"; })) s.trichrome = 1;
+  if (ret("epithBiliaire")) s.ck = 1;
+  if (ret("noyauxHemato")){ s.mpo = 1; s.cd71 = 1; }
+
+  if (E.mesure.opt === "hes" && E.mesure.v.ratio != null) s.ck = 1;
+  if (E.negatifs.ferExtra === "present") s.perlsExtra = 1;
+  if (E.negatifs.inclusions === "present") s.ihcCmv = 1;
+  if (E.negatifs.fibroseDiss === "present") s.trichrome = 1;
+  /* La décision de congeler se prend à la table : dès qu'une surcharge est suspectée. */
+  if (E.prelev.congele && (s.oilred || s.dpas)) s.congeleAssay = 1;
+  return s;
+}
+
+/* ── Contrôles propres au foie ────────────────────────────────────────────── */
+async function testsOrgane(chk, clic, set, crTient, pause){
+  /* Les deux paliers, et les ~72 h qui les séparent */
+  chk("deux paliers hépatiques",  par(RETENTION, "basoIsoles").h === 24 &&
+      par(RETENTION, "basoTous").h === 96);
+  chk("écart de 72 h entre paliers",
+      par(RETENTION, "basoTous").h - par(RETENTION, "basoIsoles").h === 72);
+  chk("contradiction 4—12 h portée", par(RETENTION, "basoIsoles").note.indexOf("4—12 h") >= 0 &&
+      par(RETENTION, "basoIsoles").note.indexOf("une seule sourcée") >= 0);
+  chk("palier 4–24 h rendu au rein", par(RETENTION, "basoIsoles").note.indexOf("appartient au REIN") >= 0);
+  chk("alignement ernst/keeling non démontré",
+      par(RETENTION, "basoTous").note.indexOf("CONCORDANT") >= 0 &&
+      par(RETENTION, "basoTous").note.indexOf("9 contre 10") >= 0);
+  chk("règle d'arbitrage non écrite", par(RETENTION, "basoComplete").note.indexOf("n'est écrite nulle part") >= 0);
+
+  /* Le comptage — observation d'abord */
+  set("sa", "22");
+  chk("sans comptage, la paucité est ininterprétable", crTient("est ininterprétable"));
+
+  set("m_ep", "6");
+  chk("moins de 10 EP bloque la conclusion", $("vMesure").className.indexOf("bad") >= 0 &&
+      crTient("ni la paucité ni son absence ne se concluent"));
+  set("m_ep", "14");
+  chk("14 EP acceptés",            crTient("14 espace(s) porte(s) évaluable(s)"));
+
+  set("m_ratio", "0.3");
+  chk("ratio sous le seuil de paucité", crTient("Sous le seuil de paucité (0,4)"));
+  chk("barème néonatal signalé",   crTient("sont NÉONATALS"));
+  chk("barème néonatal sur fœtus de 22 SA", crTient("barème néonatal appliqué à un fœtus de 22 SA"));
+
+  set("m_ratio", "0.6");
+  chk("zone grise 0,4–0,9 nommée", crTient("zone que les sources ne qualifient pas"));
+  set("m_ratio", "1.2");
+  chk("ratio normal",              crTient("Dans l'intervalle normal (0,9–1,8)"));
+
+  clic("mdef", "peripherie");
+  chk("périphérie seule = faux positif documenté",
+      crTient("apparent paucity may be seen in biopsies from premature neonates"));
+  clic("mdef", "peripherie");
+  clic("mopt", "hes");
+  chk("HES seul propose la CK7",   suggerer().ck === 1 && crTient("peut rester marqué en CK7/CK19"));
+  clic("mopt", "hes");
+
+  /* La macération invalide le comptage */
+  clic("ret", "epithBiliaire", "present");
+  chk("épithélium biliaire perdu invalide le comptage", crTient("le comptage n'est pas recevable"));
+  chk("paucité non conclue sur macéré",
+      par(RETENTION, "epithBiliaire").note.indexOf("ne se conclut pas sur foie macéré") >= 0);
+  clic("ret", "epithBiliaire", "present");
+
+  /* Les stop qui portent le sens */
+  chk("nécrose : le contraste local, pas la cellule",
+      par(DIAGS, "necrose").stop.indexOf("CONTRASTE LOCAL") >= 0);
+  chk("EMH : jamais sans nommer la lignée",
+      par(DIAGS, "emh").stop.indexOf("QUELLE lignée") >= 0);
+  chk("EMH : aucune échelle n'existe",
+      par(DIAGS, "emh").stop.indexOf("Aucune échelle de quantification n'existe") >= 0);
+  chk("GALD : jamais sur le foie seul",
+      par(DIAGS, "gald").stop.indexOf("jamais d'hémochromatose néonatale sur le foie seul") >= 0);
+  chk("AVBEH : pas de diagnostic anténatal",
+      par(DIAGS, "avbeh").stop.indexOf("N'AUTORISENT PAS") >= 0);
+  chk("MPD : ne pas grader",       par(DIAGS, "mpd").stop.indexOf("ne pas grader") >= 0);
+  chk("stéatose : côté artefact vide",
+      par(DIAGS, "steatose").stop.indexOf("côté artefact est VIDE") >= 0);
+  chk("fibrose : trichrome obligatoire",
+      par(DIAGS, "fibrose").stop.indexOf("n'est pas une donnée") >= 0);
+  chk("géantocellulaire n'est pas viral",
+      par(DIAGS, "cmv").stop.indexOf("n'est PAS une signature virale") >= 0);
+
+  /* Le négatif que le service n'écrit jamais */
+  chk("nombre d'EP en tête des négatifs", NEGATIFS[0].k === "nbEP");
+
+  /* Le banc commun laisse des signes posés : on part d'un état voulu, pas supposé. */
+  function pose(k, v){ if (E.signes[k] !== v) clic("les", k, v); }
+  function ote(k){ if (E.signes[k]) clic("les", k, E.signes[k]); }
+  function tenue(k){ return associations().some(function(a){ return a.d.k === k && a.tenu; }); }
+
+  /* Le nom se déduit des signes — il ne se coche pas */
+  chk("aucun bouton ne porte un diagnostic",
+      DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
+
+  /* Le GALD ne se conclut pas sans le fer extra-hépatique */
+  pose("perlsHepatoDuctul", "anormal");
+  pose("predominanceParench", "anormal");
+  pose("epargneSRE", "anormal");
+  chk("GALD ne tient pas sans dépôt extra-hépatique", !tenue("gald") &&
+      crTient("signe pivot non coché : Dépôts de fer extra-hépatiques"));
+  chk("le fer propose le Perls extra-hépatique", suggerer().perlsExtra === 1);
+  pose("ferExtraHep", "anormal");
+  chk("GALD tient avec le dépôt extra-hépatique", tenue("gald"));
+  ote("perlsHepatoDuctul"); ote("predominanceParench"); ote("epargneSRE"); ote("ferExtraHep");
+
+  /* La MPD se joue sur le hile : la couronne périphérique seule ne suffit pas */
+  pose("profilDuctal", "anormal");
+  pose("canauxAnastomoses", "anormal");
+  chk("MPD ne tient pas sans le hile", !tenue("mpd"));
+  pose("atteinteHilaire", "anormal");
+  chk("MPD tient avec le hile", tenue("mpd"));
+  ote("profilDuctal"); ote("canauxAnastomoses"); ote("atteinteHilaire");
+
+  /* Une lignée nommée suffit à porter l'hématopoïèse déplacée */
+  pose("myeloAugmentee", "anormal");
+  chk("EMH tient sur une lignée nommée", tenue("emh"));
+  chk("EMH propose MPO et CD71",   suggerer().mpo === 1 && suggerer().cd71 === 1);
+  ote("myeloAugmentee");
+}
+
+/* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
+var FOETO = {"sections":[{"t":"5.1 Malformation de la plaque ductale (MPD) / fibrose hépatique congénitale","termes":[{"id":"FOETO:PF.FOI-MAL-006","l":"Canaux biliaires dilatés et anastomosés dans les espaces portes"},{"id":"FOETO:PF.FOI-MAL-018","l":"Fibrose hépatique congénitale"}]},{"t":"5.11 Fibrose","termes":[{"id":"FOETO:PF.FOI-MAL-012","l":"Cirrhose (architecture pseudo-nodulaire)"},{"id":"FOETO:PF.FOI-MAL-019","l":"Fibrose lobulaire disséquante"},{"id":"FOETO:PF.FOI-MAL-020","l":"Fibrose portale avec prolifération ductulaire extensive"},{"id":"FOETO:PF.FOI-MAL-021","l":"Fibrose porto-portale (fibrose en pont)"},{"id":"FOETO:PF.FOI-MAL-022","l":"Fibrose péri-ductale en manchon"},{"id":"FOETO:PF.FOI-MAL-023","l":"Fibrose péricellulaire (maladies de surcharge)"},{"id":"FOETO:PF.FOI-MAL-024","l":"Fibrose périsinusoïdale"},{"id":"FOETO:PF.FOI-MAL-025","l":"Fibrose périveineuse (centrolobulaire)"}]},{"t":"5.12 Anomalies vasculaires","termes":[{"id":"FOETO:PF.FOI-MAL-008","l":"Cavernome portal"},{"id":"FOETO:PF.FOI-MAL-030","l":"Hématome sous-capsulaire hépatique"},{"id":"FOETO:PF.FOI-MAL-050","l":"Shunt porto-systémique congénital (malformation d'Abernethy)"}]},{"t":"5.13 Lésions rares / hétérotopies","termes":[{"id":"FOETO:PF.FOI-MAL-007","l":"Cartilage hyalin périductal"},{"id":"FOETO:PF.FOI-MAL-016","l":"Ectasie ductale (maladie de Caroli)"},{"id":"FOETO:PF.FOI-MAL-026","l":"Foie ectopique"},{"id":"FOETO:PF.FOI-MAL-028","l":"Granulomes hépatiques caséeux"},{"id":"FOETO:PF.FOI-MAL-033","l":"Hétérotopie tissulaire intra-hépatique"},{"id":"FOETO:PF.FOI-MAL-038","l":"Kyste cholédoque (paroi fibreuse avec épithélium biliaire partiel)"},{"id":"FOETO:PF.FOI-MAL-039","l":"Kyste hépatique cilié d'origine foregut"},{"id":"FOETO:PF.FOI-MAL-056","l":"Tissu pancréatique ectopique périductal"}]},{"t":"5.2 Paucité des canaux biliaires interlobulaires","termes":[{"id":"FOETO:PF.FOI-DYS-001","l":"Paucité des canaux biliaires interlobulaires"}]},{"t":"5.3 Atrésie des voies biliaires extra-hépatiques (AVBEH)","termes":[{"id":"FOETO:PF.FOI-MAL-047","l":"Oblitération fibreuse des voies biliaires extra-hépatiques"}]},{"t":"5.4 Cholestase","termes":[{"id":"FOETO:PF.FOI-MAL-003","l":"Bouchons biliaires ductulaires (bile plugs)"},{"id":"FOETO:PF.FOI-MAL-010","l":"Cholestase canaliculaire"},{"id":"FOETO:PF.FOI-MET-001","l":"Cholestase hépatocytaire"},{"id":"FOETO:PF.FOI-MAL-011","l":"Cholestase pseudoglandulaire (rosettoïde)"}]},{"t":"5.5 Surcharge en fer — et le critère extra-hépatique","termes":[{"id":"FOETO:PF.FOI-MAL-014","l":"Dépôts de fer extra-hépatiques parenchymateux (hémochromatose néonatale)"},{"id":"FOETO:PF.FOI-MET-003","l":"Hémosidérose hépatique périveinulaire"},{"id":"FOETO:PF.FOI-MAL-051","l":"Sidérose hépatocytaire (sans prédominance parenchymateuse)"},{"id":"FOETO:PF.FOI-MAL-054","l":"Surcharge en fer parenchymateuse (pattern hémochromatosique)"}]},{"t":"5.6 Hématopoïèse extra-médullaire — physiologique vs réactive","termes":[{"id":"FOETO:PF.FOI-MET-002","l":"Hématopoïèse extramédullaire hépatique augmentée"}]},{"t":"5.7 Nécrose hépatique","termes":[{"id":"FOETO:PF.FOI-MAL-027","l":"Foyers de nécrose hépatique focale"}]},{"t":"5.8 Infection à CMV et autres infections","termes":[{"id":"FOETO:PF.FOI-MAL-004","l":"Calcifications dystrophiques intra-hépatiques"},{"id":"FOETO:PF.FOI-MAL-009","l":"Cellules cytomégaliques dans les canaux biliaires"},{"id":"FOETO:PF.FOI-MAL-017","l":"Endothéliite hépatique"},{"id":"FOETO:PF.FOI-INF-001","l":"Hémophagocytose sinusoïdale hépatique"},{"id":"FOETO:PF.FOI-MAL-031","l":"Hépatocytes d'allure oncocytaire"},{"id":"FOETO:PF.FOI-MAL-032","l":"Hépatocytes oncocytaires"},{"id":"FOETO:PF.FOI-MAL-036","l":"Inclusions intrahépatocytaires virales"},{"id":"FOETO:PF.FOI-MAL-037","l":"Inflammation portale"}]},{"t":"5.9 Surcharges métaboliques — et ce qui exige du congelé ou de la ME","termes":[{"id":"FOETO:PF.FOI-MAL-002","l":"Ballooning hépatocytaire"},{"id":"FOETO:PF.FOI-MAL-034","l":"Inclusions en verre dépoli hépatocytaires (corps polyglucosaniques)"},{"id":"FOETO:PF.FOI-MAL-035","l":"Inclusions hépatocytaires DPAS positives (globules)"},{"id":"FOETO:PF.FOI-MAL-041","l":"Matériel amylopectine-like intrahépatocytaire (GSD type IV)"},{"id":"FOETO:PF.FOI-MET-005","l":"Surcharge en cholestérol hépatique"}]}],"formes":{"FOETO:PF.FOI-MAL-001":["Abcès hépatique","Hepatic abscess","(hors fiche)"],"FOETO:PF.FOI-MAL-005":["Calcifications hépatiques","Hepatic calcifications","(hors fiche)"],"FOETO:PF.FOI-MAL-013":["Collapsus parenchymateux (collapse)","Parenchymal collapse","(hors fiche)"],"FOETO:PF.FOI-MAL-015":["Désorganisation (disarray) lobulaire","Lobular disarray","(hors fiche)"],"FOETO:PF.FOI-NOR-002":["Foie normal","Foie normal","(hors fiche)"],"FOETO:PF.FOI-MAL-029":["Hyperplasie des îlots de Langerhans pancréatiques","Pancreatic islet hyperplasia","(hors fiche)"],"FOETO:PF.FOI-MET-004":["Hépatite chronique avec fibrose","Chronic hepatitis with fibrosis","(hors fiche)"],"FOETO:PF.FOI-MAL-040":["Macrophages chargés de débris (macrophages DPAS+)","Debris-laden macrophages (DPAS-positive)","(hors fiche)"],"FOETO:PF.FOI-MAL-042":["Microvésiculation hépatocytaire DPAS positive (maladie de Wolman)","DPAS-positive hepatocyte microvesiculation (Wolman disease)","(hors fiche)"],"FOETO:PF.FOI-RET-003":["Myélopoïèse hépatique excessive","Excessive hepatic myelopoiesis","(hors fiche)"],"FOETO:PF.FOI-MAL-043":["Mégacaryocytes hépatiques en excès","Excess hepatic megakaryocytes","(hors fiche)"],"FOETO:PF.FOI-MAL-044":["Nodules de régénération hépatique","Hepatic regenerative nodules","(hors fiche)"],"FOETO:PF.FOI-MAL-045":["Nécrose hépatique périveineuse hémorragique","Hemorrhagic perivenular hepatic necrosis","(hors fiche)"],"FOETO:PF.FOI-MAL-046":["Nécrose hépatique submassive","Submassive hepatic necrosis","(hors fiche)"],"FOETO:PF.FOI-MAL-048":["Plaque ductale — aspect embryonnaire persistant","Persistent embryonic ductal plate","(hors fiche)"],"FOETO:PF.FOI-MAL-049":["Réaction ductulaire marginale portale","Marginal portal ductular reaction","(hors fiche)"],"FOETO:PF.FOI-MAL-052":["Stéatose hépatique périportale","Periportal hepatic steatosis","(hors fiche)"],"FOETO:PF.FOI-MAL-053":["Stéatose microvésiculaire hépatique","Microvesicular hepatic steatosis","(hors fiche)"],"FOETO:PF.FOI-MAL-055":["Thrombi fibrineux intravasculaires hépatiques","Intravascular fibrin thrombi (hepatic)","(hors fiche)"],"FOETO:PF.FOI-MAL-057":["Transformation géantocellulaire des hépatocytes","Giant cell transformation of hepatocytes","(hors fiche)"],"FOETO:PF.FOI-MAL-058":["Œdème portal","Portal edema","(hors fiche)"],"FOETO:PF.FOI-MAL-006":["Canaux biliaires dilatés et anastomosés dans les espaces portes","Dilated and anastomosing bile ducts in portal tracts"],"FOETO:PF.FOI-MAL-018":["Fibrose hépatique congénitale","Congenital hepatic fibrosis"],"FOETO:PF.FOI-MAL-012":["Cirrhose (architecture pseudo-nodulaire)","Cirrhosis (pseudonodular architecture)"],"FOETO:PF.FOI-MAL-019":["Fibrose lobulaire disséquante","Dissecting lobular fibrosis"],"FOETO:PF.FOI-MAL-020":["Fibrose portale avec prolifération ductulaire extensive","Portal fibrosis with extensive ductal proliferation"],"FOETO:PF.FOI-MAL-021":["Fibrose porto-portale (fibrose en pont)","Bridging porto-portal fibrosis"],"FOETO:PF.FOI-MAL-022":["Fibrose péri-ductale en manchon","Periductal sleeve-like fibrosis"],"FOETO:PF.FOI-MAL-023":["Fibrose péricellulaire (maladies de surcharge)","Pericellular fibrosis (storage diseases)"],"FOETO:PF.FOI-MAL-024":["Fibrose périsinusoïdale","Perisinusoidal fibrosis"],"FOETO:PF.FOI-MAL-025":["Fibrose périveineuse (centrolobulaire)","Perivenular (centrilobular) fibrosis"],"FOETO:PF.FOI-MAL-008":["Cavernome portal","Portal cavernoma (cavernous transformation)"],"FOETO:PF.FOI-MAL-030":["Hématome sous-capsulaire hépatique","Hepatic subcapsular hematoma"],"FOETO:PF.FOI-MAL-050":["Shunt porto-systémique congénital (malformation d'Abernethy)","Congenital portosystemic shunt (Abernethy malformation)"],"FOETO:PF.FOI-MAL-007":["Cartilage hyalin périductal","Periductal hyaline cartilage"],"FOETO:PF.FOI-MAL-016":["Ectasie ductale (maladie de Caroli)","Bile duct ectasia (Caroli disease)"],"FOETO:PF.FOI-MAL-026":["Foie ectopique","Ectopic liver"],"FOETO:PF.FOI-MAL-028":["Granulomes hépatiques caséeux","Caseous hepatic granulomas"],"FOETO:PF.FOI-MAL-033":["Hétérotopie tissulaire intra-hépatique","Intrahepatic tissue heterotopia"],"FOETO:PF.FOI-MAL-038":["Kyste cholédoque (paroi fibreuse avec épithélium biliaire partiel)","Choledochal cyst (fibrous wall with partial biliary epithelium)"],"FOETO:PF.FOI-MAL-039":["Kyste hépatique cilié d'origine foregut","Ciliated hepatic foregut cyst"],"FOETO:PF.FOI-MAL-056":["Tissu pancréatique ectopique périductal","Periductal ectopic pancreatic tissue"],"FOETO:PF.FOI-DYS-001":["Paucité des canaux biliaires interlobulaires","Paucity of intrahepatic bile ducts"],"FOETO:PF.FOI-MAL-047":["Oblitération fibreuse des voies biliaires extra-hépatiques","Fibrous obliteration of extrahepatic bile ducts"],"FOETO:PF.FOI-MAL-003":["Bouchons biliaires ductulaires (bile plugs)","Ductular bile plugs"],"FOETO:PF.FOI-MAL-010":["Cholestase canaliculaire","Canalicular cholestasis"],"FOETO:PF.FOI-MET-001":["Cholestase hépatocytaire","Hepatocellular cholestasis"],"FOETO:PF.FOI-MAL-011":["Cholestase pseudoglandulaire (rosettoïde)","Pseudoglandular cholestasis (rosette pattern)"],"FOETO:PF.FOI-MAL-014":["Dépôts de fer extra-hépatiques parenchymateux (hémochromatose néonatale)","Extrahepatic parenchymal iron deposits (neonatal hemochromatosis)"],"FOETO:PF.FOI-MET-003":["Hémosidérose hépatique périveinulaire","Perivenular hepatic hemosiderosis"],"FOETO:PF.FOI-MAL-051":["Sidérose hépatocytaire (sans prédominance parenchymateuse)","Hepatocyte siderosis (non-dominant pattern)"],"FOETO:PF.FOI-MAL-054":["Surcharge en fer parenchymateuse (pattern hémochromatosique)","Parenchymal iron overload (hemochromatotic pattern)"],"FOETO:PF.FOI-MET-002":["Hématopoïèse extramédullaire hépatique augmentée","Increased hepatic extramedullary hematopoiesis"],"FOETO:PF.FOI-MAL-027":["Foyers de nécrose hépatique focale","Focal hepatic necrosis"],"FOETO:PF.FOI-MAL-004":["Calcifications dystrophiques intra-hépatiques","Intrahepatic dystrophic calcifications"],"FOETO:PF.FOI-MAL-009":["Cellules cytomégaliques dans les canaux biliaires","Cytomegalic cells in bile ducts"],"FOETO:PF.FOI-MAL-017":["Endothéliite hépatique","Hepatic endotheliitis"],"FOETO:PF.FOI-INF-001":["Hémophagocytose sinusoïdale hépatique","Sinusoidal hepatic hemophagocytosis"],"FOETO:PF.FOI-MAL-031":["Hépatocytes d'allure oncocytaire","Oncocytic-appearing hepatocytes"],"FOETO:PF.FOI-MAL-032":["Hépatocytes oncocytaires","Oncocytic hepatocytes"],"FOETO:PF.FOI-MAL-036":["Inclusions intrahépatocytaires virales","Intrahepatic viral inclusions"],"FOETO:PF.FOI-MAL-037":["Inflammation portale","Portal inflammation"],"FOETO:PF.FOI-MAL-002":["Ballooning hépatocytaire","Hepatocyte ballooning"],"FOETO:PF.FOI-MAL-034":["Inclusions en verre dépoli hépatocytaires (corps polyglucosaniques)","Ground glass hepatocyte inclusions (polyglucosan bodies)"],"FOETO:PF.FOI-MAL-035":["Inclusions hépatocytaires DPAS positives (globules)","DPAS-positive hepatocyte inclusions (globules)"],"FOETO:PF.FOI-MAL-041":["Matériel amylopectine-like intrahépatocytaire (GSD type IV)","Amylopectin-like intrahepatic material (GSD type IV)"],"FOETO:PF.FOI-MET-005":["Surcharge en cholestérol hépatique","Hepatic cholesterol overload"]}};
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+
+var DB_NAME = "foeto-" + MODULE, DB_VER = 1, db = null;
+
+/* Organe pair : le côté fait partie de la donnée, pas du commentaire. Un rein
+   lu sans son côté n'est pas rattachable à l'imagerie ni à l'autre rein. */
+var COTES = [{ k:"droit", l:"Droit — 1/2" }, { k:"gauche", l:"Gauche — 1/2" },
+             { k:"deux", l:"Les deux — 2/2" }];
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function normDossier(v){ return v.toUpperCase().replace(/\s+/g, ""); }
+function dossierOk(v){ return /^\d{2}P\d+$/.test(v); }
+function num(id){ var e = $(id); if (!e) return null; var v = parseFloat(e.value); return isFinite(v) ? v : null; }
+function par(liste, k){ return liste.filter(function(x){ return x.k === k; })[0] || null; }
+function champs(){ return MESURE ? MESURE.champs : []; }
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", E = null;
+function neuf(){
+  var e = { cote:null, prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
+            negatifs:{}, techniques:{}, foeto:{}, mesure:{ def:null, opt:null, v:{} }, libre:"" };
+  champs().forEach(function(c){ e.mesure.v[c.id] = null; });
+  return e;
+}
+
+/* Le stade attendu au terme saisi. Bornes reconstruites depuis la prose des
+   sources : ce sont des repères, pas des seuils. */
+function stadeAttendu(sa){
+  if (sa == null || !isFinite(sa)) return null;
+  for (var i = 0; i < STADES.length; i++) if (sa < STADES[i].max) return STADES[i];
+  return STADES[STADES.length - 1];
+}
+function bornesTxt(s){
+  var i = STADES.indexOf(s), min = i ? STADES[i-1].max : 0;
+  return s.max === 99 ? "≳ " + min + " SA" : min + "–" + s.max + " SA";
+}
+
+/* ── Construction du DOM — une seule fois, le clic ne fait que repeindre ──── */
+function chip(act, k, l, sous){
+  return '<button type="button" class="chip" data-act="' + act + '" data-k="' + esc(k) + '">' +
+         (sous ? '<span class="k">' + esc(sous) + '</span>' : '') + esc(l) + '</button>';
+}
+function batir(){
+  if (PAIR){
+    $("coteBloc").hidden = false;
+    $("cote").innerHTML = COTES.map(function(c){ return chip("cote", c.k, c.l); }).join("");
+  }
+  $("prelevement").innerHTML = PRELEV.map(function(p){ return chip("prelev", p.k, p.l); }).join("");
+
+  $("retention").innerHTML = RETENTION.map(function(r){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(r.l) +
+      '<span class="meta ' + r.q + '">' + esc(r.b) + " · " + esc(r.d) +
+      " · prédicteur " + r.q + '</span></div>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="present">Présent</button>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="absent">Absent</button>' +
+      '</div></div>';
+  }).join("");
+  $("kcl").innerHTML = chip("kcl", "kcl", "Fœticide par KCl", "geste à déclarer avant toute datation");
+
+  $("stTitre").textContent = STADE_TITRE;
+  $("stades").innerHTML = STADES.map(function(s){ return chip("stade", s.k, s.l); }).join("");
+
+  if (MESURE){
+    var h = '<div class="sousTitre">' + esc(MESURE.titre) + '</div>';
+    h += '<div class="chips" id="mesDefs">' +
+         MESURE.defs.map(function(d){ return chip("mdef", d.k, d.l, MESURE.defLabel); }).join("") + '</div>';
+    if (MESURE.opts && MESURE.opts.length)
+      h += '<div class="chips" id="mesOpts" style="margin-top:6px">' +
+           MESURE.opts.map(function(o){ return chip("mopt", o.k, o.l, MESURE.optLabel); }).join("") + '</div>';
+    h += '<div class="row" style="margin-top:9px">' + MESURE.champs.map(function(c){
+      return '<div class="field"><label for="m_' + c.id + '">' + esc(c.label) + '</label>' +
+             '<input type="number" id="m_' + c.id + '" min="' + c.min + '" max="' + c.max +
+             '" step="' + c.step + '" inputmode="decimal" placeholder="—"></div>';
+    }).join("") + '</div>';
+    $("mesure").innerHTML = h;
+    $("vMesure").hidden = false;
+    $("vMesure").querySelector("b").textContent = MESURE.titre;
+  }
+
+  $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
+
+  $("signes").innerHTML = SIGNES.map(function(x){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+      (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
+      '</div>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="normal">Normal</button>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="anormal">Anormal</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("foeto").innerHTML = FOETO.sections.map(function(s){
+    return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
+           s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
+  }).join("") || '<p class="note">Aucun terme FOETO rattaché à cette fiche.</p>';
+  if (FOETO.sections.length){
+    $("foetoPlus").hidden = false; $("foetoRech").hidden = false;
+    $("foetoPlus").textContent = "▸ tous les termes attestés (" + nbFoeto() + ")";
+  }
+
+  $("negatifs").innerHTML = NEGATIFS.map(function(n){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(n.l) +
+      '<span class="meta">' + esc(n.p) + '</span></div>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="absent">Vérifié</button>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="present">EN DÉFAUT</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("techNote").textContent = TECH_NOTE;
+  $("techniques").innerHTML = TECHNIQUES.map(function(t){ return chip("tech", t.k, t.l, t.q); }).join("");
+}
+
+function nbFoeto(){ return FOETO.sections.reduce(function(a, s){ return a + s.termes.length; }, 0); }
+function foetoLabel(id){
+  var l = null;
+  FOETO.sections.forEach(function(s){ s.termes.forEach(function(t){ if (t.id === id) l = t.l; }); });
+  return l || (FOETO.formes[id] || [id])[0];
+}
+/* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
+function foetoAjouter(id){
+  if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
+    var box = $("foeto").querySelector(".chips");
+    if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
+    box.insertAdjacentHTML("beforeend", chip("foeto", id, foetoLabel(id)));
+  }
+  E.foeto[id] = true;
+  peindre(); enregistrer();
+}
+function rechercherFoeto(q){
+  var sg = $("sgFoeto");
+  q = q.trim().toLowerCase();
+  if (q.length < 3){ sg.classList.remove("on"); return; }
+  var hits = [];
+  Object.keys(FOETO.formes).some(function(id){
+    var f = FOETO.formes[id].filter(function(x){ return x.toLowerCase().indexOf(q) >= 0; })[0];
+    if (f) hits.push({ id:id, l:foetoLabel(id), f:f, hf:FOETO.formes[id].indexOf("(hors fiche)") >= 0 });
+    return hits.length >= 10;
+  });
+  sg.innerHTML = hits.length ? hits.map(function(x){
+    return '<div data-pick="' + esc(x.id) + '">' + esc(x.l) +
+           (x.f !== x.l ? ' <small>— ' + esc(x.f) + '</small>' : '') + (x.hf ? ' <small>(hors fiche)</small>' : '') + '</div>';
+  }).join("") : '<div><small>aucun terme</small></div>';
+  sg.classList.add("on");
+}
+
+/* ── Associations ─────────────────────────────────────────────────────────────
+   Un diagnostic ne se coche pas : il se lit dans l'association des signes. Les
+   faisceaux incomplets sont affichés aussi — 2 signes sur 4 se dit, et dire
+   combien manquent est le seul moyen de distinguer « non trouvé » de « non
+   regardé ». */
+function seuil(d){ return d.min || d.signes.length; }
+function associations(){
+  return DIAGS.map(function(d){
+    var pris  = d.signes.filter(function(k){ return E.signes[k] === "anormal"; });
+    var muets = d.signes.filter(function(k){ return !E.signes[k]; });
+    /* Un signe pivot ne se remplace pas par le nombre : sans lui, le compte peut
+       être atteint sans que l'association tienne. */
+    var pivot = !d.cle || E.signes[d.cle] === "anormal";
+    return { d:d, pris:pris, muets:muets, pivot:pivot,
+             tenu: pivot && pris.length >= seuil(d) };
+  }).filter(function(a){ return a.pris.length; })
+    .sort(function(a, b){ return (b.tenu - a.tenu) || (b.pris.length - a.pris.length); });
+}
+function nomSigne(k){ var s = par(SIGNES, k); return s ? s.l : k; }
+
+/* ── Verdicts communs ─────────────────────────────────────────────────────── */
+function verdictPrelevement(){
+  var n = Object.keys(E.prelev).length, res = [], grave = false;
+  PRELEV.forEach(function(p){
+    if (p.manque && !E.prelev[p.k]){ res.push(p.manque); if (p.grave) grave = true; }
+  });
+  if (PAIR && !E.cote) res.push("côté non déclaré — organe pair");
+  return { n:n, res:res,
+    cls: res.length ? (grave ? "bad" : "warn") : (n === PRELEV.length ? "ok" : ""),
+    txt: n === 0 ? "—"
+       : (n + "/" + PRELEV.length + " item(s) confirmé(s)" +
+          (PAIR && E.cote ? ", " + par(COTES, E.cote).l.toLowerCase().split(" —")[0] : "") + ".") +
+         (res.length ? " Réserves : " + res.join(" ; ") + "." : " Prélèvement complet.") };
+}
+function verdictRetention(){
+  if (E.kcl) return { cls:"bad", borne:null, txt:KCL_TXT };
+  var pres = RETENTION.filter(function(r){ return E.retention[r.k] === "present"; });
+  if (!pres.length) return { cls:"", borne:null,
+    txt: Object.keys(E.retention).length ? "Aucun critère de rétention positif." : "—" };
+  var notes = [];
+  pres.forEach(function(r){ if (r.note) notes.push(r.note); });
+  var bons = pres.filter(function(r){ return r.q !== "mauvais"; });
+  if (!bons.length) return { cls:"warn", borne:null,
+    txt:"Seuls des prédicteurs MAUVAIS sont positifs — aucune borne recevable. " + notes.join(" ; ") + "." };
+  var top = bons.reduce(function(a, b){ return b.h > a.h ? b : a; });
+  if (top.alerte) notes.push(top.alerte);
+  return { cls:"ok", borne:top,
+    txt:"Rétention " + top.b + " — critère : " + top.l.toLowerCase() + " (" + top.d + ")." +
+        (notes.length ? " Réserves : " + notes.join(" ; ") + "." : "") };
+}
+function verdictMaturation(){
+  var sa = num("sa"), att = stadeAttendu(sa), obs = E.stade ? par(STADES, E.stade) : null;
+  if (!obs) return { cls:"", att:att, txt: att
+    ? "Stade attendu à " + sa + " SA : " + att.l.toLowerCase() + ". Confirmer ou choisir."
+    : "Saisir le terme pour afficher le stade attendu." };
+  if (!att) return { cls:"warn", att:null,
+    txt:"Stade " + obs.l.toLowerCase() + " — sans terme, aucune discordance n'est calculable." };
+  var io = STADES.indexOf(obs), ia = STADES.indexOf(att), t, cls;
+  if (io === ia){ cls = "ok"; t = "Maturation conforme au terme : " + obs.l.toLowerCase() + " à " + sa + " SA."; }
+  else if (io < ia){ cls = "warn";
+    t = "Retard de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (RETARD_NOTE ? " " + RETARD_NOTE : ""); }
+  else { cls = "warn";
+    t = "Avance de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (AVANCE_NOTE ? " " + AVANCE_NOTE : ""); }
+  if (obs.note) t += " (" + obs.note + ")";
+  return { cls:cls, att:att, txt:t };
+}
+
+/* ── Peinture ─────────────────────────────────────────────────────────────── */
+function classe(act, v){
+  if (act === "neg") return v === "present" ? "no" : "on";
+  if (act === "les") return v === "anormal" ? "no" : "on";
+  return "on";
+}
+function poser(id, v){
+  var e = $(id), t = e.querySelector("b").textContent;
+  e.className = "verdict" + (v.cls ? " " + v.cls : "");
+  e.innerHTML = "<b>" + esc(t) + "</b>" + esc(v.txt);
+}
+function tally(id, n, sur){ $(id).textContent = n ? n + "/" + sur : "—"; }
+
+function peindreDiags(){
+  var A = associations();
+  if (!A.length){
+    $("diags").innerHTML = '<p class="note" style="margin:0">Aucun signe anormal coché : rien à associer.</p>';
+    return;
+  }
+  $("diags").innerHTML = A.map(function(a){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(a.d.l) +
+      '<span class="meta">' + a.pris.length + "/" + a.d.signes.length + " signe(s), seuil " + seuil(a.d) +
+      (a.muets.length ? " · " + a.muets.length + " non regardé(s)" : "") + '</span></div>' +
+      '<span class="chip ' + (a.tenu ? "on" : "") + '" style="cursor:default">' +
+      (a.tenu ? "association tenue" : "faisceau incomplet") + '</span></div>' +
+      '<div class="unfold">' +
+      '<div class="note" style="margin:0">' +
+      (a.pivot ? "" : "Signe pivot non coché : " + esc(nomSigne(a.d.cle)) + ".<br>") +
+      esc(a.pris.map(nomSigne).join(" · ")) +
+      (a.muets.length ? "<br>Non regardés : " + esc(a.muets.map(nomSigne).join(" · ")) + "." : "") +
+      '</div>' +
+      '<div class="stop"><b>Ce qu\'il ne faut pas conclure</b>' + esc(a.d.stop) + '</div></div></div>';
+  }).join("");
+}
+
+function peindre(){
+  if (PAIR) document.querySelectorAll("#cote .chip").forEach(function(b){
+    b.className = "chip" + (E.cote === b.dataset.k ? " on" : "");
+  });
+  document.querySelectorAll("#prelevement .chip").forEach(function(b){
+    b.className = "chip" + (E.prelev[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#retention .chip").forEach(function(b){
+    b.className = "chip" + (E.retention[b.dataset.k] === b.dataset.v ? " on" : "");
+  });
+  $("kcl").firstChild.className = "chip" + (E.kcl ? " no" : "");
+  document.querySelectorAll("#stades .chip").forEach(function(b){
+    var att = stadeAttendu(num("sa"));
+    b.className = "chip" + (E.stade === b.dataset.k ? " on"
+                          : (att && att.k === b.dataset.k ? " sugg" : ""));
+  });
+  if (MESURE){
+    document.querySelectorAll("#mesDefs .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.def === b.dataset.k ? " on" : "");
+    });
+    if ($("mesOpts")) document.querySelectorAll("#mesOpts .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.opt === b.dataset.k ? " on" : "");
+    });
+  }
+  document.querySelectorAll("#variantes .chip").forEach(function(b){
+    b.className = "chip" + (E.variantes[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#signes .chip").forEach(function(b){
+    b.className = "chip" + (E.signes[b.dataset.k] === b.dataset.v
+                            ? " " + classe("les", b.dataset.v) : "");
+  });
+  peindreDiags();
+  document.querySelectorAll('[data-act="foeto"]').forEach(function(b){
+    b.className = "chip" + (E.foeto[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#negatifs .chip").forEach(function(b){
+    b.className = "chip" + (E.negatifs[b.dataset.k] === b.dataset.v
+                            ? " " + classe("neg", b.dataset.v) : "");
+  });
+  var sug = suggerer();
+  document.querySelectorAll("#techniques .chip").forEach(function(b){
+    b.className = "chip" + (E.techniques[b.dataset.k] ? " on" : (sug[b.dataset.k] ? " sugg" : ""));
+  });
+
+  tally("tPrelevement", Object.keys(E.prelev).length, PRELEV.length);
+  tally("tRetention",   Object.keys(E.retention).length, RETENTION.length);
+  tally("tMaturation",  (E.stade ? 1 : 0) + (MESURE && E.mesure.def ? 1 : 0), MESURE ? 2 : 1);
+  tally("tVariantes",   Object.keys(E.variantes).length, VARIANTES.length);
+  tally("tSignes",     Object.keys(E.signes).length, SIGNES.length);
+  tally("tFoeto",       Object.keys(E.foeto).length, nbFoeto());
+  tally("tNegatifs",    Object.keys(E.negatifs).length, NEGATIFS.length);
+  tally("tTechniques",  Object.keys(E.techniques).length, TECHNIQUES.length);
+
+  poser("vPrelevement", verdictPrelevement());
+  poser("vRetention",   verdictRetention());
+  poser("vMaturation",  verdictMaturation());
+  if (MESURE) poser("vMesure", verdictMesure());
+
+  var cr = composer();
+  $("cr").textContent = cr;
+  $("tCR").textContent = cr.split("\n").length + " lignes";
+}
+
+/* ── Compte rendu — la sortie du module, écrite par les clics ─────────────── */
+function composer(){
+  var sa = num("sa"), L = [];
+  L.push(TITRE_CR + " — grille de lecture");
+  L.push((dossier || "dossier —") + " · " + (sa != null ? sa + " SA" : "terme —") +
+         " · " + ($("operateur").value.trim() || "lecteur —") +
+         (PAIR ? " · " + (E.cote ? par(COTES, E.cote).l : "côté non déclaré") : ""));
+  L.push("");
+
+  L.push("PRÉLÈVEMENT");
+  L.push("  " + verdictPrelevement().txt);
+
+  L.push("");
+  L.push("RÉTENTION");
+  L.push("  " + verdictRetention().txt);
+
+  L.push("");
+  L.push("MATURATION");
+  L.push("  " + verdictMaturation().txt);
+  if (MESURE) L.push("  " + verdictMesure().txt);
+
+  var vus = VARIANTES.filter(function(v){ return E.variantes[v.k]; });
+  if (vus.length){
+    L.push("");
+    L.push("VARIANTES NORMALES VUES ET ÉCARTÉES");
+    L.push("  " + vus.map(function(v){ return v.l.toLowerCase(); }).join(" · "));
+  }
+
+  var anormales = SIGNES.filter(function(x){ return E.signes[x.k] === "anormal"; });
+  var normales  = SIGNES.filter(function(x){ return E.signes[x.k] === "normal"; });
+  L.push("");
+  L.push("SIGNES");
+  if (!anormales.length && !normales.length) L.push("  aucun axe exploré.");
+  anormales.forEach(function(x){ L.push("  " + x.l + " — ANORMAL"); });
+  if (normales.length)
+    L.push("  Normaux : " + normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  var muets = SIGNES.filter(function(x){ return !E.signes[x.k]; });
+  if (muets.length)
+    L.push("  Non explorés : " + muets.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+
+  var fo = Object.keys(E.foeto);
+  if (fo.length){
+    L.push("");
+    L.push("TERMES FOETO");
+    fo.forEach(function(id){ L.push("  " + foetoLabel(id) + " [" + id + "]"); });
+  }
+
+  var A = associations();
+  L.push("");
+  L.push("ASSOCIATIONS LUES");
+  if (!A.length) L.push("  aucune : les signes cochés ne dessinent aucune association.");
+  A.forEach(function(a){
+    L.push("  " + a.d.l + " — " + (a.tenu ? "association tenue" : "faisceau incomplet") +
+           " (" + a.pris.length + "/" + a.d.signes.length + ", seuil " + seuil(a.d) + ")");
+    L.push("      · " + a.pris.map(nomSigne).join(" · "));
+    if (!a.pivot) L.push("      · signe pivot non coché : " + nomSigne(a.d.cle));
+    if (a.muets.length) L.push("      · non regardés : " + a.muets.map(nomSigne).join(" · "));
+    L.push("      · ne pas conclure : " + a.d.stop);
+  });
+
+  L.push("");
+  L.push("NÉGATIFS OBLIGATOIRES");
+  NEGATIFS.forEach(function(n){
+    var v = E.negatifs[n.k];
+    L.push("  " + (v === "absent" ? "· " + n.l
+                 : v === "present" ? "! " + n.ko
+                 : "? " + n.l + " — non vérifié"));
+  });
+
+  var t = TECHNIQUES.filter(function(x){ return E.techniques[x.k]; });
+  if (t.length){
+    L.push("");
+    L.push("TECHNIQUES DEMANDÉES");
+    t.forEach(function(x){ L.push("  · " + x.l + " — " + x.q); });
+  }
+
+  if (E.libre.trim()){
+    L.push("");
+    L.push("REMARQUE");
+    E.libre.trim().split("\n").forEach(function(x){ L.push("  " + x); });
+  }
+
+  L.push("");
+  L.push("— La micro décrit ; la conclusion nomme. Grille v" + VERSION + " issue de " + SOURCE + ".");
+  return L.join("\n");
+}
+
+/* ── Clics ────────────────────────────────────────────────────────────────── */
+document.addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest("button[data-act]") : null;
+  if (!b || b.closest("section.off")) return;
+  var k = b.dataset.k, v = b.dataset.v, a = b.dataset.act;
+  if (a === "cote"){ E.cote = E.cote === k ? null : k; }
+  else if (a === "prelev"){ if (E.prelev[k]) delete E.prelev[k]; else E.prelev[k] = true; }
+  else if (a === "ret"){ if (E.retention[k] === v) delete E.retention[k]; else E.retention[k] = v; }
+  else if (a === "kcl"){ E.kcl = !E.kcl; }
+  else if (a === "stade"){ E.stade = E.stade === k ? null : k; }
+  else if (a === "mdef"){ E.mesure.def = E.mesure.def === k ? null : k; }
+  else if (a === "mopt"){ E.mesure.opt = E.mesure.opt === k ? null : k; }
+  else if (a === "var"){ if (E.variantes[k]) delete E.variantes[k]; else E.variantes[k] = true; }
+  else if (a === "les"){ if (E.signes[k] === v) delete E.signes[k]; else E.signes[k] = v; }
+  else if (a === "neg"){ if (E.negatifs[k] === v) delete E.negatifs[k]; else E.negatifs[k] = v; }
+  else if (a === "tech"){ if (E.techniques[k]) delete E.techniques[k]; else E.techniques[k] = true; }
+  else if (a === "foeto"){ if (E.foeto[k]) delete E.foeto[k]; else E.foeto[k] = true; }
+  else return;
+  peindre(); enregistrer();
+});
+document.addEventListener("click", function(ev){
+  var t = ev.target.closest ? ev.target.closest("[data-pick]") : null;
+  if (t){ foetoAjouter(t.dataset.pick); $("rqFoeto").value = ""; $("sgFoeto").classList.remove("on"); }
+});
+$("foetoPlus").onclick = function(){
+  var box = $("foetoTous");
+  if (!box.children.length) box.innerHTML = FOETO.sections.map(function(s){
+    return s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("");
+  }).join("");
+  box.hidden = !box.hidden; peindre();
+};
+$("rqFoeto").addEventListener("input", function(){ rechercherFoeto(this.value); });
+$("btnNegAll").onclick = function(){
+  NEGATIFS.forEach(function(n){ if (!E.negatifs[n.k]) E.negatifs[n.k] = "absent"; });
+  peindre(); enregistrer();
+};
+$("btnCopie").onclick = function(){
+  var t = composer();
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(t).then(function(){ flash("Compte rendu copié."); },
+                                          function(){ flash("Copie refusée par le navigateur."); });
+  else flash("Presse-papiers indisponible en file://.");
+};
+document.addEventListener("input", function(e){
+  var id = e.target.id;
+  if (id.indexOf("m_") === 0) E.mesure.v[id.slice(2)] = num(id);
+  else if (id === "libre") E.libre = e.target.value;
+  else if (id === "sa") majSa();
+  else return;
+  peindre(); enregistrer();
+});
+function majSa(){
+  var sa = num("sa"), att = stadeAttendu(sa), h = $("saHint");
+  h.className = "hint" + (att ? " good" : "");
+  h.textContent = att ? "Stade attendu : " + att.l.toLowerCase() + " (" + bornesTxt(att) + ")."
+                      : "SA = semaines de gestation + 2. Commande le stade attendu.";
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────────
+   localStorage est erratique en file:// et cloisonné par fichier sur certains
+   navigateurs : la saisie va en IndexedDB, y compris les champs texte.       */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction("saisies", mode), out = fn(t.objectStore("saisies"));
+    t.oncomplete = function(){ res(out && out.result !== undefined ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("readonly",  function(s){ return s.get(d); }); }
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  ["secPrelevement","secRetention","secMaturation","secVariantes","secSignes","secFoeto",
+   "secNegatifs","secTechniques","secCR","secSortie"].forEach(function(id){
+    $(id).classList.toggle("off", !ouvert);
+  });
+}
+
+/* ── Collecte / restitution ───────────────────────────────────────────────── */
+function collecter(){
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    organe: ORGANE,
+    source: SOURCE,
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    terme_sa: num("sa"),
+    grille: JSON.parse(JSON.stringify(E)),
+    compte_rendu: composer()
+  };
+}
+function appliquer(o){
+  var g = o.grille || {};
+  E = neuf();
+  ["prelev","retention","variantes","signes","negatifs","techniques","foeto"].forEach(function(c){
+    if (g[c]) E[c] = g[c];
+  });
+  Object.keys(E.foeto).forEach(function(id){
+    if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')) foetoAjouter(id);
+  });
+  E.kcl = !!g.kcl; E.stade = g.stade || null; E.cote = g.cote || null;
+  if (g.mesure){
+    E.mesure.def = g.mesure.def || null;
+    E.mesure.opt = g.mesure.opt || null;
+    champs().forEach(function(c){
+      E.mesure.v[c.id] = (g.mesure.v && g.mesure.v[c.id] != null) ? g.mesure.v[c.id] : null;
+    });
+  }
+  E.libre = g.libre || "";
+  $("sa").value = o.terme_sa != null ? o.terme_sa : "";
+  champs().forEach(function(c){ $("m_" + c.id).value = E.mesure.v[c.id] != null ? E.mesure.v[c.id] : ""; });
+  $("libre").value = E.libre;
+  majSa(); peindre();
+}
+function vider(){
+  E = neuf();
+  ["sa","libre"].forEach(function(id){ $(id).value = ""; });
+  champs().forEach(function(c){ $("m_" + c.id).value = ""; });
+  majSa(); peindre();
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, ok1 = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = ok1 && op, h = $("dossierHint");
+  h.className = "hint" + (v && !ok1 ? " bad" : ok1 ? " good" : "");
+  h.textContent = !v ? "Deux chiffres, P, puis le numéro. Conditionne l'enregistrement."
+                : ok1 ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                      : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la grille.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json."
+    : ok1 ? "Saisir le lecteur pour activer l'export."
+          : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){
+    dossier = v;
+    vider();
+    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    if (rec){ appliquer(rec); flash("Grille du " + dossier + " restituée."); }
+  } else if (!ok && dossier){
+    dossier = ""; vider();
+  }
+  peindre();
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+$("btnExport").onclick = function(){
+  if (!dossierOk(dossier)) return;
+  var out = collecter();
+  telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+              dossier + "_" + MODULE + ".json");
+  var n = NEGATIFS.filter(function(x){ return E.negatifs[x.k]; }).length;
+  flash("Grille exportée." + (n < NEGATIFS.length ? " ⚠ " + (NEGATIFS.length - n) + " négatif(s) non vérifié(s)." : ""));
+};
+function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.grille) throw new Error("aucune clé « grille »");
+  if (o.dossier) $("dossier").value = normDossier(o.dossier);
+  if (o.operateur) $("operateur").value = o.operateur;
+  return majDossier().then(function(){
+    if (!dossier) throw new Error("numéro de dossier absent ou lecteur manquant");
+    appliquer(o); enregistrer();
+    return true;
+  });
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    Promise.resolve().then(function(){ return relire(JSON.parse(String(fr.result))); })
+      .then(function(){ flash("Grille relue."); })
+      .catch(function(e){ flash("Relecture impossible : " + e.message); });
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la grille du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    await tx("readwrite", function(s){ return s.delete(dossier); });
+    vider(); flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les grilles de TOUS les dossiers sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("readwrite", function(s){ return s.clear(); });
+  vider(); flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Axes de la grille", PRELEV.length + " prélèvement · " + RETENTION.length + " rétention · " +
+                             STADES.length + " stades · " + SIGNES.length + " signes · " +
+                             DIAGS.length + " associations · " +
+                             NEGATIFS.length + " négatifs · " + TECHNIQUES.length + " techniques");
+  ligne("Source", SOURCE + " — la fiche est la source, ce module en est la sortie");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+(async function(){
+  $("ver").textContent = "v" + VERSION;
+  E = neuf();
+  batir(); majSa(); peindre();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — aucune saisie ne sera conservée. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir le fichier avec ?selftest=1 ───────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+  function clic(act, k, v){
+    var s = '[data-act="' + act + '"][data-k="' + k + '"]' + (v ? '[data-v="' + v + '"]' : "");
+    var b = document.querySelector(s);
+    if (!b){ ko.push("bouton introuvable : " + s); return null; }
+    b.click(); return b;
+  }
+  function crTient(t){ return $("cr").textContent.indexOf(t) >= 0; }
+  var pause = function(){ return new Promise(function(r){ setTimeout(r, 30); }); };
+
+  /* Intégrité des tableaux — pure, sans DOM */
+  ["PRELEV","RETENTION","STADES","VARIANTES","SIGNES","DIAGS","NEGATIFS","TECHNIQUES"].forEach(function(nom){
+    var t = { PRELEV:PRELEV, RETENTION:RETENTION, STADES:STADES, VARIANTES:VARIANTES,
+              SIGNES:SIGNES, DIAGS:DIAGS, NEGATIFS:NEGATIFS, TECHNIQUES:TECHNIQUES }[nom];
+    chk("clés uniques dans " + nom, new Set(t.map(function(x){ return x.k; })).size === t.length);
+  });
+  chk("stades ordonnés",      STADES.every(function(s, i){ return !i || s.max > STADES[i-1].max; }));
+  chk("dernier stade ouvert", STADES[STADES.length-1].max === 99);
+  chk("sans terme, pas de stade", stadeAttendu(null) === null);
+  chk("chaque association a son « ne pas conclure »",
+      DIAGS.every(function(d){ return d.stop && d.signes.length >= 2; }));
+  chk("chaque association ne cite que des signes déclarés",
+      DIAGS.every(function(d){ return d.signes.every(function(k){ return !!par(SIGNES, k); }); }));
+  chk("le signe pivot fait partie de l'association",
+      DIAGS.every(function(d){ return !d.cle || d.signes.indexOf(d.cle) >= 0; }));
+  chk("seuil d'association atteignable",
+      DIAGS.every(function(d){ return seuil(d) >= 1 && seuil(d) <= d.signes.length; }));
+  chk("chaque négatif a son défaut", NEGATIFS.every(function(n){ return n.ko && n.p; }));
+  chk("une borne de rétention au moins est bonne",
+      RETENTION.some(function(r){ return r.q === "bon"; }));
+
+  /* Verrou */
+  chk("verrouillé au départ",  $("secSignes").classList.contains("off"));
+  clic("prelev", PRELEV[0].k);
+  chk("clic ignoré sous verrou", !E.prelev[PRELEV[0].k]);
+  set("dossier", "26p0123");
+  chk("lecteur manquant",      $("secSignes").classList.contains("off"));
+  set("operateur", "RM");
+  await pause();
+  chk("déverrouillé",         !$("secSignes").classList.contains("off"));
+  chk("dossier normalisé",     $("dossier").value === "26P0123");
+  chk("export activé",        !$("btnExport").disabled);
+
+  /* Chips */
+  clic("prelev", PRELEV[0].k);
+  chk("chip prélèvement posée", E.prelev[PRELEV[0].k] === true &&
+      document.querySelector('[data-act="prelev"][data-k="' + PRELEV[0].k + '"]').className.indexOf("on") >= 0);
+  clic("prelev", PRELEV[0].k);
+  chk("chip retirée au 2e clic", !E.prelev[PRELEV[0].k]);
+
+  /* Rétention — le fœticide prime sur toute borne */
+  var bon = RETENTION.filter(function(r){ return r.q === "bon"; })[0];
+  clic("ret", bon.k, "present");
+  chk("borne posée",           $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("kcl", "kcl");
+  chk("KCl invalide la datation", $("vRetention").className.indexOf("bad") >= 0);
+  clic("kcl", "kcl");
+  chk("KCl levé, borne revenue", $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("ret", bon.k, "present");
+
+  /* Côté — organe pair */
+  if (PAIR){
+    chk("bloc côté visible",   !$("coteBloc").hidden);
+    chk("côté manquant en réserve",
+        verdictPrelevement().res.indexOf("côté non déclaré — organe pair") >= 0);
+    clic("cote", "droit");
+    chk("côté posé",            E.cote === "droit" && crTient("Droit — 1/2"));
+    clic("cote", "droit");
+    chk("2e clic retire le côté", E.cote === null);
+    clic("cote", "deux");
+  } else {
+    chk("pas de bloc côté sur organe impair", $("coteBloc").hidden);
+  }
+
+  /* Signes et associations */
+  var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
+  chk("rien à associer au départ", $("diags").textContent.indexOf("Aucun signe anormal") >= 0);
+  clic("les", l0.k, "anormal");
+  chk("signe posé anormal",    E.signes[l0.k] === "anormal");
+  chk("association esquissée",  $("diags").textContent.indexOf(d0.l) >= 0);
+  clic("les", l0.k, "anormal");
+  chk("2e clic remet à non exploré", !E.signes[l0.k]);
+  clic("les", l0.k, "normal");
+  chk("normal ne nourrit pas l'association", associations().length === 0);
+  clic("les", l0.k, "normal");
+
+  /* L'association complète se tient, et elle seule */
+  d0.signes.forEach(function(k){ clic("les", k, "anormal"); });
+  var a0 = associations().filter(function(a){ return a.d.k === d0.k; })[0];
+  chk("association tenue",     a0 && a0.tenu);
+  chk("CR : association écrite", crTient(d0.l + " — association tenue"));
+  chk("CR : ne pas conclure",  crTient("ne pas conclure : " + d0.stop));
+  d0.signes.slice(1).forEach(function(k){ clic("les", k, "anormal"); });
+  chk("retirer les signes défait l'association",
+      (associations().filter(function(a){ return a.d.k === d0.k; })[0] || {}).pris.length === 1);
+
+  /* Négatifs */
+  $("btnNegAll").click();
+  chk("tous les négatifs posés", Object.keys(E.negatifs).length === NEGATIFS.length);
+  clic("neg", NEGATIFS[0].k, "present");
+  chk("négatif retourné en rouge", E.negatifs[NEGATIFS[0].k] === "present" &&
+      document.querySelector('[data-act="neg"][data-k="' + NEGATIFS[0].k + '"][data-v="present"]').className.indexOf("no") >= 0);
+  chk("CR : défaut écrit",     crTient("! " + NEGATIFS[0].ko));
+  clic("neg", NEGATIFS[0].k, "absent");
+
+  /* Compte rendu */
+  clic("tech", TECHNIQUES[0].k);
+  set("libre", "Bloc non parvenu.");
+  chk("CR : en-tête dossier",  crTient("26P0123") && crTient("RM"));
+  chk("CR : signe anormal",    crTient(l0.l + " — ANORMAL"));
+  chk("CR : non explorés dits", crTient("Non explorés :"));
+  chk("CR : technique demandée", crTient(TECHNIQUES[0].l));
+  chk("CR : remarque libre",   crTient("Bloc non parvenu."));
+  chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
+
+  /* Contrôles propres à l'organe */
+  await testsOrgane(chk, clic, set, crTient, pause);
+
+  /* Termes FOETO — seulement si la fiche en rattache */
+  if (FOETO.sections.length){
+    var f0 = FOETO.sections[0].termes[0].id;
+    chk("FOETO : sections rendues", $("foeto").querySelectorAll(".sousTitre").length === FOETO.sections.length);
+    clic("foeto", f0);
+    chk("FOETO : terme coché",      E.foeto[f0] === true && $("tFoeto").textContent.indexOf("1/") === 0);
+    chk("FOETO : CR le porte",      crTient("[" + f0 + "]"));
+    chk("FOETO : exporté",          collecter().grille.foeto[f0] === true);
+    set("rqFoeto", foetoLabel(f0).slice(0, 4));
+    chk("FOETO : recherche",        $("sgFoeto").querySelectorAll("[data-pick]").length >= 1);
+    $("sgFoeto").querySelector("[data-pick]").click();
+    chk("FOETO : recherche vidée",  $("rqFoeto").value === "" && !$("sgFoeto").classList.contains("on"));
+    chk("FOETO : id lisible",       /^FOETO:/.test(f0));
+    clic("foeto", f0);
+    Object.keys(E.foeto).forEach(function(id){ delete E.foeto[id]; }); peindre();
+  }
+
+  /* Enveloppe, persistance, relecture — l'organe a pu reposer ses propres signes */
+  if (E.signes[l0.k] !== "anormal"){
+    if (E.signes[l0.k]) clic("les", l0.k, E.signes[l0.k]);
+    clic("les", l0.k, "anormal");
+  }
+  var snap = collecter();
+  chk("enveloppe conforme",    snap.schema_version === SCHEMA && snap.module === MODULE &&
+                               snap.module_version === VERSION && snap.dossier === "26P0123" &&
+                               snap.organe === ORGANE && !!snap.exported_at);
+  chk("version en entête",     $("ver").textContent === "v" + VERSION);
+  chk("CR dans le JSON",       snap.compte_rendu.indexOf(TITRE_CR + " — grille de lecture") === 0);
+
+  await putSaisie(snap);
+  vider();
+  chk("vider efface la grille", Object.keys(E.signes).length === 0);
+  var relu = await getSaisie("26P0123");
+  appliquer(relu);
+  chk("IndexedDB restitue",    E.signes[l0.k] === "anormal" &&
+                               $("sa").value === String(snap.terme_sa));
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+  chk("banc remis à zéro",     Object.keys(E.signes).length === 0 && $("secSignes").classList.contains("off"));
+  await relire(snap);
+  chk("relecture d'un JSON",   E.signes[l0.k] === "anormal" && dossier === "26P0123");
+  var refus = false;
+  try { await relire({module:"autopsie", grille:{}}); } catch(e){ refus = /module/.test(e.message); }
+  chk("JSON d'un autre module refusé", refus);
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>
