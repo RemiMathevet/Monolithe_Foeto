@@ -181,12 +181,18 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
   <div class="hint" id="etiquetteHint">Photographier l'étiquette : elle certifie le numéro saisi.</div>
 </section>
 
+<!-- Clichés de trame, par position du corps : construits par le script -->
+<section id="secCliches" class="off">
+  <h2><span class="n">02</span>Clichés<span class="tally" id="talCliches">—</span></h2>
+  <div id="positions"></div>
+</section>
+
 <!-- Étages : construits par le script -->
 <div id="etages"></div>
 
 <!-- Stockage -->
 <section class="jauge" id="secJauge">
-  <h2><span class="n">09</span>Stockage<span class="tally" id="tPhotos">0/0</span></h2>
+  <h2><span class="n">10</span>Stockage<span class="tally" id="tPhotos">0/0</span></h2>
   <div class="bar"><i class="proj" id="barProj" style="width:0"></i><i class="used" id="barUsed" style="width:0"></i></div>
   <div class="legende">
     <span><i class="sw" style="background:#4FB3A6"></i>occupé <b id="usedTxt">—</b><b id="quotaTxt"></b></span>
@@ -196,7 +202,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 
 <!-- Sortie -->
 <section id="secSortie" class="off">
-  <h2><span class="n">10</span>Sortie</h2>
+  <h2><span class="n">11</span>Sortie</h2>
   <div class="btns">
     <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
     <button class="btn" id="btnImport">Relire un JSON</button>
@@ -207,7 +213,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 
 <!-- Diagnostic -->
 <section>
-  <h2><span class="n">11</span>Diagnostic</h2>
+  <h2><span class="n">12</span>Diagnostic</h2>
   <table id="diag"><tbody></tbody></table>
 </section>
 
@@ -228,8 +234,8 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
    ═══════════════════════════════════════════════════════════════════════════ */
 
 var MODULE = "examen_clinique";
-var SCHEMA = "0.2.0";   /* 0.2.0 : anomalies codées HPO, vu_normal par item */
-var VERSION = "2.0.0";   /* version du document ; à incrémenter à chaque diffusion */
+var SCHEMA = "0.2.1";   /* 0.2.0 : anomalies codées HPO, vu_normal par item · 0.2.1 : position du corps sur chaque cliché */
+var VERSION = "2.1.0";   /* version du document ; à incrémenter à chaque diffusion */
 var DB_NAME = "foeto-examen-clinique", DB_VER = 1, db = null;
 
 /* ── Étages ─────────────────────────────────────────────────────────────────
@@ -237,10 +243,6 @@ var DB_NAME = "foeto-examen-clinique", DB_VER = 1, db = null;
    les anomalies qui lui appartiennent. */
 var ETAGES = [
   { id:"general", t:"Général",
-    photos:[ {k:"p_dos_gen",    l:"Générale (dos)"},
-             {k:"p_ventre_gen", l:"Dos (sur ventre)"},
-             {k:"p_droit_gen",  l:"Général D"},
-             {k:"p_gauche_gen", l:"Général G"} ],
     items:[
       {id:"aspect_general", l:"Aspect général", d:["Macéré","Hydropique","Émacié","Dysmorphique","Momifié"]},
       {id:"symetrie",       l:"Symétrie",       d:["Asymétrie corporelle","Hémihypertrophie","Hémihypotrophie"]},
@@ -249,9 +251,6 @@ var ETAGES = [
       {id:"pilosite",       l:"Pilosité",       d:["Hypertrichose","Lanugo abondant","Hypotrichose"]}
     ]},
   { id:"tete", t:"Tête & face",
-    photos:[ {k:"p_dos_face",      l:"Tête de face"},
-             {k:"p_droit_profil",  l:"Profil D"},
-             {k:"p_gauche_profil", l:"Profil G"} ],
     items:[
       {id:"crane",       l:"Forme du crâne",  d:["Dolichocéphalie","Brachycéphalie","Scaphocéphalie","Turricéphalie","Plagiocéphalie","Front bombé","Front fuyant"]},
       {id:"fontanelles", l:"Fontanelles / sutures", d:["Fontanelle large","Fontanelle punctiforme","Sutures chevauchantes","Craniosténose"]},
@@ -261,43 +260,61 @@ var ETAGES = [
       {id:"bouche",      l:"Bouche / palais", d:["Fente labiale","Fente palatine","Microstomie","Macrostomie","Rétrognathie","Micrognathie","Philtrum long","Philtrum lisse","Lèvre supérieure fine","Macroglossie"]},
       {id:"oreilles",    l:"Oreilles",        d:["Implantation basse","Rotation postérieure","Microtie","Anotie","Hélix replié","Appendice pré-auriculaire","Fistule pré-auriculaire"]}
     ]},
-  { id:"cou_thorax", t:"Cou & thorax", photos:[],
+  { id:"cou_thorax", t:"Cou & thorax",
     items:[
       {id:"cou",    l:"Cou",    d:["Pterygium colli","Cou court","Hygroma"]},
       {id:"thorax", l:"Thorax", d:["Étroit","En tonneau","En entonnoir","En carène","Mamelons écartés","Mamelons surnuméraires"]}
     ]},
-  { id:"abdomen", t:"Abdomen, dos & cordon", photos:[],
+  { id:"abdomen", t:"Abdomen, dos & cordon",
     items:[
       {id:"abdomen", l:"Abdomen",      d:["Omphalocèle","Laparoschisis","Distendu","Prune belly","Excavé"]},
       {id:"dos",     l:"Dos / rachis", d:["Spina bifida","Scoliose","Cyphose","Fossette sacrale","Appendice caudal"]},
       {id:"cordon",  l:"Cordon",       d:["Artère ombilicale unique","Nœud vrai","Circulaire","Grêle","Insertion vélamenteuse"]}
     ]},
   { id:"perinee", t:"Périnée",
-    photos:[ {k:"p_dos_oge",  l:"OGE"},
-             {k:"p_dos_anus", l:"Anus"} ],
     items:[
       {id:"oge",  l:"OGE", d:["Ambigus","Hypospadias","Épispadias","Micropénis","Cryptorchidie","Hypertrophie clitoridienne","Fusion des grandes lèvres"]},
       {id:"anus", l:"Anus", ln:"Perméable", la:"Imperforé", d:["Imperforation","Position antérieure","Fistule"]}
     ]},
   { id:"membres_sup", t:"Membres supérieurs & mains",
-    photos:[ {k:"p_dos_main_d_paume", l:"Main D paume"},
-             {k:"p_dos_main_d_dos",   l:"Main D dos"},
-             {k:"p_dos_main_g_paume", l:"Main G paume"},
-             {k:"p_dos_main_g_dos",   l:"Main G dos"} ],
     items:[
       {id:"membres_sup", l:"Membres supérieurs", d:["Raccourcissement","Agénésie","Incurvation","Amélie","Phocomélie","Rétraction articulaire"]},
       {id:"mains",       l:"Mains",              d:["Polydactylie préaxiale","Polydactylie postaxiale","Syndactylie","Clinodactylie","Camptodactylie","Pouce en adduction","Pli palmaire transverse unique","Hockey stick"]},
       {id:"ongles",      l:"Ongles",             d:["Hypoplasiques","Absents","Hyperconvexes","Larges"]}
     ]},
   { id:"membres_inf", t:"Membres inférieurs & pieds",
-    photos:[ {k:"p_dos_pied_d", l:"Pied droit"},
-             {k:"p_dos_pied_g", l:"Pied gauche"} ],
     items:[
       {id:"membres_inf",  l:"Membres inférieurs", d:["Raccourcissement","Agénésie","Incurvation","Amélie","Phocomélie","Rétraction articulaire"]},
       {id:"pieds_morpho", l:"Pieds",              d:["Pied bot varus équin","Pied convexe (rocker-bottom)","Polydactylie préaxiale","Polydactylie postaxiale","Syndactylie","Sandal gap","Talon proéminent"]}
     ]}
 ];
-var N_TRAME = ETAGES.reduce(function(a, e){ return a + e.photos.length; }, 0);
+/* ── Clichés de trame, groupés par position du corps ────────────────────────
+   L'ordre est celui des manipulations : sur le dos (corps entier, face, mains,
+   pieds, périnée), puis côté droit, côté gauche, sur le ventre. Chaque cliché
+   garde son étage anatomique (e) pour l'export ; les clés restent celles de
+   la PWA, un JSON v2.0 se relit tel quel. */
+var POSITIONS = [
+  { id:"dos", t:"Sur le dos",
+    photos:[ {k:"p_dos_gen",          l:"Corps entier",  e:"general"},
+             {k:"p_dos_face",         l:"Tête de face",  e:"tete"},
+             {k:"p_dos_main_d_paume", l:"Main D paume",  e:"membres_sup"},
+             {k:"p_dos_main_d_dos",   l:"Main D dos",    e:"membres_sup"},
+             {k:"p_dos_main_g_paume", l:"Main G paume",  e:"membres_sup"},
+             {k:"p_dos_main_g_dos",   l:"Main G dos",    e:"membres_sup"},
+             {k:"p_dos_pied_d",       l:"Pied droit",    e:"membres_inf"},
+             {k:"p_dos_pied_g",       l:"Pied gauche",   e:"membres_inf"},
+             {k:"p_dos_oge",          l:"OGE",           e:"perinee"},
+             {k:"p_dos_anus",         l:"Anus",          e:"perinee"} ] },
+  { id:"droit", t:"Côté droit",
+    photos:[ {k:"p_droit_gen",    l:"Corps entier D", e:"general"},
+             {k:"p_droit_profil", l:"Profil D",       e:"tete"} ] },
+  { id:"gauche", t:"Côté gauche",
+    photos:[ {k:"p_gauche_gen",    l:"Corps entier G", e:"general"},
+             {k:"p_gauche_profil", l:"Profil G",       e:"tete"} ] },
+  { id:"ventre", t:"Sur le ventre",
+    photos:[ {k:"p_ventre_gen", l:"Dos", e:"general"} ] }
+];
+var N_TRAME = POSITIONS.reduce(function(a, p){ return a + p.photos.length; }, 0);
 var N_ITEMS = ETAGES.reduce(function(a, e){ return a + e.items.length; }, 0);
 
 /* ── Signes codés HPO ──────────────────────────────────────────────────────
@@ -434,15 +451,15 @@ function rechercher(id, q){
 
 /* ── Construction ─────────────────────────────────────────────────────────── */
 (function batir(){
+  $("positions").innerHTML = POSITIONS.map(function(p){
+    return '<div class="sousTitre">' + esc(p.t) + '<span class="tally" id="tal_pos_' + p.id + '"></span></div>' +
+           '<div class="grid" id="ph_' + p.id + '"></div>' +
+           '<button type="button" class="mini" data-add="' + p.id + '">＋ Cliché + descriptif</button>';
+  }).join("");
   $("etages").innerHTML = ETAGES.map(function(e, n){
     var h = '<section id="sec_' + e.id + '" class="off" data-etage="' + e.id + '">' +
-            '<h2><span class="n">' + ("0" + (n+2)).slice(-2) + '</span>' + esc(e.t) +
+            '<h2><span class="n">' + ("0" + (n+3)).slice(-2) + '</span>' + esc(e.t) +
             '<span class="tally" id="tal_' + e.id + '">—</span></h2>';
-
-    h += '<div class="sousTitre">Clichés</div>' +
-         '<div class="grid" id="ph_' + e.id + '"></div>' +
-         '<button type="button" class="mini" data-add="' + e.id + '">＋ Cliché + descriptif</button>';
-
     h += '<div class="sousTitre">Constatations</div>';
     e.items.forEach(function(i){
       h += '<div class="item" id="it_' + i.id + '" data-item="' + i.id + '" data-etat="">' +
@@ -476,6 +493,7 @@ function rechercher(id, q){
 /* ── Verrou ───────────────────────────────────────────────────────────────── */
 function verrouiller(ouvert){
   ETAGES.forEach(function(e){ $("sec_" + e.id).classList.toggle("off", !ouvert); });
+  $("secCliches").classList.toggle("off", !ouvert);
   $("secSortie").classList.toggle("off", !ouvert);
 }
 
@@ -613,13 +631,16 @@ function slotHTML(k, l, libre){
 }
 function rendreCliches(){
   rendreEtiquette();
-  ETAGES.forEach(function(e){
-    var h = e.photos.map(function(p){ return slotHTML(p.k, p.l, false); }).join("");
+  POSITIONS.forEach(function(p, n){
+    var h = p.photos.map(function(x){ return slotHTML(x.k, x.l, false); }).join("");
     Object.keys(libres).forEach(function(k){
-      if (libres[k].etage === e.id && !libres[k].item) h += slotHTML(k, libres[k].l, true);
+      var l = libres[k];
+      /* un supplémentaire d'un JSON v2.0 n'a pas de position : il va sur le dos */
+      if (!l.item && ((l.position || "dos") === p.id)) h += slotHTML(k, l.l, true);
     });
-    $("ph_" + e.id).innerHTML = h;
-
+    $("ph_" + p.id).innerHTML = h;
+  });
+  ETAGES.forEach(function(e){
     e.items.forEach(function(i){
       $("phi_" + i.id).innerHTML = Object.keys(libres).filter(function(k){
         return libres[k].item === i.id;
@@ -631,14 +652,16 @@ function rendreCliches(){
 }
 function majTallies(){
   var faits = 0;
+  POSITIONS.forEach(function(p){
+    var n = p.photos.filter(function(x){ return shots[x.k]; }).length;
+    faits += n;
+    $("tal_pos_" + p.id).textContent = n + "/" + p.photos.length;
+  });
+  $("talCliches").textContent = faits + "/" + N_TRAME;
   ETAGES.forEach(function(e){
-    var p = e.photos.filter(function(x){ return shots[x.k]; }).length;
-    faits += p;
     var vus = e.items.filter(function(i){ return etatDe(i.id); }).length;
     var ano = e.items.filter(function(i){ return etatDe(i.id) === "a"; }).length;
-    $("tal_" + e.id).textContent =
-      (e.photos.length ? p + "/" + e.photos.length + " cliché · " : "") +
-      vus + "/" + e.items.length + (ano ? " · " + ano + " anormal" : "");
+    $("tal_" + e.id).textContent = vus + "/" + e.items.length + (ano ? " · " + ano + " anormal" : "");
   });
   $("tPhotos").textContent = faits + "/" + N_TRAME;
 }
@@ -664,21 +687,22 @@ function ouvrirSlot(k){
   slotCible = k;
   $("pick").click();
 }
-function nouveauCliche(etage, item){
+function nouveauCliche(cible, item){
   if (!dossier){ flash("Saisir d'abord dossier et opérateur."); $("dossier").focus(); return; }
   var def = item ? (itemDef(item) || {}).l : "";
   var l = prompt("Descriptif du cliché :", def || "");
   if (l === null) return;
   l = l.trim(); if (!l) return;
-  var k = (item ? "anomaly_" + item : "extra_" + etage) + "_" + uid();
-  libres[k] = { l: l, etage: etage, item: item };
+  var k = (item ? "anomaly_" + item : "extra_" + cible) + "_" + uid();
+  libres[k] = item ? { l: l, etage: cible, item: item, position: null }
+                   : { l: l, etage: null, item: null, position: cible };
   rendreCliches();
   ouvrirSlot(k);
 }
 function libelle(k){
   if (k === K_ETIQUETTE) return L_ETIQUETTE;
   var t = null;
-  ETAGES.forEach(function(e){ e.photos.forEach(function(p){ if (p.k === k) t = p.l; }); });
+  POSITIONS.forEach(function(p){ p.photos.forEach(function(x){ if (x.k === k) t = x.l; }); });
   return t || (libres[k] ? libres[k].l : k);
 }
 async function ajouterPhoto(k, file){
@@ -687,6 +711,7 @@ async function ajouterPhoto(k, file){
   var rec = {
     id: sid(k), dossier: dossier, module: MODULE, key: k, label: lib,
     etage: l ? l.etage : etageDeCliche(k), item: l ? l.item : null, libre: !!l,
+    position: l ? (l.position || null) : positionDeCliche(k),
     name: file.name || (k + ".jpg"), type: r.blob.type || "image/jpeg",
     bytes: r.blob.size, w: r.w, h: r.h, ow: r.ow, oh: r.oh,
     addedAt: new Date().toISOString(), blob: r.blob, thumb: r.thumb
@@ -700,7 +725,12 @@ async function ajouterPhoto(k, file){
 }
 function etageDeCliche(k){
   var t = null;
-  ETAGES.forEach(function(e){ e.photos.forEach(function(p){ if (p.k === k) t = e.id; }); });
+  POSITIONS.forEach(function(p){ p.photos.forEach(function(x){ if (x.k === k) t = x.e; }); });
+  return t;
+}
+function positionDeCliche(k){
+  var t = null;
+  POSITIONS.forEach(function(p){ p.photos.forEach(function(x){ if (x.k === k) t = p.id; }); });
   return t;
 }
 $("pick").addEventListener("change", async function(){
@@ -754,7 +784,7 @@ function collecter(){
       };
     }),
     cliches_libres: Object.keys(libres).map(function(k){
-      return { key: k, label: libres[k].l, etage: libres[k].etage, item: libres[k].item };
+      return { key: k, label: libres[k].l, etage: libres[k].etage, item: libres[k].item, position: libres[k].position || null };
     })
   };
 }
@@ -768,7 +798,7 @@ function appliquer(o){
     });
   });
   (o.cliches_libres || []).forEach(function(c){
-    libres[c.key] = { l: c.label, etage: c.etage, item: c.item || null };
+    libres[c.key] = { l: c.label, etage: c.etage, item: c.item || null, position: c.position || null };
   });
   rendreCliches();
 }
@@ -792,7 +822,7 @@ async function relierCliches(){
     shots[r.key] = r;
     if (urls[r.key]) URL.revokeObjectURL(urls[r.key]);
     urls[r.key] = URL.createObjectURL(r.thumb || r.blob);
-    if (r.libre && !libres[r.key]) libres[r.key] = { l: r.label, etage: r.etage, item: r.item || null };
+    if (r.libre && !libres[r.key]) libres[r.key] = { l: r.label, etage: r.etage, item: r.item || null, position: r.position || null };
   });
   return list.length;
 }
@@ -873,13 +903,13 @@ async function paquet(){
   out.photos = [];
   var cles = [];
   if (shots[K_ETIQUETTE]) cles.push(K_ETIQUETTE);
-  ETAGES.forEach(function(e){ e.photos.forEach(function(p){ if (shots[p.k]) cles.push(p.k); }); });
+  POSITIONS.forEach(function(p){ p.photos.forEach(function(x){ if (shots[x.k]) cles.push(x.k); }); });
   Object.keys(libres).forEach(function(k){ if (shots[k]) cles.push(k); });
   for (var i = 0; i < cles.length; i++){
     var r = shots[cles[i]];
     flash("Encodage " + (i+1) + "/" + cles.length + "…");
     out.photos.push({
-      key: r.key, label: r.label, etage: r.etage, item: r.item, libre: !!r.libre,
+      key: r.key, label: r.label, etage: r.etage, item: r.item, position: r.position || null, libre: !!r.libre,
       name: r.name, type: r.type, bytes: r.bytes, w: r.w, h: r.h, ow: r.ow, oh: r.oh,
       addedAt: r.addedAt, data_base64: await toB64(r.blob)
     });
@@ -920,7 +950,7 @@ async function relire(o){
     if (bmp.close) bmp.close();
     await putShot({
       id: sid(p.key), dossier: dossier, module: MODULE, key: p.key, label: p.label,
-      etage: p.etage, item: p.item || null, libre: !!p.libre, name: p.name, type: p.type,
+      etage: p.etage, item: p.item || null, position: p.position || null, libre: !!p.libre, name: p.name, type: p.type,
       bytes: blob.size, w: p.w, h: p.h, ow: p.ow, oh: p.oh, addedAt: p.addedAt,
       blob: blob, thumb: th
     });
@@ -1020,13 +1050,14 @@ async function autotest(){
   }
 
   var tousItems = [], toutesCles = [];
-  ETAGES.forEach(function(e){
-    e.items.forEach(function(i){ tousItems.push(i.id); });
-    e.photos.forEach(function(p){ toutesCles.push(p.k); });
-  });
+  ETAGES.forEach(function(e){ e.items.forEach(function(i){ tousItems.push(i.id); }); });
+  POSITIONS.forEach(function(p){ p.photos.forEach(function(x){ toutesCles.push(x.k); }); });
   chk("items sans doublon",       new Set(tousItems).size === tousItems.length);
   chk("clés photo sans doublon",  new Set(toutesCles).size === toutesCles.length);
   chk("trame de 15 clichés",      N_TRAME === 15);
+  chk("4 positions du corps",     POSITIONS.length === 4 && POSITIONS[0].id === "dos" && POSITIONS[0].photos.length === 10);
+  chk("étage sur chaque cliché",  POSITIONS.every(function(p){ return p.photos.every(function(x){ return ETAGES.some(function(e){ return e.id === x.e; }); }); }));
+  chk("position d'un cliché",     positionDeCliche("p_droit_profil") === "droit");
   chk("24 items",                 N_ITEMS === 24);
   chk("étages sans doublon",      new Set(ETAGES.map(function(e){ return e.id; })).size === ETAGES.length);
   chk("chaque item a des chips",  ETAGES.every(function(e){ return e.items.every(function(i){ return $("ch_" + i.id).children.length > 0; }); }));
@@ -1099,7 +1130,8 @@ async function autotest(){
   chk("vignette produite",        rec.thumb.size > 0 && rec.thumb.size < rec.blob.size);
   chk("original intact",          rec.blob === img && rec.bytes === img.size);
   chk("pleine résolution gardée", rec.w === 1200 && rec.h === 900 && rec.ow === 1200);
-  chk("slot marqué fait",         $("ph_tete").children[0].classList.contains("done"));
+  chk("slot marqué fait",         $("ph_dos").children[1].classList.contains("done"));
+  chk("cliché positionné",        rec.position === "dos" && $("tal_pos_dos").textContent === "1/10");
   chk("compteur de clichés",      $("tPhotos").textContent === "1/" + N_TRAME);
 
   /* Cliché d'anomalie rattaché à un item */
@@ -1110,9 +1142,9 @@ async function autotest(){
 
   /* Cliché supplémentaire déclaré mais pas encore pris */
   var kv = "extra_general_" + uid();
-  libres[kv] = { l: "Vue de la nuque", etage: "general", item: null };
+  libres[kv] = { l: "Vue de la nuque", etage: null, item: null, position: "ventre" };
   rendreCliches();
-  chk("slot supplémentaire vide", $("ph_general").children.length === 5);
+  chk("slot supplémentaire vide", $("ph_ventre").children.length === 2);
 
   /* Étiquette patient — pièce source du numéro de dossier */
   chk("étiquette absente signalée", !shots[K_ETIQUETTE] &&
@@ -1168,7 +1200,8 @@ async function autotest(){
   chk("relecture : item normal",  etatDe("crane") === "n");
   chk("relecture : cliché trame", !!shots["p_dos_face"] && $("tPhotos").textContent === "1/" + N_TRAME);
   chk("relecture : cliché anomalie", $("phi_yeux").children.length === 1);
-  chk("relecture : slot vide gardé", $("ph_general").children.length === 5);
+  chk("relecture : slot vide gardé", $("ph_ventre").children.length === 2);
+  chk("relecture : position gardée", libres[kv].position === "ventre" && pack.cliches_libres.some(function(c){ return c.position === "ventre"; }));
 
   await nettoyer();
   $("operateur").value = "";
