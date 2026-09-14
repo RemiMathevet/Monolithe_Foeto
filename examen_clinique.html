@@ -235,7 +235,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 
 var MODULE = "examen_clinique";
 var SCHEMA = "0.2.1";   /* 0.2.0 : anomalies codées HPO, vu_normal par item · 0.2.1 : position du corps sur chaque cliché */
-var VERSION = "2.1.10";   /* version du document ; à incrémenter à chaque diffusion */
+var VERSION = "2.1.11";   /* version du document ; à incrémenter à chaque diffusion */
 var DB_NAME = "foeto-examen-clinique", DB_VER = 1, db = null;
 
 /* ── Étages ─────────────────────────────────────────────────────────────────
@@ -1114,10 +1114,14 @@ async function autotest(){
   chk("chip ajoutée par la liste", chipsCodees("yeux").some(function(a){ return a.hpo_id === "HP:0000518"; }));
   set("rq_yeux", "microph");
   chk("recherche à 3 lettres",    $("sg_yeux").querySelectorAll("[data-pick]").length >= 1);
-  clic($("sg_yeux").querySelector("[data-pick]"));
+  /* le premier résultat dépend de l'ordre des formes attestées (il a changé avec la
+     matrice) : on vise la microphtalmie explicitement, et on retire ce qu'on a ajouté */
+  var pickMicro = $("sg_yeux").querySelector('[data-pick][data-hpo="HP:0000568"]') || $("sg_yeux").querySelector("[data-pick]");
+  var hpoPick = pickMicro.getAttribute("data-hpo");
+  clic(pickMicro);
   chk("choix de recherche → chip", chipsCodees("yeux").length === 4);
   chk("recherche vidée",          $("rq_yeux").value === "");
-  clic(chipTrouver("yeux", "HP:0000518")); clic(chipTrouver("yeux", "HP:0000568"));
+  clic(chipTrouver("yeux", "HP:0000518")); clic(chipTrouver("yeux", hpoPick));
   chk("précisions exportées",     yeux.precisions === "fentes courtes");
   chk("item normal sans chips",   tete.items.filter(function(i){ return i.id === "crane"; })[0].anomalies.length === 0);
   chk("item non vu à null",       tete.items.filter(function(i){ return i.id === "nez"; })[0].etat === null);
