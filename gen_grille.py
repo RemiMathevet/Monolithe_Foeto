@@ -38,9 +38,11 @@ def bloc_foeto(organe):
     if not DB.exists():
         return vide
     c = sqlite3.connect("file:%s?mode=ro" % DB, uri=True)
-    fiche = "fiche_%s.md" % organe
+    # le placenta est trie contre « diffusion/fiche_placenta.md#1 », #2, #3 (fiche par tranches) :
+    # on apparie sur le nom de fichier, pas sur le chemin
+    fiche = "%%fiche_%s.md%%" % organe
     rows = c.execute("""select id, label_fr, label_en, triage_verdict, triage_section from foeto_terms
-                        where triage_fiche=? and triage_verdict in ('LESION','HORS_FICHE')
+                        where triage_fiche like ? and triage_verdict in ('LESION','HORS_FICHE')
                         order by triage_section, label_fr""", (fiche,)).fetchall()
     sections, formes = {}, {}
     for i, fr, en, v, sec in rows:
@@ -443,8 +445,13 @@ function batir(){
 
   $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
 
+  /* Un signe peut porter un groupe g (placenta : cordon, membranes, parenchyme sous
+     cordon, marge, systémique) : un sous-titre s'ouvre quand le groupe change. */
+  var gPrec = null;
   $("signes").innerHTML = SIGNES.map(function(x){
-    return '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+    var h = "";
+    if (x.g && x.g !== gPrec){ h = '<div class="sousTitre">' + esc(x.g) + '</div>'; gPrec = x.g; }
+    return h + '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
       (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
       '</div>' +
       '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="normal">Normal</button>' +
@@ -708,7 +715,7 @@ function composer(){
   L.push("");
   L.push("SIGNES");
   if (!anormales.length && !normales.length) L.push("  aucun axe exploré.");
-  anormales.forEach(function(x){ L.push("  " + x.l + " — ANORMAL"); });
+  anormales.forEach(function(x){ L.push("  " + (x.g ? x.g + " · " : "") + x.l + " — ANORMAL"); });
   if (normales.length)
     L.push("  Normaux : " + normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
   var muets = SIGNES.filter(function(x){ return !E.signes[x.k]; });

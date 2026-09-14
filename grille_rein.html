@@ -877,8 +877,13 @@ function batir(){
 
   $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
 
+  /* Un signe peut porter un groupe g (placenta : cordon, membranes, parenchyme sous
+     cordon, marge, systémique) : un sous-titre s'ouvre quand le groupe change. */
+  var gPrec = null;
   $("signes").innerHTML = SIGNES.map(function(x){
-    return '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+    var h = "";
+    if (x.g && x.g !== gPrec){ h = '<div class="sousTitre">' + esc(x.g) + '</div>'; gPrec = x.g; }
+    return h + '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
       (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
       '</div>' +
       '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="normal">Normal</button>' +
@@ -1142,7 +1147,7 @@ function composer(){
   L.push("");
   L.push("SIGNES");
   if (!anormales.length && !normales.length) L.push("  aucun axe exploré.");
-  anormales.forEach(function(x){ L.push("  " + x.l + " — ANORMAL"); });
+  anormales.forEach(function(x){ L.push("  " + (x.g ? x.g + " · " : "") + x.l + " — ANORMAL"); });
   if (normales.length)
     L.push("  Normaux : " + normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
   var muets = SIGNES.filter(function(x){ return !E.signes[x.k]; });
