@@ -85,6 +85,8 @@ hub/
   rejets/             ce qui n'est pas passé, avec un .txt qui dit pourquoi
   photos/26P0123/<module>/          les JPEG reconstitués
   photos/26P0123/<module>/vignettes/ les vignettes, si Pillow est installé
+  biblio/             le paquet data_hub en place (akinator, familles, fiches)
+  archive/_biblio/    les paquets reçus, horodatés
   hub.sqlite          la base de travail
   index.json          l'index lu par dossiers.html, réécrit à chaque passage
 ```
@@ -179,6 +181,26 @@ Flask (qui amène Jinja2). `serveur.bat` propose de l'installer s'il manque.
 sans serveur : le mode hors ligne n'est jamais perdu.
 
 ---
+
+## La biblio — le paquet data_hub
+
+Onglet « Biblio ». Il reprend `data_hub_vN.zip`, publié par
+<https://data.pazuzu.uk/browse/scripts> (fabriqué par `foetodata_hub/build_data_hub.py`) :
+
+- `akinator.json` — la matrice syndromes × signes attestée par les livres de
+  syndromologie, plus les termes FOETO ; le moteur bayésien de data.pazuzu
+  (`app/web/akinator.js`) tourne ici sur ce fichier, hors ligne ;
+- `familles.json` — les familles de syndromes fœtaux, membres, signes cœur /
+  partiels / discriminants, parenté entre membres ;
+- `fiches/` — les fiches de lecture microscopique, celles dont sortent les
+  grilles de `micro/`, rendues telles quelles (Markdown).
+
+Le zip se dépose sur la page (ou dans `arrivee/`, `ingest.py` le prend avant
+les JSON). `ingerer_paquet()` lit le `manifest.json`, vérifie l'empreinte de
+chaque fichier, refuse tout chemin douteux, et n'écrit dans `biblio/` que
+quand tout est lu : un paquet remplace le précédent en entier, le zip reçu
+reste dans `archive/_biblio/`. Un paquet déjà repris est reconnu à son
+empreinte. Le dépôt ne porte jamais les données, seulement le lecteur.
 
 ## Le compte rendu
 

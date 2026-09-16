@@ -132,6 +132,17 @@ hub*. Le numéro de dossier y est aussi libre que dans les modules.
 
 ![Hub — fiche d'un dossier](captures/10_hub_fiche.png)
 
+**Biblio.** Télécharger `data_hub_vN.zip` sur
+[data.pazuzu.uk/browse/scripts](https://data.pazuzu.uk/browse/scripts) et le
+glisser dans l'onglet **Biblio** : les fiches de lecture microscopique, les
+familles de syndromes fœtaux et l'akinator (matrice des livres + termes
+FOETO) sont alors consultables hors ligne. Un nouveau paquet remplace le
+précédent.
+
+![Biblio — fiche](captures/11_biblio_fiche.png)
+
+![Biblio — akinator](captures/13_biblio_akinator.png)
+
 Le détail (ingestion en ligne de commande, comptes rendus, BaMaRa,
 sauvegarde) est dans [hub/README.md](../hub/README.md).
 

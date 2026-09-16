@@ -32,7 +32,10 @@ page de gestion des cas, comptes rendus Jinja et préparation du document
 BaMaRa. **`serveur.bat` à la racine** lance le serveur local
 (<http://127.0.0.1:5005>) et ouvre la page après quelques secondes ;
 `hub/app/ingest.py` fait la reprise seule, en bibliothèque standard.
-Tout est décrit dans [hub/README.md](hub/README.md).
+L'onglet **Biblio** du hub reprend le paquet `data_hub_vN.zip` publié par
+[data.pazuzu.uk](https://data.pazuzu.uk/browse/scripts) — akinator sur la
+matrice des livres, familles de syndromes fœtaux, fiches de lecture micro —
+et le sert hors ligne. Tout est décrit dans [hub/README.md](hub/README.md).
 
 `micro.html` s'ouvre sur une seule section vide qui propose les quatorze
 organes. On désigne celui de la lame en main : la section prend son nom et

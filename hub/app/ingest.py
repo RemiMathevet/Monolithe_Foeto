@@ -41,6 +41,7 @@ import shutil
 import sqlite3
 import sys
 import traceback
+import zipfile
 from pathlib import Path
 
 try:
@@ -1107,6 +1108,69 @@ def rejeter(racine: Path, chemin: Path, motif: str, trace: str = ""):
     return cible
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# Le paquet biblio — data_hub_vN.zip publié par data.pazuzu.uk
+# ══════════════════════════════════════════════════════════════════════════════
+
+CHEMIN_PAQUET_OK = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9._-]*(/[A-Za-z0-9_][A-Za-z0-9._-]*)*$")
+
+
+def ingerer_paquet(cx, racine: Path, chemin: Path):
+    """Reprend un paquet biblio dans biblio/ : manifest vérifié, empreintes
+    vérifiées, l'archive garde le zip tel quel. Un paquet remplace le
+    précédent en entier — c'est un état, pas une saisie.
+
+    Même discipline que les JSON : ce qui ne passe pas part en rejets/ avec
+    son motif, et rien n'est écrit dans biblio/ tant que tout n'est pas lu.
+    """
+    brut = chemin.read_bytes()
+    empreinte = sha256(brut)
+    try:
+        z = zipfile.ZipFile(chemin)
+    except zipfile.BadZipFile:
+        raise Refus("ce n'est pas un zip")
+    with z:
+        if "manifest.json" not in z.namelist():
+            raise Refus("pas de manifest.json — ce n'est pas un paquet data_hub")
+        try:
+            man = json.loads(z.read("manifest.json").decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as e:
+            raise Refus(f"manifest.json illisible : {e}")
+        if man.get("paquet") != "data_hub" or not isinstance(man.get("fichiers"), dict):
+            raise Refus("manifest.json n'est pas celui d'un paquet data_hub")
+        deja = cx.execute("SELECT 1 FROM journal WHERE message LIKE ? LIMIT 1",
+                          (f"%[{empreinte[:16]}]%",)).fetchone()
+        if deja:
+            return "doublon", f"paquet déjà repris à l'identique (v{man.get('version')})"
+        contenu = {}
+        for nom, att in man["fichiers"].items():
+            if not CHEMIN_PAQUET_OK.match(nom) or ".." in nom.split("/"):
+                raise Refus(f"chemin inacceptable dans le manifest : {nom}")
+            if nom not in z.namelist():
+                raise Refus(f"{nom} annoncé par le manifest, absent du zip")
+            b = z.read(nom)
+            if sha256(b) != att.get("sha256"):
+                raise Refus(f"{nom} : empreinte différente de celle du manifest — paquet altéré")
+            contenu[nom] = b
+    # Tout est lu et vérifié : on écrit.
+    biblio = racine / "biblio"
+    if biblio.exists():
+        shutil.rmtree(biblio)
+    for nom, b in contenu.items():
+        cible = biblio / nom
+        cible.parent.mkdir(parents=True, exist_ok=True)
+        cible.write_bytes(b)
+    (biblio / "manifest.json").write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding="utf-8")
+    rel = f"archive/_biblio/{horodatage()}_{chemin.name}"
+    (racine / rel).parent.mkdir(parents=True, exist_ok=True)
+    (racine / rel).write_bytes(brut)
+    msg = (f"paquet data_hub v{man.get('version')} du {man.get('date')} — {len(contenu)} fichier(s), "
+           f"{man.get('sources', {}).get('fiches', '?')} fiches, {man.get('sources', {}).get('familles', '?')} familles "
+           f"[{empreinte[:16]}]")
+    journal(cx, "info", msg, chemin.name)
+    return "info", msg
+
+
 def rejouer(cx, racine: Path):
     """Vide la base et la reconstruit depuis l'archive, la plus ancienne d'abord.
 
@@ -1194,6 +1258,18 @@ def main():
         ecrire_index(cx, racine)
         print(f"\nrejoué : {n_ok} saisie(s), {n_ko} refus.")
         return 1 if n_ko else 0
+
+    for zp in sorted((racine / "arrivee").glob("*.zip")):
+        try:
+            etat, msg = ingerer_paquet(cx, racine, zp)
+            cx.commit()
+            zp.unlink()
+            print(f"  {'=' if etat == 'doublon' else '+'} {zp.name} — {msg}")
+        except Refus as e:
+            cx.rollback()
+            cible = rejeter(racine, zp, str(e))
+            journal(cx, "rejet", str(e), zp.name); cx.commit()
+            print(f"  ! {zp.name} — {e}\n      → {cible.relative_to(racine)}")
 
     fichiers = sorted((racine / "arrivee").glob("*.json"))
     if not fichiers:

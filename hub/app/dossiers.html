@@ -132,6 +132,13 @@ td{padding:8px;border-bottom:1px solid var(--rule);vertical-align:top}
 .onglet .pt.on{background:var(--drape)}
 .onglet .pt.poste{background:var(--amber)}
 .panneau{padding:16px}
+.md{max-width:78ch;line-height:1.55;font-size:14.5px}
+.md h2{font-size:18px;margin:18px 0 8px} .md h3{font-size:15.5px;margin:16px 0 6px} .md h4{font-size:14px;margin:12px 0 4px}
+.md p{margin:0 0 10px} .md ul,.md ol{margin:0 0 10px;padding-left:22px} .md li{margin:2px 0}
+.md code{font-family:var(--mono);font-size:12.5px;background:var(--paper);padding:1px 4px;border-radius:2px}
+.md pre{font-family:var(--mono);font-size:12px;background:var(--paper);padding:10px;overflow:auto}
+.md blockquote{border-left:3px solid var(--rule);margin:8px 0;padding:4px 12px;color:var(--ink-soft)}
+.md table{font-size:13px;margin:8px 0 12px} .md hr{border:0;border-top:1px solid var(--rule);margin:14px 0}
 
 .grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:9px}
 .tuile{border:1px solid var(--rule);border-radius:var(--rayon);padding:8px 10px;background:var(--saisie)}
@@ -428,6 +435,15 @@ try {
   <main class="volet"><div class="tete"><h2>Préparation BaMaRa</h2>
     <span class="actions noprint"><button class="btn ghost" id="btnBamara" type="button">Rafraîchir</button></span>
   </div><div class="panneau" id="panBamara"></div></main>
+</div>
+
+<div class="page" id="pg_biblio" hidden>
+  <main class="volet"><div class="tete"><h2>Biblio</h2>
+    <span class="actions noprint"><button class="btn ghost" id="btnPaquet" type="button">Déposer un paquet</button>
+    <input type="file" id="pickPaquet" accept=".zip" hidden></span>
+  </div>
+  <div class="onglets" id="ongletsBiblio" hidden></div>
+  <div class="panneau" id="panBiblio"></div></main>
 </div>
 
 <div class="page" id="pg_modules" hidden>
@@ -1368,6 +1384,7 @@ var PAGES = [
   { id:"stats",      l:"Statistiques",     servi:true  },
   { id:"cr",         l:"Comptes rendus",   servi:true  },
   { id:"bamara",     l:"BaMaRa",           servi:true  },
+  { id:"biblio",     l:"Biblio",           servi:true  },
   { id:"modules",    l:"Modules",          servi:true  },
   { id:"sauvegarde", l:"Sauvegarde",       servi:true  },
   { id:"affichage",  l:"Affichage",        servi:false }
@@ -1689,6 +1706,189 @@ $("panBamara").addEventListener("click", function(e){
 });
 
 /* ── Modules servis ──────────────────────────────────────────────────────── */
+/* ── Biblio : le paquet data_hub ─────────────────────────────────────────
+   Un zip publié par data.pazuzu.uk (akinator, familles, fiches), repris par
+   ingerer_paquet() et servi tel quel sous /biblio/. Trois lecteurs, un par
+   fichier ; rien ici ne sait fabriquer la matière, seulement la montrer. */
+var BIBLIO = { man:null, vue:"fiches", familles:null };
+
+function md(texte){
+  /* Rendu Markdown minimal — titres, listes, tableaux, gras, code, citations.
+     ponytail: ce que les fiches utilisent, rien de plus ; passer à une
+     bibliothèque si une fiche sort de ce cadre. */
+  function inl(t){
+    return esc(t)
+      .replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+      .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, "$1<i>$2</i>")
+      .replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  }
+  var out = [], lignes = texte.replace(/\r/g, "").split("\n"), i = 0;
+  while (i < lignes.length){
+    var l = lignes[i];
+    if (/^```/.test(l)){ var b = []; i++; while (i < lignes.length && !/^```/.test(lignes[i])) b.push(lignes[i++]); i++;
+      out.push("<pre>" + esc(b.join("\n")) + "</pre>"); continue; }
+    var h = /^(#{1,6})\s+(.*)$/.exec(l);
+    if (h){ out.push("<h" + (h[1].length + 1) + ">" + inl(h[2]) + "</h" + (h[1].length + 1) + ">"); i++; continue; }
+    if (/^\s*(-{3,}|\*{3,})\s*$/.test(l)){ out.push("<hr>"); i++; continue; }
+    if (/^\|/.test(l)){ var rows = []; while (i < lignes.length && /^\|/.test(lignes[i])) rows.push(lignes[i++]);
+      var cells = rows.filter(function(r){ return !/^\|\s*:?-+/.test(r); })
+        .map(function(r){ return r.replace(/^\||\|$/g, "").split("|").map(function(c){ return c.trim(); }); });
+      out.push("<table><thead><tr>" + cells[0].map(function(c){ return "<th>" + inl(c) + "</th>"; }).join("") + "</tr></thead><tbody>" +
+        cells.slice(1).map(function(r){ return "<tr>" + r.map(function(c){ return "<td>" + inl(c) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table>");
+      continue; }
+    if (/^\s*[-*+]\s+/.test(l) || /^\s*\d+[.)]\s+/.test(l)){
+      var ol = /^\s*\d+[.)]\s+/.test(l), items = [];
+      while (i < lignes.length && (/^\s*[-*+]\s+/.test(lignes[i]) || /^\s*\d+[.)]\s+/.test(lignes[i]) || /^\s{2,}\S/.test(lignes[i]))){
+        var m = /^\s*(?:[-*+]|\d+[.)])\s+(.*)$/.exec(lignes[i]);
+        if (m) items.push(m[1]); else if (items.length) items[items.length - 1] += " " + lignes[i].trim();
+        i++;
+      }
+      out.push((ol ? "<ol>" : "<ul>") + items.map(function(x){ return "<li>" + inl(x) + "</li>"; }).join("") + (ol ? "</ol>" : "</ul>")); continue; }
+    if (/^>\s?/.test(l)){ var q = []; while (i < lignes.length && /^>\s?/.test(lignes[i])) q.push(lignes[i++].replace(/^>\s?/, ""));
+      out.push("<blockquote>" + inl(q.join(" ")) + "</blockquote>"); continue; }
+    if (!l.trim()){ i++; continue; }
+    var para = []; while (i < lignes.length && lignes[i].trim() && !/^(#|\||>|```|\s*[-*+]\s|\s*\d+[.)]\s)/.test(lignes[i])) para.push(lignes[i++]);
+    if (!para.length){ para.push(l); i++; }
+    out.push("<p>" + inl(para.join(" ")) + "</p>");
+  }
+  return '<div class="md">' + out.join("") + "</div>";
+}
+
+function pageBiblio(){
+  $("panBiblio").innerHTML = vide("Lecture…");
+  api("/api/biblio").then(function(o){
+    BIBLIO.man = o;
+    if (!o.present){
+      $("ongletsBiblio").hidden = true;
+      $("panBiblio").innerHTML =
+        '<div id="dropPaquet" class="drop">Déposer ici <b>data_hub_vN.zip</b>, ou cliquer sur « Déposer un paquet ».</div>' +
+        '<p class="note">Le paquet est publié sur <a href="https://data.pazuzu.uk/browse/scripts" target="_blank" rel="noopener">data.pazuzu.uk</a> : ' +
+        'akinator (matrice des livres + termes FOETO), familles de syndromes fœtaux, fiches de lecture microscopique. ' +
+        'Le hub vérifie le manifest et chaque empreinte, garde le zip en archive et sert le contenu hors ligne. ' +
+        'Un paquet remplace le précédent en entier.</p>';
+      zoneDepotPaquet($("dropPaquet"));
+      return;
+    }
+    var src = o.sources || {};
+    $("ongletsBiblio").hidden = false;
+    $("ongletsBiblio").innerHTML =
+      [["fiches", "Fiches micro (" + (o.fiches || []).length + ")"],
+       ["familles", "Familles (" + (src.familles || "—") + ")"],
+       ["akinator", "Akinator (" + ((src.akinator || {}).n_diseases || "—") + " maladies)"],
+       ["paquet", "Paquet v" + o.version]]
+      .map(function(x){ return '<button class="onglet' + (x[0] === BIBLIO.vue ? " on" : "") + '" data-vue="' + x[0] + '">' + esc(x[1]) + "</button>"; }).join("");
+    vueBiblio(BIBLIO.vue);
+  }).catch(function(e){ $("panBiblio").innerHTML = vide("Biblio illisible : " + e.message); });
+}
+$("ongletsBiblio").addEventListener("click", function(e){
+  var b = e.target.closest("button[data-vue]"); if (!b) return;
+  BIBLIO.vue = b.dataset.vue;
+  Array.prototype.forEach.call($("ongletsBiblio").children, function(x){ x.classList.toggle("on", x === b); });
+  vueBiblio(BIBLIO.vue);
+});
+
+function vueBiblio(v){
+  var pan = $("panBiblio"), o = BIBLIO.man;
+  if (v === "paquet"){
+    var src = o.sources || {}, ak = src.akinator || {};
+    pan.innerHTML = '<div class="grille" style="margin-bottom:16px">' +
+      tuile("version", "v" + o.version + " · " + esc(o.date)) + tuile("fiches", src.fiches) +
+      tuile("familles", src.familles) + tuile("maladies (akinator)", ak.n_diseases) +
+      tuile("termes HPO", ak.n_hpo) + tuile("termes FOETO", ak.n_foeto) + "</div>" +
+      '<p class="note">syndromes_foetaux.db du ' + esc(src["syndromes_foetaux.db"] || "—") +
+      (src.fiches_lecture ? " · fiches_lecture " + esc(src.fiches_lecture) : "") + ". Matrice : " + esc(ak.prob_mode || "—") + ".</p>" +
+      "<table><thead><tr><th>fichier</th><th>octets</th><th>sha256</th></tr></thead><tbody>" +
+      Object.keys(o.fichiers || {}).sort().map(function(n){ var f = o.fichiers[n];
+        return "<tr><td>" + esc(n) + "</td><td class=num>" + poids(f.octets) + '</td><td class="mono">' + esc(String(f.sha256).slice(0, 16)) + "…</td></tr>"; }).join("") +
+      "</tbody></table>" +
+      '<div id="dropPaquet" class="drop" style="margin-top:16px">Déposer un nouveau paquet ici — il remplace celui-ci.</div>';
+    zoneDepotPaquet($("dropPaquet"));
+    return;
+  }
+  if (v === "fiches"){
+    pan.innerHTML = '<div class="deux"><div class="colonne" id="listeFiches">' +
+      (o.fiches || []).map(function(n){ var t = n.replace(/^fiches\/fiche_|\.md$/g, "").replace(/_/g, " ");
+        return '<button class="btn ghost" style="display:block;width:100%;text-align:left;margin-bottom:4px" data-fiche="' + esc(n) + '">' + esc(t) + "</button>"; }).join("") +
+      '</div><div id="corpsFiche">' + vide("Choisir une fiche.") + "</div></div>";
+    $("listeFiches").onclick = function(e){
+      var b = e.target.closest("button[data-fiche]"); if (!b) return;
+      $("corpsFiche").innerHTML = vide("Lecture…");
+      fetch("/biblio/" + b.dataset.fiche).then(function(r){ return r.text(); })
+        .then(function(t){ $("corpsFiche").innerHTML = md(t); })
+        .catch(function(e){ $("corpsFiche").innerHTML = vide("Fiche illisible : " + e.message); });
+    };
+    return;
+  }
+  if (v === "familles"){
+    pan.innerHTML = vide("Lecture…");
+    (BIBLIO.familles ? Promise.resolve(BIBLIO.familles)
+                     : fetch("/biblio/familles.json").then(function(r){ return r.json(); }).then(function(j){ BIBLIO.familles = j.familles; return j.familles; }))
+    .then(function(fam){
+      pan.innerHTML = '<div class="deux"><div class="colonne" id="listeFam">' +
+        fam.map(function(f, i){ return '<button class="btn ghost" style="display:block;width:100%;text-align:left;margin-bottom:4px" data-i="' + i + '">' +
+          esc(f.nom || f.id) + ' <span class="mono" style="opacity:.6">' + f.n_membres + " membres · " + f.n_signes + " signes</span></button>"; }).join("") +
+        '</div><div id="corpsFam">' + vide("Choisir une famille.") + "</div></div>";
+      $("listeFam").onclick = function(e){
+        var b = e.target.closest("button[data-i]"); if (!b) return;
+        var f = fam[+b.dataset.i], niv = {};
+        f.signes.forEach(function(s){ (niv[s.niveau] = niv[s.niveau] || []).push(s); });
+        var noms = {}; f.membres.forEach(function(m){ noms[m.id] = m.nom; });
+        $("corpsFam").innerHTML = "<h3>" + esc(f.nom || f.id) + "</h3>" +
+          '<div class="pilules">' + f.membres.map(function(m){ return '<span class="pilule" title="' + esc(m.livres || "") + '">' + esc(m.nom) + (m.orpha ? " · " + esc(m.orpha) : "") + "</span>"; }).join("") + "</div>" +
+          ["coeur", "partiel", "discriminant", "discriminant faible"].filter(function(k){ return niv[k]; }).map(function(k){
+            return "<h4 style=\"margin:14px 0 6px\">" + esc(k) + " (" + niv[k].length + ")</h4><table><tbody>" +
+              niv[k].map(function(s){ return "<tr><td>" + esc(s.label) + ' <span class="mono" style="opacity:.6">' + esc(s.hpo_id) + "</span></td><td class=num>" +
+                s.n_attestant + "/" + f.n_membres + "</td><td>" + s.membres.map(function(m){ return esc(noms[m] || m); }).join(", ") + "</td></tr>"; }).join("") + "</tbody></table>"; }).join("") +
+          (f.parente && f.parente.length ? "<h4 style=\"margin:14px 0 6px\">Parenté entre membres</h4><table><tbody>" +
+            f.parente.slice(0, 15).map(function(p){ return "<tr><td>" + esc(noms[p.a] || p.a) + " — " + esc(noms[p.b] || p.b) + "</td><td class=num>" + p.score + "</td><td>" + p.n_partages + " signes partagés</td></tr>"; }).join("") + "</tbody></table>" : "");
+      };
+    }).catch(function(e){ pan.innerHTML = vide("Familles illisibles : " + e.message); });
+    return;
+  }
+  if (v === "akinator"){
+    pan.innerHTML = '<div id="akinator-app">' +
+      '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">' +
+        '<div style="flex:1;min-width:200px"><b>Akinator</b> <span style="font-size:11px;opacity:.7">diagnostic syndromique bayésien, matrice des livres + FOETO</span></div>' +
+        '<div class="ctx-toggle" id="ctxToggle"><button class="active" data-ctx="" onclick="setContext(\'\')">Tous</button>' +
+        '<button data-ctx="prenatal" onclick="setContext(\'prenatal\')">Prénatal</button><button data-ctx="postnatal" onclick="setContext(\'postnatal\')">Postnatal</button></div>' +
+        '<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer"><input type="checkbox" id="hierToggle" checked onchange="state.useHierarchy=this.checked;updateRanking()"> Hiérarchie HPO</label>' +
+        '<span id="akStatus" style="font-size:11px"></span></div>' +
+      '<div id="akLoading">Chargement de la matrice…</div>' +
+      '<div id="akMain" style="display:none"><div class="ak-wrap"><div>' +
+        '<div class="ak-card" id="signsCard"></div><div class="ak-card" id="suggestionsCard" style="display:none"></div>' +
+        '<div class="ak-card" id="obsCard" style="display:none"></div>' +
+        '<button class="ak-btn" id="resetBtn" onclick="resetAll()" style="width:100%;display:none">Réinitialiser</button></div>' +
+        '<div><div class="ak-card" id="rankingCard"></div></div></div></div></div>';
+    if (!document.getElementById("akCss")){
+      var l = document.createElement("link"); l.id = "akCss"; l.rel = "stylesheet"; l.href = "/akinator.css"; document.head.appendChild(l);
+    }
+    if (window.akinatorCharger){ window.akinatorCharger(); return; }
+    var sc = document.createElement("script"); sc.src = "/akinator.js";
+    sc.onload = function(){ window.akinatorCharger(); };
+    sc.onerror = function(){ pan.innerHTML = vide("akinator.js introuvable : le serveur tourne avec l'ancien code."); };
+    document.body.appendChild(sc);
+  }
+}
+
+function zoneDepotPaquet(zd){
+  if (!zd) return;
+  ["dragenter","dragover"].forEach(function(ev){ zd.addEventListener(ev, function(e){ e.preventDefault(); zd.classList.add("actif"); }); });
+  ["dragleave","drop"].forEach(function(ev){ zd.addEventListener(ev, function(e){ e.preventDefault(); zd.classList.remove("actif"); }); });
+  zd.addEventListener("drop", function(e){ deposerPaquet(e.dataTransfer.files); });
+}
+function deposerPaquet(files){
+  var f = Array.prototype.filter.call(files || [], function(x){ return /\.zip$/i.test(x.name); })[0];
+  if (!f){ flash("Un .zip, publié par data.pazuzu.uk."); return; }
+  var fd = new FormData(); fd.append("paquet", f, f.name);
+  flash("Reprise de " + f.name + "…");
+  api("/api/biblio", {method:"POST", body:fd}).then(function(o){
+    flash(o.message); BIBLIO.familles = null; BIBLIO.vue = "paquet"; recharger("biblio");
+  }).catch(function(e){ flash("Paquet refusé : " + e.message); });
+}
+$("btnPaquet").onclick = function(){ $("pickPaquet").click(); };
+$("pickPaquet").addEventListener("change", function(){ var l = this.files; this.value = ""; deposerPaquet(l); });
+
 function pageModules(){
   $("panModules").innerHTML = vide("Lecture du dépôt…");
   api("/api/modules").then(function(o){
@@ -1840,7 +2040,7 @@ $("panAffichage").addEventListener("change", function(e){
 
 var CHARGEURS = {
   qualite: pageQualite, stats: pageStats, cr: pageCr,
-  bamara: pageBamara, modules: pageModules, sauvegarde: pageSauvegarde,
+  bamara: pageBamara, biblio: pageBiblio, modules: pageModules, sauvegarde: pageSauvegarde,
   affichage: pageAffichage
 };
 [["btnQualite","qualite"],["btnStats","stats"],["btnCrRech","cr"],

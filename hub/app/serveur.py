@@ -55,8 +55,8 @@ import cr as compte_rendu
 import ingest
 from ingest import (ADAPTATEURS, MODULES_FACULTATIFS, MODULES_MICRO,
                     ORDRE_MODULES, Refus, slot, arborescence, construire_index,
-                    ecrire_index, ingerer, ingerer_fichier, journal, migrer, ouvrir,
-                    rejeter, reindexer)
+                    ecrire_index, ingerer, ingerer_fichier, ingerer_paquet, journal,
+                    migrer, ouvrir, rejeter, reindexer)
 
 ICI = Path(__file__).resolve().parent      # hub/app — le code, la page, web/, gabarits/, migrations/
 HUB = ICI.parent                            # hub/     — la base et les dossiers de travail
@@ -208,6 +208,63 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
     def themes():
         """Les thèmes des modules servis. Voir web/themes.css."""
         return send_file(ICI / "web" / "themes.css", mimetype="text/css")
+
+    @app.get("/akinator.js")
+    def akinator_js():
+        """Le moteur bayésien de la page Biblio — transposé de data.pazuzu.uk."""
+        return send_file(ICI / "web" / "akinator.js", mimetype="application/javascript")
+
+    @app.get("/akinator.css")
+    def akinator_css():
+        return send_file(ICI / "web" / "akinator.css", mimetype="text/css")
+
+    # ── Biblio : le paquet data_hub ────────────────────────────────────────
+    @app.get("/api/biblio")
+    def api_biblio():
+        """Le manifest du paquet en place, ou rien : la page sait quoi montrer."""
+        m = racine / "biblio" / "manifest.json"
+        if not m.is_file():
+            return jsonify({"present": False})
+        man = json.loads(m.read_text(encoding="utf-8"))
+        man["present"] = True
+        man["fiches"] = sorted(n for n in man.get("fichiers", {}) if n.startswith("fiches/"))
+        return jsonify(man)
+
+    @app.post("/api/biblio")
+    def api_biblio_deposer():
+        """Reçoit un data_hub_vN.zip et le reprend tout de suite : un paquet
+        n'est pas une saisie à relire, c'est un état qu'on remplace."""
+        f = request.files.get("paquet")
+        if not f:
+            return erreur("aucun fichier reçu")
+        nom = Path(f.filename or "").name
+        if not re.match(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,120}\.zip$", nom):
+            return erreur("nom inattendu — un data_hub_vN.zip")
+        arrivee = racine / "arrivee"
+        arrivee.mkdir(parents=True, exist_ok=True)
+        cible = arrivee / nom
+        f.save(cible)
+        cx = base()
+        try:
+            try:
+                etat, msg = ingerer_paquet(cx, racine, cible)
+                cx.commit()
+                cible.unlink(missing_ok=True)
+                return jsonify({"etat": etat, "message": msg})
+            except Refus as e:
+                cx.rollback()
+                rejet = rejeter(racine, cible, str(e))
+                journal(cx, "rejet", str(e), nom)
+                cx.commit()
+                return erreur(f"{e} → {rejet.relative_to(racine)}", 422)
+        finally:
+            cx.close()
+
+    @app.get("/biblio/<path:chemin>")
+    def biblio_fichier(chemin):
+        """Les fichiers du paquet, tels quels. send_from_directory refuse
+        tout chemin qui sortirait de biblio/."""
+        return send_from_directory(racine / "biblio", chemin)
 
     # ── Index et dossiers ──────────────────────────────────────────────────
     @app.get("/api/index")

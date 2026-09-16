@@ -29,3 +29,4 @@ hub/app/WPy*/
 # étui des grilles, produit par micro/assembler.py
 micro/microscopie.html
 /batterie.py
+hub/biblio/
