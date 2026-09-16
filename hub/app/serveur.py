@@ -35,12 +35,14 @@ bibliothèque standard seule et continue de fonctionner sans serveur.
 
 import argparse
 import datetime as dt
+import io
 import json
 import re
 import shutil
 import sqlite3
 import sys
 import traceback
+import zipfile
 from pathlib import Path
 
 try:
@@ -217,6 +219,13 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
     @app.get("/akinator.css")
     def akinator_css():
         return send_file(ICI / "web" / "akinator.css", mimetype="text/css")
+
+    @app.get("/bamara_fichier.user.js")
+    def bamara_userscript():
+        """Le script de pré-remplissage, servi pour l'installer dans Tampermonkey.
+        Il vit dans BAMARA/ à la racine du dépôt et ne connaît pas le hub."""
+        return send_file(DEPOT / "BAMARA" / "bamara_fichier.user.js",
+                         mimetype="application/javascript")
 
     # ── Biblio : le paquet data_hub ────────────────────────────────────────
     @app.get("/api/biblio")
@@ -776,35 +785,37 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
         finally:
             cx.close()
 
-    # Les deux adresses que le script de pré-remplissage appelle. Il lit le
-    # document tel quel — pas d'enveloppe autour — et va chercher son message
-    # d'erreur dans « error ». On lui rend donc exactement ça.
-    def _document_bamara(numero):
+    # Aucune adresse pour un script extérieur : le document BaMaRa quitte le
+    # hub par un fichier (bouton « document », ou le lot ci-dessous) que
+    # l'opérateur glisse lui-même dans la page BaMaRa. Pas de canal vivant
+    # entre une page externe et les dossiers en clair.
+    @app.get("/api/bamara/lot.zip")
+    def api_bamara_lot():
+        """Tous les dossiers déclarables, un <dossier>_bamara.json chacun, dans
+        un zip à décompresser dans un dossier : c'est ce dossier que le script
+        de pré-remplissage parcourt, dossier après dossier. Chaque document
+        emporte ses manques (`_manques`) : ce que le script ne posera pas et
+        que l'opérateur tape lui-même — le statut diagnostique, en tête, n'est
+        collecté nulle part, donc aucun dossier n'est jamais « prêt » au sens
+        strict. Un dossier ouvert reste exclu : il n'est pas fini."""
         cx = base()
         try:
-            doc, _ = prep_bamara.preparer(cx, numero, prep_bamara.config(racine))
-            return doc
+            cfg = prep_bamara.config(racine)
+            retenus = [d["dossier"] for d in prep_bamara.audit(cx, cfg)
+                       if d.get("declarable") and d.get("statut") != "ouvert"]
+            buf = io.BytesIO()
+            with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+                for n in retenus:
+                    doc, manques = prep_bamara.preparer(cx, n, cfg)
+                    doc["_manques"] = manques
+                    z.writestr(f"{n}_bamara.json", json.dumps(doc, ensure_ascii=False, indent=1))
         finally:
             cx.close()
-
-    @app.get("/api/bamara/lookup")
-    def api_bamara_lookup():
-        q = (request.args.get("q") or "").strip().upper()
-        if not DOSSIER_OK.match(q):
-            return jsonify({"error": "numéro de dossier inutilisable (lettres, chiffres, . _ -)"}), 400
-        doc = _document_bamara(q)
-        if doc is None:
-            return jsonify({"error": f"aucune saisie administrative pour {q}"}), 404
-        return jsonify(doc)
-
-    @app.get("/cas/<numero>/bamara.json")
-    def cas_bamara_json(numero):
-        if not DOSSIER_OK.match(numero.upper()):
-            return jsonify({"error": "numéro de dossier inutilisable (lettres, chiffres, . _ -)"}), 400
-        doc = _document_bamara(numero.upper())
-        if doc is None:
-            return jsonify({"error": f"aucune saisie administrative pour {numero}"}), 404
-        return jsonify(doc)
+        if not retenus:
+            return erreur("aucun dossier déclarable hors statut « ouvert »", 404)
+        buf.seek(0)
+        return send_file(buf, mimetype="application/zip", as_attachment=True,
+                         download_name=f"bamara_lot_{dt.date.today().isoformat()}.zip")
 
     # ── Sauvegarde ─────────────────────────────────────────────────────────
     def _poids(chemin: Path):

@@ -143,6 +143,17 @@ précédent.
 
 ![Biblio — akinator](captures/13_biblio_akinator.png)
 
+**BaMaRa.** Onglet **BaMaRa** → « Lot des dossiers déclarables » (un JSON par
+dossier, à décompresser dans un dossier) et « Installer le script »
+(Tampermonkey). Sur bamara.bndmr.fr, glisser les fichiers dans le panneau du
+script, puis dossier après dossier : « Remplir cette page », relire, taper ce
+qui manque, valider, « Fait, dossier suivant ». Rien ne circule entre le hub
+et BaMaRa autrement que par ce fichier.
+
+![Hub — BaMaRa](captures/15_bamara_hub.png)
+
+![Script sur une page BaMaRa (maquette)](captures/14_bamara_userscript.png)
+
 Le détail (ingestion en ligne de commande, comptes rendus, BaMaRa,
 sauvegarde) est dans [hub/README.md](../hub/README.md).
 

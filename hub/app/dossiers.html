@@ -1655,6 +1655,13 @@ function pageBamara(){
         }).join("") +
         '<div class="field" style="flex:0 0 auto"><label>&nbsp;</label>' +
         '<button class="btn" id="bamEnregistrer" type="button">Enregistrer</button></div></div></div>' +
+      '<div class="bloc"><h3>Vers BaMaRa, par fichier</h3>' +
+        '<p class="note">Le hub n\'a aucune adresse ouverte à un script extérieur. Le circuit : ' +
+        "1. télécharger le lot (un <span class=\"mono\">&lt;dossier&gt;_bamara.json</span> par dossier déclarable non ouvert, avec sa liste de manques) et le décompresser dans un dossier ; " +
+        "2. sur bamara.bndmr.fr, le script Tampermonkey ouvre son panneau : y glisser les fichiers ou choisir le dossier ; " +
+        "3. dossier après dossier, page après page, cliquer « Remplir », relire, taper ce que le panneau liste comme manquant, valider dans BaMaRa, puis « Suivant ».</p>" +
+        '<div class="btns"><a class="btn" href="/api/bamara/lot.zip">Lot des dossiers déclarables (zip)</a> ' +
+        '<a class="btn ghost" href="/bamara_fichier.user.js">Installer le script (Tampermonkey)</a></div></div>' +
       '<div class="bloc"><h3>État des dossiers</h3><div class="scroll"><table>' +
         "<thead><tr><th>Dossier</th><th>Issue</th><th>État</th><th>Ce qui manque</th>" +
         "<th></th></tr></thead><tbody>" +
@@ -1700,6 +1707,7 @@ $("panBamara").addEventListener("click", function(e){
   if (!b) return;
   var n = b.dataset.bam;
   api("/api/bamara/" + encodeURIComponent(n)).then(function(o){
+    o.document._manques = o.manques;
     telecharger(n + "_bamara.json", JSON.stringify(o.document, null, 1));
     flash("Document de " + n + " téléchargé.");
   }).catch(function(e){ flash("Échec : " + e.message); });

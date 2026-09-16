@@ -202,6 +202,30 @@ quand tout est lu : un paquet remplace le précédent en entier, le zip reçu
 reste dans `archive/_biblio/`. Un paquet déjà repris est reconnu à son
 empreinte. Le dépôt ne porte jamais les données, seulement le lecteur.
 
+## BaMaRa, par fichier
+
+Onglet « BaMaRa ». `bamara.py::preparer()` compose pour chaque dossier le
+document au format du modèle SDM (blocs identity, medicare, encounter,
+pregnancy_end, antenatal, condition) et la liste de ce qui manque. Le hub
+**n'envoie rien et n'ouvre aucune adresse à un script extérieur** : le document
+quitte le hub par un fichier.
+
+1. « Lot des dossiers déclarables » télécharge un zip — un
+   `<dossier>_bamara.json` par dossier déclarable non ouvert, chacun portant
+   ses `_manques` ; « document » sur une ligne fait la même chose pour un seul.
+   Le décompresser dans un dossier.
+2. Installer `BAMARA/bamara_fichier.user.js` dans Tampermonkey (bouton
+   « Installer le script »). Sur bamara.bndmr.fr, son panneau reçoit les
+   fichiers glissés ou le dossier choisi ; la file survit aux changements de
+   page.
+3. Dossier après dossier : ouvrir le patient dans BaMaRa, « Remplir cette
+   page » (ou une section), relire, taper ce que le panneau liste « à taper
+   soi-même » — le statut diagnostique n'est collecté nulle part —, valider
+   dans BaMaRa, « Fait, dossier suivant ».
+
+Le script n'a ni `@connect` ni `GM_xmlhttpRequest` : il ne sait pas que le
+hub existe. Le seul transfert nominatif est un fichier déplacé à la main.
+
 ## Le compte rendu
 
 Onglet « Compte rendu » d'un dossier : on choisit un gabarit, on produit un
