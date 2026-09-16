@@ -8,8 +8,6 @@ que l'on récupère à la main.
 Pensés pour des postes de salle d'autopsie hors réseau, où installer quoi que
 ce soit n'est ni possible ni souhaitable.
 
-**Téléchargement des dernières versions : <https://hublight.pazuzu.uk>**
-
 ## Modules
 
 | Fichier | Contenu |
