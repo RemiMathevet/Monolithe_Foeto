@@ -128,7 +128,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
     <div class="field">
       <label for="dossier">Numéro de dossier</label>
       <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
-      <div class="hint" id="dossierHint">Deux chiffres, P, puis le numéro. Conditionne l'enregistrement.</div>
+      <div class="hint" id="dossierHint">Libre, mis en majuscules. Conditionne l'enregistrement.</div>
     </div>
     <div class="field">
       <label for="operateur">Opérateur</label>
@@ -416,7 +416,7 @@ function flash(m){
   clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
 }
 function normDossier(v){ return v.toUpperCase().replace(/^(\d{2})P/, "$1P").replace(/\s+/g,""); }
-function dossierOk(v){ return /^\d{2}P\d+$/.test(v); }
+function dossierOk(v){ return v.trim().length > 0; } // ponytail: plus de format imposé, seul le uppercase (normDossier) reste
 function val(id){ var e = $(id); return e ? e.value.trim() : ""; }
 function nb(id){ var v = parseFloat(val(id)); return isFinite(v) ? v : null; }
 /* Une valeur de champ, typée selon la trame. "err" remonte tel quel. */
@@ -825,7 +825,7 @@ async function majDossier(){
   var ok = num && op;
   var h = $("dossierHint");
   h.className = "hint" + (v && !num ? " bad" : num ? " good" : "");
-  h.textContent = !v ? "Deux chiffres, P, puis le numéro. Conditionne l'enregistrement."
+  h.textContent = !v ? "Libre, mis en majuscules. Conditionne l'enregistrement."
                 : num ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
                       : "Numéro incomplet — enregistrement et export bloqués";
   var oh = $("operateurHint");

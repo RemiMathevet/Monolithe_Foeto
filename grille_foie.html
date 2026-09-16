@@ -148,7 +148,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
     <div class="field">
       <label for="dossier">Numéro de dossier</label>
       <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
-      <div class="hint" id="dossierHint">Deux chiffres, P, puis le numéro. Conditionne l'enregistrement.</div>
+      <div class="hint" id="dossierHint">Libre, mis en majuscules. Conditionne l'enregistrement.</div>
     </div>
     <div class="field">
       <label for="operateur">Lecteur</label>
@@ -909,7 +909,7 @@ function flash(m){
   clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
 }
 function normDossier(v){ return v.toUpperCase().replace(/\s+/g, ""); }
-function dossierOk(v){ return /^\d{2}P\d+$/.test(v); }
+function dossierOk(v){ return v.trim().length > 0; } // ponytail: plus de format imposé, seul le uppercase (normDossier) reste
 function num(id){ var e = $(id); if (!e) return null; var v = parseFloat(e.value); return isFinite(v) ? v : null; }
 function par(liste, k){ return liste.filter(function(x){ return x.k === k; })[0] || null; }
 function champs(){ return MESURE ? MESURE.champs : []; }
@@ -979,8 +979,13 @@ function batir(){
 
   $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
 
+  /* Un signe peut porter un groupe g (placenta : cordon, membranes, parenchyme sous
+     cordon, marge, systémique) : un sous-titre s'ouvre quand le groupe change. */
+  var gPrec = null;
   $("signes").innerHTML = SIGNES.map(function(x){
-    return '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+    var h = "";
+    if (x.g && x.g !== gPrec){ h = '<div class="sousTitre">' + esc(x.g) + '</div>'; gPrec = x.g; }
+    return h + '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
       (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
       '</div>' +
       '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="normal">Normal</button>' +
@@ -1244,7 +1249,7 @@ function composer(){
   L.push("");
   L.push("SIGNES");
   if (!anormales.length && !normales.length) L.push("  aucun axe exploré.");
-  anormales.forEach(function(x){ L.push("  " + x.l + " — ANORMAL"); });
+  anormales.forEach(function(x){ L.push("  " + (x.g ? x.g + " · " : "") + x.l + " — ANORMAL"); });
   if (normales.length)
     L.push("  Normaux : " + normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
   var muets = SIGNES.filter(function(x){ return !E.signes[x.k]; });
@@ -1461,7 +1466,7 @@ async function majDossier(){
   var v = $("dossier").value, ok1 = dossierOk(v), op = $("operateur").value.trim() !== "";
   var ok = ok1 && op, h = $("dossierHint");
   h.className = "hint" + (v && !ok1 ? " bad" : ok1 ? " good" : "");
-  h.textContent = !v ? "Deux chiffres, P, puis le numéro. Conditionne l'enregistrement."
+  h.textContent = !v ? "Libre, mis en majuscules. Conditionne l'enregistrement."
                 : ok1 ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
                       : "Numéro incomplet — enregistrement et export bloqués";
   var oh = $("operateurHint");

@@ -151,7 +151,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
     <div class="field">
       <label for="dossier">Numéro de dossier</label>
       <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
-      <div class="hint" id="dossierHint">Deux chiffres, P, puis le numéro. Conditionne l'enregistrement.</div>
+      <div class="hint" id="dossierHint">Libre, mis en majuscules. Conditionne l'enregistrement.</div>
     </div>
     <div class="field">
       <label for="operateur">Opérateur</label>
@@ -310,7 +310,7 @@ function uid(){
   return "x" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 }
 function normDossier(v){ return v.toUpperCase().replace(/^(\d{2})P/, "$1P").replace(/\s+/g,""); }
-function dossierOk(v){ return /^\d{2}P\d+$/.test(v); }
+function dossierOk(v){ return v.trim().length > 0; } // ponytail: plus de format imposé, seul le uppercase (normDossier) reste
 function champDef(id){
   var r = null;
   SECTIONS.forEach(function(s){ s.champs.forEach(function(c){ if (c.id === id) r = c; }); });
@@ -828,7 +828,7 @@ async function majDossier(){
   var ok = ok_n && op;
   var h = $("dossierHint");
   h.className = "hint" + (v && !ok_n ? " bad" : ok_n ? " good" : "");
-  h.textContent = !v ? "Deux chiffres, P, puis le numéro. Conditionne l'enregistrement."
+  h.textContent = !v ? "Libre, mis en majuscules. Conditionne l'enregistrement."
                 : ok_n ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
                        : "Numéro incomplet — enregistrement et export bloqués";
   var oh = $("operateurHint");
@@ -1039,7 +1039,7 @@ async function autotest(){
                                         SECTIONS.map(function(s){ return s.id; }).indexOf("tranches") - 1);
   chk("indication en tête",       SECTIONS[0].champs[0].id === "indication" && champDef("indication").d.indexOf("MFIU") >= 0);
   chk("normDossier 26p0123",      normDossier("26p0123") === "26P0123");
-  chk("dossier incomplet refusé", !dossierOk("26P"));
+  chk("dossier vide refusé", !dossierOk("  "));
   chk("section d'un cliché",      sectionDeCliche("photo_basale") === "galette");
 
   chk("verrouillé au départ",     $("sec_galette").classList.contains("off"));

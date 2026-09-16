@@ -14,14 +14,45 @@ ce soit n'est ni possible ni souhaitable.
 
 | Fichier | Contenu |
 |---|---|
+| `administratif.html` | Identité, circuit du prélèvement, antécédents, grossesses précédentes, examens prénataux |
 | `examen_clinique.html` | Morphologie externe étage par étage, clichés de trame et anomalies |
 | `biometrie_clinique.html` | Mesures au ruban et au pied à coulisse, z-scores contre les références |
 | `radio.html` | Lecture du squelette, mesures des os longs, z-scores de Chitty |
 | `autopsie.html` | Le déroulé complet de l'autopsie, masses d'organes et z-scores |
 | `neuropath.html` | Examen de l'encéphale fixé, biométries cérébrales et z-scores |
+| `micro.html` | Lecture des blocs, une section par lame : maturation, cytoarchitecture, lésions, rétention |
+| `macro_placenta.html` | Macroscopie placentaire sur pièce fraîche : cordon, membranes, tranches, clichés |
+| `grille_<organe>.html` | Grilles de lecture microscopique, une par organe (17) : prélèvement, rétention, maturation, signes, termes FOETO, compte rendu |
 
-Restent à définir : module d'administration, lecture microscopique, placenta.
-Le script de reprise des JSON dans la base est en cours.
+**Manuel d'utilisation avec captures d'écran : [docs/MANUEL.md](docs/MANUEL.md).**
+
+`micro.html` s'ouvre sur une seule section vide qui propose les quatorze
+organes. On désigne celui de la lame en main : la section prend son nom et
+pose ses axes, on remplit dessous, puis on ajoute une section pour la lame
+suivante. Les lames passent dans l'ordre où elles arrivent, jamais dans celui
+d'un document à dérouler ; un même organe peut revenir autant de fois qu'il a
+de blocs, et une section restée vide se retire.
+
+Le vocabulaire — 2 911 termes recopiés de la base FOETO — ne se montre pas
+tant qu'on ne le demande pas. Chaque axe est d'abord une bascule — normal,
+anormal — et ne se déroule que sur l'anormal. Là, les termes restent masqués
+jusqu'à ce qu'on cherche trois lettres ou qu'on demande la liste entière ;
+chacun porte en infobulle la description du livre de référence. Chaque axe
+déroulé offre en plus un champ « autre » pour le terme absent, et une zone de
+texte pour quantifier et localiser. Aucun calcul n'y est fait : la rétention
+s'enregistre comme ce qui est vu, l'intervalle mort-délivrance se déduit au
+traitement des données.
+
+Les grilles `grille_<organe>.html` sont produites par `gen_grille.py` à partir
+des fragments `grilles/<organe>.js` ; seule `grille_poumon.html` est écrite à
+la main. Le script de reprise des JSON dans la base est en cours.
+
+## Numéro de dossier
+
+Champ libre : les lettres passent en majuscules, les espaces sont retirés,
+aucun format n'est imposé (`26P0123`, `25P9999`, `A2026-17` sont tous
+acceptés). Seul le vide bloque l'enregistrement et l'export. Le numéro donne
+son nom au fichier exporté : `<dossier>_<module>.json`.
 
 ## Les deux numéros de version
 
@@ -60,7 +91,8 @@ le document.
 
 Le dépôt ne contient que des numéros de dossier fictifs (`26P0123`, `25P9999`,
 `25P1234`). Le hook `.githooks/pre-commit` refuse tout commit introduisant un
-numéro au format `NNPNNNN` qui ne soit pas l'un d'eux. Après clone :
+numéro de la forme `NNPNNNN` qui ne soit pas l'un d'eux (le garde-fou
+ne dit rien du format accepté par les modules, qui est libre). Après clone :
 
 ```
 git config core.hooksPath .githooks
