@@ -193,7 +193,14 @@ Onglet « Biblio ». Il reprend `data_hub_vN.zip`, publié par
 - `familles.json` — les familles de syndromes fœtaux, membres, signes cœur /
   partiels / discriminants, parenté entre membres ;
 - `fiches/` — les fiches de lecture microscopique, celles dont sortent les
-  grilles de `micro/`, rendues telles quelles (Markdown).
+  grilles de `micro/`, rendues telles quelles (Markdown) ;
+- `genes.json` (v2) — gènes par syndrome et syndromes par gène.
+
+La vue **Comparer** (`app/web/comparer.js`) confronte 2 à 4 syndromes sur ces
+trois fichiers : recouvrement des signes (boules), tableau communs /
+partagés / cousins HPO / propres avec pénétrances, gènes, familles et parenté
+par paire, arbre HPO, dendrogramme navigable (Jaccard élargi aux parents,
+liaison moyenne). Tout se calcule dans la page.
 
 Le zip se dépose sur la page (ou dans `arrivee/`, `ingest.py` le prend avant
 les JSON). `ingerer_paquet()` lit le `manifest.json`, vérifie l'empreinte de

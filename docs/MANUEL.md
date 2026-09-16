@@ -158,7 +158,7 @@ décrits dans [hub/README.md](../hub/README.md).
    membres, signes cœur / partiels / discriminants, parenté), **Akinator**
    (diagnostic syndromique bayésien sur la matrice attestée par les livres +
    termes FOETO — saisir deux signes, répondre aux questions discriminantes),
-   **Paquet** (version, sources, empreintes).
+   **Comparer** (voir ci-dessous), **Paquet** (version, sources, empreintes).
 
 ![Biblio — fiche](captures/11_biblio_fiche.png)
 
@@ -166,6 +166,24 @@ décrits dans [hub/README.md](../hub/README.md).
 
 Un nouveau paquet se dépose de la même façon ; la version affichée est celle
 du manifest.
+
+**Comparer** — choisir de deux à quatre syndromes (par nom, ORPHA ou gène),
+ou partir d'une famille. La page pose alors : les boules de recouvrement des
+signes (2 ou 3 syndromes ; un tableau des intersections à 4) ; le tableau des
+signes en quatre bandes — communs à tous, partagés par certains, *cousins*
+(absent chez l'autre mais un signe proche dans l'arbre HPO, jusqu'à 3
+niveaux) et propres à un seul — avec la pénétrance de chacun ; les gènes
+partagés ou propres ; les familles et la parenté par paire attestée par les
+livres (signes partagés, discriminants) ; la position des signes dans l'arbre
+HPO (ancêtres dépliables, un point par syndrome) ; un dendrogramme de la
+sélection et des membres de ses familles (Jaccard sur les signes et leurs
+parents, liaison moyenne) — cliquer un nom l'ajoute, cliquer un nœud
+sélectionne sa branche. « Propre à A » signifie *attesté chez A et pas chez B
+dans ces livres*, jamais « absent chez B ».
+
+![Comparer — recouvrement](captures/18_comparer_venn.png)
+
+![Comparer — dendrogramme](captures/17_comparer_dendro.png)
 
 ## 9. BaMaRa — par fichier, jamais par réseau
 
