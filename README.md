@@ -22,6 +22,13 @@ ce soit n'est ni possible ni souhaitable.
 | `Macro/macro_placenta.html` | Macroscopie placentaire sur pièce fraîche : cordon, membranes, tranches, clichés |
 | `micro/grille_<organe>.html` | Grilles de lecture microscopique, une par organe (17) : prélèvement, rétention, maturation, signes, termes FOETO, compte rendu |
 
+**Pack téléphone : [`pack_telephone/`](pack_telephone/) ou
+[`pack_telephone.zip`](pack_telephone.zip)** — les six modules de salle
+(examen clinique, biométrie, radio, autopsie, neuropath, macro placenta) à
+copier tels quels sur le téléphone ou la tablette. Copies de `Macro/` et
+`Radio/`, refaites par `pack_telephone.py` ; le hook refuse une copie qui
+dévie de sa source.
+
 **Manuel d'utilisation avec captures d'écran : [docs/MANUEL.md](docs/MANUEL.md).**
 
 ## Le hub — reprise des JSON en base

@@ -21,6 +21,17 @@ trouves=$(git diff --cached --diff-filter=ACMR -U0 -- . ':!.githooks/pre-commit'
           grep -Evi "^($FICTIFS)$" |
           sort -u)
 
+# Le pack telephone est une copie de Macro/ et Radio/ : une copie qui ne
+# correspond plus a sa source ne part pas (python3 pack_telephone.py).
+for f in $(git diff --cached --name-only -- Macro Radio pack_telephone | grep '\.html$'); do
+  b=$(basename "$f")
+  src=$(ls Macro/"$b" Radio/"$b" 2>/dev/null | head -1)
+  if [ -n "$src" ] && [ -f "pack_telephone/$b" ] && ! cmp -s "$src" "pack_telephone/$b"; then
+    echo "pre-commit : pack_telephone/$b ne correspond plus a $src — lancer python3 pack_telephone.py" >&2
+    exit 1
+  fi
+done
+
 if [ -n "$trouves" ]; then
   echo "pre-commit : numero(s) de dossier non fictif(s) dans les lignes ajoutees :" >&2
   echo "$trouves" | sed 's/^/  /' >&2

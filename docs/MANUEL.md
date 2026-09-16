@@ -4,7 +4,8 @@ Tous les cas montrés ici sont fictifs (`26P0123`, opérateur `AB`).
 
 ## 1. Ouvrir un module
 
-Télécharger le fichier `.html` voulu, l'ouvrir par double-clic. Aucun serveur,
+Télécharger le fichier `.html` voulu (ou `pack_telephone.zip`, qui réunit les
+six modules de salle), l'ouvrir par double-clic. Aucun serveur,
 aucun réseau, aucun compte. Le module fonctionne dans Chrome, Edge, Firefox et
 Safari récents ; sur tablette aussi.
 
