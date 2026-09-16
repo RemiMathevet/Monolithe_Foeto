@@ -1,0 +1,125 @@
+/* SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | Monolithe_Foeto
+   ═══════════════════════════════════════════════════════════════════════════
+   Thèmes des modules servis — injectée par le serveur, jamais dans le fichier.
+
+   Les modules gardent leur feuille de style : celle-ci ne fait que redéfinir
+   les variables qu'ils déclarent tous — --paper, --card, --ink, --ink-soft,
+   --rule, --drape, --drape-soft, --alert, --amber — plus les quelques règles
+   où une couleur est écrite en dur, presque toujours le blanc du texte posé
+   sur la couleur d'accent.
+
+   Le même fichier ouvert par double-clic ne la reçoit pas et reste tel qu'il a
+   toujours été. Le thème suit celui de la page des dossiers, réglé dans son
+   onglet Affichage — c'est le même navigateur, la même origine, le même choix.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Les jetons manquants, valables pour les quatre thèmes ────────────────── */
+body{
+  --saisie:var(--paper);      /* fond des champs — les modules y mettent --paper */
+  --sur-drape:#FFFFFF;        /* ce qui s'écrit sur la couleur d'accent */
+  --drape-fort:#0B564F;       /* accent survolé */
+  --alert-soft:#F7EAE7;
+  --plaque:var(--grey18, #7A7E7C);   /* fond d'un emplacement de cliché vide */
+}
+
+/* ── Sombre ──────────────────────────────────────────────────────────────── */
+body.theme-sombre{
+  --paper:#12171A; --card:#1A2126; --saisie:#151C21; --plaque:#222B30;
+  --ink:#DCE4E4; --ink-soft:#93A0A0; --rule:#2F3B41;
+  --drape:#3FB3A4; --drape-soft:#12302D; --sur-drape:#08181A; --drape-fort:#57C8B9;
+  --alert:#E08472; --alert-soft:#2A1C19; --amber:#D6B45C; --amber-soft:#241F14;
+}
+body.theme-sombre header{border-bottom-color:var(--rule)}
+body.theme-sombre th{border-bottom-color:var(--rule)}
+body.theme-sombre img{opacity:.92}
+
+/* ── Windows 98 ──────────────────────────────────────────────────────────── */
+body.theme-w98{
+  /* Le gris est celui de la fenêtre, pas celui du bureau : les sections
+     prennent le gris, seuls les champs restent blancs — c'est l'inverse du
+     thème clair, où la section est blanche sur un fond papier. */
+  --paper:#008080; --card:#C0C0C0; --saisie:#FFFFFF; --plaque:#808080;
+  --ink:#000000; --ink-soft:#404040; --rule:#808080;
+  --drape:#000080; --drape-soft:#B4B4C8; --sur-drape:#FFFFFF; --drape-fort:#000060;
+  --alert:#800000; --alert-soft:#E8D8D8; --amber:#806000; --amber-soft:#E0E0C0;
+  font-family:Tahoma,"MS Sans Serif",Geneva,Verdana,sans-serif;
+  --sans:Tahoma,"MS Sans Serif",Geneva,Verdana,sans-serif;
+  --mono:"Courier New",Courier,monospace;
+}
+body.theme-w98 section{
+  background:var(--card);
+  border:2px solid;border-color:#FFFFFF #404040 #404040 #FFFFFF;border-radius:0;
+  box-shadow:1px 1px 0 #000}
+body.theme-w98 header{color:#fff}
+body.theme-w98 header .sub,body.theme-w98 header .eyebrow,
+body.theme-w98 header .ver,body.theme-w98 header .hint{color:#CFE3E3}
+body.theme-w98 header{border-bottom-color:#004848}
+body.theme-w98 .btn,body.theme-w98 .chip,body.theme-w98 .tog{
+  border-radius:0;border:2px solid;border-color:#FFFFFF #404040 #404040 #FFFFFF}
+body.theme-w98 .btn:active,body.theme-w98 .chip[aria-pressed=true],
+body.theme-w98 .chip.on{border-color:#404040 #FFFFFF #FFFFFF #404040}
+body.theme-w98 input,body.theme-w98 select,body.theme-w98 textarea{
+  border-radius:0;border:2px solid;border-color:#404040 #FFFFFF #FFFFFF #404040}
+
+/* ── Terminal ────────────────────────────────────────────────────────────── */
+body.theme-cli{
+  --paper:#0A0E0A; --card:#0A0E0A; --saisie:#0A0E0A; --plaque:#10200F;
+  --ink:#8CE68C; --ink-soft:#4E9E5E; --rule:#1F4A2A;
+  --drape:#7FE0B0; --drape-soft:#0F2418; --sur-drape:#0A0E0A; --drape-fort:#A8F0C8;
+  --alert:#F08A7A; --alert-soft:#1A100E; --amber:#E0C070; --amber-soft:#141810;
+  --sans:var(--mono);
+  font-family:var(--mono);
+}
+body.theme-cli h1,body.theme-cli h2,body.theme-cli h3{font-family:var(--mono)}
+body.theme-cli section{border-radius:0}
+body.theme-cli .btn,body.theme-cli .chip,body.theme-cli input,
+body.theme-cli select,body.theme-cli textarea{border-radius:0}
+body.theme-cli img{opacity:.9}
+
+/* ── Ce que les modules écrivent en dur ───────────────────────────────────
+   Toujours la même chose : du blanc posé sur la couleur d'accent. Sans ces
+   quelques lignes, une puce cochée resterait blanche sur fond clair en mode
+   Windows 98, et illisible en terminal. */
+body[class*="theme-"] .btn.primary,
+body[class*="theme-"] .chip.on,
+body[class*="theme-"] .chip[aria-pressed="true"],
+body[class*="theme-"] .tog button[aria-pressed="true"],
+body[class*="theme-"] .mi[data-etat] .mc,
+body[class*="theme-"] .tick,
+body[class*="theme-"] .slot .ph,
+body[class*="theme-"] .pilule.on{ color:var(--sur-drape) }
+
+body[class*="theme-"] .btn.primary:hover{ background:var(--drape-fort) }
+body[class*="theme-"] .btn.danger:hover{ background:var(--alert-soft) }
+
+/* Les champs de saisie : les modules leur donnent --paper, ce qui les confond
+   avec le fond dès que le thème rapproche les deux. On les distingue. */
+body[class*="theme-"] input[type=text],
+body[class*="theme-"] input[type=number],
+body[class*="theme-"] input[type=search],
+body[class*="theme-"] select,
+body[class*="theme-"] textarea{ background:var(--saisie) }
+
+/* Les jauges décoratives de la biométrie et de la neuropathologie sont peintes
+   en dur dans des verts sombres : lisibles sur fond clair, invisibles sur fond
+   sombre. On les ramène sur les jetons du thème. */
+/* L'emplacement d'un cliché non pris est peint dans un gris fixe : éclatant
+   sur fond sombre, et il n'a pas à l'être — c'est un trou, pas une donnée. */
+body[class*="theme-"] .slot .plate{ background:var(--plaque) }
+body[class*="theme-"] .slot .ph{ opacity:.4 }
+
+body[class*="theme-"] .bar{ background:var(--drape-soft) }
+body[class*="theme-"] .bar .used{ background:var(--drape) }
+body[class*="theme-"] .bar .proj{ background:var(--ink-soft) }
+body[class*="theme-"] .jauge h2,
+body[class*="theme-"] .jauge .tally{ color:var(--ink-soft) }
+body[class*="theme-"] .jauge .n{ color:var(--drape) }
+
+/* La barre de liaison est déjà sombre : en thème sombre elle se fondrait dans
+   la page, en Windows 98 elle jurerait. On la raccorde. */
+body.theme-sombre .hub-bar{ background:#0B1013;border-top:1px solid var(--rule) }
+body.theme-cli    .hub-bar{ background:#06170D;border-top:1px solid var(--rule);
+                            font-family:var(--mono) }
+body.theme-w98    .hub-bar{ background:#000080;border-top:2px solid #FFFFFF }
+
+@media print{ body[class*="theme-"]{ background:#fff;color:#000 } }

@@ -1,0 +1,293 @@
+{# titre: Compte rendu complet #}
+{# version: 1.0.0 #}
+{#
+   Ce gabarit parcourt les trames plutôt que de nommer les champs : un champ
+   ajouté à un module apparaît ici sans qu'on y touche, avec son libellé. Ce
+   qui n'a pas été rempli ne s'écrit pas — un compte rendu qui aligne des
+   « non renseigné » se relit mal et n'apprend rien.
+#}
+{%- macro titre(t) -%}
+{{ t | upper }}
+{{ '=' * (t | length) }}
+{%- endmacro -%}
+{%- macro sous(t) -%}
+{{ t }}
+{{ '-' * (t | length) }}
+{%- endmacro -%}
+{%- macro champs(etape) -%}
+{% for c in etape.champs %}
+  {{ c.label }} : {{ c | valeur }}
+{% endfor %}
+{%- endmacro -%}
+COMPTE RENDU D'EXAMEN FŒTOPATHOLOGIQUE — BROUILLON
+Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
+
+{{ titre("Identification") }}
+{% if identite.nom_mere or identite.prenom_mere %}
+  Mère : {{ identite.nom_mere | fr }} {{ identite.prenom_mere | fr('') }}{% if identite.nom_naiss %} (née {{ identite.nom_naiss }}){% endif %}
+
+{% endif %}
+{% if identite.ddn_mere %}
+  Naissance de la mère : {{ date_variable(identite.ddn_mere) | fr }}
+{% endif %}
+{% if identite.ipp %}
+  IPP mère : {{ identite.ipp }}{% if identite.ipp_fetus %} — IPP fœtus : {{ identite.ipp_fetus }}{% endif %}
+
+{% endif %}
+{% if identite.prenom_foetus %}
+  Prénom du fœtus : {{ identite.prenom_foetus }}
+{% endif %}
+{% if identite.opposition in (true, "true") %}
+  ⚠ Opposition au registre déclarée à la saisie.
+{% endif %}
+
+{{ sous("Circuit") }}
+{% if circuit.date_reception %}
+  Reçu le {{ date_variable(circuit.date_reception) | fr }}{% if circuit.date_examen %}, examiné le {{ date_variable(circuit.date_examen) | fr }}{% endif %}.
+
+{% endif %}
+{% if circuit.medecin %}
+  Demandeur : {{ circuit.medecin }}{% if circuit.medecin_rpps %} (RPPS {{ circuit.medecin_rpps }}){% endif %}{% if circuit.service %}, {{ circuit.service }}{% endif %}{% if circuit.ville_maternite %} — {{ circuit.ville_maternite }}{% endif %}.
+
+{% endif %}
+{% if issue.type_issue %}
+  Issue : {{ issue.type_issue }}{% if issue.voie %}, {{ issue.voie | fr }}{% endif %}{% if issue.sexe %} — sexe {{ issue.sexe | fr }}{% endif %}{% if issue.multiple in (true, "true") %} — grossesse multiple{% endif %}.
+
+{% endif %}
+{% if issue.indication %}
+  Indication de l'examen : {{ issue.indication }}
+{% endif %}
+{% if terme.discordant %}
+
+  ⚠ Termes discordants entre modules : {% for m, v in terme.vu_par.items() %}{{ m }} {{ v }} SA{% if not loop.last %}, {% endif %}{% endfor %}{% if terme.sa %} — administratif {{ terme.sa }} SA{% endif %}. Les écarts-types sont calculés sur {{ terme.sa | fr("aucun terme") }}{% if terme.sa %} SA{% endif %}.
+{% endif %}
+
+{% if grossesse or atcd_mat or prenatal %}
+{{ titre("Renseignements cliniques") }}
+{% if atcd_mat.profession_mere or atcd_mat.atcd_medicaux or atcd_mat.traitements or atcd_mat.consanguinite %}
+{{ sous("Antécédents maternels") }}
+{% if atcd_mat.groupe_sanguin %}
+  Groupe {{ atcd_mat.groupe_sanguin }}{% if atcd_mat.rhesus %} {{ atcd_mat.rhesus | fr }}{% endif %}.
+
+{% endif %}
+{% if atcd_mat.consanguinite %}
+  Consanguinité : {{ atcd_mat.consanguinite | fr }}.
+{% endif %}
+{% set fdr = atcd_mat.fdr or {} %}
+{% set positifs = fdr.items() | selectattr('1') | map(attribute='0') | list %}
+{% if positifs %}
+  Facteurs de risque : {{ positifs | join(', ') }}.
+{% endif %}
+{% if atcd_mat.atcd_medicaux %}
+  Antécédents : {{ atcd_mat.atcd_medicaux }}
+{% endif %}
+{% if atcd_mat.traitements %}
+  Traitements : {{ atcd_mat.traitements }}
+{% endif %}
+{% endif %}
+{% if atcd_obs.gestite is not none or atcd_obs.parite is not none %}
+
+  Gestité {{ atcd_obs.gestite | fr }}, parité {{ atcd_obs.parite | fr }}.
+{% endif %}
+{% if grossesse.mode_conception or grossesse.histoire_clinique or grossesse.contexte_clinique %}
+
+{{ sous("Grossesse en cours") }}
+{% if grossesse.mode_conception %}
+  Conception : {{ grossesse.mode_conception | fr }}{% if grossesse.amp_type %} ({{ grossesse.amp_type }}){% endif %}{% if grossesse.ddg %}, début de grossesse {{ date_variable(grossesse.ddg) | fr }}{% endif %}.
+
+{% endif %}
+{% if grossesse.risque_t21 or grossesse.cn or grossesse.lcc %}
+  Marqueurs du premier trimestre :{% if grossesse.lcc %} LCC {{ grossesse.lcc }} mm ·{% endif %}{% if grossesse.cn %} clarté nucale {{ grossesse.cn }} mm ·{% endif %}{% if grossesse.risque_t21 %} risque combiné T21 {{ grossesse.risque_t21 }}{% endif %}.
+
+{% endif %}
+{% if grossesse.histoire_clinique %}
+  {{ grossesse.histoire_clinique }}
+{% endif %}
+{% if grossesse.contexte_clinique %}
+  {{ grossesse.contexte_clinique }}
+{% endif %}
+{% endif %}
+{% for c in (grossesse.chronologie or []) %}
+{% if loop.first %}
+
+{{ sous("Chronologie") }}
+{% endif %}
+  {{ date_variable(c.date) | fr }}{% if c.sa and c.sa.sa is not none %} ({{ c.sa.sa }} SA){% endif %} — {{ c.type | fr }} : {{ c.texte | fr }}
+{% endfor %}
+{% if prenatal.echo_t1 or prenatal.echo_t2 or prenatal.echo_t3 or prenatal.autres_examens %}
+
+{{ sous("Examens prénataux") }}
+{% for n in ['t1', 't2', 't3'] %}
+{% set st = prenatal['echo_' ~ n] %}
+{% if st %}
+  Échographie {{ n | upper }} : {{ st | fr }}{% if prenatal['echo_' ~ n ~ '_details'] %} — {{ prenatal['echo_' ~ n ~ '_details'] }}{% endif %}
+
+{% endif %}
+{% endfor %}
+{% if prenatal.autres_examens %}
+  Autres examens : {{ prenatal.autres_examens }}
+{% endif %}
+{% endif %}
+{% endif %}
+
+{% if clinique.etages %}
+{{ titre("Examen externe") }}
+  {{ clinique.faits }} item(s) renseigné(s) sur {{ clinique.total }}.
+{% if clinique.anormaux %}
+
+{{ sous("Anomalies constatées") }}
+{% for a in clinique.anormaux %}
+  {{ a.label }} ({{ a.etage }}){% if a.anomalies %} : {{ a.anomalies | join(', ') }}{% endif %}{% if a.precisions %} — {{ a.precisions }}{% endif %}
+
+{% endfor %}
+{% else %}
+
+  Aucune anomalie relevée parmi les items renseignés.
+{% endif %}
+{% endif %}
+
+{% if biometrie.mesures %}
+{{ titre("Biométrie externe") }}
+{% for cle, v in biometrie.mesures.items() %}
+{% set r = z.get('bio_' ~ cle) %}
+  {{ cle }} : {{ v }}{% if r and r.z_gc is not none %} ({{ r.z_gc | zt }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if radio.squelette or radio.biometries %}
+{{ titre("Imagerie") }}
+{% set sq = radio.squelette or {} %}
+{% if sq.aspect_general %}
+  Aspect général : {{ sq.aspect_general }}
+{% endif %}
+{% if sq.cotes and (sq.cotes.droite is not none or sq.cotes.gauche is not none) %}
+  Côtes : {{ sq.cotes.droite | fr }} à droite, {{ sq.cotes.gauche | fr }} à gauche.
+{% endif %}
+{% if sq.thorax_forme %}
+  Thorax : {{ sq.thorax_forme }}.
+{% endif %}
+{% if sq.vertebres and sq.vertebres.aspects %}
+  Vertèbres : {{ sq.vertebres.aspects | join(', ') }}{% if sq.vertebres.remarques %} — {{ sq.vertebres.remarques | phrase }}{% endif %}.
+
+{% endif %}
+{% if sq.aspect_os and sq.aspect_os.aspects %}
+  Os : {{ sq.aspect_os.aspects | join(', ') }}{% if sq.aspect_os.remarques %} — {{ sq.aspect_os.remarques | phrase }}{% endif %}.
+
+{% endif %}
+{% set os = (radio.biometries or {}).os_longs or {} %}
+{% if os %}
+
+{{ sous("Os longs (mm, z de Chitty)") }}
+{% for nom, o in os.items() %}
+{% if o.moyenne is not none %}
+  {{ nom }} : {{ o.moyenne }}{% if o.droite is not none and o.gauche is not none %} (D {{ o.droite }} / G {{ o.gauche }}){% endif %}{% if o.zscore_chitty is not none %} — {{ o.zscore_chitty | zt }}{% endif %}
+
+{% endif %}
+{% endfor %}
+{% endif %}
+{% set sc = radio.scores_staturaux or {} %}
+{% if sc.hadlock_sa or sc.adalian_sa %}
+
+  Âge statural : Hadlock {{ sc.hadlock_sa | fr }} SA, Adalian {{ sc.adalian_sa | fr }} SA.
+{% endif %}
+{% if radio.hpo %}
+
+  Termes HPO retenus par le module : {% for h in radio.hpo %}{{ h.code }} ({{ h.term_fr }}){% if not loop.last %}, {% endif %}{% endfor %}.
+
+{% endif %}
+{% if radio.remarques %}
+
+  {{ radio.remarques }}
+{% endif %}
+{% endif %}
+
+{% if autopsie.etapes %}
+{{ titre("Examen interne") }}
+{% if autopsie.maceration is not none %}
+  Macération, grade de Maroun : {{ autopsie.maceration }}.
+{% endif %}
+{% for e in autopsie.etapes %}
+{% if e.champs %}
+
+{{ sous(e.titre) }}
+{{ champs(e) }}
+{% endif %}
+{% endfor %}
+{% if autopsie.masses %}
+
+{{ sous("Masses d'organes") }}
+{% for m in autopsie.masses %}
+  {{ m.label }} : {{ m.detail }}{% if m.z_gc is not none %} — Guihard-Costa {{ m.z_gc | zt }}{% endif %}{% if m.z_ma is not none %} — Maroun {{ m.z_ma | zt }}{% endif %}{% if m.alerte %}  ⚠{% endif %}
+
+{% endfor %}
+{% if not references.dispo %}
+
+  Note : aucune table de référence n'est installée sur ce poste. Les écarts-types
+  ci-dessus sont ceux calculés par le module de saisie et n'ont pas été recalculés.
+{% endif %}
+{% endif %}
+{% endif %}
+
+{% if neuropath.etapes %}
+{{ titre("Neuropathologie") }}
+{% for e in neuropath.etapes %}
+{% if e.champs %}
+
+{{ sous(e.titre) }}
+{% for c in e.champs %}
+  {{ c.label }} : {{ c | valeur }}{% if c.zscore and c.zscore.z is not none %} — {{ c.zscore.z | zt }} contre {{ c.zscore.reference }}{% endif %}
+
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if cliches %}
+{{ titre("Iconographie") }}
+  {{ cliches | length }} cliché(s) au dossier.
+{% for m in cliches | map(attribute='module') | unique %}
+  {{ m }} : {% for p in cliches if p.module == m %}{{ p.label or p.cle }}{% if not loop.last %} · {% endif %}{% endfor %}
+
+{% endfor %}
+{% endif %}
+
+{{ titre("Conclusion") }}
+  À rédiger.
+{% if clinique.anormaux or autopsie.masses | selectattr('alerte') | list %}
+
+  Éléments à reprendre dans la conclusion :
+{% for a in clinique.anormaux %}
+  · {{ a.label }}{% if a.anomalies %} — {{ a.anomalies | join(', ') }}{% endif %}
+
+{% endfor %}
+{% for m in autopsie.masses if m.alerte %}
+  · {{ m.label }} : {{ m.detail }}, écart supérieur à 2 DS
+{% endfor %}
+{% endif %}
+
+--
+Brouillon produit le {{ genere_at | dtc }} à partir des saisies en base. À relire
+et à corriger avant signature : rien ici n'a été validé par un humain.
+{% if manquants %}
+Modules non parvenus : {{ manquants | join(', ') }}.
+{% endif %}
+{% if coherence %}
+Cohérence signalée à la saisie : {% for c in coherence %}{{ c }}{% if not loop.last %} · {% endif %}{% endfor %}.
+{% endif %}
+{% if z_divergences %}
+{% if z_cause_terme %}
+Les écarts-types d'ici sont calculés sur {{ terme.sa }} SA, l'administratif faisant
+autorité, alors que le module d'autopsie affichait ceux de {{ z_terme_module }} SA. Tous
+les z diffèrent donc de ceux vus en salle — c'est attendu, et c'est le terme qu'il
+faut trancher avant de signer.
+{% else %}
+Écarts entre le z recalculé ici et celui affiché à la saisie, à terme identique :
+{% for d in z_divergences %}
+  {{ d.champ }} ({{ d.reference }}) : {{ d.serveur }} ici, {{ d.module }} au module.
+{% endfor %}
+Une table de référence diffère entre le module et ce poste. Le compte rendu retient
+la valeur d'ici ; la transcription est à vérifier contre l'article.
+{% endif %}
+{% endif %}
+Modules repris : {% for m, v in modules.items() %}{{ m }} v{{ v.module_version }} ({{ v.provenance }}, {{ v.operateur | fr }}){% if not loop.last %} · {% endif %}{% endfor %}.

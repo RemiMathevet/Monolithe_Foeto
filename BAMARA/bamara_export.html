@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+{% block title %}BaMaRa — {{ cas.numero_dossier }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>
+    <span class="mono">{{ cas.numero_dossier }}</span>
+    <span class="badge" style="background:#d97706;color:#fff">BaMaRa</span>
+  </h1>
+  <div class="header-actions">
+    <a href="{{ url_for('case_view', case_id=cas.id) }}" class="btn">Retour au cas</a>
+    <a href="{{ url_for('case_bamara_json', case_id=cas.id) }}" class="btn btn-muted" target="_blank">JSON</a>
+    <a href="{{ url_for('bamara_userscript') }}" class="btn btn-accent">Installer Userscript</a>
+  </div>
+</div>
+
+<p class="bam-intro">
+  Donnees formatees pour saisie dans
+  <a href="https://bamara.bndmr.fr" target="_blank">BaMaRa</a>.
+  Cliquez sur <span class="bam-copy-icon">copier</span> pour copier une valeur dans le presse-papier.
+</p>
+
+{% set id = bam.identity %}
+{% set hub = bam.hub_case %}
+{% set med = bam.medicare %}
+{% set enc = bam.encounter %}
+{% set cond = bam.condition %}
+{% set pe = bam.pregnancy_end %}
+{% set ante = bam.antenatal %}
+{% set foeto = bam.foeto_details %}
+
+{# ── STEP 1 : Identite ── #}
+<div class="bam-step">
+  <div class="bam-step-header">
+    <span class="bam-step-num">1</span>
+    <h2>Identite & Mere</h2>
+  </div>
+  <div class="bam-grid">
+    {% if id.is_fetus %}
+    <div class="bam-field">
+      <span class="bam-label">Patient est un foetus</span>
+      <span class="bam-value" data-copy="true">Oui</span>
+    </div>
+    {% endif %}
+    <div class="bam-field">
+      <span class="bam-label">Sexe du foetus</span>
+      <span class="bam-value" data-copy="true">{{ label('gender', id.gender) or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Nom de naissance de la mere</span>
+      <span class="bam-value bam-important" data-copy="true">{{ id.mother_name or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Prenom de la mere</span>
+      <span class="bam-value bam-important" data-copy="true">{{ id.mother_given_name or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Nom d'usage de la mere</span>
+      <span class="bam-value" data-copy="true">{{ id.mother_used_name or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Date debut grossesse (DDG)</span>
+      <span class="bam-value" data-copy="true">{{ bam_date(id.pregnancy_date_year, id.pregnancy_date_month, id.pregnancy_date_day) or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">DDN mere</span>
+      <span class="bam-value" data-copy="true">{{ hub.ddn_mere or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Grossesse multiple</span>
+      <span class="bam-value" data-copy="true">{{ 'Oui' if id.is_multiple_pregnancy else 'Non' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Consentement</span>
+      <span class="bam-value" data-copy="true">{{ 'Oui' if id.has_given_consent else 'Non' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Opposition reutilisation</span>
+      <span class="bam-value" data-copy="true">{{ 'Oui' if id.opposition else 'Non' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Pays residence</span>
+      <span class="bam-value" data-copy="true">{{ id.residence_country_code or 'FR' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Commune residence</span>
+      <span class="bam-value" data-copy="true">{{ id.residence_city or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Consanguinite</span>
+      <span class="bam-value" data-copy="true">{{ label('inbreeding', id.inbreeding) or '—' }}</span>
+    </div>
+  </div>
+</div>
+
+{# ── STEP 2 : PeC ── #}
+<div class="bam-step">
+  <div class="bam-step-header">
+    <span class="bam-step-num">2</span>
+    <h2>Prise en charge (PeC)</h2>
+    {% if not med %}
+    <span class="bam-missing">Donnees manquantes</span>
+    {% endif %}
+  </div>
+  {% if med %}
+  <div class="bam-grid">
+    <div class="bam-field">
+      <span class="bam-label">Date d'inclusion</span>
+      <span class="bam-value" data-copy="true">{{ bam_date(med.inclusion_date_year, med.inclusion_date_month, med.inclusion_date_day) or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Site MR</span>
+      <span class="bam-value" data-copy="true">{{ med.site_code or '—' }} {{ med.site_label or '' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Medecin MR (RPPS)</span>
+      <span class="bam-value" data-copy="true">{{ med.care_provider_rpps or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Medecin MR (Nom)</span>
+      <span class="bam-value" data-copy="true">{{ med.care_provider_name or '—' }} {{ med.care_provider_given_name or '' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Patient adresse par</span>
+      <span class="bam-value" data-copy="true">{{ med.sent_by or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Dans la labellisation</span>
+      <span class="bam-value" data-copy="true">{{ 'Oui' if med.is_label else 'Non' }}</span>
+    </div>
+  </div>
+  {% else %}
+  <p class="bam-empty">Aucune prise en charge enregistree. Creer une PeC dans BaMaRa puis renseigner les identifiants.</p>
+  {% endif %}
+</div>
+
+{# ── STEP 3 : Activite ── #}
+<div class="bam-step">
+  <div class="bam-step-header">
+    <span class="bam-step-num">3</span>
+    <h2>Activite</h2>
+    {% if not enc %}
+    <span class="bam-missing">Donnees manquantes</span>
+    {% endif %}
+  </div>
+  {% if enc %}
+  <div class="bam-grid">
+    <div class="bam-field">
+      <span class="bam-label">Date consultation</span>
+      <span class="bam-value" data-copy="true">{{ bam_date(enc.encounter_date_year, enc.encounter_date_month, enc.encounter_date_day) or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Contexte</span>
+      <span class="bam-value" data-copy="true">{{ label('context', enc.context) or enc.context or '—' }}</span>
+    </div>
+    {% if enc.context_precision %}
+    <div class="bam-field">
+      <span class="bam-label">Precision contexte</span>
+      <span class="bam-value" data-copy="true">{{ enc.context_precision }}</span>
+    </div>
+    {% endif %}
+    <div class="bam-field">
+      <span class="bam-label">Objectifs</span>
+      <span class="bam-value" data-copy="true">{{ enc.objectives or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Lieu</span>
+      <span class="bam-value" data-copy="true">{{ 'Au site' if enc.location_at_hospital else 'Hors site' }}</span>
+    </div>
+  </div>
+  {% else %}
+  <p class="bam-empty">Aucune activite enregistree.</p>
+  {% endif %}
+</div>
+
+{# ── STEP 4 : Diagnostic ── #}
+<div class="bam-step">
+  <div class="bam-step-header">
+    <span class="bam-step-num">4</span>
+    <h2>Diagnostic</h2>
+  </div>
+  {% if cond %}
+  <div class="bam-grid">
+    <div class="bam-field">
+      <span class="bam-label">Statut diagnostic</span>
+      <span class="bam-value bam-important" data-copy="true">{{ label('diagnostic_status', cond.diagnostic_status) or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Diagnostic prenatal</span>
+      <span class="bam-value" data-copy="true">{{ label('early_diagnosis_status', cond.early_diagnosis_status) or '—' }}</span>
+    </div>
+    {% if cond.description_code %}
+    <div class="bam-field">
+      <span class="bam-label">Pathologie (Orpha)</span>
+      <span class="bam-value" data-copy="true">{{ cond.description_code }} — {{ cond.description_label or '' }}</span>
+    </div>
+    {% endif %}
+    <div class="bam-field">
+      <span class="bam-label">Heredite</span>
+      <span class="bam-value" data-copy="true">{{ label('heredity', cond.heredity) or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Site diagnostic</span>
+      <span class="bam-value" data-copy="true">{{ cond.site_diag_code or '—' }} {{ cond.site_diag_label or '' }}</span>
+    </div>
+    {% if cond.is_complex_non_rare %}
+    <div class="bam-field">
+      <span class="bam-label">Pathologie complexe non rare</span>
+      <span class="bam-value" data-copy="true">{{ cond.complex_code or '—' }} {{ cond.complex_label or '' }}</span>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if bam.hpo_terms %}
+  <div class="bam-sub">
+    <h3>Description clinique ({{ bam.hpo_terms|length }} termes)</h3>
+    <table class="bam-table">
+      <thead><tr><th>Code</th><th>Label</th><th>Ref</th><th></th></tr></thead>
+      <tbody>
+      {% for t in bam.hpo_terms %}
+        <tr>
+          <td class="mono">{{ t.code }}</td>
+          <td>{{ t.label }}</td>
+          <td>{{ t.ref }}</td>
+          <td><button class="bam-copy-btn" data-text="{{ t.code }}">copier</button></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+  {% else %}
+  <p class="bam-empty">Aucun diagnostic enregistre.</p>
+  {% endif %}
+</div>
+
+{# ── STEP 5 : Fin de grossesse ── #}
+<div class="bam-step">
+  <div class="bam-step-header">
+    <span class="bam-step-num">5</span>
+    <h2>Fin de grossesse</h2>
+    {% if not pe %}
+    <span class="bam-missing">Donnees manquantes</span>
+    {% endif %}
+  </div>
+  {% if pe %}
+  <div class="bam-grid">
+    <div class="bam-field">
+      <span class="bam-label">Naissance vivante</span>
+      <span class="bam-value" data-copy="true">{{ 'Oui' if pe.birth else 'Non' }}</span>
+    </div>
+    {% if not pe.birth %}
+    <div class="bam-field">
+      <span class="bam-label">Type d'interruption</span>
+      <span class="bam-value bam-important" data-copy="true">{{ label('termination_type', pe.termination_type) or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Moment du deces</span>
+      <span class="bam-value" data-copy="true">{{ label('stp_type', pe.stp_type) or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Date de deces</span>
+      <span class="bam-value" data-copy="true">{{ bam_date(pe.death_date_year, pe.death_date_month, pe.death_date_day) or '—' }}</span>
+    </div>
+    {% endif %}
+    <div class="bam-field">
+      <span class="bam-label">Terme (SA)</span>
+      <span class="bam-value bam-important" data-copy="true">{{ pe.term_week or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Foetopathologie realisee</span>
+      <span class="bam-value" data-copy="true">{{ 'Oui' if pe.is_foetopathology_done else 'Non' }}</span>
+    </div>
+  </div>
+
+  {% if foeto %}
+  <div class="bam-sub">
+    <h3>Details foetopathologie (hub)</h3>
+    <div class="bam-grid">
+      {% if foeto.modalite %}
+      <div class="bam-field">
+        <span class="bam-label">Modalite</span>
+        <span class="bam-value" data-copy="true">{{ foeto.modalite }}</span>
+      </div>
+      {% endif %}
+      {% if foeto.grade_maceration is not none %}
+      <div class="bam-field">
+        <span class="bam-label">Grade maceration</span>
+        <span class="bam-value" data-copy="true">{{ foeto.grade_maceration }}</span>
+      </div>
+      {% endif %}
+      {% if foeto.mode_expulsion %}
+      <div class="bam-field">
+        <span class="bam-label">Mode expulsion</span>
+        <span class="bam-value" data-copy="true">{{ foeto.mode_expulsion }}</span>
+      </div>
+      {% endif %}
+      {% if foeto.indication_img %}
+      <div class="bam-field">
+        <span class="bam-label">Indication IMG</span>
+        <span class="bam-value" data-copy="true">{{ foeto.indication_img }}</span>
+      </div>
+      {% endif %}
+      {% if foeto.date_decision_cpdpn %}
+      <div class="bam-field">
+        <span class="bam-label">Date decision CPDPN</span>
+        <span class="bam-value" data-copy="true">{{ foeto.date_decision_cpdpn }}</span>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+  {% else %}
+  <p class="bam-empty">Aucune donnee de fin de grossesse.</p>
+  {% endif %}
+</div>
+
+{# ── STEP 6 : Donnees ante/neonatales ── #}
+{% if ante %}
+<div class="bam-step">
+  <div class="bam-step-header">
+    <span class="bam-step-num">6</span>
+    <h2>Donnees antenatales / neonatales</h2>
+  </div>
+  <div class="bam-grid">
+    <div class="bam-field">
+      <span class="bam-label">AMP</span>
+      <span class="bam-value" data-copy="true">{{ 'Oui' if ante.amp else 'Non' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Terme (SA)</span>
+      <span class="bam-value" data-copy="true">{{ ante.term or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Taille (cm)</span>
+      <span class="bam-value" data-copy="true">{{ ante.height or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">Poids (g)</span>
+      <span class="bam-value" data-copy="true">{{ ante.weight or '—' }}</span>
+    </div>
+    <div class="bam-field">
+      <span class="bam-label">PC (cm)</span>
+      <span class="bam-value" data-copy="true">{{ ante.head_circumference or '—' }}</span>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{# ── Recap / indicateur ── #}
+<div class="bam-step bam-recap">
+  <div class="bam-step-header">
+    <span class="bam-step-num">&#x2713;</span>
+    <h2>Resume</h2>
+  </div>
+  <div class="bam-checklist">
+    {% set checks = [
+      ('Identite mere', id.mother_name and id.mother_given_name),
+      ('Sexe foetus', id.gender and id.gender != 'UNK'),
+      ('PeC', med),
+      ('Activite', enc),
+      ('Diagnostic', cond and cond.diagnostic_status),
+      ('Termes HPO', bam.hpo_terms|length > 0),
+      ('Fin de grossesse', pe and pe.term_week),
+    ] %}
+    {% for name, ok in checks %}
+    <div class="bam-check {{ 'bam-ok' if ok else 'bam-ko' }}">
+      <span>{{ '&#10003;' if ok else '&#10007;' }}</span> {{ name }}
+    </div>
+    {% endfor %}
+  </div>
+  <p class="bam-hint">
+    Indication : <strong>{{ hub.indication_examen or '—' }}</strong>
+    | Type : <strong>{{ hub.type_prelevement or '—' }}</strong>
+    | Dossier : <strong>{{ cas.numero_dossier }}</strong>
+  </p>
+</div>
+
+<div class="bam-step" style="border-color: var(--border); background: var(--bg-secondary);">
+  <div class="bam-step-header">
+    <span class="bam-step-num" style="background: var(--text-muted);">?</span>
+    <h2>Saisie automatique BaMaRa</h2>
+  </div>
+  <p style="font-size:13px;margin:0 0 8px;">
+    Pour remplir automatiquement les formulaires BaMaRa depuis MiniHub :
+  </p>
+  <ol style="font-size:13px;margin:0;padding-left:20px;line-height:1.8;">
+    <li>Installez <a href="https://www.tampermonkey.net/" target="_blank">Tampermonkey</a> dans votre navigateur</li>
+    <li>Cliquez sur <a href="{{ url_for('bamara_userscript') }}"><strong>Installer Userscript</strong></a> — Tampermonkey proposera l'installation</li>
+    <li>Ouvrez <a href="https://bamara.bndmr.fr" target="_blank">BaMaRa</a> et authentifiez-vous</li>
+    <li>Dans le panneau MiniHub (coin haut droit), entrez le numero <strong>{{ cas.id }}</strong> et cliquez Charger</li>
+    <li>Cliquez sur les boutons de section pour remplir les champs — validez visuellement avant de soumettre</li>
+  </ol>
+</div>
+
+<script>
+(function() {
+  document.querySelectorAll('[data-copy="true"]').forEach(function(el) {
+    el.style.cursor = 'pointer';
+    el.title = 'Cliquer pour copier';
+    el.addEventListener('click', function() {
+      var text = el.textContent.trim();
+      if (text === '—' || text === '') return;
+      navigator.clipboard.writeText(text).then(function() {
+        el.classList.add('bam-copied');
+        setTimeout(function() { el.classList.remove('bam-copied'); }, 1200);
+      });
+    });
+  });
+  document.querySelectorAll('.bam-copy-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var text = btn.getAttribute('data-text');
+      navigator.clipboard.writeText(text).then(function() {
+        btn.textContent = 'copie !';
+        setTimeout(function() { btn.textContent = 'copier'; }, 1200);
+      });
+    });
+  });
+})();
+</script>
+{% endblock %}

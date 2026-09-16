@@ -1,0 +1,196 @@
+{
+ "schema_version": "0.1.0",
+ "module": "radio",
+ "module_version": "1.0.0",
+ "dossier": "26P0123",
+ "operateur": "R. Mathevet",
+ "exported_at": "2026-09-08T11:54:53.829Z",
+ "terme": {
+  "sa": 27,
+  "jours": 3
+ },
+ "squelette": {
+  "aspect_general": "Constatation de controle.",
+  "cotes": {
+   "droite": 8,
+   "gauche": 8
+  },
+  "thorax_forme": "Asymétrique",
+  "vertebres": {
+   "aspects": [
+    "Normales",
+    "Fentes",
+    "Hémivertèbres",
+    "Anomalie de segmentation"
+   ],
+   "remarques": "Constatation de controle."
+  },
+  "aspect_os": {
+   "aspects": [
+    "Normal",
+    "Déminéralisés",
+    "Fractures",
+    "Bandes claires métaphysaires",
+    "Incurvés"
+   ],
+   "remarques": "Constatation de controle."
+  }
+ },
+ "biometries": {
+  "bip_osseux_mm": 1,
+  "pc_radio_mm": 1,
+  "os_longs": {
+   "Humerus": {
+    "droite": 1,
+    "gauche": 1,
+    "moyenne": 1,
+    "zscore_chitty": -19.04
+   },
+   "Radius": {
+    "droite": 1,
+    "gauche": 1,
+    "moyenne": 1,
+    "zscore_chitty": -16.13
+   },
+   "Ulna": {
+    "droite": 1,
+    "gauche": 1,
+    "moyenne": 1,
+    "zscore_chitty": -17.48
+   },
+   "Femur": {
+    "droite": 1,
+    "gauche": 1,
+    "moyenne": 1,
+    "zscore_chitty": -19
+   },
+   "Tibia": {
+    "droite": 1,
+    "gauche": 1,
+    "moyenne": 1,
+    "zscore_chitty": -17.72
+   },
+   "Fibula": {
+    "droite": 1,
+    "gauche": 1,
+    "moyenne": 1,
+    "zscore_chitty": -17.32
+   },
+   "Piedradio": {
+    "droite": 1,
+    "gauche": 1,
+    "moyenne": 1,
+    "zscore_chitty": -16.16
+   }
+  }
+ },
+ "scores_staturaux": {
+  "hadlock_sa": 11.5,
+  "adalian_sa": 7.4
+ },
+ "maturation_osseuse": [
+  {
+   "sa": 8,
+   "label": "Clavicules, mandibule",
+   "status": "present"
+  },
+  {
+   "sa": 9,
+   "label": "Os longs des membres, maxillaire supérieur",
+   "status": "present"
+  },
+  {
+   "sa": 10,
+   "label": "Ilions, côtes, omoplates, phalanges distales des mains",
+   "status": "present"
+  },
+  {
+   "sa": 11,
+   "label": "Métacarpiens",
+   "status": "present"
+  },
+  {
+   "sa": 12,
+   "label": "Métatarsiens, voûte crânienne, os propres du nez",
+   "status": "present"
+  },
+  {
+   "sa": 12,
+   "label": "Arcs vertébraux postérieurs (à partir de la région cervicale)",
+   "status": "present"
+  },
+  {
+   "sa": 12,
+   "label": "Corps vertébraux (à partir de la charnière thoraco-lombaire)",
+   "status": "present"
+  },
+  {
+   "sa": 13,
+   "label": "Grandes ailes du sphénoïde",
+   "status": "present"
+  },
+  {
+   "sa": 13,
+   "label": "Phalanges proximales des mains",
+   "status": "present"
+  },
+  {
+   "sa": 13,
+   "label": "Arcs vertébraux postérieurs jusqu'à la région lombaire",
+   "status": "present"
+  },
+  {
+   "sa": 13,
+   "label": "Corps vertébraux : derniers cervicaux → région sacrée",
+   "status": "present"
+  }
+ ],
+ "remarques": "Constatation de controle.",
+ "hpo": [
+  {
+   "code": "HP:0001555",
+   "term_fr": "Asymétrie thoracique",
+   "source": "chip:thorax"
+  },
+  {
+   "code": "HP:0003422",
+   "term_fr": "Anomalie vertébrale",
+   "source": "chip:vertebres"
+  },
+  {
+   "code": "HP:0002937",
+   "term_fr": "Hémivertèbre",
+   "source": "chip:vertebres"
+  },
+  {
+   "code": "HP:0003468",
+   "term_fr": "Anomalie de segmentation vertébrale",
+   "source": "chip:vertebres"
+  },
+  {
+   "code": "HP:0004349",
+   "term_fr": "Déminéralisation osseuse",
+   "source": "chip:os"
+  },
+  {
+   "code": "HP:0002757",
+   "term_fr": "Fractures",
+   "source": "chip:os"
+  },
+  {
+   "code": "HP:0003416",
+   "term_fr": "Métaphyses évasées",
+   "source": "chip:os"
+  },
+  {
+   "code": "HP:0006487",
+   "term_fr": "Incurvation des os longs",
+   "source": "chip:os"
+  },
+  {
+   "code": "HP:0002983",
+   "term_fr": "Micromélie",
+   "source": "zscore"
+  }
+ ]
+}

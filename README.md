@@ -12,17 +12,27 @@ ce soit n'est ni possible ni souhaitable.
 
 | Fichier | Contenu |
 |---|---|
-| `administratif.html` | Identité, circuit du prélèvement, antécédents, grossesses précédentes, examens prénataux |
-| `examen_clinique.html` | Morphologie externe étage par étage, clichés de trame et anomalies |
-| `biometrie_clinique.html` | Mesures au ruban et au pied à coulisse, z-scores contre les références |
-| `radio.html` | Lecture du squelette, mesures des os longs, z-scores de Chitty |
-| `autopsie.html` | Le déroulé complet de l'autopsie, masses d'organes et z-scores |
-| `neuropath.html` | Examen de l'encéphale fixé, biométries cérébrales et z-scores |
-| `micro.html` | Lecture des blocs, une section par lame : maturation, cytoarchitecture, lésions, rétention |
-| `macro_placenta.html` | Macroscopie placentaire sur pièce fraîche : cordon, membranes, tranches, clichés |
-| `grille_<organe>.html` | Grilles de lecture microscopique, une par organe (17) : prélèvement, rétention, maturation, signes, termes FOETO, compte rendu |
+| `admin/administratif.html` | Identité, circuit du prélèvement, antécédents, grossesses précédentes, examens prénataux |
+| `Macro/examen_clinique.html` | Morphologie externe étage par étage, clichés de trame et anomalies |
+| `Macro/biometrie_clinique.html` | Mesures au ruban et au pied à coulisse, z-scores contre les références |
+| `Radio/radio.html` | Lecture du squelette, mesures des os longs, z-scores de Chitty |
+| `Macro/autopsie.html` | Le déroulé complet de l'autopsie, masses d'organes et z-scores |
+| `Macro/neuropath.html` | Examen de l'encéphale fixé, biométries cérébrales et z-scores |
+| `micro/micro.html` | Lecture des blocs, une section par lame : maturation, cytoarchitecture, lésions, rétention |
+| `Macro/macro_placenta.html` | Macroscopie placentaire sur pièce fraîche : cordon, membranes, tranches, clichés |
+| `micro/grille_<organe>.html` | Grilles de lecture microscopique, une par organe (17) : prélèvement, rétention, maturation, signes, termes FOETO, compte rendu |
 
 **Manuel d'utilisation avec captures d'écran : [docs/MANUEL.md](docs/MANUEL.md).**
+
+## Le hub — reprise des JSON en base
+
+`hub/` reprend les JSON exportés par les modules sur l'ordinateur : archive
+horodatée, base SQLite (`hub/hub.sqlite`), clichés reconstitués en JPEG,
+page de gestion des cas, comptes rendus Jinja et préparation du document
+BaMaRa. **`serveur.bat` à la racine** lance le serveur local
+(<http://127.0.0.1:5005>) et ouvre la page après quelques secondes ;
+`hub/app/ingest.py` fait la reprise seule, en bibliothèque standard.
+Tout est décrit dans [hub/README.md](hub/README.md).
 
 `micro.html` s'ouvre sur une seule section vide qui propose les quatorze
 organes. On désigne celui de la lame en main : la section prend son nom et
@@ -41,16 +51,19 @@ texte pour quantifier et localiser. Aucun calcul n'y est fait : la rétention
 s'enregistre comme ce qui est vu, l'intervalle mort-délivrance se déduit au
 traitement des données.
 
-Les grilles `grille_<organe>.html` sont produites par `gen_grille.py` à partir
-des fragments `grilles/<organe>.js` ; seule `grille_poumon.html` est écrite à
-la main. Le script de reprise des JSON dans la base est en cours.
+Les grilles `micro/grille_<organe>.html` sont produites par `micro/gen_grille.py`
+à partir des fragments `micro/grilles/<organe>.js` ; seule `grille_poumon.html`
+est écrite à la main. `micro/assembler.py` les monte en un seul étui
+`microscopie.html` (non versionné, se refait en une commande).
 
 ## Numéro de dossier
 
 Champ libre : les lettres passent en majuscules, les espaces sont retirés,
 aucun format n'est imposé (`26P0123`, `25P9999`, `A2026-17` sont tous
 acceptés). Seul le vide bloque l'enregistrement et l'export. Le numéro donne
-son nom au fichier exporté : `<dossier>_<module>.json`.
+son nom au fichier exporté : `<dossier>_<module>.json`. Le hub applique la
+même liberté, avec la seule règle qu'impose un nom de répertoire : lettres,
+chiffres, `. _ -`, 64 caractères au plus.
 
 ## Les deux numéros de version
 

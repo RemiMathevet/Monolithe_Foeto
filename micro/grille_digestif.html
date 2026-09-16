@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grille de lecture — tube digestif</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --alert-soft:#F7EAE7;
+  --amber:#8A6A18; --amber-soft:#F6F0DE;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off button,section.off input,section.off select{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 170px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],input[type=number],textarea{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+input[type=number]{font-family:var(--mono);letter-spacing:.03em}
+textarea{resize:vertical;min-height:60px;font-size:15px}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+/* ── Boutons-clics : toute la saisie sémantique passe par là ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font-family:var(--sans);font-size:14px;line-height:1.25;
+  border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+  border-radius:2px;padding:8px 11px;cursor:pointer;min-height:38px;text-align:left}
+.chip:hover{background:var(--drape-soft)}
+.chip:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.chip.on{background:var(--drape);border-color:var(--drape);color:#fff;font-weight:600}
+.chip.no{background:var(--alert-soft);border-color:var(--alert);color:var(--alert);font-weight:600}
+.chip.sugg{border-color:var(--amber);border-style:dashed}
+.chip[data-act=foeto]::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;background:var(--drape);opacity:.55}
+.chip.on[data-act=foeto]::after{background:#fff}
+.plus{font-size:13px;color:var(--drape);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline dotted}
+.rech{position:relative;margin-top:8px}
+.rech input{font:inherit;font-size:14px;padding:6px 10px;border:1px solid #bbb;border-radius:8px;width:min(100%,24rem)}
+.sugg{position:absolute;z-index:5;background:#fff;border:1px solid #bbb;border-radius:8px;max-height:12rem;overflow:auto;width:min(100%,24rem);display:none}
+.sugg.on{display:block}
+.sugg div{padding:5px 10px;cursor:pointer;font-size:14px}
+.sugg div:hover{background:var(--drape-soft)}
+.sugg small{color:#777}
+.chip .k{font-family:var(--mono);font-size:10px;letter-spacing:.07em;opacity:.75;
+         display:block;text-transform:uppercase}
+
+.item{border-top:1px solid var(--rule);padding:10px 0}
+.item:first-child{border-top:0}
+.item .head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.item .lbl{flex:1 1 240px;min-width:0;font-size:15px}
+.item .meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-soft);
+            display:block;margin-top:2px}
+.item .meta.bon{color:var(--drape)} .item .meta.mauvais{color:var(--alert)}
+.item .meta.moyen{color:var(--amber)}
+.unfold{margin:9px 0 0 0;padding:9px 0 0;border-top:1px dashed var(--rule)}
+.unfold[hidden]{display:none}
+.stop{font-size:13px;line-height:1.35;color:var(--alert);background:var(--alert-soft);
+      border-left:2px solid var(--alert);padding:6px 9px;margin-top:8px}
+.stop b{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+
+.verdict{font-size:14px;line-height:1.4;border-left:3px solid var(--rule);
+         padding:7px 10px;margin-top:11px;background:var(--paper)}
+.verdict.ok{border-color:var(--drape);background:var(--drape-soft)}
+.verdict.warn{border-color:var(--amber);background:var(--amber-soft)}
+.verdict.bad{border-color:var(--alert);background:var(--alert-soft)}
+.verdict b{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+           display:block;color:var(--ink-soft)}
+
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+.sousTitre:first-child{margin-top:0}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:var(--alert-soft)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+pre.cr{font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;
+  padding:12px;margin:0 0 10px;max-height:44vh;overflow:auto}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · lecture microscopique</p>
+  <h1>Grille de lecture — tube digestif <span class="ver" id="ver"></span></h1>
+  <p class="sub">Sortie de <code>fiche_digestif.md</code>. Tout se clique ; seuls le dossier, le terme et les comptes se tapent. Document autonome : rien n'est transmis.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Libre, mis en majuscules. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Lecteur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la grille.</div>
+    </div>
+    <div class="field">
+      <label for="sa">Terme (SA)</label>
+      <input type="number" id="sa" min="8" max="45" step="1" inputmode="numeric" placeholder="—">
+      <div class="hint" id="saHint">SA = semaines de gestation + 2. Commande le stade attendu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — Prélèvement -->
+<section id="secPrelevement" class="off">
+  <h2><span class="n">02</span>Prélèvement<span class="tally" id="tPrelevement">—</span></h2>
+  <div id="coteBloc" hidden>
+    <div class="sousTitre">Côté prélevé</div>
+    <div class="chips" id="cote" style="margin-bottom:11px"></div>
+  </div>
+  <div class="chips" id="prelevement"></div>
+  <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
+</section>
+
+<!-- 03 — Rétention -->
+<section id="secRetention" class="off">
+  <h2><span class="n">03</span>Rétention<span class="tally" id="tRetention">—</span></h2>
+  <div id="retention"></div>
+  <div class="chips" id="kcl" style="margin-top:11px"></div>
+  <div class="verdict" id="vRetention"><b>Borne inférieure</b>—</div>
+</section>
+
+<!-- 04 — Maturation -->
+<section id="secMaturation" class="off">
+  <h2><span class="n">04</span>Maturation<span class="tally" id="tMaturation">—</span></h2>
+  <div class="sousTitre" id="stTitre">Stade observé</div>
+  <div class="chips" id="stades"></div>
+  <div id="mesure"></div>
+  <div class="verdict" id="vMaturation"><b>Lecture</b>—</div>
+  <div class="verdict" id="vMesure" hidden><b>Mesure</b>—</div>
+</section>
+
+<!-- 05 — Variantes normales -->
+<section id="secVariantes" class="off">
+  <h2><span class="n">05</span>Variantes normales<span class="tally" id="tVariantes">—</span></h2>
+  <p class="note" style="margin-top:0">Cliquer ce qui est vu et écarté comme normal. Rien de coché ne veut pas dire absent : ça veut dire non regardé.</p>
+  <div class="chips" id="variantes" style="margin-top:10px"></div>
+</section>
+
+<!-- 06 — Signes -->
+<section id="secSignes" class="off">
+  <h2><span class="n">06</span>Signes<span class="tally" id="tSignes">—</span></h2>
+  <p class="note" style="margin-top:0">On coche des signes, pas des diagnostics. Les associations en dessous se déduisent de ce qui est coché : elles s'affichent, elles ne se choisissent pas.</p>
+  <div id="signes" style="margin-top:10px"></div>
+  <div class="sousTitre" style="margin-top:16px">Associations lues</div>
+  <div id="diags"></div>
+</section>
+
+<!-- 07 — Termes FOETO attestés par la fiche -->
+<section id="secFoeto" class="off">
+  <h2><span class="n">07</span>Termes FOETO<span class="tally" id="tFoeto">—</span></h2>
+  <p class="note" style="margin-top:0">Les termes du vocabulaire FOETO que la fiche de l'organe retient comme lésions, par sous-section. Un terme coché est présent ; rien de coché ne veut pas dire absent.</p>
+  <div id="foeto"></div>
+  <button type="button" class="plus" id="foetoPlus" hidden>▸ tous les termes attestés</button>
+  <div class="chips" id="foetoTous" hidden style="margin-top:6px"></div>
+  <div class="rech" id="foetoRech" hidden><input type="text" id="rqFoeto" placeholder="rechercher un terme (3 lettres)…" autocomplete="off"><div class="sugg" id="sgFoeto"></div></div>
+</section>
+
+<!-- 08 — Négatifs obligatoires -->
+<section id="secNegatifs" class="off">
+  <h2><span class="n">08</span>Négatifs obligatoires<span class="tally" id="tNegatifs">—</span></h2>
+  <div class="btns" style="margin-bottom:11px">
+    <button class="btn" id="btnNegAll">Tous vérifiés</button>
+  </div>
+  <div id="negatifs"></div>
+</section>
+
+<!-- 08 — Techniques -->
+<section id="secTechniques" class="off">
+  <h2><span class="n">09</span>Techniques<span class="tally" id="tTechniques">—</span></h2>
+  <p class="note" style="margin-top:0" id="techNote"></p>
+  <div class="chips" id="techniques" style="margin-top:10px"></div>
+</section>
+
+<!-- 09 — Compte rendu -->
+<section id="secCR" class="off">
+  <h2><span class="n">10</span>Compte rendu<span class="tally" id="tCR">—</span></h2>
+  <pre class="cr" id="cr">—</pre>
+  <div class="row">
+    <div class="field" style="flex:1 1 100%">
+      <label for="libre">Remarque libre</label>
+      <textarea id="libre" placeholder="Ce que la grille ne prévoit pas."></textarea>
+    </div>
+  </div>
+  <div class="btns" style="margin-top:10px">
+    <button class="btn" id="btnCopie">Copier le compte rendu</button>
+  </div>
+</section>
+
+<!-- 10 — Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n">11</span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Vider le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- 11 — Diagnostic -->
+<section>
+  <h2><span class="n">12</span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante, aucun fetch : doit fonctionner par double-clic hors réseau.
+
+   Ce module est la SORTIE de fiche_digestif.md, jamais l'inverse. Les bornes, les
+   spécificités et les « ce qu'il ne faut pas conclure » sont recopiés de la
+   fiche ; ils ne se corrigent pas ici mais dans la fiche.
+
+   La grille ne conclut pas : elle contraint la description et rend ses
+   réserves visibles. Un critère non cliqué n'est pas un négatif — c'est un
+   non-regardé, et le compte rendu le dit.
+
+   Fichier ENGENDRÉ par gen_grille.py depuis grilles/digestif.js.
+   Corriger le fragment, pas ce fichier.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  FRAGMENT D'ORGANE — grilles/digestif.js                            ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+/* Grille de lecture — tube digestif (œsophage → canal anal).
+   Fond : ~/Bureau/fiches_lecture/fiche_digestif.md (§1 à §10).
+   Forme : gen_grille.py, calquée sur grille_poumon.html.
+   Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées.
+   Aucune page n'est citée : page_start est vide sur tout le corpus. */
+
+var ORGANE  = "digestif";
+var TITRE   = "tube digestif";
+var SOURCE  = "fiche_digestif.md";
+var MODULE  = "grille_digestif";
+var VERSION = "1.0.1";
+
+/* Le tube digestif ne se latéralise pas : il se SEGMENTE. L'axe de variation
+   n'est pas droite/gauche mais rostro-caudal — « Histogenesis in general
+   proceeds from rostral to caudal. » [ernst, ch. 4] — et un même repère est
+   plus tardif en distal. Le segment tient donc ici la place que la latéralité
+   tient au rein : il se déclare au § 04, et sans lui rien ne se date. */
+var PAIR = false;
+
+var TITRE_CR    = "TUBE DIGESTIF";
+var STADE_TITRE = "Horloge du GALT — la seule chronologie transversale du § 3 qui porte un critère diagnostique";
+
+var KCL_TXT = "Fœticide par KCl déclaré. Aucune des sources ne décrit d'effet digestif du geste — mais " +
+              "l'heure du décès est alors CONNUE, et c'est exactement ce que la source appelle son étalon : " +
+              "l'estimation du délai se compare au délai réel, elle ne le remplace pas. Aucune borne n'est " +
+              "à lire ici.";
+
+/* Le faux retard n° 1 de l'organe est administratif : la lame arrive étiquetée
+   « intestins » et rien ne dit quel segment. */
+var RETARD_NOTE = "Sur cet organe, un retard de maturation est d'abord une erreur de SEGMENT : " +
+                  "« Histogenesis in general proceeds from rostral to caudal. » [ernst, ch. 4], donc un " +
+                  "intestin terminal « en retard » sur un duodénum n'est pas une anomalie mais la règle. " +
+                  "Vérifier le segment déclaré au § 04 avant de conclure. Et toute la chronologie du § 3 " +
+                  "est une moyenne d'auteurs, déclarée telle par la source : « averages of different ages " +
+                  "given for each event by several authors » et « should be considered approximations » " +
+                  "[ernst, ch. 4] — un ordre, pas un barème.";
+
+var AVANCE_NOTE = "Une avance du GALT n'est pas une curiosité : c'est le seul critère diagnostique du § 3. " +
+                  "Des follicules primaires sous-muqueux facilement identifiables avant 20 SA, ou un " +
+                  "« centre germinatif ou un plasmocyte mature à n'importe quel âge fœtal », font évoquer " +
+                  "une infection fœtale ou un autre stimulus antigénique [ernst, ch. 4]. MAIS le seuil " +
+                  "repose sur un « 20 weeks » écrit deux fois avec deux échelles dans la même phrase " +
+                  "(§ 9-6) : 2 SA d'écart sur un critère diagnostique. Le versant fort du critère est " +
+                  "l'autre : le centre germinatif et le plasmocyte mature sont anormaux SANS condition d'âge.";
+
+var TECH_NOTE = "Les pointillés sont des propositions déduites des clics, jamais des prescriptions. Deux " +
+                "d'entre elles ne se rattrapent pas après le fixateur : l'histochimie AChE, qui " +
+                "« requires fresh rectal mucosa and is performed on frozen section tissue » " +
+                "[keeling, ch. 22], et la congélation pour CFTR. Le corpus prouve par ailleurs que le " +
+                "panel lymphoïde est DÉJÀ pratiqué sur le tube digestif dans ce service, quand aucune IHC " +
+                "neurale (calrétinine, PHOX2B, CD117) n'apparaît dans un seul CR.";
+
+/* ── 01 · Prélèvement ─────────────────────────────────────────────────────── */
+/* Le § 1 est ici un constat d'écart, pas une liste de vœux : la liste de
+   prélèvement du service est identique dans les 176 CR et ne porte que deux
+   entrées digestives, « estomac » et « intestins ». Aucun segment nommé, aucun
+   rectum, aucune orientation, aucune mesure. */
+var PRELEV = [
+  { k:"segmentNomme", l:"Chaque segment prélevé et NOMMÉ séparément", grave:true,
+    manque:"« Chaque segment digestif doit être analysé systématiquement. » [soffoet, ch. digestif] — la " +
+           "liste pratiquée est « cœur, estomac, foie, gonades, intestins, muscle squelettique " +
+           "(diaphragme, quadriceps), pancréas, peau, poumons, rate, reins, surrénales, thymus » " +
+           "[corpus CR] : deux entrées seulement, jamais un segment. Sans segment nommé, tout le § 3 et " +
+           "tout le § 4 sont inapplicables (§ 04)" },
+  { k:"rectum", l:"Rectum prélevé", grave:true,
+    manque:"le rectum est prescrit — « la muqueuse et le contenu gastrique, meilleur moyen de détecter " +
+           "la présence de polynucléaires d'origine amniotique déglutis, le rectum et le pancréas » " +
+           "[soffoet, ch. digestif] — et prélevé dans ZÉRO CR [corpus CR]. C'est le seul segment où une " +
+           "aganglionose serait discutable, et c'est celui qui n'est pas prélevé (§ 9-20)" },
+  { k:"perpendiculaire", l:"Coupe perpendiculaire, les deux couches de la musculeuse et le plexus myentérique sur la MÊME coupe", grave:true,
+    manque:"« well-oriented, perpendicular to the serosal or mucosal surface », de sorte que « both " +
+           "layers of the muscularis propria and the intervening myenteric plexus are visualized » " +
+           "[keeling, ch. 22] ; l'orientation n'est mentionnée dans aucun CR [corpus CR]. Une coupe " +
+           "tangentielle fait disparaître un plexus myentérique présent" },
+  { k:"estomacContenu", l:"Muqueuse ET contenu gastriques",
+    manque:"le prélèvement gastrique existe pour une question précise : « meilleur moyen de détecter la " +
+           "présence de polynucléaires d'origine amniotique déglutis » [soffoet, ch. digestif]. Son " +
+           "négatif est une donnée d'infection, pas un blanc" },
+  { k:"lumiereConservee", l:"Lumière et contenu luminal conservés",
+    manque:"le contenu est ce que ce service décrit réellement — méconium, squames, polynucléaires " +
+           "déglutis, hématies — et il reste lisible sur un tube macéré à 1–2 semaines [corpus CR] : le " +
+           "contenu est plus robuste que le contenant" },
+  { k:"appendice", l:"Appendice prélevé",
+    manque:"le repère de datation le plus commode du § 3 n'est pas dans le tube : les cryptes " +
+           "microkystiques appendiculaires sont transitoires, 17–28 SA, pic 20–25 SA, et " +
+           "« can be used as an additional histologic marker for midtrimester gestation » [ernst, ch. 4]" },
+  { k:"duodenumPancreas", l:"Rapport duodénum / tête du pancréas conservé sur le bloc",
+    manque:"avant 16 SA le duodénum ne s'identifie pas autrement : « The jejunum and ileum cannot be " +
+           "differentiated histologically from the duodenum at this gestational age », et il se " +
+           "reconnaît « only by its attachment to the head of the pancreas » [ernst, ch. 4]" },
+  { k:"niveauRectal", l:"Niveau du prélèvement rectal noté, si aganglionose évoquée",
+    manque:"« An adequate suction rectal biopsy is ideally obtained 2–3 cm proximal to the anorectal " +
+           "junction (dentate line) » [keeling, ch. 22] — un prélèvement trop distal tombe dans le " +
+           "segment hypoganglionnaire physiologique et produit un faux Hirschsprung" },
+  { k:"sondeOesophage", l:"Sonde passée dans l'œsophage",
+    manque:"« Une sonde doit être passée dans la lumière de l'œsophage » [soffoet] — c'est le négatif " +
+           "d'atrésie de l'œsophage, et il ne se rattrape pas après éviscération" },
+  { k:"sondeAnale", l:"Perméabilité anale vérifiée à la sonde",
+    manque:"« une petite sonde permet de vérifier la perméabilité » [soffoet] — négatif d'imperforation. " +
+           "Le geste peut éroder la muqueuse : une érosion muqueuse consignée après sondage se lit avec " +
+           "cette réserve (§ 8)" },
+  { k:"trajetCalibre", l:"Trajet inspecté en entier, calibre et longueurs relevés",
+    manque:"« L'inspection de l'intestin sur tout son trajet permet de rechercher une disparité de " +
+           "calibre pouvant évoquer une sténose ou atrésie, des calcifications ou adhérences. » " +
+           "[soffoet] ; aucune de ces mesures n'apparaît dans un seul CR [corpus CR]" }
+];
+
+/* ── 02 · Rétention ───────────────────────────────────────────────────────── */
+/* Le tube digestif est l'axe de datation le plus utilisé du service ET le plus
+   contradictoire : la « perte complète » de basophilie y est écrite pour > 75 h,
+   1, 2 et 4 semaines. La cause n'est pas rédactionnelle, elle est lexicale — le
+   corpus écrit « tube digestif » sans dire de quel COMPARTIMENT il parle, alors
+   que l'épithélium part tôt et que la paroi reste. Les neuf formules du corpus
+   sont donc portées telles quelles, avec leur délai et leur contradiction, et
+   toutes en prédicteur MAUVAIS ; ce qui ordonne sans dater est en MOYEN ; et le
+   seul prédicteur BON est celui que la source elle-même nomme son étalon. */
+var CONTRA = "le corpus se contredit frontalement sur cet axe : la même « perte complète » de basophilie " +
+             "digestive est écrite pour > 75 h, 1 semaine, 2 semaines et 4 semaines, et deux CR datent " +
+             "4–8 h et 8–24 h sur le tube digestif — l'un par sa persistance, l'autre par sa perte " +
+             "[corpus CR]. Le même organe sert de témoin PRÉCOCE et de témoin TARDIF (§ 9-2)";
+
+var COMPART = "et surtout : la phrase ne nomme pas le COMPARTIMENT. L'épithélium part tôt, la paroi reste " +
+              "[ernst, ch. 37] — écrire « tube digestif » mélange les deux vitesses. Écrire entérocytes " +
+              "ou épithélium de surface (précoce), ou muscularis mucosae, musculeuse propre et cellules " +
+              "ganglionnaires (tardif). Six CR emploient déjà le bon mot, treize non [corpus CR]";
+
+var NON_ATTRIBUABLE = "la ligne « Epithelium ≥96 h » de la Table 37.1 — celle qui trancherait — est " +
+                      "extraite avec sa colonne d'organe détruite : elle n'est rattachable à aucun organe " +
+                      "de façon vérifiable et n'est PAS attribuée ici au tube digestif (§ 9-1). Aucune " +
+                      "source ne donne de séquence chronologique compartiment par compartiment pour ce " +
+                      "tube, contrairement au foie et aux surrénales (§ 9-3)";
+
+var RETENTION = [
+  { k:"histoireClinique", l:"Histoire clinique datée disponible — heure ou jour du décès connus", b:"= le délai clinique",
+    d:"étalon déclaré par la source", h:9999, q:"bon",
+    note:"c'est le seul prédicteur qui ne se contredise pas, et la source le dit elle-même : le " +
+         "« gold standard » de l'estimation est « intrauterine fetal demise is an accurate clinical " +
+         "history » [ernst, ch. 37]. La même source borne la méthode histologique : les pertes de " +
+         "basophilie « and therefore may limit the accurate assessment of the duration of » la mort " +
+         "fœtale quand elles sont discordantes d'un organe à l'autre" },
+
+  { k:"epithProfil", l:"Épithélium de surface / entérocytes : basophilie perdue, paroi encore lisible", b:"compartiment PRÉCOCE",
+    d:"ordre structurel, non chiffré", h:1, q:"moyen",
+    note:"c'est la forme correcte, mais elle ORDONNE sans DATER : « The GI mucosa is often sloughed and " +
+         "difficult to assess » [ernst, ch. 37] pendant que la paroi reste jugeable. " + NON_ATTRIBUABLE },
+  { k:"paroiProfil", l:"Paroi — muscularis mucosae, musculeuse propre, cellules ganglionnaires : basophilie perdue", b:"compartiment TARDIF",
+    d:"ordre structurel, non chiffré", h:2, q:"moyen",
+    note:"le compartiment résistant est parti : c'est plus tard que la perte épithéliale, et c'est tout " +
+         "ce qu'on peut en dire sans inventer un chiffre. " + NON_ATTRIBUABLE },
+  { k:"deuxProfils", l:"Les DEUX compartiments ont perdu leur basophilie", b:"les deux compartiments perdus",
+    d:"ordre structurel, non chiffré", h:3, q:"moyen",
+    note:"« et si les deux sont perdus, le dire ainsi » est la consigne du § 2 : c'est la borne la plus " +
+         "tardive que l'organe sache produire, et elle reste sans heure. " + NON_ATTRIBUABLE },
+
+  { k:"cr4_8", l:"Basophilie persistante dans l'épithélium gastro-intestinal, perte débutante aux tubules rénaux", b:"4–8 h",
+    d:"formule locale, contradictoire", h:8, q:"mauvais",
+    note:"« début de perte de basophilie nucléaire des tubules rénaux et sa persistance au niveau de " +
+         "l'épithélium gastro-intestinal » [corpus CR] — " + CONTRA },
+  { k:"cr8_24", l:"Basophilie perdue aux TCP et à l'épithélium digestif, conservée dans les hépatocytes", b:"8–24 h",
+    d:"formule locale, déclarée artéfactuelle", h:24, q:"mauvais",
+    note:"« perte de basophilie nucléaire des TCP, de l'épithélium du tube digestif, conservée au sein " +
+         "des hépatocytes (rétention estimée entre 8 et 24 heures, artéfactuelle) » [corpus CR] — le CR " +
+         "déclare lui-même sa borne artéfactuelle. " + CONTRA },
+  { k:"cr75", l:"Absence de basophilie du tractus digestif", b:"> 75 h",
+    d:"formule locale, contradictoire", h:75, q:"mauvais",
+    note:"« absence de basophilie du tractus digestif » [corpus CR] — et un autre CR conclut à la " +
+         "PERSISTANCE digestive à 96 h – 1 semaine, contre un foie déjà éteint. " + CONTRA },
+  { k:"cr72_1s", l:"Basophilie persistante du cortex surrénalien fœtal ET du tractus digestif", b:"72 h – 1 sem",
+    d:"formule locale, contradictoire", h:168, q:"mauvais",
+    note:"« persistance d'une basophilie nucléaire du cortex fœtal surrénalien et du tractus digestif » " +
+         "[corpus CR] — " + CONTRA },
+  { k:"cr96_1s", l:"Basophilie hépatique perdue, conservée dans le tractus intestinal", b:"96 h – 1 sem",
+    d:"formule locale, contradictoire", h:168, q:"mauvais",
+    note:"« perte de la basophilie nucléaire hépatique, conservation dans le tractus intestinal » et " +
+         "« perte de basophilie des hépatocytes et sa persistance au sein des entérocytes » [corpus CR] " +
+         "— cette formule inverse l'ordre foie/digestif de la borne 8–24 h, et le même délai porte " +
+         "encore « perte complète de basophilie nucléaire intestinale et persistance dans les " +
+         "chondrocytes trachéaux ». " + CONTRA },
+  { k:"cr1_2s", l:"Perte totale de basophilie intestinale, basophilie alvéolaire encore discrète", b:"1–2 sem",
+    d:"formule locale, contradictoire", h:336, q:"mauvais",
+    note:"« perte totale de basophilie nucléaire intestinale, discrète persistance de la basophilie des " +
+         "murs alvéolaires » [corpus CR] — " + CONTRA },
+  { k:"cr2s", l:"Perte complète de basophilie du tube digestif, des surrénales et de la trachée", b:"2 sem",
+    d:"formule locale, contradictoire", h:336, q:"mauvais",
+    note:"« perte complète de basophilie nucléaire du tube digestif, des surrénales et de la trachée » " +
+         "[corpus CR] — " + COMPART },
+  { k:"cr1_4s", l:"Perte complète de basophilie du tube digestif et des surrénales", b:"1–4 sem",
+    d:"formule locale, contradictoire", h:672, q:"mauvais",
+    note:"« perte complète de la basophilie nucléaire du tube digestif et des surrénales » [corpus CR] " +
+         "— la même phrase que la borne 2 semaines, avec un délai différent. " + COMPART },
+  { k:"cr4s", l:"Perte quasi complète de basophilie des surrénales et du tube digestif", b:"4 sem",
+    d:"formule locale, contradictoire", h:672, q:"mauvais",
+    note:"« perte de la basophilie nucléaire quasi complète des surrénales et du tube digestif » " +
+         "[corpus CR] — " + COMPART },
+
+  { k:"muqueuseSloughee", l:"Muqueuse desquamée, épithélium détaché en nappes", b:"—",
+    d:"artefact, ne date rien", h:0, q:"mauvais",
+    note:"« The GI mucosa is often sloughed and difficult to assess » [ernst, ch. 37] : ce n'est pas une " +
+         "nécrose muqueuse et ce n'est pas une borne. Juger sur la paroi, qui persiste (§ 8)" },
+  { k:"gazParoi", l:"Gaz dans la paroi intestinale sur fœtus macéré", b:"—",
+    d:"non interprétable", h:0, q:"mauvais",
+    note:"AUCUNE source du corpus ne donne de critère séparant une pneumatose d'un gaz de putréfaction " +
+         "sur un fœtus macéré (§ 9-10) : ne pas conclure « pneumatose » ici" },
+  { k:"necroseIndistincte", l:"Nécrose de coagulation de la paroi sur pièce d'autopsie", b:"—",
+    d:"ne sépare rien", h:0, q:"mauvais",
+    note:"« In autopsy specimens, the coagulative necrosis may be difficult to differentiate from " +
+         "post-mortem tissue autolysis. » [keeling, ch. 22] — c'est le piège qui coûte un diagnostic. " +
+         "Le seul argument en faveur de l'entérocolite est topographique : " +
+         "« Ganglion cells are generally spared » [keeling, ch. 22]" }
+];
+
+/* ── 03 · Maturation ──────────────────────────────────────────────────────────
+   Le § 3 porte six chronologies : quatre par segment (œsophage, estomac, grêle,
+   côlon-appendice-anal) et deux transversales (système nerveux entérique,
+   muscularis mucosae, GALT). Une seule peut tenir dans une échelle unique :
+   celle du GALT. Elle est la seule à la fois TRANSVERSALE — elle ne suppose
+   aucun segment particulier —, MONOTONE en SA, et porteuse d'un CRITÈRE
+   diagnostique. La muscularis mucosae, plus robuste encore, ne pouvait pas tenir
+   ici : sa date attendue dépend du segment, donc elle vit au § 04. Le système
+   nerveux entérique est achevé à 16 SA et n'ordonne plus rien ensuite.
+   Toute la table est en SA (= post-fécondation + 2), conversion validée par la
+   source elle-même sur les cryptes appendiculaires (17 = 15+2, 28 = 26+2). */
+var STADES = [
+  { k:"epars", l:"Cellules lymphoïdes ÉPARSES de la lamina propria — pas de GALT en coloration de routine", max:16,
+    note:"« Scattered lymphoid cells appear in the lamina propria during the seventh week » (pf 7 → 9 SA) " +
+         "[ernst, ch. 4]. Entre-temps, à 13 SA, seule l'IHC voit quelque chose : « Beginning in the 11th " +
+         "week, immunohistochemical stains identify precursors of lymphoid tissue » — donc une lame HES " +
+         "muette avant 16 SA n'est pas un déficit lymphoïde" },
+  { k:"routineRare", l:"GALT visible en routine — petits amas de l'iléon terminal encore RARES", max:18,
+    note:"« After 14 weeks, the gut-associated lymphoid tissue is visible in routine histological " +
+         "sections. » (pf 14 → 16 SA) et « Tiny aggregates […] of the terminal ileum are infrequent at " +
+         "14 weeks and more consistently seen at 16 weeks. » (pf 14→16 → 16→18 SA) [ernst, ch. 4]. " +
+         "Rare ne veut pas dire absent : c'est le rang où le compte ne prouve rien" },
+  { k:"amasConstants", l:"Amas lymphoïdes de l'iléon terminal CONSTANTS, pas encore de follicule organisé", max:21,
+    note:"borne haute du même verbatim : « more consistently seen at 16 weeks » (pf 16 → 18 SA) " +
+         "[ernst, ch. 4]. C'est le rang où passe le seuil d'anomalie du GALT — et c'est précisément " +
+         "celui dont l'échelle est ambiguë (§ 9-6)" },
+  { k:"folliculesPrimaires", l:"Follicules primaires ORGANISÉS", max:26,
+    note:"« By 19–20 weeks, more organized primary follicles are present » (pf 19–20 → 21–22 SA) " +
+         "[ernst, ch. 4]. INCOHÉRENCE INTERNE NON ARBITRÉE : la même phrase écrit ensuite « these become " +
+         "easily recognizable […] after 20 weeks postmenstrual age », donc 20 SA — 21–22 SA d'un côté, " +
+         "20 SA de l'autre, pour le même objet (§ 9-6). Deux SA d'écart, et c'est sur ce chiffre que " +
+         "repose le seuil d'anomalie du GALT : follicules primaires sous-muqueux avant 20 SA" },
+  { k:"peyer", l:"Plaques de Peyer volumineuses dans la sous-muqueuse de l'iléon terminal", max:99,
+    note:"« By 24 weeks, large Peyer's patches are present in the submucosa of the terminal ileum » " +
+         "(pf 24 → 26 SA) [ernst, ch. 4], avec des follicules solitaires sous-muqueux au duodénum, au " +
+         "jéjunum, à l'appendice et au côlon distal. Topographie normale à connaître avant de s'étonner " +
+         "d'un amas : les follicules sont « most well-developed at the junctions of the primary " +
+         "segments », et le GALT « is most prominent in the cecum and rectum » [ernst, ch. 4]" }
+];
+
+/* ── 04 · Segment, muscularis mucosae, calibre et longueur ────────────────────
+   Le segment est à ce tube ce que la région est à la peau : sans lui, aucune
+   norme à laquelle comparer. C'est le champ manquant n° 1 du § 10-2. */
+var SEGMENTS = [
+  { k:"oesophage",  l:"Œsophage" },
+  { k:"jog",        l:"Jonction œsogastrique" },
+  { k:"estomac",    l:"Estomac" },
+  { k:"duodenum",   l:"Duodénum" },
+  { k:"jejunum",    l:"Jéjunum" },
+  { k:"ileon",      l:"Iléon" },
+  { k:"appendice",  l:"Appendice" },
+  { k:"colon",      l:"Côlon" },
+  { k:"rectum",     l:"Rectum" },
+  { k:"canalAnal",  l:"Canal anal" },
+  { k:"nonNomme",   l:"Segment NON identifiable — bloc étiqueté « intestins »" }
+];
+
+/* La muscularis mucosae est la dernière couche à se développer et la seule qui
+   survive à une macération ayant effacé la muqueuse. Elle date donc mieux que
+   tout le reste — à condition de savoir de quel segment on parle. */
+var MM = [
+  { k:"presente", l:"Muscularis mucosae PRÉSENTE" },
+  { k:"absente",  l:"Muscularis mucosae ABSENTE" },
+  { k:"nonEval",  l:"Muscularis mucosae NON ÉVALUABLE — coupe, lyse ou orientation" }
+];
+
+var MESURE = {
+  titre:"Segment prélevé, muscularis mucosae, calibre et longueur",
+  defLabel:"segment — sans lui, aucune norme",
+  optLabel:"horloge qui survit à la macération",
+  defs:SEGMENTS, opts:MM,
+  champs:[{ id:"calibre",  label:"Calibre du segment (mm)",  min:0, max:60,  step:0.1 },
+          { id:"longueur", label:"Longueur totale du grêle ou du côlon (cm)", min:0, max:400, step:1 }]
+};
+
+/* Dates d'apparition sourcées, § 3.7. Là où la fiche ne donne rien, la valeur
+   est null et se dit : un trou dans la fiche reste un trou dans la grille. */
+function mmAttendue(seg){
+  return { oesophage:13, jog:null, estomac:16, duodenum:23, jejunum:null, ileon:32,
+           appendice:null, colon:null, rectum:null, canalAnal:18 }[seg];
+}
+function mmSource(seg){
+  return {
+    oesophage:"« It begins in the esophagus during the 11th week » (pf 11 → 13 SA)",
+    jog:null,
+    estomac:"« in the stomach during the 14th week » (pf 14 → 16 SA)",
+    duodenum:"« The muscularis mucosae appears in the duodenum as early as the 21st week and spreads " +
+             "caudally. » (pf 21 → 23 SA)",
+    jejunum:null,
+    ileon:"« It may arrive at the terminal ileum by 30 weeks in some cases, but not until later in " +
+          "others. » (pf 30 → 32 SA) — donc 32 SA est un PLANCHER incertain, pas une date",
+    appendice:null,
+    colon:null,
+    rectum:null,
+    canalAnal:"« in the anal canal in the 16th week » (pf 16 → 18 SA)"
+  }[seg];
+}
+function famille(seg){
+  if (seg === "duodenum" || seg === "jejunum" || seg === "ileon") return "grele";
+  if (seg === "colon" || seg === "rectum" || seg === "appendice") return "colon";
+  return "haut";
+}
+
+function verdictMesure(){
+  var seg = E.mesure.def, mm = E.mesure.opt,
+      cal = E.mesure.v.calibre, lon = E.mesure.v.longueur, sa = num("sa");
+  if (!seg && !mm && cal == null && lon == null && !E.stade)
+    return { cls:"", txt:"Ni segment, ni muscularis mucosae, ni mesure — le tube digestif n'est pas encore lu." };
+
+  var t = [], cls = "ok", res = [];
+
+  if (!seg || seg === "nonNomme"){
+    cls = "bad";
+    t.push((seg === "nonNomme" ? "Segment déclaré NON identifiable" : "Segment NON déclaré") +
+           " : toute la lecture du tube digestif est ININTERPRÉTABLE. La différenciation va de la " +
+           "bouche vers l'anus — « Histogenesis in general proceeds from rostral to caudal. » " +
+           "[ernst, ch. 4] — donc un même repère est plus tardif en distal et il n'existe AUCUNE norme " +
+           "commune à laquelle comparer. C'est le champ manquant n° 1 du service : la liste de " +
+           "prélèvement ne porte que « estomac » et « intestins », jamais un segment nommé [corpus CR]. " +
+           "Discriminants sourçables à tenter avant de renoncer : muscularis mucosae la plus épaisse " +
+           "du tube et « are not present during fetal life » pour les papilles de la lamina propria " +
+           "(œsophage) ; « an additional oblique layer internal to the inner circular layer » " +
+           "(estomac) ; « The glands are largest near the pyloric sphincter and are progressively " +
+           "smaller caudally. » (Brunner, duodénum après 16 SA) ; « The mucosa of the appendix is " +
+           "similar to that of the colon except that it lacks villi. » ; « stratified cuboidal and " +
+           "columnar epithelium with peg cells on the surface » (canal anal) [ernst, ch. 4]. Et avant " +
+           "18 SA, renoncer est la bonne réponse entre grêle et côlon : « difficult, especially prior " +
+           "to 16 weeks » (pf 16 → 18 SA).");
+  } else {
+    t.push("Segment : " + par(SEGMENTS, seg).l.toLowerCase() + ".");
+    if (seg === "duodenum" && sa != null && sa < 16)
+      res.push("avant 16 SA le duodénum ne s'identifie QUE par son rapport au pancréas — « The jejunum " +
+               "and ileum cannot be differentiated histologically from the duodenum at this " +
+               "gestational age » [ernst, ch. 4]");
+    if ((seg === "colon" || seg === "rectum") && sa != null && sa < 18)
+      res.push("avant 18 SA, côlon et grêle sont tous deux villositaires et ne se séparent pas en " +
+               "pratique : « difficult, especially prior to 16 weeks » (pf 16 → 18 SA) [ernst, ch. 4]");
+    if (seg === "rectum" && !E.prelev.rectum)
+      res.push("segment rectum déclaré alors que le rectum n'est pas coché au § 01 — il est prélevé " +
+               "dans zéro CR du corpus, vérifier ce qui est réellement sur la lame");
+  }
+
+  if (mm){
+    var att = mmAttendue(seg), src = mmSource(seg);
+    t.push("Muscularis mucosae : " + par(MM, mm).l.toLowerCase().replace("muscularis mucosae ", "") +
+           ". C'est « The muscularis mucosae is the last layer to develop » [ernst, ch. 4], et c'est " +
+           "la structure qui SURVIT à la macération : la maturation par la paroi reste lisible quand " +
+           "la muqueuse est partie (§ 02).");
+    if (seg && seg !== "nonNomme" && att == null)
+      res.push("aucune date d'apparition de la muscularis mucosae n'est sourcée pour ce segment : la " +
+               "progression est BIDIRECTIONNELLE — « It spreads from the duodenum caudally and from the " +
+               "anal canal rostrally to meet at the ileocecal junction during the last trimester. » " +
+               "[ernst, ch. 4] — mais aucune borne intermédiaire n'est donnée. Ne pas en inventer une");
+    else if (att != null){
+      t.push("Date attendue pour ce segment : " + att + " SA — " + src + " [ernst, ch. 4].");
+      if (mm === "absente" && sa != null && sa < att)
+        t.push("Absence ATTENDUE à " + sa + " SA : ce n'est pas une hypoplasie pariétale. " +
+               "« The muscularis mucosae is not present, although the muscularis propria and " +
+               "Auerbach's plexus are well-developed » [ernst, ch. 4] est l'image normale du grêle de " +
+               "deuxième trimestre.");
+      else if (mm === "absente" && sa != null && sa >= att){
+        if (cls === "ok") cls = "warn";
+        res.push("muscularis mucosae absente à " + sa + " SA alors qu'elle est attendue dès " + att +
+                 " SA sur ce segment : soit le segment déclaré n'est pas le bon, soit le repère est en " +
+                 "retard. Sur un tube, la première hypothèse est la plus fréquente");
+      }
+      else if (mm === "presente" && sa != null && sa < att)
+        res.push("muscularis mucosae présente à " + sa + " SA, avant la date HES attendue (" + att +
+                 " SA) : ne pas conclure à une avance. La source signale elle-même que ses dates " +
+                 "musculaires sont datées, les études IHC plaçant la différenciation plus tôt et la " +
+                 "vague rostro-caudale plus rapide « which are based on routine stains » (§ 9-7)");
+    }
+    if (mm === "nonEval")
+      res.push("muscularis mucosae non évaluable : c'est la dernière horloge qui restait sur un tube " +
+               "macéré. Sur coupe mal orientée, le smoothelin sépare musculeuse propre et muscularis " +
+               "mucosae — « especially in suboptimally sampled and/or poorly oriented specimens » " +
+               "[ernst, ch. 4] (§ 08)");
+  }
+
+  if (cal != null){
+    if (cls === "ok") cls = "warn";
+    t.push("Calibre mesuré à " + cal + " mm. Les seules valeurs datées de la fiche sont MACROSCOPIQUES " +
+           "et portent une INVERSION : « L'intestin grêle est plus large (4 mm) que le côlon jusqu'à " +
+           "mi-gestation (< 3 mm) », puis le côlon « devient plus large que le grêle à la fin du " +
+           "deuxième trimestre (6 mm) » [soffoet, ch. digestif]. Un calibre ne se lit donc qu'avec son " +
+           "segment ET son terme, et les deux bornes ne sont pas des intervalles.");
+    if (famille(seg) === "haut" && seg && seg !== "nonNomme")
+      res.push("aucune valeur de calibre n'est sourcée hors grêle et côlon : le chiffre se consigne, " +
+               "il ne s'interprète pas");
+    if (cal > 6)
+      res.push("calibre au-delà de la plus haute valeur de référence citée (6 mm, côlon en fin de 2ᵉ " +
+               "trimestre) : chercher une disparité de calibre sur tout le trajet et un obstacle " +
+               "d'aval avant de conclure à une variation");
+  }
+
+  if (lon != null){
+    if (cls === "ok") cls = "warn";
+    t.push("Longueur mesurée à " + lon + " cm. Ancres sourcées, macroscopiques : grêle « 80 cm à 20 SA, " +
+           "2 m à 32 SA, et 3 m à terme » ; « Le côlon mesure environ 15 cm à 20 SA, 40 cm à 32 SA, et " +
+           "50 cm à terme » [soffoet, ch. digestif]. Ces trois valeurs sont des POINTS, pas un " +
+           "intervalle : la fiche ne fournit ni écart-type ni bornes, et un écart ne se quantifie pas " +
+           "ici. Aucune de ces mesures n'apparaît dans un seul CR du corpus.");
+  }
+
+  if ((cal != null || lon != null) && !E.prelev.trajetCalibre)
+    res.push("mesure saisie sans que l'inspection du trajet soit cochée au § 01 — « L'inspection de " +
+             "l'intestin sur tout son trajet permet de rechercher une disparité de calibre pouvant " +
+             "évoquer une sténose ou atrésie, des calcifications ou adhérences. » [soffoet]");
+
+  if (seg && seg !== "nonNomme" && !E.prelev.perpendiculaire)
+    res.push("plan de coupe non confirmé — une coupe tangentielle fait disparaître un plexus " +
+             "myentérique PRÉSENT et transforme un tube normal en faux Hirschsprung");
+
+  res.push("aucune mesure HISTOLOGIQUE n'est possible sur cet organe : zéro épaisseur de paroi, zéro " +
+           "hauteur villositaire, zéro rapport crypte/villosité, zéro compte de ganglions sur 176 CR, " +
+           "et AUCUNE source ne fournit de normale digestive chiffrée par SA (§ 9-19). Les deux champs " +
+           "ci-dessus sont macroscopiques et ce n'est pas un oubli");
+
+  if (res.length){ if (cls === "ok") cls = "warn"; t.push("Réserves : " + res.join(" ; ") + "."); }
+  return { cls:cls, txt:t.join(" ") };
+}
+
+/* ── 05 · Variantes normales ──────────────────────────────────────────────────
+   Le § 8 de la fiche est presque entièrement fait de normalités surdiagnostiquées :
+   sur un tube fœtal, la plupart des « lésions » sont des étapes. */
+var VARIANTES = [
+  { k:"colonVillositaire", l:"Côlon villositaire — « The colonic mucosa is villous from this point in development until the 30th week or later. »" },
+  { k:"villiGastriques",   l:"Villosités cardiales et pyloriques proéminentes (16–32 SA), pouvant persister au-delà" },
+  { k:"ciliesOesophage",   l:"Cellules ciliées à la surface de l'œsophage — « Some patches of ciliated epithelium may remain at birth »" },
+  { k:"mmAbsenteGrele",    l:"Absence de muscularis mucosae dans le grêle avant 23 SA" },
+  { k:"longiFine",         l:"Longitudinale externe très fine — « The outer longitudinal layer is very thin until approximately the third trimester »" },
+  { k:"pasDePapilles",     l:"Absence de papilles de la lamina propria œsophagienne, à tout âge fœtal" },
+  { k:"muscleStrieOeso",   l:"Muscle strié squelettique dans le tiers supérieur de l'œsophage" },
+  { k:"gastriqueEctopique",l:"Muqueuse gastrique ectopique dans l'œsophage — hétérotopie fréquente et banale" },
+  { k:"pyloriqueDuodenum", l:"« pyloric-like epithelium may be found in the duodenum » — hétérotopie banale" },
+  { k:"cryptesMicrokystiques", l:"Cryptes microkystiques appendiculaires et microdiverticules (17–28 SA, pic 20–25 SA)" },
+  { k:"muqueuseDesorganisee", l:"Muqueuse appendiculaire désorganisée — « This process results in a disorganized mucosa with extensive areas of crypt dropout »" },
+  { k:"folliculesAppendice", l:"Gros follicules primaires appendiculaires après 22 SA — « Beginning at 20 weeks, larger primary follicles become common. »" },
+  { k:"appendiceSansVilli",l:"Appendice sans villosités et à couches musculaires indistinctes avant 22 SA" },
+  { k:"thanatosomes",      l:"Globules hyalins / thanatosomes aux sommets des villosités, 16–22 SA, absents des cryptes" },
+  { k:"apoptoseApicale",   l:"Apoptose des cellules au sommet des villosités et débris épithéliaux dans la lumière" },
+  { k:"segiCaps",          l:"Coiffes de Segi au sommet des villosités après 22 SA" },
+  { k:"panethDroit",       l:"Cellules de Paneth au fond des cryptes, « confined to the right colon »" },
+  { k:"ganglionsImmaturesVar", l:"Cellules ganglionnaires immatures dans les plexus entériques" },
+  { k:"hypoganglionnaire", l:"Segment hypoganglionnaire physiologique du canal anal distal" }
+];
+
+/* ── 06 · Signes ──────────────────────────────────────────────────────────────
+   On coche des SIGNES, jamais des diagnostics. Rien de coché ne veut pas dire
+   absent : ça veut dire non regardé. Sur cet organe, le rappel n'est pas
+   rhétorique : sur 176 CR à section micro, le tube digestif n'est décrit comme
+   porteur d'une lésion que dans TROIS. Le reste est une horloge de macération,
+   un contenant, ou un « normal » global. La liste ci-dessous vient donc
+   massivement des livres : ce sont des lésions que le service ne produit pas
+   encore, pas des lésions qu'il exclut. */
+var SIGNES = [
+  /* Contenu luminal — le seul axe que le service alimente déjà spontanément */
+  { k:"meconiumLumiere",  l:"Méconium dans la lumière" },
+  { k:"squames",          l:"Squames dans la lumière" },
+  { k:"lanugo",           l:"Poils de lanugo dans la lumière" },
+  { k:"pnAlteres",        l:"Polynucléaires ALTÉRÉS dans la lumière",
+    meta:"« de très volumineux amas de polynucléaires plus ou moins altérés »" },
+  { k:"pnPeuAlteres",     l:"Polynucléaires PEU altérés dans la lumière",
+    meta:"peu altérés = déglutis récemment ; l'altération n'est pas une gradation, c'est une chronologie" },
+  { k:"hematiesLumiere",  l:"Hématies fœtales dans la lumière" },
+  { k:"amasNecroses",     l:"Amas cellulaires nécrosés dans la lumière" },
+  { k:"contenuDiffus",    l:"Contenu retrouvé « sur presque tous les segments étudiés »",
+    meta:"la distribution EST le diagnostic : diffus = déglutition, focal = local" },
+  { k:"contenuPoumon",    l:"Même contenu dans les lumières aériques pulmonaires",
+    meta:"hors lame digestive — un même liquide amniotique dégluti ET inhalé" },
+
+  /* Paroi — inflammation, nécrose, gaz */
+  { k:"infiltratParoi",   l:"Infiltrat inflammatoire de la PAROI",
+    meta:"des polynucléaires DANS LA LUMIÈRE ne sont pas une inflammation pariétale" },
+  { k:"abcesCryptiques",  l:"Abcès cryptiques" },
+  { k:"pseudomembrane",   l:"Pseudomembrane" },
+  { k:"muqueuseDesquamee",l:"Muqueuse desquamée, épithélium détaché en nappes",
+    meta:"« The GI mucosa is often sloughed and difficult to assess » — post-mortem, pas nécrose" },
+  { k:"necroseCoagulation", l:"Nécrose de coagulation de la paroi",
+    meta:"« may be difficult to differentiate from post-mortem tissue autolysis » sur pièce d'autopsie" },
+  { k:"necroseMuqueuse",  l:"Nécrose limitée à la MUQUEUSE" },
+  { k:"necroseSousMuqueuse", l:"Nécrose atteignant la SOUS-MUQUEUSE" },
+  { k:"necroseTransmurale", l:"Nécrose atteignant la MUSCULEUSE PROPRE — transmurale" },
+  { k:"ganglionsEpargnes",l:"Cellules ganglionnaires ÉPARGNÉES par la nécrose",
+    meta:"« Ganglion cells are generally spared » — le seul argument contre l'autolyse globale" },
+  { k:"pneumatose",       l:"Gaz dans la paroi intestinale",
+    meta:"aucune source ne le sépare d'un gaz de putréfaction sur macéré" },
+  { k:"oedemeParoi",      l:"Œdème de la paroi" },
+  { k:"hemorragieParoi",  l:"Hémorragie de la paroi" },
+  { k:"fibroseSousMuqueuse", l:"Fibrose sous-muqueuse, régénération épithéliale — phase de réparation" },
+  { k:"perforation",      l:"Perforation pariétale",
+    meta:"siège antimésentérique à noter ; dans la péritonite fibro-adhésive, le trou peut être introuvable" },
+
+  /* Innervation */
+  { k:"ganglionsAbsentsSM", l:"Absence de cellules ganglionnaires — plexus SOUS-MUQUEUX" },
+  { k:"ganglionsAbsentsMY", l:"Absence de cellules ganglionnaires — plexus MYENTÉRIQUE" },
+  { k:"nerfsHypertrophiques", l:"Nerfs sous-muqueux hypertrophiques — plus de 40 µm, au moins deux" },
+  { k:"filetsEpais",      l:"« Le plexus myentérique est remplacé par d'épais filets nerveux »" },
+  { k:"ganglionsImmatures", l:"Cellules ganglionnaires petites, à chromatine mottée, sans nucléole",
+    meta:"normales jusqu'à la fin de la 1ʳᵉ année — PHOX2B les révèle" },
+  { k:"ganglionsSereuse", l:"Cellules ganglionnaires vues dans la SÉREUSE",
+    meta:"« erroneously interpreted as ganglionic submucosa »" },
+  { k:"hypoganglionnaireSigne", l:"Fragment pris dans la zone distale normalement pauvre en ganglions",
+    meta:"faux positif n° 1 — et les deux sources ne s'accordent pas sur la longueur de cette zone" },
+  { k:"coupeTangentielle",l:"Coupe mal orientée — les deux couches de la musculeuse ne sont pas sur le même plan" },
+
+  /* GALT */
+  { k:"centreGerminatif", l:"Centre germinatif",
+    meta:"anormal SANS condition d'âge fœtal — le versant fort du critère" },
+  { k:"plasmocyteMature", l:"Plasmocyte mature",
+    meta:"anormal SANS condition d'âge fœtal" },
+  { k:"folliculesSousMuqueux", l:"Follicules primaires sous-muqueux facilement identifiables avant 20 SA",
+    meta:"versant fragile : le seuil repose sur un « 20 weeks » écrit avec deux échelles (§ 9-6)" },
+
+  /* Obstruction, atrésies, disparité */
+  { k:"disparite",        l:"Disparité de calibre sur le trajet" },
+  { k:"amontDilate",      l:"Segment d'amont dilaté et hypertrophié" },
+  { k:"avalCollabe",      l:"Segment d'aval rétracté, étroit, collabé" },
+  { k:"deuxCulsDeSac",    l:"Deux culs-de-sac borgnes" },
+  { k:"contenuAval",      l:"Squames, lanugo ou bile EN AVAL de l'atrésie",
+    meta:"la preuve du mécanisme : l'atrésie est postérieure à la perméabilité établie" },
+  { k:"longitudinaleEpaisse", l:"Longitudinale externe anormalement ÉPAISSE",
+    meta:"signe positif d'obstacle d'aval, gratuit en HES" },
+  { k:"diaphragmeMuqueux",l:"Diaphragme muqueux duodénal, sous l'ampoule de Vater" },
+  { k:"pancreasAnnulaire",l:"Pancréas annulaire",
+    meta:"n'entraîne pas obligatoirement une réduction de la lumière duodénale" },
+  { k:"culDeSacOeso",     l:"Cul-de-sac œsophagien supérieur" },
+  { k:"fistuleOesoTracheale", l:"Fistule œso-trachéale inférieure" },
+  { k:"remnantsTracheoBronchiques", l:"Remnants trachéo-bronchiques dans la paroi œsophagienne",
+    meta:"signe POSITIF d'anomalie de séparation — pas du cartilage d'entraînement de coupe" },
+
+  /* Duplication */
+  { k:"kysteParoiIntestinale", l:"Structure kystique ou tubulaire à paroi identique à celle de l'intestin" },
+  { k:"bordMesenterique", l:"Lésion kystique située près du bord mésentérique" },
+  { k:"heterotopieKyste", l:"Hétérotopie gastrique ou pancréatique dans la paroi du kyste",
+    meta:"c'est elle qui porte le risque ulcéreux" },
+
+  /* Méconium */
+  { k:"meconiumImpacte",  l:"Iléon distal obstrué par du méconium impacté" },
+  { k:"concretions",      l:"Concrétions blanc-gris dans le grêle distal étroit" },
+  { k:"microcolon",       l:"Microcôlon vide, exclu du transit" },
+  { k:"cryptesDilatees",  l:"Cryptes courtes, écartées ou kystiquement dilatées à sécrétions éosinophiles" },
+  { k:"brunnerDilatees",  l:"Glandes de Brunner dilatées par du mucus inspissé" },
+  { k:"villositesAplaties", l:"Aplatissement des villosités",
+    meta:"pas d'atrophie villositaire : les villosités « may appear shortened, blunted, or bent in segments distended by meconium »" },
+  { k:"calcificationsPeritoneales", l:"Calcifications péritonéales" },
+  { k:"macrophagesBiliaires", l:"Macrophages contenant de la bile, péritonéaux" },
+  { k:"squamesPeritoine", l:"Squames et rares poils de lanugo dans le péritoine" },
+  { k:"gigantoCellulaire",l:"Réaction giganto-cellulaire péritonéale au méconium",
+    meta:"« typically associated » pour keeling, « exceptionnel » pour soffoet — divergence non arbitrée" },
+  { k:"adherences",       l:"Adhérences péritonéales" },
+
+  /* Paroi abdominale — macroscopie, avant éviscération */
+  { k:"laparoschisis",    l:"Solution de continuité du flanc droit, à bord net, SANS sac",
+    meta:"macroscopie exclusivement, avant éviscération" },
+  { k:"omphalocele",      l:"Hernie DANS le cordon, limitée par un sac à collet étroit",
+    meta:"macroscopie — le sac fait la différence" },
+  { k:"ansesExposees",    l:"Anses ayant flotté librement dans le liquide amniotique",
+    meta:"macroscopie — c'est l'exposition qui produit la lésion digestive" },
+
+  /* Prélèvement et technique */
+  { k:"segmentNonIdentifiable", l:"Segment du fragment non identifiable" }
+];
+
+/* ── 06 bis · Associations lues ───────────────────────────────────────────────
+   Aucun diagnostic ne se coche. Chaque faisceau est DÉDUIT des signes cochés.
+   Un faisceau incomplet reste affiché avec le compte de ce qui n'a pas été
+   regardé : sur cet organe, non regardé est la situation la plus fréquente.
+   Le pivot (cle) est le signal sans lequel le faisceau ne veut rien dire.        */
+var DIAGS = [
+
+  { k:"deglutitionInflammatoire",
+    l:"Contenu inflammatoire dégluti — le tube lit le LIQUIDE AMNIOTIQUE, il n'est pas malade",
+    cle:"pnAlteres", min:2,
+    signes:["pnAlteres","pnPeuAlteres","squames","lanugo","contenuDiffus","contenuPoumon"],
+    stop:"Ne pas conclure à une atteinte du tube digestif. Le contenu luminal est un " +
+         "PRÉLÈVEMENT de liquide amniotique, pas une lésion pariétale : la paroi doit être " +
+         "regardée séparément. L'altération des polynucléaires oriente sur l'ancienneté du " +
+         "passage, pas sur l'organe. Un même contenu retrouvé dans les lumières aériques " +
+         "pulmonaires confirme la déglutition-inhalation et retire toute spécificité " +
+         "digestive." },
+
+  { k:"hemorragieDeglutie",
+    l:"Hématies dans la lumière — chercher la source EN AMONT avant d'accuser le tube",
+    cle:"hematiesLumiere", min:2,
+    signes:["hematiesLumiere","squames","contenuDiffus","contenuPoumon","meconiumLumiere"],
+    stop:"Ne pas conclure à une hémorragie digestive. Des hématies dans la lumière sans " +
+         "hémorragie de la paroi et sans lésion muqueuse plaident pour du sang dégluti " +
+         "(source maternelle, placentaire ou ORL). La fiche ne donne AUCUN critère " +
+         "morphologique séparant sang dégluti et sang d'origine pariétale : la distinction " +
+         "se fait sur la présence ou l'absence d'hémorragie de la paroi, pas sur l'aspect " +
+         "du sang." },
+
+  { k:"ecunSuspecte",
+    l:"Entérocolite ulcéro-nécrosante — faisceau de phase aiguë",
+    cle:"necroseCoagulation", min:4,
+    signes:["necroseCoagulation","oedemeParoi","hemorragieParoi","infiltratParoi",
+            "pneumatose","ganglionsEpargnes","perforation","necroseTransmurale",
+            "fibroseSousMuqueuse"],
+    stop:"Ne pas conclure ECUN sans contexte clinique, et ne JAMAIS écrire un stade de Bell " +
+         "depuis la lame : la stadification est clinique. Le piège central est écrit — " +
+         "« In autopsy specimens, the coagulative necrosis may be difficult to differentiate " +
+         "from post-mortem tissue autolysis. » Le seul argument morphologique opposable est " +
+         "de localisation : « Ganglion cells are generally spared » — une nécrose qui " +
+         "respecte les cellules ganglionnaires plaide contre une autolyse globale. La " +
+         "pneumatose ne tranche PAS : aucune source du corpus ne donne de critère pour " +
+         "distinguer un gaz de fermentation d'un gaz de putréfaction sur un fœtus macéré." },
+
+  { k:"autolyseNonEcun",
+    l:"Nécrose pariétale SANS argument de vivant — lire d'abord l'autolyse",
+    cle:"necroseCoagulation", min:2,
+    signes:["necroseCoagulation","muqueuseDesquamee","amasNecroses","contenuDiffus",
+            "segmentNonIdentifiable"],
+    stop:"Faisceau affiché DÉLIBÉRÉMENT à côté du précédent : les deux partagent le même " +
+         "pivot. Tant qu'aucun signe de réaction du vivant n'est coché — infiltrat, " +
+         "pneumatose, ganglions épargnés, fibrose de réparation — la nécrose reste non " +
+         "attribuée. Ne pas trancher par le nombre de signes cochés : trancher par la " +
+         "présence d'un argument de réaction tissulaire." },
+
+  { k:"ecunExteriorisation",
+    l:"Nécrose intestinale SUR défaut de paroi — mécanisme écrit, pas une ECUN du prématuré",
+    cle:"laparoschisis", min:2,
+    signes:["laparoschisis","ansesExposees","necroseCoagulation","necroseTransmurale",
+            "fibroseSousMuqueuse","omphalocele"],
+    stop:"Ne pas conclure ECUN du prématuré : le seul cas du corpus est secondaire et son " +
+         "mécanisme est écrit — « entérocolite nécrosante distale secondaire à " +
+         "l'extériorisation du tube digestif ». Le sac fait la différence entre omphalocèle " +
+         "et laparoschisis : si les deux sont cochés ensemble, la macroscopie n'a pas été " +
+         "tranchée avant éviscération." },
+
+  { k:"atresieDuodenale",
+    l:"Atrésie ou sténose duodénale — le seul site à mécanisme ÉPITHÉLIAL",
+    cle:"diaphragmeMuqueux", min:2,
+    signes:["diaphragmeMuqueux","disparite","amontDilate","avalCollabe","pancreasAnnulaire"],
+    stop:"Ne pas conclure au mécanisme vasculaire : le duodénum est le seul point de " +
+         "l'intestin où la prolifération épithéliale occlut complètement la lumière pendant " +
+         "l'embryogenèse — « The suggested mechanism of duodenal atresia by Tandler is a " +
+         "failure of the lumen of the embryonic duodenum to recanalise ». Un pancréas " +
+         "annulaire associé n'est pas la cause : « n'entraîne pas obligatoirement une " +
+         "réduction de la lumière duodénale ». Caryotype systématique, trisomie 21." },
+
+  { k:"atresieJejunoIleale",
+    l:"Atrésie jéjuno-iléale — événement VASCULAIRE tardif, marqueur d'hypoperfusion",
+    cle:"deuxCulsDeSac", min:3,
+    signes:["deuxCulsDeSac","amontDilate","avalCollabe","disparite","contenuAval",
+            "necroseCoagulation"],
+    stop:"Ne pas conclure « défaut de recanalisation » : ce mécanisme ne vaut QUE pour le " +
+         "duodénum. La preuve du mécanisme est dans la lumière d'aval — « the bowel lumen " +
+         "distal to the site of atresia often contains squames, lanugo hair or bile » : " +
+         "l'atrésie est survenue APRÈS que la lumière était perméable. Une nécrose du " +
+         "cul-de-sac proximal ne doit pas être lue comme une entérocolite. Les types I à IV " +
+         "sont une typologie, pas une échelle, et leurs fréquences divergent entre les deux " +
+         "sources sans être arbitrées." },
+
+  { k:"atresieOesophage",
+    l:"Atrésie de l'œsophage — anomalie de séparation trachéo-œsophagienne",
+    cle:"culDeSacOeso", min:2,
+    signes:["culDeSacOeso","fistuleOesoTracheale","remnantsTracheoBronchiques","disparite"],
+    stop:"Ne pas conclure à l'isolement : la forme isolée ne vaut que la moitié des " +
+         "nouveau-nés, et les associations sont plus fréquentes en fœtopathologie. Chercher " +
+         "le VACTERL, faire un caryotype. Les remnants trachéo-bronchiques de la paroi " +
+         "œsophagienne sont un signe positif d'anomalie de séparation : ne pas les confondre " +
+         "avec du cartilage adjacent entraîné par la coupe. Le passage de sonde " +
+         "œsophagienne est un geste d'autopsie obligatoire : sans lui, le faisceau ne se " +
+         "constitue pas." },
+
+  { k:"hirschsprungNonConcluable",
+    l:"Absence de cellules ganglionnaires — sur un fœtus, ce faisceau ne conclut PAS",
+    cle:"ganglionsAbsentsSM", min:2,
+    signes:["ganglionsAbsentsSM","ganglionsAbsentsMY","nerfsHypertrophiques","filetsEpais"],
+    stop:"Ce faisceau est affiché pour être REFUSÉ. Consigne de la fiche, mot pour mot : " +
+         "« sur un fœtus, ne rien conclure du tout ». Quatre raisons cumulées : la " +
+         "maturation neuroblaste vers cellule ganglionnaire n'est pas achevée à la " +
+         "naissance — « Immature ganglion cells may persist up to the end of the first year " +
+         "of life » — et chez un fœtus tout le rectum est dans cet état ; le gradient " +
+         "rostro-caudal fait du rectum le segment le plus immature ; le segment distal est " +
+         "NORMALEMENT pauvre en ganglions, sur une longueur que les deux sources ne " +
+         "s'accordent pas à définir ; et le rectum n'est pas prélevé dans le service. Le " +
+         "signe positif de secours manque aussi : l'hyperplasie des filets cholinergiques " +
+         "est à peine ébauchée chez le fœtus. Le service l'a vérifié — « La maladie de " +
+         "Hirschsprung est exceptionnellement retrouvée en période fœtale. » Conclure au " +
+         "plus : innervation non évaluable sur ce prélèvement." },
+
+  { k:"fauxHirschsprung",
+    l:"Les trois faux positifs documentés de l'aganglionose",
+    cle:"ganglionsImmatures", min:2,
+    signes:["ganglionsImmatures","ganglionsSereuse","hypoganglionnaireSigne",
+            "ganglionsAbsentsSM","coupeTangentielle"],
+    stop:"Faisceau de RÉFUTATION, à lire AVANT le précédent. Les trois faux positifs sont " +
+         "écrits : le segment hypoganglionnaire physiologique distal, les cellules " +
+         "ganglionnaires immatures non reconnues, et des cellules ganglionnaires de la " +
+         "séreuse prises pour de la sous-muqueuse. S'y ajoute la coupe tangentielle. Il faut " +
+         "jusqu'à cent coupes sériées pour affirmer une absence, et les cellules doivent " +
+         "être résolues à l'objectif ×10 sur deux coupes adjacentes au moins." },
+
+  { k:"ileusMeconial",
+    l:"Iléus méconial — une obstruction, pas un diagnostic de mucoviscidose",
+    cle:"meconiumImpacte", min:3,
+    signes:["meconiumImpacte","concretions","microcolon","cryptesDilatees",
+            "brunnerDilatees","villositesAplaties","perforation"],
+    stop:"Ne pas conclure mucoviscidose sur l'iléus seul : elle n'est prouvée que quinze " +
+         "fois sur trente-huit iléus. Ne pas conclure mucoviscidose sur le PANCRÉAS non " +
+         "plus : jusqu'à mi-gestation il n'existe aucune différence chez les fœtus atteints, " +
+         "un pancréas fœtal normal n'exclut rien. Le contenu mastic est rare en fœtal, la " +
+         "présentation fœtale est plus fruste qu'en néonatal. Congeler du tissu pour CFTR si " +
+         "l'étude n'a pas été faite sur liquide amniotique. La seule mesure digestive " +
+         "prescrite de toute la fiche est ici : niveau d'arrêt du méconium par rapport à la " +
+         "valvule de Bauhin, et diamètre le plus large." },
+
+  { k:"peritoniteMeconiale",
+    l:"Péritonite méconiale — la perforation n'a pas besoin d'être retrouvée",
+    cle:"calcificationsPeritoneales", min:2,
+    signes:["calcificationsPeritoneales","macrophagesBiliaires","squamesPeritoine",
+            "gigantoCellulaire","adherences","perforation"],
+    stop:"Ne pas exiger de trouver le trou : dans la forme fibro-adhésive la perforation " +
+         "« has usually been sealed off and may not be detectable at operation or " +
+         "post-mortem examination ». Ne pas conclure sur des calcifications péritonéales " +
+         "isolées, sans réaction cellulaire. Ne pas conclure mucoviscidose : elle n'est " +
+         "trouvée que chez dix pour cent des péritonites méconiales. DIVERGENCE FRONTALE " +
+         "NON ARBITRÉE sur la réaction giganto-cellulaire — keeling : « typically " +
+         "associated with a peritoneal foreign body-type giant cell reaction » ; soffoet : " +
+         "« Il est exceptionnel de retrouver une réaction giganto-cellulaire au contact. » " +
+         "Son absence n'infirme rien, sa présence ne confirme rien de plus que le méconium " +
+         "extravasé. Borne temporelle — « Peristalsis, which is necessary to extrude the " +
+         "meconium, rarely occurs before 20 weeks gestation » — mais l'échelle gestation " +
+         "n'est pas résolue dans la source." },
+
+  { k:"duplication",
+    l:"Duplication digestive — se prouve par la PAROI, pas par le siège",
+    cle:"kysteParoiIntestinale", min:2,
+    signes:["kysteParoiIntestinale","bordMesenterique","heterotopieKyste"],
+    stop:"Ne pas conclure à un mécanisme : « none consistently explain EDCs at all " +
+         "locations ». Piège de siège : une duplication peut évoquer un kyste d'origine " +
+         "ovarienne, et certaines sont très à distance du tube, vascularisées par le " +
+         "rétropéritoine — l'absence de contiguïté n'élimine rien. Chercher l'hétérotopie " +
+         "gastrique, qui porte le risque ulcéreux. Les fréquences par site divergent entre " +
+         "les deux sources et leurs catégories ne sont pas superposables : ne pas les citer." },
+
+  { k:"stimulationAntigenique",
+    l:"GALT en avance — le seul critère diagnostique porté par la chronologie du § 3",
+    cle:"centreGerminatif", min:1,
+    signes:["centreGerminatif","plasmocyteMature","folliculesSousMuqueux","infiltratParoi"],
+    stop:"Seuil à UN : un centre germinatif ou un plasmocyte mature est anormal SANS " +
+         "condition d'âge — « found in normal fetuses or in neonates prior to 2 weeks of " +
+         "age » ne s'applique ni à l'un ni à l'autre. Ce versant est solide. Le versant " +
+         "faible est celui des follicules sous-muqueux : il repose sur un « 20 weeks » écrit " +
+         "avec deux échelles non résolues (§ 9-6) et ne doit pas être utilisé seul. Le " +
+         "faisceau dit une stimulation antigénique in utero ; il ne nomme pas l'agent." },
+
+  { k:"obstacleAval",
+    l:"Hypertrophie de la longitudinale externe — argument d'obstacle sur le trajet",
+    cle:"longitudinaleEpaisse", min:2,
+    signes:["longitudinaleEpaisse","amontDilate","disparite","avalCollabe","microcolon"],
+    stop:"La longitudinale externe est normalement la couche MINCE : son épaississement est " +
+         "un argument d'obstacle d'aval, pas une variante. Vérifier d'abord que la coupe " +
+         "n'est pas tangentielle. La fiche ne donne aucun seuil chiffré d'épaisseur : ne pas " +
+         "en inventer un, décrire le rapport des deux couches." },
+
+  { k:"segmentInconnu",
+    l:"Fragment non rattachable à un segment — tout ce qui suit est non interprétable",
+    cle:"segmentNonIdentifiable", min:1,
+    signes:["segmentNonIdentifiable","coupeTangentielle","muqueuseDesquamee",
+            "contenuDiffus"],
+    stop:"Faisceau de blocage. Sans segment nommé, aucune norme du § 3 ne s'applique : la " +
+         "date attendue de la muscularis mucosae, la densité lymphoïde attendue, le calibre " +
+         "et la longueur n'ont plus de référent. Reprendre les discriminants histologiques " +
+         "avant de décrire quoi que ce soit ; si le rattachement reste impossible, l'écrire " +
+         "dans le compte rendu plutôt que de décrire un « intestin » sans adresse." }
+
+];
+
+/* ── 07 · Négatifs à énoncer ──────────────────────────────────────────────────
+   Le corpus écrit onze fois un négatif GLOBAL — « Le tube digestif semble
+   normal. » — qui ne nomme ni un segment, ni une couche, ni une structure. Un
+   tel énoncé n'est pas faux, il est INEXPLOITABLE : il ne permet à personne de
+   savoir ce qui a été regardé. Chaque ligne ci-dessous est le négatif d'un
+   critère positif écrit ailleurs dans la fiche : l'énoncer transforme le
+   « normal » global en donnée.                                                  */
+var NEGATIFS = [
+
+  { k:"segmentNomme",
+    l:"Le segment étudié est nommé (et le compartiment lu est nommé aussi)",
+    p:"Sans segment, aucune norme du § 3 n'a de référent : ni la date de la muscularis " +
+      "mucosae, ni la densité lymphoïde attendue, ni le calibre. Le compartiment compte " +
+      "autant : « épithélium » et « entérocytes » désignent une horloge PRÉCOCE, « paroi », " +
+      "« musculeuse » et « ganglions » une horloge TARDIVE. Le corpus nomme le compartiment " +
+      "six fois sur dix-neuf ; c'est cette imprécision lexicale qui rend ses délais " +
+      "contradictoires entre eux.",
+    ko:"« Le tube digestif semble normal. » — sans segment ni compartiment, la phrase ne " +
+       "vaut pour aucun des deux." },
+
+  { k:"ganglionsPresents",
+    l:"Cellules ganglionnaires PRÉSENTES dans les plexus myentérique ET sous-muqueux, segment nommé",
+    p:"C'est le négatif de Hirschsprung, et il n'est JAMAIS écrit dans le corpus. Il ne " +
+      "coûte rien : les deux plexus sont sur la même coupe HES. Il doit porter le nom du " +
+      "segment, parce que la maturation suit le gradient rostro-caudal et qu'un rectum " +
+      "pauvre en ganglions est normal.",
+    ko:"« Le tube digestif est de morphologie normale. » — ne dit pas si les plexus ont été " +
+       "cherchés." },
+
+  { k:"pasDeNerfHypertrophique",
+    l:"Absence de nerf sous-muqueux hypertrophique de plus de 40 µm",
+    p:"L'autre versant du même diagnostic, et le seul critère morphologique sur lequel les " +
+      "deux sources convergent en période fœtale. Un seuil chiffré existe : il se dit.",
+    ko:"Silence complet du corpus sur ce point." },
+
+  { k:"pasDeCentreGerminatif",
+    l:"Absence de centre germinatif et de plasmocyte mature",
+    p:"Leur présence est anormale à TOUT âge fœtal, sans condition — c'est le seul critère " +
+      "diagnostique porté par la chronologie du § 3. Le négatif a donc la même valeur que " +
+      "le positif.",
+    ko:"« Sur tube digestif et foie, marquage normal » — un panel lymphoïde normal ne dit " +
+       "rien de la MATURITÉ des structures lymphoïdes en HES." },
+
+  { k:"pasDeFolliculeSousMuqueux",
+    l:"Absence de follicule primaire sous-muqueux avant 20 SA",
+    p:"Seuil d'anomalie du GALT — mais sous réserve : le « 20 weeks » de la source est " +
+      "écrit avec une échelle non résolue (§ 9-6). Énoncer le négatif AVEC sa réserve, " +
+      "jamais sans.",
+    ko:"Silence complet du corpus." },
+
+  { k:"pasDeDisparite",
+    l:"Absence de disparité de calibre sur tout le trajet, ni calcification ni adhérence",
+    p:"Négatif d'atrésie et de sténose, MACROSCOPIQUE et gratuit : « L'inspection de " +
+      "l'intestin sur tout son trajet permet de rechercher une disparité de calibre » " +
+      "pouvant évoquer une sténose ou une atrésie. Il couvre en même temps la péritonite " +
+      "méconiale.",
+    ko:"« Le tube digestif est d'aspect attendu. » — aspect de quoi, vu comment, sur quelle " +
+       "longueur ?" },
+
+  { k:"sondeAnalePassee",
+    l:"Perméabilité anale vérifiée à la sonde",
+    p:"Négatif d'imperforation, geste explicitement prescrit : « une petite sonde permet de " +
+      "vérifier la perméabilité ». Un geste prescrit et non tracé équivaut à un geste non " +
+      "fait.",
+    ko:"Aucun CR du corpus ne trace ce geste." },
+
+  { k:"sondeOesoPassee",
+    l:"Perméabilité œsophagienne vérifiée à la sonde",
+    p:"Négatif d'atrésie de l'œsophage : « Une sonde doit être passée dans la lumière de " +
+      "l'œsophage ». Sans lui, une atrésie de type C peut être manquée sur un fœtus dont " +
+      "l'œsophage n'a pas été ouvert.",
+    ko:"Aucun CR du corpus ne trace ce geste." },
+
+  { k:"pasDePeritoniteMeconiale",
+    l:"Absence de calcification péritonéale et d'adhérence",
+    p:"Négatif de péritonite méconiale. Il se lit à l'œil nu au moment de l'éviscération, " +
+      "et il est perdu définitivement si on ne le regarde pas à ce moment-là.",
+    ko:"Silence du corpus." },
+
+  { k:"pasDePnGastriques",
+    l:"Absence de polynucléaires déglutis dans le contenu gastrique",
+    p:"Le prélèvement dédié existe pour ça. Son négatif est une donnée d'infection " +
+      "ovulaire, au même titre que son positif : ne pas le jeter parce qu'il est négatif.",
+    ko:"Le prélèvement de contenu gastrique n'apparaît dans aucun CR." },
+
+  { k:"pasDeNecroseParoi",
+    l:"Absence de nécrose de la paroi, distincte de la lyse post-mortem",
+    p:"C'est le seul moyen de rendre interprétable le mot « nécrose » sur cet organe. " +
+      "Écrire le négatif en le distinguant explicitement de l'autolyse revient à déclarer " +
+      "qu'on a fait la différence — et à s'obliger à la faire.",
+    ko:"« Le foie et le tube digestif sont d'histologie normale, absence de signe de " +
+       "macération. » — le seul CR qui approche le bon énoncé, mais il ne sépare pas " +
+       "nécrose et lyse." },
+
+  { k:"mmParSegment",
+    l:"Muscularis mucosae présente ou absente, PAR SEGMENT",
+    p:"La seule horloge de maturation lisible même sur tissu macéré, et une phrase de " +
+      "compte rendu de dix mots. Sa date attendue dépend du segment : sans le segment, " +
+      "l'énoncé ne se lit pas.",
+    ko:"Aucun CR du corpus ne mentionne la muscularis mucosae." }
+
+];
+
+/* ── 08 · Techniques ──────────────────────────────────────────────────────────
+   Ce que le corpus PROUVE : le panel lymphoïde complet est déjà pratiqué sur le
+   tube digestif dans ce service. Aucune IHC neurale — calrétinine, PHOX2B,
+   CD117 — et aucune histochimie AChE n'apparaît dans un seul CR. Deux d'entre
+   elles ont une contrainte de prélèvement qui doit être connue AVANT
+   l'autopsie, pas au moment où on les prescrit.                                 */
+var TECHNIQUES = [
+  { k:"hesSeriees",  l:"HES, coupes sériées — jusqu'à cent",
+    q:"y a-t-il des cellules ganglionnaires ? Résolues à l'objectif ×10, sur au moins deux coupes adjacentes ; normal = présentes dans le plexus sous-muqueux ET myentérique" },
+  { k:"phox2b",      l:"IHC PHOX2B",
+    q:"les cellules ganglionnaires sont-elles présentes mais immatures ? « IHC for PHOX2B has recently been shown to identify both mature and immature ganglion cells » — lève le premier faux positif ; absente de tout CR du corpus" },
+  { k:"calretinine", l:"IHC calrétinine",
+    q:"l'innervation intrinsèque de la lamina propria est-elle conservée ? Normal = filets calrétinine-positifs dans la lamina propria ; leur perte signe le Hirschsprung ; absente de tout CR du corpus" },
+  { k:"ache",        l:"Histochimie AChE — sur tissu FRAIS CONGELÉ uniquement",
+    q:"y a-t-il une hyperinnervation cholinergique extrinsèque ? Impraticable sur tissu fixé : « requires fresh rectal mucosa and is performed on frozen section tissue » — se décide avant l'autopsie ou jamais ; faux négatifs dans l'aganglionose colique totale" },
+  { k:"cd117",       l:"IHC CD117",
+    q:"les cellules interstitielles de Cajal sont-elles présentes ? « CD117 is a useful immunohistochemical marker for identification of interstitial cells of Cajal » — positives dès le premier trimestre, autour d'Auerbach puis des plexus sous-muqueux" },
+  { k:"actineLisse", l:"IHC actine musculaire lisse",
+    q:"les cellules myoépithéliales salivaires sont-elles différenciées ? Normal = couche basale des structures tubulaires distales positive, AVANT toute lisibilité en HES" },
+  { k:"vonKossa",    l:"Von Kossa",
+    q:"ce dépôt péritonéal est-il calcifié ? Normal = négatif" },
+  { k:"perls",       l:"Coloration de Perls",
+    q:"y a-t-il eu hémorragie ou dépôt ferrique dans un iléus ? Normal = négatif" },
+  { k:"cftr",        l:"Congélation de tissu fœtal pour mutations CFTR",
+    q:"est-ce une mucoviscidose, si l'étude n'a pas été faite sur liquide amniotique ? Contrainte de prélèvement : la congélation se décide à l'autopsie, elle ne se rattrape pas sur bloc" },
+  { k:"cd45",        l:"IHC CD45 (clone 2B11+PD7/26, Bio SB, 1/150)",
+    q:"y a-t-il un infiltrat lymphoïde anormal dans la paroi ? Normal dans le corpus : « tube digestif, poumons normaux »" },
+  { k:"panelLymphoide", l:"CD3 · CD4 · CD8 · CD20 · CD163",
+    q:"quelle est la composition d'un infiltrat pariétal ? Panel déjà pratiqué sur le tube digestif dans ce service — CD3 polyclonal Dako 1/200, CD4 UMAB64 SDIX 1/100, CD8 C8/144B BioSB 1/100, CD20 L26 Agilent 1/400, CD163 10D6 Thermo 1/25" },
+  { k:"cmvSalivaire", l:"HES sur glandes salivaires — inclusions intranucléaires",
+    q:"y a-t-il une infection à CMV ? Le prélèvement existe pour ça : « to evaluate the presence of developmental anomalies or cytomegalovirus infection » ; normal = absence" },
+  { k:"caryotype",   l:"Caryotype ou CGH",
+    q:"quelle étiologie derrière une atrésie ? Trisomie 21 pour le duodénum ; T21, 13, 18, del22q11, del17q21q23 pour l'œsophage" },
+  { k:"smoothelin",  l:"IHC smoothelin",
+    q:"cette couche musculaire est-elle la musculeuse propre ou la muscularis mucosae ? « strong and diffuse expression of smoothelin in both layers of the muscularis propria », la muscularis mucosae restant faible ou irrégulière — « especially in suboptimally sampled and/or poorly oriented specimens », c'est-à-dire exactement la situation du service" },
+  { k:"pcrInfectieux", l:"Bactériologie et virologie PCR",
+    q:"étiologie d'un iléus ou d'une péritonite méconiale ? CMV et parvovirus B19 à évoquer en l'absence d'obstruction" }
+];
+
+/* ── Suggestions de techniques ────────────────────────────────────────────────
+   Deux techniques ont une contrainte de PRÉLÈVEMENT : l'AChE veut de la muqueuse
+   rectale fraîche congelée, le CFTR veut du tissu congelé. Elles se proposent
+   donc AVANT que la question ne se pose, pas après.                             */
+function suggerer(){
+  var s = {};
+  function anormal(k){ return E.signes[k] === "anormal"; }
+  var seg = E.mesure.def;
+
+  if (anormal("ganglionsAbsentsSM") || anormal("ganglionsAbsentsMY") ||
+      anormal("ganglionsImmatures") || anormal("ganglionsSereuse") ||
+      anormal("nerfsHypertrophiques") || anormal("filetsEpais")){
+    s.hesSeriees = 1; s.phox2b = 1; s.calretinine = 1;
+  }
+  if (anormal("coupeTangentielle")) s.hesSeriees = 1;
+  if (anormal("infiltratParoi") || anormal("abcesCryptiques")){ s.cd45 = 1; s.panelLymphoide = 1; }
+  if (anormal("centreGerminatif") || anormal("plasmocyteMature") || anormal("folliculesSousMuqueux")){
+    s.panelLymphoide = 1; s.cmvSalivaire = 1; s.pcrInfectieux = 1;
+  }
+  if (anormal("calcificationsPeritoneales") || anormal("squamesPeritoine") ||
+      anormal("macrophagesBiliaires") || anormal("gigantoCellulaire")){
+    s.vonKossa = 1; s.pcrInfectieux = 1;
+  }
+  if (anormal("hemorragieParoi") || anormal("meconiumImpacte") || anormal("concretions")) s.perls = 1;
+  if (anormal("meconiumImpacte") || anormal("concretions") || anormal("microcolon") ||
+      anormal("brunnerDilatees") || anormal("cryptesDilatees")){ s.cftr = 1; s.caryotype = 1; }
+  if (anormal("diaphragmeMuqueux") || anormal("pancreasAnnulaire") ||
+      anormal("culDeSacOeso") || anormal("fistuleOesoTracheale") || anormal("deuxCulsDeSac"))
+    s.caryotype = 1;
+  if (anormal("necroseCoagulation") || anormal("necroseTransmurale") || anormal("pneumatose"))
+    s.pcrInfectieux = 1;
+  if (E.mesure.opt === "nonEval" || anormal("coupeTangentielle")) s.smoothelin = 1;
+
+  /* Le CD117 date les cellules de Cajal, il ne cherche pas une lésion : il sert
+     quand on doute de la maturité de la paroi, pas quand on la sait malade. */
+  if (E.mesure.opt === "absente" || E.variantes.ganglionsImmaturesVar) s.cd117 = 1;
+
+  /* Les deux techniques à contrainte de prélèvement : proposées tant que le
+     matériel n'est pas déclaré pris. Après fixation, plus rien à décider. */
+  if ((seg === "rectum" || anormal("ganglionsAbsentsSM") || anormal("ganglionsAbsentsMY")) &&
+      !E.prelev.niveauRectal) s.ache = 1;
+  if (E.negatifs.pasDePnGastriques === "present") s.pcrInfectieux = 1;
+  return s;
+}
+
+/* ── Banc propre à l'organe ───────────────────────────────────────────────────
+   Le banc commun a déjà tourné et laisse des signes posés : chaque bloc repart
+   d'un état voulu.                                                             */
+async function testsOrgane(chk, clic, set, crTient, pause){
+  function pose(k, v){ if (E.signes[k] !== v) clic("les", k, v); }
+  function ote(k){ if (E.signes[k]) clic("les", k, E.signes[k]); }
+  function propre(){ SIGNES.forEach(function(x){ ote(x.k); }); }
+  function tenue(k){ return associations().some(function(a){ return a.d.k === k && a.tenu; }); }
+  function lue(k){ return associations().some(function(a){ return a.d.k === k; }); }
+  function segment(k){ if (E.mesure.def !== k) clic("mdef", k); }
+  function mm(k){ if (E.mesure.opt !== k) clic("mopt", k); }
+  function texte(x){ return JSON.stringify(x).toLowerCase(); }
+
+  /* ── L'axe de l'organe : il ne latéralise pas, il segmente ─────────────── */
+  chk("aucune latéralité sur cet organe", PAIR === false);
+  propre();
+  segment("nonNomme"); mm("nonEval");
+  chk("segment non nommé : tout est ininterprétable",
+      crTient("ININTERPRÉTABLE") && crTient("rostral to caudal"));
+  chk("le champ manquant n° 1 est nommé", crTient("champ manquant n° 1 du service"));
+  chk("des discriminants sont proposés avant de renoncer",
+      crTient("lacks villi") && crTient("peg cells on the surface"));
+
+  /* ── La muscularis mucosae ne se lit qu'AVEC son segment ───────────────── */
+  segment("ileon"); mm("absente"); set("sa", "24");
+  chk("iléon reconnu", crTient("Segment : iléon."));
+  chk("date attendue portée pour l'iléon", crTient("Date attendue pour ce segment : 32 SA"));
+  chk("absence attendue à 24 SA n'est pas une hypoplasie",
+      crTient("Absence ATTENDUE à 24 SA") && crTient("ce n'est pas une hypoplasie pariétale"));
+  set("sa", "36");
+  chk("absence tardive interroge d'abord le SEGMENT, pas le tissu",
+      crTient("soit le segment déclaré n'est pas le bon"));
+  segment("oesophage");
+  chk("l'œsophage a une date bien plus précoce", crTient("Date attendue pour ce segment : 13 SA"));
+  segment("jog");
+  chk("aucune date sourcée pour la jonction œsogastrique",
+      crTient("aucune date d'apparition de la muscularis mucosae n'est sourcée"));
+  chk("la progression bidirectionnelle est portée, sans borne inventée",
+      crTient("It spreads from the duodenum caudally"));
+  chk("les segments sans date sont vraiment sans date",
+      ["jog","jejunum","appendice","colon","rectum"].every(function(k){ return mmAttendue(k) == null; }));
+  chk("les segments datés le sont tous par une citation",
+      SEGMENTS.every(function(g){ return mmAttendue(g.k) == null || !!mmSource(g.k); }));
+
+  /* ── Le duodénum avant 16 SA, et le côlon avant 18 SA ──────────────────── */
+  segment("duodenum"); mm("presente"); set("sa", "14");
+  chk("avant 16 SA le duodénum ne se sépare pas du grêle",
+      crTient("cannot be differentiated histologically from the duodenum"));
+  segment("colon"); set("sa", "16");
+  chk("avant 18 SA le côlon est villositaire comme le grêle",
+      crTient("difficult, especially prior to 16 weeks"));
+  set("sa", "26");
+  chk("après 18 SA la réserve tombe", !crTient("difficult, especially prior to 16 weeks"));
+
+  /* ── Le rectum : déclaré comme segment mais jamais prélevé ─────────────── */
+  segment("rectum");
+  chk("rectum déclaré sans être coché au prélèvement",
+      crTient("il est prélevé dans zéro CR du corpus"));
+  chk("le rectum est une réserve GRAVE au § 01", par(PRELEV, "rectum").grave === true);
+  chk("le segment nommé est lui aussi une réserve grave", par(PRELEV, "segmentNomme").grave === true);
+
+  /* ── Aucune norme histologique : le trou est dit, pas comblé ───────────── */
+  segment("ileon"); mm("presente"); set("sa", "34");
+  set("m_calibre", "12");
+  chk("l'inversion grêle/côlon est portée avec le calibre",
+      crTient("plus large (4 mm) que le côlon jusqu'à mi-gestation"));
+  chk("au-delà de 6 mm on cherche un obstacle avant de conclure",
+      crTient("chercher une disparité de calibre sur tout le trajet"));
+  set("m_longueur", "180");
+  chk("les longueurs sont des points, pas des intervalles",
+      crTient("des POINTS, pas un intervalle"));
+  chk("le trajet non inspecté est une réserve",
+      crTient("mesure saisie sans que l'inspection du trajet soit cochée"));
+  chk("aucune mesure histologique n'existe sur cet organe",
+      crTient("zéro rapport crypte/villosité") && crTient("AUCUNE source ne fournit de normale " +
+      "digestive chiffrée par SA"));
+  set("m_calibre", ""); set("m_longueur", "");
+  chk("aucun champ n'est histologique",
+      MESURE.champs.every(function(c){ return /mm|cm/.test(c.label); }));
+
+  /* ── Rétention : le seul bon prédicteur n'est pas histologique ─────────── */
+  chk("un seul prédicteur bon, et c'est l'histoire clinique",
+      RETENTION.filter(function(r){ return r.q === "bon"; }).length === 1 &&
+      RETENTION.filter(function(r){ return r.q === "bon"; })[0].k === "histoireClinique");
+  chk("le corpus se contredit frontalement sur le même énoncé",
+      par(RETENTION, "cr75").note.indexOf("contredit") >= 0 ||
+      par(RETENTION, "cr75").note.indexOf("CONTRADICTION") >= 0);
+  chk("les formules datées du corpus sont toutes de mauvais prédicteurs",
+      ["cr4_8","cr8_24","cr75","cr72_1s","cr96_1s","cr1_2s","cr2s","cr1_4s","cr4s"]
+        .every(function(k){ return par(RETENTION, k).q === "mauvais"; }));
+  chk("les profils de compartiment ORDONNENT sans dater",
+      ["epithProfil","paroiProfil","deuxProfils"].every(function(k){
+        return par(RETENTION, k).q === "moyen"; }));
+  clic("ret", "histoireClinique", "present");
+  chk("l'histoire clinique domine toute borne histologique",
+      crTient("Rétention " + par(RETENTION, "histoireClinique").b));
+  clic("ret", "epithProfil", "present");
+  chk("un profil moyen ne dépasse pas le gold standard",
+      crTient("Rétention " + par(RETENTION, "histoireClinique").b));
+  clic("ret", "epithProfil", "present");
+  clic("ret", "histoireClinique", "present");
+  clic("ret", "cr75", "present");
+  chk("seuls des mauvais prédicteurs : aucune borne recevable",
+      crTient("Seuls des prédicteurs MAUVAIS sont positifs"));
+  clic("ret", "cr75", "present");
+  chk("la ligne « Epithelium » n'est attribuée à aucun organe",
+      par(RETENTION, "epithProfil").note.indexOf("n'est rattachable à aucun organe") >= 0 &&
+      par(RETENTION, "epithProfil").note.indexOf("n'est PAS attribuée ici") >= 0);
+
+  /* ── Le GALT : la seule chronologie du § 3 qui porte un critère ────────── */
+  chk("cinq rangs de GALT", STADES.length === 5);
+  chk("le dernier rang est ouvert", STADES[STADES.length-1].max === 99);
+  chk("les bornes du GALT sont bien celles de la fiche",
+      STADES.map(function(s){ return s.max; }).join(",") === "16,18,21,26,99");
+  set("sa", "15");
+  chk("avant 16 SA, pas de GALT en routine", stadeAttendu(15).k === "epars");
+  set("sa", "25");
+  chk("à 25 SA on attend des follicules organisés", stadeAttendu(25).k === "folliculesPrimaires");
+  set("sa", "34");
+  chk("à 34 SA on attend des plaques de Peyer", stadeAttendu(34).k === "peyer");
+  chk("l'incohérence interne du seuil des 20 semaines est portée",
+      par(STADES, "folliculesPrimaires").note.indexOf("§ 9-6") >= 0);
+  chk("aucun rang du GALT n'est présenté comme une gradation de sévérité",
+      STADES.every(function(s){ return !/grade|stade [0-9]/i.test(s.l); }));
+
+  /* ── L'avance de GALT est le critère, et il n'a PAS de condition d'âge ─── */
+  propre();
+  pose("centreGerminatif", "anormal");
+  chk("un centre germinatif seul suffit", tenue("stimulationAntigenique"));
+  chk("le seuil de ce faisceau est à un", par(DIAGS, "stimulationAntigenique").min === 1);
+  chk("le versant fragile est signalé comme fragile",
+      par(DIAGS, "stimulationAntigenique").stop.indexOf("versant faible") >= 0);
+  chk("le faisceau ne nomme pas l'agent",
+      par(DIAGS, "stimulationAntigenique").stop.indexOf("ne nomme pas l'agent") >= 0);
+  chk("l'infection est cherchée ailleurs que dans le tube",
+      suggerer().cmvSalivaire === 1 && suggerer().pcrInfectieux === 1);
+  propre();
+  pose("folliculesSousMuqueux", "anormal");
+  chk("le versant fragile seul ne tient pas le faisceau", !tenue("stimulationAntigenique") &&
+      lue("stimulationAntigenique"));
+
+  /* ── Contenu luminal : le tube lit le liquide amniotique ───────────────── */
+  propre();
+  pose("pnAlteres", "anormal"); pose("contenuDiffus", "anormal");
+  chk("la déglutition se lit", tenue("deglutitionInflammatoire"));
+  chk("le contenu n'est pas une lésion pariétale",
+      par(DIAGS, "deglutitionInflammatoire").stop.indexOf("pas une lésion pariétale") >= 0);
+  chk("l'infiltrat de PAROI est un autre signe que les PN de la lumière",
+      par(SIGNES, "infiltratParoi").meta.indexOf("DANS LA LUMIÈRE") >= 0);
+  pose("contenuPoumon", "anormal");
+  chk("le même contenu au poumon retire la spécificité digestive",
+      crTient("retire toute spécificité digestive"));
+  chk("aucune inflammation pariétale n'est déduite du contenu", !tenue("ecunSuspecte"));
+
+  /* ── ECUN contre autolyse : le même pivot, deux lectures affichées ─────── */
+  propre();
+  pose("necroseCoagulation", "anormal"); pose("muqueuseDesquamee", "anormal");
+  chk("l'autolyse est lue d'abord", tenue("autolyseNonEcun"));
+  chk("l'ECUN reste esquissée sans se tenir", lue("ecunSuspecte") && !tenue("ecunSuspecte"));
+  pose("oedemeParoi", "anormal"); pose("hemorragieParoi", "anormal");
+  pose("infiltratParoi", "anormal");
+  chk("avec les arguments de vivant, l'ECUN se tient", tenue("ecunSuspecte"));
+  chk("le piège central est cité", crTient("difficult to differentiate from post-mortem tissue " +
+      "autolysis"));
+  chk("les ganglions épargnés sont le seul argument opposable",
+      par(SIGNES, "ganglionsEpargnes").meta.indexOf("seul argument contre l'autolyse") >= 0);
+  chk("la pneumatose ne tranche pas",
+      par(DIAGS, "ecunSuspecte").stop.indexOf("La pneumatose ne tranche PAS") >= 0);
+  chk("aucun stade de Bell depuis la lame",
+      par(DIAGS, "ecunSuspecte").stop.indexOf("stade de Bell") >= 0);
+  chk("aucun grade digestif inventé",
+      SIGNES.concat(DIAGS).every(function(x){ return !/grade [0-9IV]/i.test(x.l); }));
+  propre();
+  pose("laparoschisis", "anormal"); pose("necroseTransmurale", "anormal");
+  chk("sur laparoschisis, le mécanisme est écrit", tenue("ecunExteriorisation"));
+  chk("ce n'est pas une ECUN du prématuré",
+      par(DIAGS, "ecunExteriorisation").stop.indexOf("secondaire à l'extériorisation") >= 0);
+
+  /* ── Hirschsprung : le faisceau est affiché pour être REFUSÉ ───────────── */
+  propre();
+  pose("ganglionsAbsentsSM", "anormal"); pose("ganglionsAbsentsMY", "anormal");
+  chk("le faisceau se constitue", tenue("hirschsprungNonConcluable"));
+  chk("et il refuse explicitement de conclure",
+      crTient("sur un fœtus, ne rien conclure du tout"));
+  chk("les quatre raisons sont portées",
+      par(DIAGS, "hirschsprungNonConcluable").stop.indexOf("Immature ganglion cells") >= 0 &&
+      par(DIAGS, "hirschsprungNonConcluable").stop.indexOf("rostro-caudal") >= 0 &&
+      par(DIAGS, "hirschsprungNonConcluable").stop.indexOf("n'est pas prélevé dans le service") >= 0);
+  chk("le service l'a vérifié empiriquement",
+      par(DIAGS, "hirschsprungNonConcluable").stop.indexOf("exceptionnellement retrouvée en " +
+      "période fœtale") >= 0);
+  chk("aucune conclusion positive de Hirschsprung dans la grille",
+      DIAGS.every(function(d){ return !/^maladie de hirschsprung/i.test(d.l); }));
+  chk("PHOX2B et calrétinine sont proposées", suggerer().phox2b === 1 && suggerer().calretinine === 1);
+  chk("les coupes sériées aussi", suggerer().hesSeriees === 1);
+  pose("ganglionsImmatures", "anormal"); pose("hypoganglionnaireSigne", "anormal");
+  chk("la réfutation se lit en même temps", tenue("fauxHirschsprung"));
+  chk("les trois faux positifs sont nommés",
+      par(DIAGS, "fauxHirschsprung").stop.indexOf("hypoganglionnaire physiologique") >= 0 &&
+      par(DIAGS, "fauxHirschsprung").stop.indexOf("immatures non reconnues") >= 0 &&
+      par(DIAGS, "fauxHirschsprung").stop.indexOf("séreuse") >= 0);
+  chk("cent coupes sériées avant d'affirmer une absence",
+      par(DIAGS, "fauxHirschsprung").stop.indexOf("cent coupes sériées") >= 0);
+  chk("la longueur du segment hypoganglionnaire n'est pas arbitrée",
+      par(SIGNES, "hypoganglionnaireSigne").meta.indexOf("ne s'accordent pas") >= 0);
+  chk("l'AChE est proposée mais avec sa contrainte",
+      suggerer().ache === 1 && par(TECHNIQUES, "ache").l.indexOf("FRAIS CONGELÉ") >= 0);
+
+  /* ── Atrésies : trois mécanismes différents, pas un seul ───────────────── */
+  propre();
+  pose("diaphragmeMuqueux", "anormal"); pose("amontDilate", "anormal");
+  chk("l'atrésie duodénale se lit", tenue("atresieDuodenale"));
+  chk("le duodénum est le seul site à mécanisme épithélial",
+      par(DIAGS, "atresieDuodenale").stop.indexOf("Tandler") >= 0);
+  pose("pancreasAnnulaire", "anormal");
+  chk("un pancréas annulaire n'est pas la cause",
+      par(SIGNES, "pancreasAnnulaire").meta.indexOf("n'entraîne pas obligatoirement") >= 0);
+  chk("le caryotype est proposé", suggerer().caryotype === 1);
+  propre();
+  pose("deuxCulsDeSac", "anormal"); pose("amontDilate", "anormal"); pose("avalCollabe", "anormal");
+  chk("l'atrésie jéjuno-iléale se lit", tenue("atresieJejunoIleale"));
+  chk("ce n'est PAS un défaut de recanalisation",
+      par(DIAGS, "atresieJejunoIleale").stop.indexOf("ne vaut QUE pour le duodénum") >= 0);
+  chk("la preuve du mécanisme est dans la lumière d'aval",
+      par(SIGNES, "contenuAval").meta.indexOf("postérieure à la perméabilité établie") >= 0);
+  chk("les types I à IV sont une typologie, pas une échelle",
+      par(DIAGS, "atresieJejunoIleale").stop.indexOf("typologie, pas une échelle") >= 0);
+  propre();
+  pose("culDeSacOeso", "anormal"); pose("fistuleOesoTracheale", "anormal");
+  chk("l'atrésie de l'œsophage se lit", tenue("atresieOesophage"));
+  chk("les remnants sont un signe positif, pas un artefact de coupe",
+      par(SIGNES, "remnantsTracheoBronchiques").meta.indexOf("pas du cartilage") >= 0);
+  chk("le passage de sonde est une réserve de prélèvement",
+      !!par(PRELEV, "sondeOesophage") && !!par(PRELEV, "sondeAnale"));
+
+  /* ── Méconium : une obstruction n'est pas un diagnostic génétique ──────── */
+  propre();
+  pose("meconiumImpacte", "anormal"); pose("concretions", "anormal"); pose("microcolon", "anormal");
+  chk("l'iléus méconial se lit", tenue("ileusMeconial"));
+  chk("l'iléus seul ne prouve pas la mucoviscidose",
+      par(DIAGS, "ileusMeconial").stop.indexOf("quinze fois sur trente-huit") >= 0);
+  chk("un pancréas fœtal normal n'exclut rien",
+      par(DIAGS, "ileusMeconial").stop.indexOf("un pancréas fœtal normal n'exclut rien") >= 0);
+  chk("la seule mesure prescrite de la fiche est portée",
+      par(DIAGS, "ileusMeconial").stop.indexOf("valvule de Bauhin") >= 0);
+  chk("CFTR et Perls sont proposés", suggerer().cftr === 1 && suggerer().perls === 1);
+  chk("la contrainte de congélation est dite",
+      par(TECHNIQUES, "cftr").q.indexOf("ne se rattrape pas sur bloc") >= 0);
+  chk("l'aplatissement villositaire n'est pas une atrophie",
+      par(SIGNES, "villositesAplaties").meta.indexOf("pas d'atrophie villositaire") >= 0);
+  propre();
+  pose("calcificationsPeritoneales", "anormal"); pose("macrophagesBiliaires", "anormal");
+  chk("la péritonite méconiale se lit", tenue("peritoniteMeconiale"));
+  chk("on n'exige pas de trouver le trou",
+      par(DIAGS, "peritoniteMeconiale").stop.indexOf("sealed off") >= 0);
+  chk("la divergence giganto-cellulaire n'est pas arbitrée",
+      par(DIAGS, "peritoniteMeconiale").stop.indexOf("DIVERGENCE FRONTALE NON ARBITRÉE") >= 0);
+  chk("les deux versions sont citées",
+      par(SIGNES, "gigantoCellulaire").meta.indexOf("keeling") >= 0 &&
+      par(SIGNES, "gigantoCellulaire").meta.indexOf("soffoet") >= 0);
+  chk("la borne des 20 semaines est portée AVEC son incertitude d'échelle",
+      par(DIAGS, "peritoniteMeconiale").stop.indexOf("l'échelle gestation n'est pas résolue") >= 0);
+  chk("Von Kossa est proposé", suggerer().vonKossa === 1);
+
+  /* ── Duplication : la paroi prouve, le siège trompe ────────────────────── */
+  propre();
+  pose("kysteParoiIntestinale", "anormal"); pose("bordMesenterique", "anormal");
+  chk("la duplication se lit", tenue("duplication"));
+  chk("aucun mécanisme n'est conclu",
+      par(DIAGS, "duplication").stop.indexOf("none consistently explain") >= 0);
+  chk("les fréquences par site ne sont pas citées",
+      par(DIAGS, "duplication").stop.indexOf("ne pas les citer") >= 0);
+
+  /* ── Variantes : ce qui se fait prendre pour une lésion ────────────────── */
+  chk("le côlon villositaire est une variante, pas une lésion", !!par(VARIANTES, "colonVillositaire"));
+  chk("les cils œsophagiens sont une variante", !!par(VARIANTES, "ciliesOesophage"));
+  chk("la muscularis mucosae absente du grêle est une variante",
+      !!par(VARIANTES, "mmAbsenteGrele"));
+  chk("la longitudinale mince est la NORME, son épaississement le signe",
+      !!par(VARIANTES, "longiFine") && par(SIGNES, "longitudinaleEpaisse").meta.indexOf("obstacle") >= 0);
+  chk("les cellules ganglionnaires immatures sont AUSSI une variante",
+      !!par(VARIANTES, "ganglionsImmaturesVar"));
+  chk("l'appendice sans villosités est une variante", !!par(VARIANTES, "appendiceSansVilli"));
+  propre();
+  pose("longitudinaleEpaisse", "anormal"); pose("amontDilate", "anormal");
+  chk("l'obstacle d'aval se lit", tenue("obstacleAval"));
+  chk("aucun seuil d'épaisseur n'est inventé",
+      par(DIAGS, "obstacleAval").stop.indexOf("aucun seuil chiffré") >= 0);
+
+  /* ── Le blocage terminal : sans segment, plus rien ne se lit ───────────── */
+  propre();
+  pose("segmentNonIdentifiable", "anormal");
+  chk("le fragment sans adresse bloque tout", tenue("segmentInconnu"));
+  chk("et il s'écrit dans le compte rendu",
+      par(DIAGS, "segmentInconnu").stop.indexOf("dans le compte rendu") >= 0);
+
+  /* ── Négatifs : l'inverse du « normal » global du corpus ───────────────── */
+  chk("douze négatifs à énoncer", NEGATIFS.length === 12);
+  chk("le négatif de Hirschsprung n'est jamais écrit dans le corpus",
+      par(NEGATIFS, "ganglionsPresents").p.indexOf("JAMAIS écrit") >= 0);
+  chk("le compartiment est un négatif à part entière",
+      par(NEGATIFS, "segmentNomme").p.indexOf("entérocytes") >= 0);
+  chk("le « normal » global du corpus est cité comme contre-exemple",
+      par(NEGATIFS, "segmentNomme").ko.indexOf("Le tube digestif semble normal.") >= 0);
+  chk("la muscularis mucosae par segment est un négatif",
+      par(NEGATIFS, "mmParSegment").ko.indexOf("Aucun CR") >= 0);
+  chk("les deux gestes de sonde sont des négatifs distincts",
+      !!par(NEGATIFS, "sondeAnalePassee") && !!par(NEGATIFS, "sondeOesoPassee"));
+  chk("le follicule sous-muqueux garde sa réserve d'échelle",
+      par(NEGATIFS, "pasDeFolliculeSousMuqueux").p.indexOf("échelle non résolue") >= 0);
+  clic("neg", "pasDePnGastriques", "present");
+  chk("un contenu gastrique positif relance la virologie", suggerer().pcrInfectieux === 1);
+  clic("neg", "pasDePnGastriques", "absent");
+
+  /* ── Techniques : ce que le service fait déjà, ce qu'il ne fait pas ────── */
+  chk("le panel lymphoïde est déjà pratiqué ici",
+      par(TECHNIQUES, "panelLymphoide").q.indexOf("Déjà pratiqué") >= 0 ||
+      par(TECHNIQUES, "panelLymphoide").q.indexOf("déjà pratiqué") >= 0);
+  chk("aucune IHC neurale n'apparaît dans un CR",
+      par(TECHNIQUES, "phox2b").q.indexOf("absente de tout CR") >= 0 &&
+      par(TECHNIQUES, "calretinine").q.indexOf("absente de tout CR") >= 0);
+  chk("chaque technique porte sa question", TECHNIQUES.every(function(t){ return !!t.q && !!t.l; }));
+  mm("nonEval");
+  chk("coupe mal orientée : le smoothelin sépare les deux couches musculaires",
+      suggerer().smoothelin === 1);
+  mm("presente");
+
+  /* ── Ce qui n'a pas été comblé ─────────────────────────────────────────── */
+  chk("aucune atrésie des voies biliaires inventée",
+      SIGNES.concat(DIAGS).every(function(x){ return texte(x).indexOf("voies biliaires") < 0; }));
+  chk("aucune maladie cœliaque inventée",
+      SIGNES.concat(DIAGS).every(function(x){ return texte(x).indexOf("coeliaque") < 0 &&
+                                                     texte(x).indexOf("cœliaque") < 0; }));
+  chk("aucun volvulus ni malrotation inventés",
+      SIGNES.concat(DIAGS).every(function(x){ return texte(x).indexOf("malrotation") < 0; }));
+  chk("aucune tumeur digestive inventée",
+      SIGNES.concat(DIAGS).every(function(x){ return texte(x).indexOf("tumeur") < 0 &&
+                                                     texte(x).indexOf("carcinome") < 0; }));
+  chk("aucune SA collée à un rang sans source",
+      STADES.every(function(s){ return !!s.note; }));
+
+  /* On laisse le banc sur un état lisible : terme posé, segment déclaré. */
+  propre();
+  segment("ileon"); mm("presente"); set("sa", "28");
+}
+
+/* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
+var FOETO = {"sections":[{"t":"5.11 Hétérotopies — la famille la plus surdiagnostiquée","termes":[{"id":"FOETO:PF.DIG-MAL-018","l":"Hétérotopie gastrique dans atrésie jéjunale"}]},{"t":"5.3 Atrésies jéjuno-iléales","termes":[{"id":"FOETO:PF.DIG-MAL-017","l":"Hypertrophie de la musculeuse propria en amont d'une atrésie"},{"id":"FOETO:PF.DIG-MAL-025","l":"Lésions histologiques d'atrésie intestinale"}]},{"t":"5.4 Atrésie de l'œsophage","termes":[{"id":"FOETO:PF.DIG-MAL-035","l":"Remnants trachéo-bronchiques dans la paroi œsophagienne"}]},{"t":"5.5 Maladie de Hirschsprung — **structurellement non diagnosticable en autopsie fœtale**","termes":[{"id":"FOETO:PF.DIG-MAL-002","l":"Absence de cellules ganglionnaires dans les plexus entériques"},{"id":"FOETO:PF.DIG-MAL-004","l":"Aganglionose circonférentielle partielle (zone de transition de Hirschsprung)"},{"id":"FOETO:PF.DIG-MAL-007","l":"Augmentation de l'acétylcholinestérase dans la lamina propria et la muscularis mucosae"},{"id":"FOETO:PF.DIG-MAL-029","l":"Nerfs sous-muqueux hypertrophiques"},{"id":"FOETO:PF.DIG-MAL-031","l":"Perte de l'immunoréactivité à la calrétinine dans la lamina propria"}]},{"t":"5.6 Entérocolite ulcéro-nécrosante (ECUN / NEC)","termes":[{"id":"FOETO:PF.DIG-MAL-014","l":"Fibrose sous-muqueuse post-nécrose intestinale"},{"id":"FOETO:PF.DIG-MAL-030","l":"Nécrose coagulative de la paroi intestinale"},{"id":"FOETO:PF.DIG-MAL-032","l":"Pneumatose intestinale"}]},{"t":"5.7 Iléus méconial et mucoviscidose","termes":[{"id":"FOETO:PF.DIG-MAL-005","l":"Aplatissement villositaire intestinal avec bouchons luminaux éosinophiles"},{"id":"FOETO:PF.DIG-MAL-010","l":"Dilatation kystique des cryptes intestinales avec sécrétions éosinophiles"},{"id":"FOETO:PF.DIG-MAL-026","l":"Matériel éosinophile inspissé dans les acini et canaux pancréatiques"},{"id":"FOETO:PF.DIG-MAL-028","l":"Méconium inspissé obstruant la lumière intestinale"}]},{"t":"5.8 Péritonite méconiale","termes":[{"id":"FOETO:PF.DIG-MAL-009","l":"Calcifications péritonéales"},{"id":"FOETO:PF.DIG-MAL-036","l":"Réaction granulomateuse péritonéale à corps étrangers au méconium"}]},{"t":"5.9 Duplications digestives (kystes de duplication entérique)","termes":[{"id":"FOETO:PF.DIG-MAL-023","l":"Kyste de duplication entérique"},{"id":"FOETO:PF.DIG-MAL-024","l":"Kyste de duplication œsophagienne"},{"id":"FOETO:PF.DIG-MAL-027","l":"Muqueuse gastrique hétérotopique dans duplication entérique"},{"id":"FOETO:PF.DIG-MAL-037","l":"Tissu pancréatique ectopique dans duplication entérique"},{"id":"FOETO:PF.DIG-MAL-038","l":"Tissu pancréatique hétérotopique dans la paroi digestive"}]}],"formes":{"FOETO:PF.DIG-MAL-001":["Abcès cryptiques intestinaux","Intestinal crypt abscesses","(hors fiche)"],"FOETO:PF.DIG-MAL-003":["Absence de différenciation acinaire salivaire","Absent salivary acinar differentiation","(hors fiche)"],"FOETO:PF.DIG-MAL-006":["Atrophie des plexus sous-muqueux et myentériques proximaux à une atrésie","Atrophy of submucosal and myenteric plexuses proximal to intestinal atresia","(hors fiche)"],"FOETO:PF.DIG-MAL-008":["Calcifications dystrophiques luminales intestinales","Intestinal luminal dystrophic calcification","(hors fiche)"],"FOETO:PF.DIG-MAL-011":["Discontinuité ou amincissement segmentaire de la musculeuse propria","Segmental thinning or discontinuity of muscularis propria","(hors fiche)"],"FOETO:PF.DIG-MAL-012":["Effacement de l'architecture muqueuse intestinale","Intestinal mucosal architectural effacement","(hors fiche)"],"FOETO:PF.DIG-MAL-015":["Formation de pseudomembrane intestinale avec nécrose muqueuse","Intestinal pseudomembrane formation with mucosal necrosis","(hors fiche)"],"FOETO:PF.DIG-MAL-016":["Gangliose géante (gros ganglion entérique)","Giant ganglion (hyperplastic enteric ganglion)","(hors fiche)"],"FOETO:PF.DIG-INF-002":["Inclusions intranucléaires à cytomégalovirus dans les glandes salivaires","Cytomegalovirus intranuclear inclusions in salivary glands","(hors fiche)"],"FOETO:PF.DIG-DYS-001":["Persistance du stroma mésenchymateux lâche après le troisième trimestre (glandes salivaires)","Persistent loose mesenchymal stroma beyond third trimester in salivary glands","(hors fiche)"],"FOETO:PF.DIG-MAL-033":["Pseudostratification et hyperchromatose épithéliale intestinale","Intestinal epithelial pseudostratification and nuclear hyperchromasia","(hors fiche)"],"FOETO:PF.DIG-MAL-034":["Raréfaction des cellules interstitielles de Cajal","Reduced interstitial cells of Cajal","(hors fiche)"],"FOETO:PF.DIG-NOR-065":["Tractus digestif normal","Tractus digestif normal","(hors fiche)"],"FOETO:PF.DIG-MAL-018":["Hétérotopie gastrique dans atrésie jéjunale","Gastric heterotopia in jejunal atresia"],"FOETO:PF.DIG-MAL-017":["Hypertrophie de la musculeuse propria en amont d'une atrésie","Muscularis propria hypertrophy proximal to intestinal atresia"],"FOETO:PF.DIG-MAL-025":["Lésions histologiques d'atrésie intestinale","Histological features of intestinal atresia"],"FOETO:PF.DIG-MAL-035":["Remnants trachéo-bronchiques dans la paroi œsophagienne","Tracheobronchial remnants in esophageal wall"],"FOETO:PF.DIG-MAL-002":["Absence de cellules ganglionnaires dans les plexus entériques","Absence of ganglion cells in enteric plexuses"],"FOETO:PF.DIG-MAL-004":["Aganglionose circonférentielle partielle (zone de transition de Hirschsprung)","Partial circumferential aganglionosis (Hirschsprung transition zone)"],"FOETO:PF.DIG-MAL-007":["Augmentation de l'acétylcholinestérase dans la lamina propria et la muscularis mucosae","Increased acetylcholinesterase activity in lamina propria and muscularis mucosae"],"FOETO:PF.DIG-MAL-029":["Nerfs sous-muqueux hypertrophiques","Hypertrophic submucosal nerves"],"FOETO:PF.DIG-MAL-031":["Perte de l'immunoréactivité à la calrétinine dans la lamina propria","Loss of calretinin immunoreactivity in lamina propria"],"FOETO:PF.DIG-MAL-014":["Fibrose sous-muqueuse post-nécrose intestinale","Submucosal fibrosis after intestinal necrosis"],"FOETO:PF.DIG-MAL-030":["Nécrose coagulative de la paroi intestinale","Coagulative necrosis of intestinal wall"],"FOETO:PF.DIG-MAL-032":["Pneumatose intestinale","Pneumatosis intestinalis"],"FOETO:PF.DIG-MAL-005":["Aplatissement villositaire intestinal avec bouchons luminaux éosinophiles","Intestinal villous flattening with eosinophilic luminal plugs"],"FOETO:PF.DIG-MAL-010":["Dilatation kystique des cryptes intestinales avec sécrétions éosinophiles","Cystic dilatation of intestinal crypts with eosinophilic secretions"],"FOETO:PF.DIG-MAL-026":["Matériel éosinophile inspissé dans les acini et canaux pancréatiques","Inspissated eosinophilic material in pancreatic acini and ducts"],"FOETO:PF.DIG-MAL-028":["Méconium inspissé obstruant la lumière intestinale","Inspissated meconium obstructing intestinal lumen"],"FOETO:PF.DIG-MAL-009":["Calcifications péritonéales","Peritoneal calcifications"],"FOETO:PF.DIG-MAL-036":["Réaction granulomateuse péritonéale à corps étrangers au méconium","Peritoneal foreign body giant cell reaction to meconium"],"FOETO:PF.DIG-MAL-023":["Kyste de duplication entérique","Enteric duplication cyst"],"FOETO:PF.DIG-MAL-024":["Kyste de duplication œsophagienne","Esophageal duplication cyst"],"FOETO:PF.DIG-MAL-027":["Muqueuse gastrique hétérotopique dans duplication entérique","Heterotopic gastric mucosa in enteric duplication cyst"],"FOETO:PF.DIG-MAL-037":["Tissu pancréatique ectopique dans duplication entérique","Ectopic pancreatic tissue in enteric duplication cyst"],"FOETO:PF.DIG-MAL-038":["Tissu pancréatique hétérotopique dans la paroi digestive","Heterotopic pancreatic tissue in gastrointestinal wall"]}};
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+
+var DB_NAME = "foeto-" + MODULE, DB_VER = 1, db = null;
+
+/* Organe pair : le côté fait partie de la donnée, pas du commentaire. Un rein
+   lu sans son côté n'est pas rattachable à l'imagerie ni à l'autre rein. */
+var COTES = [{ k:"droit", l:"Droit — 1/2" }, { k:"gauche", l:"Gauche — 1/2" },
+             { k:"deux", l:"Les deux — 2/2" }];
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function normDossier(v){ return v.toUpperCase().replace(/\s+/g, ""); }
+function dossierOk(v){ return v.trim().length > 0; } // ponytail: plus de format imposé, seul le uppercase (normDossier) reste
+function num(id){ var e = $(id); if (!e) return null; var v = parseFloat(e.value); return isFinite(v) ? v : null; }
+function par(liste, k){ return liste.filter(function(x){ return x.k === k; })[0] || null; }
+function champs(){ return MESURE ? MESURE.champs : []; }
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", E = null;
+function neuf(){
+  var e = { cote:null, prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
+            negatifs:{}, techniques:{}, foeto:{}, mesure:{ def:null, opt:null, v:{} }, libre:"" };
+  champs().forEach(function(c){ e.mesure.v[c.id] = null; });
+  return e;
+}
+
+/* Le stade attendu au terme saisi. Bornes reconstruites depuis la prose des
+   sources : ce sont des repères, pas des seuils. */
+function stadeAttendu(sa){
+  if (sa == null || !isFinite(sa)) return null;
+  for (var i = 0; i < STADES.length; i++) if (sa < STADES[i].max) return STADES[i];
+  return STADES[STADES.length - 1];
+}
+function bornesTxt(s){
+  var i = STADES.indexOf(s), min = i ? STADES[i-1].max : 0;
+  return s.max === 99 ? "≳ " + min + " SA" : min + "–" + s.max + " SA";
+}
+
+/* ── Construction du DOM — une seule fois, le clic ne fait que repeindre ──── */
+function chip(act, k, l, sous){
+  return '<button type="button" class="chip" data-act="' + act + '" data-k="' + esc(k) + '">' +
+         (sous ? '<span class="k">' + esc(sous) + '</span>' : '') + esc(l) + '</button>';
+}
+function batir(){
+  if (PAIR){
+    $("coteBloc").hidden = false;
+    $("cote").innerHTML = COTES.map(function(c){ return chip("cote", c.k, c.l); }).join("");
+  }
+  $("prelevement").innerHTML = PRELEV.map(function(p){ return chip("prelev", p.k, p.l); }).join("");
+
+  $("retention").innerHTML = RETENTION.map(function(r){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(r.l) +
+      '<span class="meta ' + r.q + '">' + esc(r.b) + " · " + esc(r.d) +
+      " · prédicteur " + r.q + '</span></div>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="present">Présent</button>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="absent">Absent</button>' +
+      '</div></div>';
+  }).join("");
+  $("kcl").innerHTML = chip("kcl", "kcl", "Fœticide par KCl", "geste à déclarer avant toute datation");
+
+  $("stTitre").textContent = STADE_TITRE;
+  $("stades").innerHTML = STADES.map(function(s){ return chip("stade", s.k, s.l); }).join("");
+
+  if (MESURE){
+    var h = '<div class="sousTitre">' + esc(MESURE.titre) + '</div>';
+    h += '<div class="chips" id="mesDefs">' +
+         MESURE.defs.map(function(d){ return chip("mdef", d.k, d.l, MESURE.defLabel); }).join("") + '</div>';
+    if (MESURE.opts && MESURE.opts.length)
+      h += '<div class="chips" id="mesOpts" style="margin-top:6px">' +
+           MESURE.opts.map(function(o){ return chip("mopt", o.k, o.l, MESURE.optLabel); }).join("") + '</div>';
+    h += '<div class="row" style="margin-top:9px">' + MESURE.champs.map(function(c){
+      return '<div class="field"><label for="m_' + c.id + '">' + esc(c.label) + '</label>' +
+             '<input type="number" id="m_' + c.id + '" min="' + c.min + '" max="' + c.max +
+             '" step="' + c.step + '" inputmode="decimal" placeholder="—"></div>';
+    }).join("") + '</div>';
+    $("mesure").innerHTML = h;
+    $("vMesure").hidden = false;
+    $("vMesure").querySelector("b").textContent = MESURE.titre;
+  }
+
+  $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
+
+  /* Un signe peut porter un groupe g (placenta : cordon, membranes, parenchyme sous
+     cordon, marge, systémique) : un sous-titre s'ouvre quand le groupe change. */
+  var gPrec = null;
+  $("signes").innerHTML = SIGNES.map(function(x){
+    var h = "";
+    if (x.g && x.g !== gPrec){ h = '<div class="sousTitre">' + esc(x.g) + '</div>'; gPrec = x.g; }
+    return h + '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+      (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
+      '</div>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="normal">Normal</button>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="anormal">Anormal</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("foeto").innerHTML = FOETO.sections.map(function(s){
+    return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
+           s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
+  }).join("") || '<p class="note">Aucun terme FOETO rattaché à cette fiche.</p>';
+  if (FOETO.sections.length){
+    $("foetoPlus").hidden = false; $("foetoRech").hidden = false;
+    $("foetoPlus").textContent = "▸ tous les termes attestés (" + nbFoeto() + ")";
+  }
+
+  $("negatifs").innerHTML = NEGATIFS.map(function(n){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(n.l) +
+      '<span class="meta">' + esc(n.p) + '</span></div>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="absent">Vérifié</button>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="present">EN DÉFAUT</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("techNote").textContent = TECH_NOTE;
+  $("techniques").innerHTML = TECHNIQUES.map(function(t){ return chip("tech", t.k, t.l, t.q); }).join("");
+}
+
+function nbFoeto(){ return FOETO.sections.reduce(function(a, s){ return a + s.termes.length; }, 0); }
+function foetoLabel(id){
+  var l = null;
+  FOETO.sections.forEach(function(s){ s.termes.forEach(function(t){ if (t.id === id) l = t.l; }); });
+  return l || (FOETO.formes[id] || [id])[0];
+}
+/* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
+function foetoAjouter(id){
+  if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
+    var box = $("foeto").querySelector(".chips");
+    if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
+    box.insertAdjacentHTML("beforeend", chip("foeto", id, foetoLabel(id)));
+  }
+  E.foeto[id] = true;
+  peindre(); enregistrer();
+}
+function rechercherFoeto(q){
+  var sg = $("sgFoeto");
+  q = q.trim().toLowerCase();
+  if (q.length < 3){ sg.classList.remove("on"); return; }
+  var hits = [];
+  Object.keys(FOETO.formes).some(function(id){
+    var f = FOETO.formes[id].filter(function(x){ return x.toLowerCase().indexOf(q) >= 0; })[0];
+    if (f) hits.push({ id:id, l:foetoLabel(id), f:f, hf:FOETO.formes[id].indexOf("(hors fiche)") >= 0 });
+    return hits.length >= 10;
+  });
+  sg.innerHTML = hits.length ? hits.map(function(x){
+    return '<div data-pick="' + esc(x.id) + '">' + esc(x.l) +
+           (x.f !== x.l ? ' <small>— ' + esc(x.f) + '</small>' : '') + (x.hf ? ' <small>(hors fiche)</small>' : '') + '</div>';
+  }).join("") : '<div><small>aucun terme</small></div>';
+  sg.classList.add("on");
+}
+
+/* ── Associations ─────────────────────────────────────────────────────────────
+   Un diagnostic ne se coche pas : il se lit dans l'association des signes. Les
+   faisceaux incomplets sont affichés aussi — 2 signes sur 4 se dit, et dire
+   combien manquent est le seul moyen de distinguer « non trouvé » de « non
+   regardé ». */
+function seuil(d){ return d.min || d.signes.length; }
+function associations(){
+  return DIAGS.map(function(d){
+    var pris  = d.signes.filter(function(k){ return E.signes[k] === "anormal"; });
+    var muets = d.signes.filter(function(k){ return !E.signes[k]; });
+    /* Un signe pivot ne se remplace pas par le nombre : sans lui, le compte peut
+       être atteint sans que l'association tienne. */
+    var pivot = !d.cle || E.signes[d.cle] === "anormal";
+    return { d:d, pris:pris, muets:muets, pivot:pivot,
+             tenu: pivot && pris.length >= seuil(d) };
+  }).filter(function(a){ return a.pris.length; })
+    .sort(function(a, b){ return (b.tenu - a.tenu) || (b.pris.length - a.pris.length); });
+}
+function nomSigne(k){ var s = par(SIGNES, k); return s ? s.l : k; }
+
+/* ── Verdicts communs ─────────────────────────────────────────────────────── */
+function verdictPrelevement(){
+  var n = Object.keys(E.prelev).length, res = [], grave = false;
+  PRELEV.forEach(function(p){
+    if (p.manque && !E.prelev[p.k]){ res.push(p.manque); if (p.grave) grave = true; }
+  });
+  if (PAIR && !E.cote) res.push("côté non déclaré — organe pair");
+  return { n:n, res:res,
+    cls: res.length ? (grave ? "bad" : "warn") : (n === PRELEV.length ? "ok" : ""),
+    txt: n === 0 ? "—"
+       : (n + "/" + PRELEV.length + " item(s) confirmé(s)" +
+          (PAIR && E.cote ? ", " + par(COTES, E.cote).l.toLowerCase().split(" —")[0] : "") + ".") +
+         (res.length ? " Réserves : " + res.join(" ; ") + "." : " Prélèvement complet.") };
+}
+function verdictRetention(){
+  if (E.kcl) return { cls:"bad", borne:null, txt:KCL_TXT };
+  var pres = RETENTION.filter(function(r){ return E.retention[r.k] === "present"; });
+  if (!pres.length) return { cls:"", borne:null,
+    txt: Object.keys(E.retention).length ? "Aucun critère de rétention positif." : "—" };
+  var notes = [];
+  pres.forEach(function(r){ if (r.note) notes.push(r.note); });
+  var bons = pres.filter(function(r){ return r.q !== "mauvais"; });
+  if (!bons.length) return { cls:"warn", borne:null,
+    txt:"Seuls des prédicteurs MAUVAIS sont positifs — aucune borne recevable. " + notes.join(" ; ") + "." };
+  var top = bons.reduce(function(a, b){ return b.h > a.h ? b : a; });
+  if (top.alerte) notes.push(top.alerte);
+  return { cls:"ok", borne:top,
+    txt:"Rétention " + top.b + " — critère : " + top.l.toLowerCase() + " (" + top.d + ")." +
+        (notes.length ? " Réserves : " + notes.join(" ; ") + "." : "") };
+}
+function verdictMaturation(){
+  var sa = num("sa"), att = stadeAttendu(sa), obs = E.stade ? par(STADES, E.stade) : null;
+  if (!obs) return { cls:"", att:att, txt: att
+    ? "Stade attendu à " + sa + " SA : " + att.l.toLowerCase() + ". Confirmer ou choisir."
+    : "Saisir le terme pour afficher le stade attendu." };
+  if (!att) return { cls:"warn", att:null,
+    txt:"Stade " + obs.l.toLowerCase() + " — sans terme, aucune discordance n'est calculable." };
+  var io = STADES.indexOf(obs), ia = STADES.indexOf(att), t, cls;
+  if (io === ia){ cls = "ok"; t = "Maturation conforme au terme : " + obs.l.toLowerCase() + " à " + sa + " SA."; }
+  else if (io < ia){ cls = "warn";
+    t = "Retard de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (RETARD_NOTE ? " " + RETARD_NOTE : ""); }
+  else { cls = "warn";
+    t = "Avance de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (AVANCE_NOTE ? " " + AVANCE_NOTE : ""); }
+  if (obs.note) t += " (" + obs.note + ")";
+  return { cls:cls, att:att, txt:t };
+}
+
+/* ── Peinture ─────────────────────────────────────────────────────────────── */
+function classe(act, v){
+  if (act === "neg") return v === "present" ? "no" : "on";
+  if (act === "les") return v === "anormal" ? "no" : "on";
+  return "on";
+}
+function poser(id, v){
+  var e = $(id), t = e.querySelector("b").textContent;
+  e.className = "verdict" + (v.cls ? " " + v.cls : "");
+  e.innerHTML = "<b>" + esc(t) + "</b>" + esc(v.txt);
+}
+function tally(id, n, sur){ $(id).textContent = n ? n + "/" + sur : "—"; }
+
+function peindreDiags(){
+  var A = associations();
+  if (!A.length){
+    $("diags").innerHTML = '<p class="note" style="margin:0">Aucun signe anormal coché : rien à associer.</p>';
+    return;
+  }
+  $("diags").innerHTML = A.map(function(a){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(a.d.l) +
+      '<span class="meta">' + a.pris.length + "/" + a.d.signes.length + " signe(s), seuil " + seuil(a.d) +
+      (a.muets.length ? " · " + a.muets.length + " non regardé(s)" : "") + '</span></div>' +
+      '<span class="chip ' + (a.tenu ? "on" : "") + '" style="cursor:default">' +
+      (a.tenu ? "association tenue" : "faisceau incomplet") + '</span></div>' +
+      '<div class="unfold">' +
+      '<div class="note" style="margin:0">' +
+      (a.pivot ? "" : "Signe pivot non coché : " + esc(nomSigne(a.d.cle)) + ".<br>") +
+      esc(a.pris.map(nomSigne).join(" · ")) +
+      (a.muets.length ? "<br>Non regardés : " + esc(a.muets.map(nomSigne).join(" · ")) + "." : "") +
+      '</div>' +
+      '<div class="stop"><b>Ce qu\'il ne faut pas conclure</b>' + esc(a.d.stop) + '</div></div></div>';
+  }).join("");
+}
+
+function peindre(){
+  if (PAIR) document.querySelectorAll("#cote .chip").forEach(function(b){
+    b.className = "chip" + (E.cote === b.dataset.k ? " on" : "");
+  });
+  document.querySelectorAll("#prelevement .chip").forEach(function(b){
+    b.className = "chip" + (E.prelev[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#retention .chip").forEach(function(b){
+    b.className = "chip" + (E.retention[b.dataset.k] === b.dataset.v ? " on" : "");
+  });
+  $("kcl").firstChild.className = "chip" + (E.kcl ? " no" : "");
+  document.querySelectorAll("#stades .chip").forEach(function(b){
+    var att = stadeAttendu(num("sa"));
+    b.className = "chip" + (E.stade === b.dataset.k ? " on"
+                          : (att && att.k === b.dataset.k ? " sugg" : ""));
+  });
+  if (MESURE){
+    document.querySelectorAll("#mesDefs .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.def === b.dataset.k ? " on" : "");
+    });
+    if ($("mesOpts")) document.querySelectorAll("#mesOpts .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.opt === b.dataset.k ? " on" : "");
+    });
+  }
+  document.querySelectorAll("#variantes .chip").forEach(function(b){
+    b.className = "chip" + (E.variantes[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#signes .chip").forEach(function(b){
+    b.className = "chip" + (E.signes[b.dataset.k] === b.dataset.v
+                            ? " " + classe("les", b.dataset.v) : "");
+  });
+  peindreDiags();
+  document.querySelectorAll('[data-act="foeto"]').forEach(function(b){
+    b.className = "chip" + (E.foeto[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#negatifs .chip").forEach(function(b){
+    b.className = "chip" + (E.negatifs[b.dataset.k] === b.dataset.v
+                            ? " " + classe("neg", b.dataset.v) : "");
+  });
+  var sug = suggerer();
+  document.querySelectorAll("#techniques .chip").forEach(function(b){
+    b.className = "chip" + (E.techniques[b.dataset.k] ? " on" : (sug[b.dataset.k] ? " sugg" : ""));
+  });
+
+  tally("tPrelevement", Object.keys(E.prelev).length, PRELEV.length);
+  tally("tRetention",   Object.keys(E.retention).length, RETENTION.length);
+  tally("tMaturation",  (E.stade ? 1 : 0) + (MESURE && E.mesure.def ? 1 : 0), MESURE ? 2 : 1);
+  tally("tVariantes",   Object.keys(E.variantes).length, VARIANTES.length);
+  tally("tSignes",     Object.keys(E.signes).length, SIGNES.length);
+  tally("tFoeto",       Object.keys(E.foeto).length, nbFoeto());
+  tally("tNegatifs",    Object.keys(E.negatifs).length, NEGATIFS.length);
+  tally("tTechniques",  Object.keys(E.techniques).length, TECHNIQUES.length);
+
+  poser("vPrelevement", verdictPrelevement());
+  poser("vRetention",   verdictRetention());
+  poser("vMaturation",  verdictMaturation());
+  if (MESURE) poser("vMesure", verdictMesure());
+
+  var cr = composer();
+  $("cr").textContent = cr;
+  $("tCR").textContent = cr.split("\n").length + " lignes";
+}
+
+/* ── Compte rendu — la sortie du module, écrite par les clics ─────────────── */
+function composer(){
+  var sa = num("sa"), L = [];
+  L.push(TITRE_CR + " — grille de lecture");
+  L.push((dossier || "dossier —") + " · " + (sa != null ? sa + " SA" : "terme —") +
+         " · " + ($("operateur").value.trim() || "lecteur —") +
+         (PAIR ? " · " + (E.cote ? par(COTES, E.cote).l : "côté non déclaré") : ""));
+  L.push("");
+
+  L.push("PRÉLÈVEMENT");
+  L.push("  " + verdictPrelevement().txt);
+
+  L.push("");
+  L.push("RÉTENTION");
+  L.push("  " + verdictRetention().txt);
+
+  L.push("");
+  L.push("MATURATION");
+  L.push("  " + verdictMaturation().txt);
+  if (MESURE) L.push("  " + verdictMesure().txt);
+
+  var vus = VARIANTES.filter(function(v){ return E.variantes[v.k]; });
+  if (vus.length){
+    L.push("");
+    L.push("VARIANTES NORMALES VUES ET ÉCARTÉES");
+    L.push("  " + vus.map(function(v){ return v.l.toLowerCase(); }).join(" · "));
+  }
+
+  var anormales = SIGNES.filter(function(x){ return E.signes[x.k] === "anormal"; });
+  var normales  = SIGNES.filter(function(x){ return E.signes[x.k] === "normal"; });
+  L.push("");
+  L.push("SIGNES");
+  if (!anormales.length && !normales.length) L.push("  aucun axe exploré.");
+  anormales.forEach(function(x){ L.push("  " + (x.g ? x.g + " · " : "") + x.l + " — ANORMAL"); });
+  if (normales.length)
+    L.push("  Normaux : " + normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  var muets = SIGNES.filter(function(x){ return !E.signes[x.k]; });
+  if (muets.length)
+    L.push("  Non explorés : " + muets.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+
+  var fo = Object.keys(E.foeto);
+  if (fo.length){
+    L.push("");
+    L.push("TERMES FOETO");
+    fo.forEach(function(id){ L.push("  " + foetoLabel(id) + " [" + id + "]"); });
+  }
+
+  var A = associations();
+  L.push("");
+  L.push("ASSOCIATIONS LUES");
+  if (!A.length) L.push("  aucune : les signes cochés ne dessinent aucune association.");
+  A.forEach(function(a){
+    L.push("  " + a.d.l + " — " + (a.tenu ? "association tenue" : "faisceau incomplet") +
+           " (" + a.pris.length + "/" + a.d.signes.length + ", seuil " + seuil(a.d) + ")");
+    L.push("      · " + a.pris.map(nomSigne).join(" · "));
+    if (!a.pivot) L.push("      · signe pivot non coché : " + nomSigne(a.d.cle));
+    if (a.muets.length) L.push("      · non regardés : " + a.muets.map(nomSigne).join(" · "));
+    L.push("      · ne pas conclure : " + a.d.stop);
+  });
+
+  L.push("");
+  L.push("NÉGATIFS OBLIGATOIRES");
+  NEGATIFS.forEach(function(n){
+    var v = E.negatifs[n.k];
+    L.push("  " + (v === "absent" ? "· " + n.l
+                 : v === "present" ? "! " + n.ko
+                 : "? " + n.l + " — non vérifié"));
+  });
+
+  var t = TECHNIQUES.filter(function(x){ return E.techniques[x.k]; });
+  if (t.length){
+    L.push("");
+    L.push("TECHNIQUES DEMANDÉES");
+    t.forEach(function(x){ L.push("  · " + x.l + " — " + x.q); });
+  }
+
+  if (E.libre.trim()){
+    L.push("");
+    L.push("REMARQUE");
+    E.libre.trim().split("\n").forEach(function(x){ L.push("  " + x); });
+  }
+
+  L.push("");
+  L.push("— La micro décrit ; la conclusion nomme. Grille v" + VERSION + " issue de " + SOURCE + ".");
+  return L.join("\n");
+}
+
+/* ── Clics ────────────────────────────────────────────────────────────────── */
+document.addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest("button[data-act]") : null;
+  if (!b || b.closest("section.off")) return;
+  var k = b.dataset.k, v = b.dataset.v, a = b.dataset.act;
+  if (a === "cote"){ E.cote = E.cote === k ? null : k; }
+  else if (a === "prelev"){ if (E.prelev[k]) delete E.prelev[k]; else E.prelev[k] = true; }
+  else if (a === "ret"){ if (E.retention[k] === v) delete E.retention[k]; else E.retention[k] = v; }
+  else if (a === "kcl"){ E.kcl = !E.kcl; }
+  else if (a === "stade"){ E.stade = E.stade === k ? null : k; }
+  else if (a === "mdef"){ E.mesure.def = E.mesure.def === k ? null : k; }
+  else if (a === "mopt"){ E.mesure.opt = E.mesure.opt === k ? null : k; }
+  else if (a === "var"){ if (E.variantes[k]) delete E.variantes[k]; else E.variantes[k] = true; }
+  else if (a === "les"){ if (E.signes[k] === v) delete E.signes[k]; else E.signes[k] = v; }
+  else if (a === "neg"){ if (E.negatifs[k] === v) delete E.negatifs[k]; else E.negatifs[k] = v; }
+  else if (a === "tech"){ if (E.techniques[k]) delete E.techniques[k]; else E.techniques[k] = true; }
+  else if (a === "foeto"){ if (E.foeto[k]) delete E.foeto[k]; else E.foeto[k] = true; }
+  else return;
+  peindre(); enregistrer();
+});
+document.addEventListener("click", function(ev){
+  var t = ev.target.closest ? ev.target.closest("[data-pick]") : null;
+  if (t){ foetoAjouter(t.dataset.pick); $("rqFoeto").value = ""; $("sgFoeto").classList.remove("on"); }
+});
+$("foetoPlus").onclick = function(){
+  var box = $("foetoTous");
+  if (!box.children.length) box.innerHTML = FOETO.sections.map(function(s){
+    return s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("");
+  }).join("");
+  box.hidden = !box.hidden; peindre();
+};
+$("rqFoeto").addEventListener("input", function(){ rechercherFoeto(this.value); });
+$("btnNegAll").onclick = function(){
+  NEGATIFS.forEach(function(n){ if (!E.negatifs[n.k]) E.negatifs[n.k] = "absent"; });
+  peindre(); enregistrer();
+};
+$("btnCopie").onclick = function(){
+  var t = composer();
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(t).then(function(){ flash("Compte rendu copié."); },
+                                          function(){ flash("Copie refusée par le navigateur."); });
+  else flash("Presse-papiers indisponible en file://.");
+};
+document.addEventListener("input", function(e){
+  var id = e.target.id;
+  if (id.indexOf("m_") === 0) E.mesure.v[id.slice(2)] = num(id);
+  else if (id === "libre") E.libre = e.target.value;
+  else if (id === "sa") majSa();
+  else return;
+  peindre(); enregistrer();
+});
+function majSa(){
+  var sa = num("sa"), att = stadeAttendu(sa), h = $("saHint");
+  h.className = "hint" + (att ? " good" : "");
+  h.textContent = att ? "Stade attendu : " + att.l.toLowerCase() + " (" + bornesTxt(att) + ")."
+                      : "SA = semaines de gestation + 2. Commande le stade attendu.";
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────────
+   localStorage est erratique en file:// et cloisonné par fichier sur certains
+   navigateurs : la saisie va en IndexedDB, y compris les champs texte.       */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction("saisies", mode), out = fn(t.objectStore("saisies"));
+    /* Tester la présence de `result`, pas sa valeur : un get() qui ne trouve rien
+       a bien un `result` (undefined) — comparé à undefined, la requête elle-même
+       était rendue, et un dossier jamais saisi s'annonçait comme restitué. */
+    t.oncomplete = function(){ res(out && "result" in out ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("readonly",  function(s){ return s.get(d); }); }
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  ["secPrelevement","secRetention","secMaturation","secVariantes","secSignes","secFoeto",
+   "secNegatifs","secTechniques","secCR","secSortie"].forEach(function(id){
+    $(id).classList.toggle("off", !ouvert);
+  });
+}
+
+/* ── Collecte / restitution ───────────────────────────────────────────────── */
+function collecter(){
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    organe: ORGANE,
+    source: SOURCE,
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    terme_sa: num("sa"),
+    grille: JSON.parse(JSON.stringify(E)),
+    compte_rendu: composer()
+  };
+}
+function appliquer(o){
+  var g = o.grille || {};
+  E = neuf();
+  ["prelev","retention","variantes","signes","negatifs","techniques","foeto"].forEach(function(c){
+    if (g[c]) E[c] = g[c];
+  });
+  Object.keys(E.foeto).forEach(function(id){
+    if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')) foetoAjouter(id);
+  });
+  E.kcl = !!g.kcl; E.stade = g.stade || null; E.cote = g.cote || null;
+  if (g.mesure){
+    E.mesure.def = g.mesure.def || null;
+    E.mesure.opt = g.mesure.opt || null;
+    champs().forEach(function(c){
+      E.mesure.v[c.id] = (g.mesure.v && g.mesure.v[c.id] != null) ? g.mesure.v[c.id] : null;
+    });
+  }
+  E.libre = g.libre || "";
+  $("sa").value = o.terme_sa != null ? o.terme_sa : "";
+  champs().forEach(function(c){ $("m_" + c.id).value = E.mesure.v[c.id] != null ? E.mesure.v[c.id] : ""; });
+  $("libre").value = E.libre;
+  majSa(); peindre();
+}
+function vider(){
+  E = neuf();
+  ["sa","libre"].forEach(function(id){ $(id).value = ""; });
+  champs().forEach(function(c){ $("m_" + c.id).value = ""; });
+  majSa(); peindre();
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, ok1 = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = ok1 && op, h = $("dossierHint");
+  h.className = "hint" + (v && !ok1 ? " bad" : ok1 ? " good" : "");
+  h.textContent = !v ? "Libre, mis en majuscules. Conditionne l'enregistrement."
+                : ok1 ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                      : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la grille.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json."
+    : ok1 ? "Saisir le lecteur pour activer l'export."
+          : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){
+    dossier = v;
+    vider();
+    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    if (rec){ appliquer(rec); flash("Grille du " + dossier + " restituée."); }
+  } else if (!ok && dossier){
+    dossier = ""; vider();
+  }
+  peindre();
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+$("btnExport").onclick = function(){
+  if (!dossierOk(dossier)) return;
+  var out = collecter();
+  telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+              dossier + "_" + MODULE + ".json");
+  var n = NEGATIFS.filter(function(x){ return E.negatifs[x.k]; }).length;
+  flash("Grille exportée." + (n < NEGATIFS.length ? " ⚠ " + (NEGATIFS.length - n) + " négatif(s) non vérifié(s)." : ""));
+};
+function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.grille) throw new Error("aucune clé « grille »");
+  if (o.dossier) $("dossier").value = normDossier(o.dossier);
+  if (o.operateur) $("operateur").value = o.operateur;
+  return majDossier().then(function(){
+    if (!dossier) throw new Error("numéro de dossier absent ou lecteur manquant");
+    appliquer(o); enregistrer();
+    return true;
+  });
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    Promise.resolve().then(function(){ return relire(JSON.parse(String(fr.result))); })
+      .then(function(){ flash("Grille relue."); })
+      .catch(function(e){ flash("Relecture impossible : " + e.message); });
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la grille du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    await tx("readwrite", function(s){ return s.delete(dossier); });
+    vider(); flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les grilles de TOUS les dossiers sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("readwrite", function(s){ return s.clear(); });
+  vider(); flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Axes de la grille", PRELEV.length + " prélèvement · " + RETENTION.length + " rétention · " +
+                             STADES.length + " stades · " + SIGNES.length + " signes · " +
+                             DIAGS.length + " associations · " +
+                             NEGATIFS.length + " négatifs · " + TECHNIQUES.length + " techniques");
+  ligne("Source", SOURCE + " — la fiche est la source, ce module en est la sortie");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+(async function(){
+  $("ver").textContent = "v" + VERSION;
+  E = neuf();
+  batir(); majSa(); peindre();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — aucune saisie ne sera conservée. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir le fichier avec ?selftest=1 ───────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+  function clic(act, k, v){
+    var s = '[data-act="' + act + '"][data-k="' + k + '"]' + (v ? '[data-v="' + v + '"]' : "");
+    var b = document.querySelector(s);
+    if (!b){ ko.push("bouton introuvable : " + s); return null; }
+    b.click(); return b;
+  }
+  function crTient(t){ return $("cr").textContent.indexOf(t) >= 0; }
+  var pause = function(){ return new Promise(function(r){ setTimeout(r, 30); }); };
+
+  /* Intégrité des tableaux — pure, sans DOM */
+  ["PRELEV","RETENTION","STADES","VARIANTES","SIGNES","DIAGS","NEGATIFS","TECHNIQUES"].forEach(function(nom){
+    var t = { PRELEV:PRELEV, RETENTION:RETENTION, STADES:STADES, VARIANTES:VARIANTES,
+              SIGNES:SIGNES, DIAGS:DIAGS, NEGATIFS:NEGATIFS, TECHNIQUES:TECHNIQUES }[nom];
+    chk("clés uniques dans " + nom, new Set(t.map(function(x){ return x.k; })).size === t.length);
+  });
+  chk("stades ordonnés",      STADES.every(function(s, i){ return !i || s.max > STADES[i-1].max; }));
+  chk("dernier stade ouvert", STADES[STADES.length-1].max === 99);
+  chk("sans terme, pas de stade", stadeAttendu(null) === null);
+  chk("chaque association a son « ne pas conclure »",
+      DIAGS.every(function(d){ return d.stop && d.signes.length >= 2; }));
+  chk("chaque association ne cite que des signes déclarés",
+      DIAGS.every(function(d){ return d.signes.every(function(k){ return !!par(SIGNES, k); }); }));
+  chk("le signe pivot fait partie de l'association",
+      DIAGS.every(function(d){ return !d.cle || d.signes.indexOf(d.cle) >= 0; }));
+  chk("seuil d'association atteignable",
+      DIAGS.every(function(d){ return seuil(d) >= 1 && seuil(d) <= d.signes.length; }));
+  chk("chaque négatif a son défaut", NEGATIFS.every(function(n){ return n.ko && n.p; }));
+  chk("une borne de rétention au moins est bonne",
+      RETENTION.some(function(r){ return r.q === "bon"; }));
+
+  /* Verrou */
+  chk("verrouillé au départ",  $("secSignes").classList.contains("off"));
+  clic("prelev", PRELEV[0].k);
+  chk("clic ignoré sous verrou", !E.prelev[PRELEV[0].k]);
+  set("dossier", "26p0123");
+  chk("lecteur manquant",      $("secSignes").classList.contains("off"));
+  set("operateur", "RM");
+  await pause();
+  chk("déverrouillé",         !$("secSignes").classList.contains("off"));
+  chk("dossier normalisé",     $("dossier").value === "26P0123");
+  chk("export activé",        !$("btnExport").disabled);
+
+  /* Chips */
+  clic("prelev", PRELEV[0].k);
+  chk("chip prélèvement posée", E.prelev[PRELEV[0].k] === true &&
+      document.querySelector('[data-act="prelev"][data-k="' + PRELEV[0].k + '"]').className.indexOf("on") >= 0);
+  clic("prelev", PRELEV[0].k);
+  chk("chip retirée au 2e clic", !E.prelev[PRELEV[0].k]);
+
+  /* Rétention — le fœticide prime sur toute borne */
+  var bon = RETENTION.filter(function(r){ return r.q === "bon"; })[0];
+  clic("ret", bon.k, "present");
+  chk("borne posée",           $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("kcl", "kcl");
+  chk("KCl invalide la datation", $("vRetention").className.indexOf("bad") >= 0);
+  clic("kcl", "kcl");
+  chk("KCl levé, borne revenue", $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("ret", bon.k, "present");
+
+  /* Côté — organe pair */
+  if (PAIR){
+    chk("bloc côté visible",   !$("coteBloc").hidden);
+    chk("côté manquant en réserve",
+        verdictPrelevement().res.indexOf("côté non déclaré — organe pair") >= 0);
+    clic("cote", "droit");
+    chk("côté posé",            E.cote === "droit" && crTient("Droit — 1/2"));
+    clic("cote", "droit");
+    chk("2e clic retire le côté", E.cote === null);
+    clic("cote", "deux");
+  } else {
+    chk("pas de bloc côté sur organe impair", $("coteBloc").hidden);
+  }
+
+  /* Signes et associations */
+  var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
+  chk("rien à associer au départ", $("diags").textContent.indexOf("Aucun signe anormal") >= 0);
+  clic("les", l0.k, "anormal");
+  chk("signe posé anormal",    E.signes[l0.k] === "anormal");
+  chk("association esquissée",  $("diags").textContent.indexOf(d0.l) >= 0);
+  clic("les", l0.k, "anormal");
+  chk("2e clic remet à non exploré", !E.signes[l0.k]);
+  clic("les", l0.k, "normal");
+  chk("normal ne nourrit pas l'association", associations().length === 0);
+  clic("les", l0.k, "normal");
+
+  /* L'association complète se tient, et elle seule */
+  d0.signes.forEach(function(k){ clic("les", k, "anormal"); });
+  var a0 = associations().filter(function(a){ return a.d.k === d0.k; })[0];
+  chk("association tenue",     a0 && a0.tenu);
+  chk("CR : association écrite", crTient(d0.l + " — association tenue"));
+  chk("CR : ne pas conclure",  crTient("ne pas conclure : " + d0.stop));
+  d0.signes.slice(1).forEach(function(k){ clic("les", k, "anormal"); });
+  chk("retirer les signes défait l'association",
+      (associations().filter(function(a){ return a.d.k === d0.k; })[0] || {}).pris.length === 1);
+
+  /* Négatifs */
+  $("btnNegAll").click();
+  chk("tous les négatifs posés", Object.keys(E.negatifs).length === NEGATIFS.length);
+  clic("neg", NEGATIFS[0].k, "present");
+  chk("négatif retourné en rouge", E.negatifs[NEGATIFS[0].k] === "present" &&
+      document.querySelector('[data-act="neg"][data-k="' + NEGATIFS[0].k + '"][data-v="present"]').className.indexOf("no") >= 0);
+  chk("CR : défaut écrit",     crTient("! " + NEGATIFS[0].ko));
+  clic("neg", NEGATIFS[0].k, "absent");
+
+  /* Compte rendu */
+  clic("tech", TECHNIQUES[0].k);
+  set("libre", "Bloc non parvenu.");
+  chk("CR : en-tête dossier",  crTient("26P0123") && crTient("RM"));
+  chk("CR : signe anormal",    crTient(l0.l + " — ANORMAL"));
+  chk("CR : non explorés dits", crTient("Non explorés :"));
+  chk("CR : technique demandée", crTient(TECHNIQUES[0].l));
+  chk("CR : remarque libre",   crTient("Bloc non parvenu."));
+  chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
+
+  /* Contrôles propres à l'organe */
+  await testsOrgane(chk, clic, set, crTient, pause);
+
+  /* Termes FOETO — seulement si la fiche en rattache */
+  if (FOETO.sections.length){
+    var f0 = FOETO.sections[0].termes[0].id;
+    chk("FOETO : sections rendues", $("foeto").querySelectorAll(".sousTitre").length === FOETO.sections.length);
+    clic("foeto", f0);
+    chk("FOETO : terme coché",      E.foeto[f0] === true && $("tFoeto").textContent.indexOf("1/") === 0);
+    chk("FOETO : CR le porte",      crTient("[" + f0 + "]"));
+    chk("FOETO : exporté",          collecter().grille.foeto[f0] === true);
+    set("rqFoeto", foetoLabel(f0).slice(0, 4));
+    chk("FOETO : recherche",        $("sgFoeto").querySelectorAll("[data-pick]").length >= 1);
+    $("sgFoeto").querySelector("[data-pick]").click();
+    chk("FOETO : recherche vidée",  $("rqFoeto").value === "" && !$("sgFoeto").classList.contains("on"));
+    chk("FOETO : id lisible",       /^FOETO:/.test(f0));
+    clic("foeto", f0);
+    Object.keys(E.foeto).forEach(function(id){ delete E.foeto[id]; }); peindre();
+  }
+
+  /* Enveloppe, persistance, relecture — l'organe a pu reposer ses propres signes */
+  if (E.signes[l0.k] !== "anormal"){
+    if (E.signes[l0.k]) clic("les", l0.k, E.signes[l0.k]);
+    clic("les", l0.k, "anormal");
+  }
+  var snap = collecter();
+  chk("enveloppe conforme",    snap.schema_version === SCHEMA && snap.module === MODULE &&
+                               snap.module_version === VERSION && snap.dossier === "26P0123" &&
+                               snap.organe === ORGANE && !!snap.exported_at);
+  chk("version en entête",     $("ver").textContent === "v" + VERSION);
+  chk("CR dans le JSON",       snap.compte_rendu.indexOf(TITRE_CR + " — grille de lecture") === 0);
+
+  await putSaisie(snap);
+  vider();
+  chk("vider efface la grille", Object.keys(E.signes).length === 0);
+  var relu = await getSaisie("26P0123");
+  appliquer(relu);
+  chk("IndexedDB restitue",    E.signes[l0.k] === "anormal" &&
+                               $("sa").value === String(snap.terme_sa));
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+  chk("banc remis à zéro",     Object.keys(E.signes).length === 0 && $("secSignes").classList.contains("off"));
+  await relire(snap);
+  chk("relecture d'un JSON",   E.signes[l0.k] === "anormal" && dossier === "26P0123");
+  var refus = false;
+  try { await relire({module:"autopsie", grille:{}}); } catch(e){ refus = /module/.test(e.message); }
+  chk("JSON d'un autre module refusé", refus);
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>

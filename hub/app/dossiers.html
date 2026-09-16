@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dossiers — gestion des cas</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF; --grey18:#7A7E7C;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --amber:#8A6A18;
+  --saisie:#FFFFFF;      /* fond des champs et des petites surfaces */
+  --sur-drape:#FFFFFF;   /* ce qui s'écrit sur la couleur d'accent */
+  --tete:#F6F8F7;        /* bandeaux : ruban, onglets */
+  --chaud:#FBF7EC;       /* fond des alertes */
+  --rayon:3px;           /* rayon des coins — nul dans certains thèmes */
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --police:var(--sans);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--police);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:1560px;margin:0 auto;padding:14px 14px 40px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:11px;margin-bottom:14px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:var(--rayon);
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+h3{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+   color:var(--drape);margin:16px 0 8px;font-weight:600}
+section[hidden],div[hidden]{display:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.field{flex:1 1 180px;min-width:0}
+label{display:block;font-size:12px;color:var(--ink-soft);margin:0 0 4px}
+input[type=search],input[type=text],select,textarea{
+  width:100%;padding:8px 10px;font-size:14.5px;font-family:inherit;color:var(--ink);
+  background:var(--saisie);border:1px solid var(--rule);border-radius:var(--rayon)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px}
+
+/* Les liens n'avaient pas de couleur propre : ils prenaient le bleu du
+   navigateur, illisible dès que le fond s'assombrit. */
+a{color:var(--drape)}
+a:hover{color:var(--ink)}
+
+.btn{padding:8px 13px;font-size:14px;font-family:inherit;color:var(--sur-drape);
+     background:var(--drape);border:1px solid var(--drape);border-radius:var(--rayon);
+     cursor:pointer}
+.btn.ghost{background:var(--saisie);color:var(--ink);border-color:var(--rule)}
+.btn.mini{padding:4px 10px;font-size:12px}
+.btn:disabled{opacity:.45;cursor:default}
+a.btn{text-decoration:none;display:inline-block}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+   text-transform:uppercase;color:var(--ink-soft);font-weight:600;
+   border-bottom:1px solid var(--ink);padding:0 8px 7px}
+td{padding:8px;border-bottom:1px solid var(--rule);vertical-align:top}
+.num{font-family:var(--mono);font-weight:600;letter-spacing:.03em;white-space:nowrap}
+.scroll{overflow-x:auto}
+.mono{font-family:var(--mono)}
+.note{font-size:12.5px;color:var(--ink-soft);margin:8px 0 0}
+.vide{color:var(--ink-soft);font-size:14px;padding:22px 16px;text-align:center}
+
+.pastille{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;
+          text-transform:uppercase;padding:2px 7px;border-radius:2px;border:1px solid var(--rule);
+          color:var(--ink-soft);background:var(--saisie);white-space:nowrap}
+.pastille.ok{color:var(--drape);border-color:var(--drape);background:var(--drape-soft)}
+.pastille.att{color:var(--amber);border-color:var(--amber)}
+.pastille.chaud{color:var(--alert);border-color:var(--alert)}
+
+.jauge{display:inline-flex;gap:3px}
+.jauge i{display:block;width:10px;height:5px;border-radius:1px;background:var(--rule)}
+.jauge i.on{background:var(--drape)}
+
+/* ── Deux colonnes : les cas à gauche, le cas ouvert à droite ─────────────── */
+.appli{display:grid;grid-template-columns:330px minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:1000px){
+  .appli{grid-template-columns:1fr}
+  .colonne{position:static!important;max-height:none!important}
+}
+.colonne{position:sticky;top:14px;max-height:calc(100vh - 28px);display:flex;flex-direction:column;
+         background:var(--card);border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+.colonne .tete{padding:12px 12px 10px;border-bottom:1px solid var(--rule)}
+.colonne .liste{overflow-y:auto;flex:1}
+.colonne .pied{padding:9px 12px;border-top:1px solid var(--rule);display:flex;gap:8px;align-items:center}
+
+.pilules{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.pilule{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+        padding:4px 9px;border:1px solid var(--rule);border-radius:2px;background:var(--saisie);
+        color:var(--ink-soft);cursor:pointer}
+.pilule.on{background:var(--drape);border-color:var(--drape);color:var(--sur-drape)}
+
+.cas{padding:10px 12px;border-bottom:1px solid var(--rule);cursor:pointer}
+.cas:hover{background:var(--drape-soft)}
+.cas.sel{background:var(--drape-soft);box-shadow:inset 3px 0 0 var(--drape)}
+.cas .l1{display:flex;align-items:baseline;gap:8px}
+.cas .l1 .n{font-family:var(--mono);font-weight:650;letter-spacing:.03em}
+.cas .l1 .s{margin-left:auto}
+.cas .l2{font-size:13px;color:var(--ink-soft);margin-top:3px;overflow:hidden;
+         text-overflow:ellipsis;white-space:nowrap}
+.cas .l3{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:11.5px;color:var(--ink-soft)}
+
+.volet{background:var(--card);border:1px solid var(--rule);border-radius:var(--rayon);min-height:60vh}
+.volet .tete{padding:13px 16px;border-bottom:1px solid var(--rule);display:flex;
+             flex-wrap:wrap;gap:10px;align-items:center}
+.volet .tete h2{margin:0;font-size:19px;font-family:var(--mono);letter-spacing:.02em;
+                text-transform:none;color:var(--ink);font-weight:650;display:block}
+.volet .tete .actions{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.onglets{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--rule);
+         overflow-x:auto;background:var(--tete)}
+.onglet{padding:9px 13px;font-size:13.5px;border:none;background:none;cursor:pointer;
+        color:var(--ink-soft);border-bottom:2px solid transparent;white-space:nowrap;
+        font-family:inherit}
+.onglet:hover{color:var(--ink)}
+.onglet.on{color:var(--ink);border-bottom-color:var(--drape);font-weight:600}
+.onglet .pt{display:inline-block;width:6px;height:6px;border-radius:50%;
+            background:var(--rule);margin-left:6px;vertical-align:middle}
+.onglet .pt.on{background:var(--drape)}
+.onglet .pt.poste{background:var(--amber)}
+.panneau{padding:16px}
+
+.grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:9px}
+.tuile{border:1px solid var(--rule);border-radius:var(--rayon);padding:8px 10px;background:var(--saisie)}
+.tuile .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+          color:var(--ink-soft);display:block;margin-bottom:2px}
+.tuile .v{font-size:15px;word-break:break-word}
+.cliches{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+figure{margin:0;border:1px solid var(--rule);border-radius:var(--rayon);overflow:hidden;background:var(--saisie)}
+figure img{display:block;width:100%;height:120px;object-fit:cover;background:var(--paper)}
+figure figcaption{padding:6px 8px;font-size:12px;line-height:1.3}
+figure .m{font-family:var(--mono);font-size:10px;color:var(--ink-soft);letter-spacing:.06em}
+.alerte{border-left:3px solid var(--amber);padding:6px 10px;background:var(--chaud);
+        font-size:13.5px;margin-bottom:6px}
+.drop{border:1px dashed var(--rule);border-radius:3px;padding:20px;text-align:center;
+      color:var(--ink-soft);font-size:14px}
+.drop.actif{border-color:var(--drape);background:var(--drape-soft);color:var(--drape)}
+.flash{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);
+       color:var(--paper);padding:9px 15px;border-radius:var(--rayon);font-size:14px;opacity:0;
+       transition:opacity .2s;pointer-events:none;max-width:90vw;z-index:80}
+.flash.on{opacity:1}
+.z{font-family:var(--mono);font-size:13px}
+.z.fort{color:var(--alert);font-weight:600}
+ul.liste{margin:0;padding-left:18px;font-size:14px}
+ul.liste li{margin-bottom:5px}
+tr.gris td,li.gris{color:var(--ink-soft)}
+/* Bandeau de navigation : les pages du hub, pas les onglets d'un dossier.
+   Même vocabulaire visuel que les onglets de la fiche, un cran au-dessus. */
+.ruban{display:flex;gap:2px;margin:0 0 16px;padding:0 6px;background:var(--tete);
+       border:1px solid var(--rule);border-radius:3px;overflow-x:auto}
+.ruban button{padding:10px 14px;font-size:13.5px;border:none;background:none;
+              cursor:pointer;color:var(--ink-soft);border-bottom:2px solid transparent;
+              white-space:nowrap;font-family:inherit}
+.ruban button:hover{color:var(--ink)}
+.ruban button.on{color:var(--ink);border-bottom-color:var(--drape);font-weight:600}
+.ruban .coin{margin-left:auto;display:flex;align-items:center;gap:8px;padding:4px 4px 4px 12px}
+.ruban .coin label{margin:0;white-space:nowrap}
+.ruban .coin input{width:120px;padding:5px 8px;font-size:13.5px}
+.page[hidden]{display:none}
+
+/* Une barre proportionnelle plutôt qu'un camembert : on y compare des
+   longueurs, ce que l'œil fait bien, et ça reste lisible imprimé en noir. */
+.barres{display:grid;gap:5px}
+.barre{display:grid;grid-template-columns:minmax(130px,1fr) 3fr 46px;gap:9px;
+       align-items:center;font-size:13.5px}
+.barre .t{color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.barre .j{background:var(--paper);border-radius:2px;height:14px;overflow:hidden}
+.barre .j span{display:block;height:100%;background:var(--drape)}
+.barre .n{font-family:var(--mono);font-size:12.5px;text-align:right;color:var(--ink)}
+.bloc{margin-bottom:20px}
+.bloc h3{margin:0 0 8px;font-size:12px;font-family:var(--mono);letter-spacing:.09em;
+         text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.editeur{width:100%;min-height:320px;font-family:var(--mono);font-size:12.5px;
+         line-height:1.5;padding:10px;border:1px solid var(--rule);border-radius:3px;
+         background:var(--saisie);resize:vertical;tab-size:2;box-sizing:border-box}
+.rendu{white-space:pre-wrap;font-family:var(--mono);font-size:12.5px;line-height:1.5;
+       background:var(--paper);border:1px solid var(--rule);border-radius:3px;
+       padding:12px;max-height:58vh;overflow:auto}
+.deux{display:grid;grid-template-columns:1fr 1fr;gap:14px 34px;align-items:start}
+@media (max-width:900px){ .deux{grid-template-columns:1fr} }
+
+/* Options d'affichage, appliquées à toute la page. */
+body.compact .cas{padding:8px 12px}
+body.compact .cas .l3{margin-top:3px}
+body.compact .panneau{padding:11px}
+body.compact table th,body.compact table td{padding:4px 7px}
+body.sansVides tr.gris,body.sansVides li.gris{display:none}
+body.sansVignettes figure img{display:none}
+body.grand{font-size:16px}
+
+/* ── Thèmes ───────────────────────────────────────────────────────────────────
+   Tout le dessin passe par des variables, donc un thème n'est presque qu'une
+   redéfinition de couleurs. Les deux derniers vont plus loin : Windows 98
+   remplace les coins arrondis par des biseaux, et le mode terminal remplace la
+   typographie et les boutons. Aucun ne touche à la structure de la page — un
+   thème qui déplacerait les choses ne serait plus un thème.
+   Le thème ne change rien aux données, et l'impression ignore tout ça. */
+
+/* Sombre — mêmes rapports de contraste, luminosités inversées. */
+body.theme-sombre{
+  --paper:#12171A; --card:#1A2126; --saisie:#151C21; --tete:#161D22;
+  --ink:#DCE4E4; --ink-soft:#93A0A0; --rule:#2F3B41;
+  --drape:#3FB3A4; --drape-soft:#12302D; --sur-drape:#08181A;
+  --alert:#E08472; --amber:#D6B45C; --chaud:#241F14;
+}
+body.theme-sombre header{border-bottom-color:var(--rule)}
+body.theme-sombre th{border-bottom-color:var(--rule)}
+body.theme-sombre .barre .j{background:#0D1215}
+body.theme-sombre .flash{background:var(--drape);color:var(--sur-drape)}
+body.theme-sombre figure img{background:#0D1215}
+
+/* Windows 98 — gris 3D, biseaux, barres de titre bleu marine, rien d'arrondi.
+   Les biseaux sont faits avec quatre bordures de couleurs différentes, comme
+   à l'époque : c'est ce qui donne le relief sans une seule image. */
+body.theme-w98{
+  --paper:#008080; --card:#C0C0C0; --saisie:#FFFFFF; --tete:#C0C0C0;
+  --ink:#000000; --ink-soft:#404040; --rule:#808080;
+  --drape:#000080; --drape-soft:#B4B4C8; --sur-drape:#FFFFFF;
+  --alert:#800000; --amber:#806000; --chaud:#E0E0C0; --rayon:0;
+  --police:Tahoma,"MS Sans Serif",Geneva,Verdana,sans-serif;
+  --mono:"Courier New",Courier,monospace;
+  font-size:15px;
+}
+body.theme-w98 section,body.theme-w98 .volet,body.theme-w98 aside.colonne,
+body.theme-w98 .tuile,body.theme-w98 figure,body.theme-w98 .ruban{
+  border:2px solid;border-color:#FFFFFF #404040 #404040 #FFFFFF;box-shadow:1px 1px 0 #000}
+body.theme-w98 header{background:var(--drape);color:#fff;border:none;
+  padding:6px 9px;margin-bottom:12px}
+body.theme-w98 header .eyebrow,body.theme-w98 header .sub,body.theme-w98 header .ver{color:#D8D8E8}
+body.theme-w98 header a{color:#fff}
+body.theme-w98 h1{color:#fff;font-size:17px}
+body.theme-w98 .btn,body.theme-w98 .pilule{
+  background:#C0C0C0;color:#000;border:2px solid;
+  border-color:#FFFFFF #404040 #404040 #FFFFFF;border-radius:0;box-shadow:1px 1px 0 #000}
+body.theme-w98 .btn:active,body.theme-w98 .pilule.on{
+  border-color:#404040 #FFFFFF #FFFFFF #404040;box-shadow:none}
+body.theme-w98 .pilule.on{background:#000080;color:#fff}
+body.theme-w98 input,body.theme-w98 select,body.theme-w98 textarea{
+  border:2px solid;border-color:#404040 #FFFFFF #FFFFFF #404040;border-radius:0}
+body.theme-w98 .onglet.on,body.theme-w98 .ruban button.on{
+  background:#DFDFDF;border-bottom-color:transparent;font-weight:700}
+body.theme-w98 .drop{border:2px dashed #808080}
+body.theme-w98 .barre .j{background:#fff;border:1px solid #808080;height:16px}
+body.theme-w98 .barre .j span{background:#000080}
+body.theme-w98 .flash{background:#C0C0C0;color:#000;border:2px solid;
+  border-color:#FFFFFF #404040 #404040 #FFFFFF}
+
+/* Terminal — une seule police, un seul plan, du phosphore. Les boutons
+   redeviennent ce qu'ils sont dans un terminal : du texte entre crochets. */
+body.theme-cli{
+  --paper:#0A0E0A; --card:#0A0E0A; --saisie:#0A0E0A; --tete:#0A0E0A;
+  --ink:#8CE68C; --ink-soft:#4E9E5E; --rule:#1F4A2A;
+  --drape:#7FE0B0; --drape-soft:#0F2418; --sur-drape:#0A0E0A;
+  --alert:#F08A7A; --amber:#E0C070; --chaud:#141810; --rayon:0;
+  --police:var(--mono);
+  font-size:14.5px;
+}
+body.theme-cli h1,body.theme-cli h2,body.theme-cli h3{font-family:var(--mono)}
+body.theme-cli h1::before{content:"$ ";color:var(--ink-soft)}
+body.theme-cli section,body.theme-cli .volet,body.theme-cli aside.colonne,
+body.theme-cli .tuile,body.theme-cli figure{border-style:solid;border-width:1px}
+body.theme-cli .btn{background:transparent;color:var(--drape);border-color:transparent;
+  padding:6px 4px;text-transform:none}
+body.theme-cli .btn::before{content:"[ "}
+body.theme-cli .btn::after{content:" ]"}
+body.theme-cli .btn:hover{background:var(--drape-soft)}
+body.theme-cli .btn:disabled{color:var(--ink-soft)}
+body.theme-cli .ruban button.on::before{content:"› "}
+body.theme-cli .barre .j{background:transparent;border:1px solid var(--rule);height:12px}
+body.theme-cli .barre .j span{background:var(--drape)}
+body.theme-cli .pastille{border-radius:0}
+body.theme-cli .flash{background:var(--drape);color:var(--sur-drape)}
+body.theme-cli input,body.theme-cli select,body.theme-cli textarea{
+  border-radius:0;color:var(--ink)}
+body.theme-cli figure img{opacity:.9}
+
+@media print{
+  body{background:#fff}
+  .noprint{display:none!important}
+  .appli{display:block} .colonne{display:none} .volet{border:none}
+  .onglets{display:none} .panneau{padding:0} .ruban{display:none}
+}
+</style>
+</head>
+<body>
+<script>
+/* Le thème est posé ici, avant tout affichage : appliqué plus bas avec le
+   reste du script, la page se dessinerait une fois en clair puis basculerait. */
+try {
+  var _t = localStorage.getItem("hub_theme");
+  if (_t && _t !== "clair") document.body.className = "theme-" + _t;
+} catch (e) {}
+</script>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Hub Light — fœtopathologie</p>
+  <h1>Dossiers <span class="ver" id="verIndex">— aucun index chargé</span></h1>
+  <p class="sub" id="sousTitre">Vue de la base de travail alimentée par <span class="mono">ingest.py</span>.
+     Rien ne se saisit ici : une correction se fait dans le module, se ré-exporte et se ré-ingère.</p>
+</header>
+
+<nav class="ruban noprint" id="ruban"></nav>
+
+<div class="page" id="pg_dossiers">
+
+<!-- Hors ligne : on dépose l'index -->
+<section id="secSource" class="noprint">
+  <h2><span class="n">·</span>Index</h2>
+  <div id="drop" class="drop">
+    Déposer <span class="mono">index.json</span> ici, ou
+    <button class="btn ghost" id="btnPick" type="button">le choisir</button>
+  </div>
+  <p class="note" id="hintSource">Le fichier est produit à chaque passage du script d'ingestion,
+     à la racine du hub. Il ne contient aucune image : les clichés restent sur le disque et
+     ne s'affichent que si cette page est ouverte depuis la racine du hub.</p>
+</section>
+
+<!-- Servi par le hub : pilotage -->
+<section id="secPilote" class="noprint" hidden>
+  <h2><span class="n">·</span>Reprise des saisies <span class="tally" id="tPilote"></span></h2>
+  <div class="row">
+    <div class="field" style="flex:0 0 auto">
+      <button class="btn" id="btnIngerer" type="button">Reprendre les saisies</button>
+    </div>
+    <div class="field" style="flex:0 0 auto">
+      <button class="btn ghost" id="btnJournal" type="button">Journal et rejets</button>
+    </div>
+    <div class="field" style="flex:0 0 auto">
+      <button class="btn ghost" id="btnReindex" type="button">Refabriquer l'index</button>
+    </div>
+    <div class="field" style="flex:0 0 auto">
+      <button class="btn ghost" id="btnRafraichir" type="button">Rafraîchir</button>
+    </div>
+    <div class="field" style="flex:0 1 170px">
+      <label for="operateur">Vos initiales</label>
+      <input type="text" id="operateur" placeholder="RM" autocomplete="off" maxlength="24">
+    </div>
+    <div class="field"><p class="note" id="notePilote" style="margin:0"></p></div>
+  </div>
+  <div id="depot" class="drop" style="margin-top:12px">
+    Déposer ici les <span class="mono">.json</span> sortis des modules, ou
+    <button class="btn ghost" id="btnDepot" type="button">les choisir</button>
+    <div class="note" style="margin-top:6px">Ils sont rangés dans
+      <span class="mono">arrivee/</span>, puis repris tout de suite.</div>
+  </div>
+  <input type="file" id="pickDepot" accept="application/json,.json" multiple hidden>
+  <div id="rapport"></div>
+  <div id="journal" hidden></div>
+</section>
+
+<!-- Les cas à gauche, le cas ouvert à droite -->
+<div class="appli">
+
+  <aside class="colonne noprint">
+    <div class="tete">
+      <input type="search" id="q" placeholder="numéro, indication, opérateur, module" autocomplete="off">
+      <button class="btn mini" id="btnNouveau" type="button" hidden style="width:100%;margin-top:8px"
+              title="Ouvre le module administratif : le dossier naît de sa première saisie">+ Créer un cas</button>
+      <div class="pilules" id="pilules"></div>
+      <div class="row" style="margin-top:8px">
+        <div class="field">
+          <select id="fManque"><option value="">tous les modules</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="liste" id="liste"></div>
+    <div class="pied">
+      <span class="note" style="margin:0;flex:1" id="tListe"></span>
+      <button class="btn ghost mini" id="btnCsv" type="button">CSV</button>
+    </div>
+  </aside>
+
+  <main class="volet">
+    <div class="vide" id="aucunCas">Choisir un dossier dans la colonne de gauche.</div>
+    <div id="fiche" hidden>
+      <div class="tete">
+        <h2 id="ficheNum"></h2>
+        <span id="ficheStatut"></span>
+        <span class="note mono" style="margin:0" id="ficheResume"></span>
+        <span class="actions noprint" id="ficheActions"></span>
+      </div>
+      <div class="onglets" id="onglets"></div>
+      <div class="panneau" id="panneau"></div>
+    </div>
+  </main>
+
+</div>
+</div><!-- /pg_dossiers -->
+
+<!-- Les autres pages du hub. La section de pilotage est déplacée dans la page
+     Ingestion au démarrage plutôt que recopiée : un seul exemplaire de ces
+     boutons, un seul jeu de gestionnaires. -->
+<div class="page" id="pg_ingestion" hidden></div>
+
+<div class="page" id="pg_qualite" hidden>
+  <main class="volet"><div class="tete"><h2>Contrôle qualité</h2>
+    <span class="actions noprint"><button class="btn ghost" id="btnQualite" type="button">Rafraîchir</button></span>
+  </div><div class="panneau" id="panQualite"></div></main>
+</div>
+
+<div class="page" id="pg_stats" hidden>
+  <main class="volet"><div class="tete"><h2>Statistiques</h2>
+    <span class="actions noprint"><button class="btn ghost" id="btnStats" type="button">Rafraîchir</button></span>
+  </div><div class="panneau" id="panStats"></div></main>
+</div>
+
+<div class="page" id="pg_cr" hidden>
+  <main class="volet"><div class="tete"><h2>Gabarits de compte rendu</h2>
+    <span class="actions noprint"><button class="btn ghost" id="btnCrRech" type="button">Recharger</button></span>
+  </div><div class="panneau" id="panCr"></div></main>
+</div>
+
+<div class="page" id="pg_bamara" hidden>
+  <main class="volet"><div class="tete"><h2>Préparation BaMaRa</h2>
+    <span class="actions noprint"><button class="btn ghost" id="btnBamara" type="button">Rafraîchir</button></span>
+  </div><div class="panneau" id="panBamara"></div></main>
+</div>
+
+<div class="page" id="pg_modules" hidden>
+  <main class="volet"><div class="tete"><h2>Modules servis</h2>
+    <span class="actions noprint"><button class="btn ghost" id="btnModules" type="button">Rafraîchir</button></span>
+  </div><div class="panneau" id="panModules"></div></main>
+</div>
+
+<div class="page" id="pg_sauvegarde" hidden>
+  <main class="volet"><div class="tete"><h2>Sauvegarde</h2></div>
+  <div class="panneau" id="panSauvegarde"></div></main>
+</div>
+
+<div class="page" id="pg_affichage" hidden>
+  <main class="volet"><div class="tete"><h2>Affichage</h2></div>
+  <div class="panneau" id="panAffichage"></div></main>
+</div>
+
+</div><!-- /wrap -->
+
+<input type="file" id="pick" accept="application/json,.json" hidden>
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome, comme les modules de saisie : aucun module ES, aucune
+   bibliothèque, aucune police distante.
+
+   Deux vies. Ouverte par double-clic, la page lit un index.json qu'on lui
+   dépose : elle montre, et rien de plus, ce qui suffit à consulter sur un
+   poste où rien ne tourne. Servie par serveur.py, elle interroge la base et
+   gagne le pilotage — reprendre les saisies, ouvrir un module sur un dossier,
+   clore un cas. Un seul fichier pour les deux, parce qu'un second aurait
+   divergé du premier.
+
+   Disposition : les cas tiennent la colonne de gauche, le cas ouvert occupe
+   le volet de droite, un onglet par module. Chaque module y est rendu à
+   partir des libellés qu'il embarque lui-même dans son JSON — la page ne
+   connaît aucun nom de champ et n'a donc rien à rattraper quand une trame
+   s'allonge.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var VERSION = "2.0.0";
+var SERVI = location.protocol === "http:" || location.protocol === "https:";
+
+var $ = function(i){ return document.getElementById(i); };
+function esc(s){
+  // L'apostrophe aussi : esc() sert dans des attributs onclick="…('…')",
+  // où un « ' » dans un numéro de dossier ou un nom de fichier fermerait
+  // la chaîne et laisserait exécuter ce qui suit.
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+// Valeur à glisser dans un gestionnaire inline (onclick="f(…)") : d'abord
+// chaîne JavaScript (JSON), puis échappée pour l'attribut HTML. esc() seul ne
+// suffit pas là : le navigateur décode &#39; en « ' » AVANT d'analyser le
+// JavaScript, si bien qu'un « ' » dans la valeur refermerait la chaîne.
+function js(v){ return esc(JSON.stringify(String(v == null ? "" : v))); }
+var tFlash = null;
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(tFlash); tFlash = setTimeout(function(){ f.classList.remove("on"); }, 2800);
+}
+
+var INDEX = null, COURANT = null, ONGLET = "dossier", STATUT = "";
+
+/* ── Mise en forme ────────────────────────────────────────────────────────── */
+function terme(d){
+  if (d.terme_sa == null) return "—";
+  return d.terme_sa + " SA" + (d.terme_jours ? " + " + d.terme_jours + " j" : "");
+}
+function dateCourte(s){
+  if (!s) return "—";
+  var m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? m[3] + "/" + m[2] + "/" + m[1] : String(s).slice(0, 10);
+}
+var LIB_STATUT = {ouvert:"ouvert", en_cours:"en cours", complet:"complet", clos:"clos"};
+function pastilleStatut(s){
+  var c = s === "complet" ? "ok" : s === "clos" ? "" : s === "ouvert" ? "chaud" : "att";
+  return '<span class="pastille ' + c + '">' + esc(LIB_STATUT[s] || s) + "</span>";
+}
+/* Une saisie porte le nom de son module ; la fiche la range dans un créneau.
+   Les dix-sept grilles de microscopie partagent le créneau « microscopie » :
+   un dossier peut en avoir zéro, une ou dix-sept, ça reste une ligne. */
+function slotDe(s){ return s.slot || s.module; }
+function modulesDe(d){
+  var vus = [];
+  (d.saisies || []).forEach(function(s){
+    var sl = slotDe(s);
+    if (vus.indexOf(sl) < 0) vus.push(sl);
+  });
+  return vus;
+}
+function saisiesDe(d, m){
+  return (d.saisies || []).filter(function(s){ return slotDe(s) === m; });
+}
+function saisieDe(d, m){
+  var l = saisiesDe(d, m);
+  return l.length ? l[0] : null;
+}
+function facultatif(m){
+  return (INDEX.modules_facultatifs || []).indexOf(m) >= 0;
+}
+function jauge(d){
+  var recus = modulesDe(d);
+  return '<span class="jauge" title="' + esc(INDEX.modules_attendus.join(", ")) + '">' +
+    INDEX.modules_attendus.map(function(m){
+      return '<i class="' + (recus.indexOf(m) >= 0 ? "on" : "") + '"></i>';
+    }).join("") + "</span>";
+}
+function lisible(v){
+  if (v == null || v === "") return "—";
+  if (typeof v === "boolean") return v ? "oui" : "non";
+  if (v === "true") return "oui";
+  if (v === "false") return "non";
+  if (v === "UNK") return "inconnu";
+  if (Array.isArray(v)) return v.length ? v.map(lisible).join(" · ") : "—";
+  return String(v);
+}
+
+/* ── Colonne de gauche ────────────────────────────────────────────────────── */
+function filtres(){
+  var q = $("q").value.trim().toLowerCase();
+  var mq = $("fManque").value;
+  return INDEX.dossiers.filter(function(d){
+    if (STATUT && d.statut !== STATUT) return false;
+    if (mq && modulesDe(d).indexOf(mq) >= 0) return false;
+    if (!q) return true;
+    var foin = [d.numero, d.statut, d.type_issue, d.indication, d.sexe, d.remarques,
+                modulesDe(d).join(" "),
+                (d.saisies || []).map(function(s){ return s.operateur; }).join(" ")]
+               .join(" ").toLowerCase();
+    return foin.indexOf(q) >= 0;
+  });
+}
+function rendreListe(){
+  var l = filtres();
+  $("tListe").textContent = l.length + " / " + INDEX.dossiers.length + " dossier(s)";
+  $("liste").innerHTML = l.length ? l.map(function(d){
+    return '<div class="cas' + (COURANT === d.numero ? " sel" : "") +
+      '" data-num="' + esc(d.numero) + '">' +
+      '<div class="l1"><span class="n">' + esc(d.numero) + "</span>" +
+        '<span class="s">' + pastilleStatut(d.statut) + "</span></div>" +
+      '<div class="l2">' + esc(terme(d)) + " · " + esc(d.type_issue || "issue —") +
+        (d.indication ? " · " + esc(d.indication) : "") + "</div>" +
+      '<div class="l3">' + jauge(d) +
+        "<span>" + modulesDe(d).length + "/" + INDEX.modules_attendus.length + "</span>" +
+        (d.cliches ? "<span>· " + esc(d.cliches) + " cliché(s)</span>" : "") +
+        '<span style="margin-left:auto">' + esc(dateCourte(d.derniere_ingestion)) + "</span>" +
+      "</div></div>";
+  }).join("") : '<p class="vide">Aucun dossier ne correspond.</p>';
+}
+$("liste").addEventListener("click", function(e){
+  var c = e.target.closest(".cas[data-num]");
+  if (c) ouvrir(c.dataset.num);
+});
+function rendrePilules(){
+  var etats = [["", "tous"], ["ouvert","ouvert"], ["en_cours","en cours"],
+               ["complet","complet"], ["clos","clos"]];
+  $("pilules").innerHTML = etats.map(function(e){
+    return '<button type="button" class="pilule' + (STATUT === e[0] ? " on" : "") +
+      '" data-st="' + e[0] + '">' + esc(e[1]) + "</button>";
+  }).join("");
+}
+$("pilules").addEventListener("click", function(e){
+  var b = e.target.closest(".pilule");
+  if (!b) return;
+  STATUT = b.dataset.st;
+  rendrePilules(); rendreListe();
+});
+
+/* ── Rendu d'un module ────────────────────────────────────────────────────────
+   Les modules embarquent leurs propres libellés dans leur JSON. On s'appuie
+   là-dessus plutôt que sur une table de correspondance tenue ici : un champ
+   ajouté à une trame apparaît sans qu'on touche à cette page, et il porte le
+   libellé qu'a vu la personne qui l'a rempli. */
+var ENVELOPPE = ["schema_version","module","module_version","dossier","operateur",
+                 "exported_at","ouverture_at","trame_attendue","photos","cliches_libres"];
+
+function tuile(k, v){
+  return '<div class="tuile"><span class="k">' + esc(k) + '</span>' +
+         '<span class="v">' + esc(lisible(v)) + "</span></div>";
+}
+function zSpan(v, seuil){
+  if (v == null) return "—";
+  var f = Math.abs(v) >= (seuil || 2);
+  return '<span class="z' + (f ? " fort" : "") + '">' + (v > 0 ? "+" : "") + v.toFixed(2) + "</span>";
+}
+
+/* Trames en étapes et champs typés : autopsie, neuropathologie. */
+function rendreEtapes(d){
+  var zTete = d.module === "neuropath" ? "z (référence)" : "z GC / MA / MB";
+  return (d.etapes || []).map(function(e){
+    var champs = e.champs || [];
+    var faits = champs.filter(function(c){
+      return (c.valeurs && c.valeurs.length) || c.valeur != null ||
+             c.grammes != null || c.total != null;
+    }).length;
+    return "<h3>" + esc(e.titre || e.id) + " — " + faits + "/" + champs.length + "</h3>" +
+      '<div class="scroll"><table><thead><tr><th style="width:38%">Champ</th>' +
+      "<th>Valeur</th><th>" + esc(zTete) + "</th></tr></thead><tbody>" +
+      champs.map(function(c){
+        var val, z = "—", vide = false;
+        if (c.type === "chips"){
+          vide = !(c.valeurs && c.valeurs.length);
+          val = vide ? "—" : c.valeurs.join(" · ");
+        } else if (c.type === "masse2"){
+          vide = c.total == null;
+          val = vide ? "—" : "D " + lisible(c.droite) + " / G " + lisible(c.gauche) +
+                             " → " + c.total + " g";
+        } else if (c.type === "masse"){
+          vide = c.grammes == null;
+          val = vide ? "—" : c.grammes + " g";
+        } else {
+          vide = c.valeur == null || c.valeur === "";
+          val = lisible(c.valeur) + (!vide && c.unite ? " " + c.unite : "");
+        }
+        if (c.zscores) z = [zSpan(c.zscores.gc), zSpan(c.zscores.ma), zSpan(c.zscores.mb)].join(" / ");
+        else if (c.zscore) z = zSpan(c.zscore.z) +
+          (c.zscore.reference ? ' <span class="note" style="margin:0">' +
+            esc(c.zscore.reference) + "</span>" : "");
+        return "<tr" + (vide ? ' class="gris"' : "") + "><td>" + esc(c.label || c.id) + "</td>" +
+          "<td>" + esc(val) + "</td><td>" + z + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
+  }).join("");
+}
+
+/* Trame en étages et items : examen clinique externe. */
+function rendreEtages(d){
+  return (d.etages || []).map(function(e){
+    var items = e.items || [];
+    var faits = items.filter(function(i){ return i.etat; }).length;
+    return "<h3>" + esc(e.titre || e.id) + " — " + faits + "/" + items.length + "</h3>" +
+      '<ul class="liste">' + items.map(function(i){
+        var p = i.etat === "anormal" ? '<span class="pastille chaud">anormal</span>'
+              : i.etat === "normal"  ? '<span class="pastille ok">normal</span>'
+              : '<span class="pastille">non renseigné</span>';
+        return "<li" + (i.etat ? "" : ' class="gris"') + "><b>" + esc(i.label || i.id) + "</b> " + p +
+          ((i.anomalies && i.anomalies.length) ? " — " + esc(i.anomalies.join(" · ")) : "") +
+          (i.precisions ? " <i>" + esc(i.precisions) + "</i>" : "") + "</li>";
+      }).join("") + "</ul>";
+  }).join("");
+}
+
+/* Un dictionnaire de mesures : biométrie clinique. */
+function rendreMesures(d){
+  var cles = Object.keys(d.mesures || {});
+  var faites = cles.filter(function(k){ return d.mesures[k] != null; });
+  return "<h3>Mesures — " + faites.length + "/" + cles.length + "</h3>" +
+    '<div class="grille">' + cles.map(function(k){ return tuile(k, d.mesures[k]); }).join("") +
+    "</div>";
+}
+
+/* Tout le reste : administratif, radiologie. On descend l'arbre du JSON, les
+   valeurs simples en tuiles, les sous-objets en sections, les listes d'objets
+   en tableaux. */
+/* Les dates du module administratif sont des objets à précision variable.
+   On les rend telles qu'elles ont été saisies — une date connue au mois près
+   s'affiche « 03/2026 » et non « 01/03/2026 », qui serait une invention. */
+function dateVariable(v){
+  if (!v || typeof v !== "object" || v.annee == null) return null;
+  var p = function(n){ return ("0" + n).slice(-2); };
+  if (v.jour != null) return p(v.jour) + "/" + p(v.mois) + "/" + v.annee;
+  if (v.mois != null) return p(v.mois) + "/" + v.annee;
+  return String(v.annee);
+}
+function rendreArbre(o){
+  var simples = [], blocs = "";
+  Object.keys(o).forEach(function(k){
+    if (ENVELOPPE.indexOf(k) >= 0) return;
+    var v = o[k];
+    var dv = dateVariable(v);
+    if (dv !== null){
+      simples.push(tuile(k.replace(/_/g, " "), dv));
+    } else if (v === "err"){
+      simples.push('<div class="tuile"><span class="k">' + esc(k.replace(/_/g, " ")) +
+        '</span><span class="v" style="color:var(--alert)">date illisible</span></div>');
+    } else if (v && typeof v === "object" && !Array.isArray(v)){
+      blocs += "<h3>" + esc(k.replace(/_/g, " ")) + "</h3>" + rendreArbre(v);
+    } else if (Array.isArray(v) && v.length && typeof v[0] === "object"){
+      var cols = Object.keys(v[0]).filter(function(c){ return typeof v[0][c] !== "object"; });
+      blocs += "<h3>" + esc(k.replace(/_/g, " ")) + " — " + v.length + "</h3>" +
+        '<div class="scroll"><table><thead><tr>' +
+        cols.map(function(c){ return "<th>" + esc(c.replace(/_/g, " ")) + "</th>"; }).join("") +
+        "</tr></thead><tbody>" + v.map(function(r){
+          return "<tr>" + cols.map(function(c){
+            return "<td>" + esc(lisible(r[c])) + "</td>"; }).join("") + "</tr>";
+        }).join("") + "</tbody></table></div>";
+    } else {
+      simples.push(tuile(k.replace(/_/g, " "), v));
+    }
+  });
+  return (simples.length ? '<div class="grille">' + simples.join("") + "</div>" : "") + blocs;
+}
+
+function rendreModule(s){
+  var d = s.donnees || {};
+  if (!Object.keys(d).length)
+    return '<p class="vide">Cette saisie est antérieure à la migration 0002 : son document ' +
+           "n'est pas en base.<br>Un <span class=\"mono\">ingest.py --rejouer</span> le rattrape " +
+           "depuis l'archive.</p>";
+  var corps;
+  if (d.etapes) corps = rendreEtapes(d);
+  else if (d.etages) corps = rendreEtages(d);
+  else if (d.mesures){
+    var reste = {};
+    Object.keys(d).forEach(function(k){ if (k !== "mesures") reste[k] = d[k]; });
+    corps = rendreMesures(d) + rendreArbre(reste);
+  } else corps = rendreArbre(d);
+  return '<div class="grille" style="margin-bottom:6px">' +
+      tuile("version du document", s.module_version) +
+      tuile("schéma", s.schema_version) +
+      tuile("opérateur", s.operateur) +
+      tuile("entrée", s.provenance === "poste" ? "tapée sur le poste" : "JSON du téléphone") +
+      tuile("exporté", dateCourte(s.exported_at)) +
+      tuile("repris", dateCourte(s.ingere_at)) +
+    "</div>" + corps;
+}
+
+/* ── Onglets ──────────────────────────────────────────────────────────────── */
+function ongletsDe(d){
+  var l = [{id:"dossier", t:"Dossier"}];
+  INDEX.modules_attendus.forEach(function(m){
+    var ls = saisiesDe(d, m), s = ls[0];
+    var titre = m.replace(/_/g, " ");
+    if (m === "microscopie" && ls.length) titre += " (" + ls.length + ")";
+    l.push({id:"m_" + m, t:titre, recu:!!s,
+            poste: !!(s && s.provenance === "poste"), facultatif: facultatif(m)});
+  });
+  if ((d.photos || []).length) l.push({id:"cliches", t:"Clichés (" + d.photos.length + ")"});
+  if (SERVI) l.push({id:"cr", t:"Compte rendu" + (d.comptes_rendus ? " (" + d.comptes_rendus + ")" : "")});
+  if ((d.historique || []).length) l.push({id:"historique", t:"Historique"});
+  return l;
+}
+function rendreOnglets(d){
+  var l = ongletsDe(d);
+  if (!l.filter(function(o){ return o.id === ONGLET; }).length) ONGLET = "dossier";
+  $("onglets").innerHTML = l.map(function(o){
+    var pt = o.id.indexOf("m_") === 0
+      ? '<span class="pt' + (o.recu ? (o.poste ? " poste" : " on") : "") + '"></span>' : "";
+    if (o.facultatif && !o.recu) pt = "";
+    return '<button type="button" class="onglet' + (ONGLET === o.id ? " on" : "") +
+      '" data-o="' + esc(o.id) + '">' + esc(o.t) + pt + "</button>";
+  }).join("");
+}
+$("onglets").addEventListener("click", function(e){
+  var b = e.target.closest(".onglet");
+  if (!b) return;
+  ONGLET = b.dataset.o;
+  ouvrir(COURANT, true);
+});
+
+/* ── Le volet de droite ───────────────────────────────────────────────────── */
+function ouvrir(numero, garderOnglet){
+  var d = INDEX.dossiers.filter(function(x){ return x.numero === numero; })[0];
+  if (!d) return;
+  if (COURANT !== numero && !garderOnglet) ONGLET = "dossier";
+  COURANT = numero;
+  rendreListe();
+  $("aucunCas").hidden = true;
+  $("fiche").hidden = false;
+  $("ficheNum").textContent = numero;
+  $("ficheStatut").innerHTML = pastilleStatut(d.statut);
+  $("ficheResume").textContent = terme(d) + " · " + (d.type_issue || "—") + " · " +
+    (d.sexe || "—") + " · " + modulesDe(d).length + "/" + INDEX.modules_attendus.length + " modules";
+
+  var slugs = {};
+  Object.keys(INDEX.modules || {}).forEach(function(sl){
+    slugs[INDEX.modules[sl].module] = sl;
+  });
+  $("ficheActions").innerHTML = SERVI
+    ? ["ouvert","en_cours","complet","clos"].map(function(st){
+        return '<button class="btn mini ' + (d.statut === st ? "" : "ghost") +
+          '" onclick="poserStatut(' + js(numero) + "," + js(st) + ')">' +
+          esc(LIB_STATUT[st]) + "</button>";
+      }).join("")
+    : "";
+
+  rendreOnglets(d);
+  var h = "";
+  if (ONGLET === "dossier")         h = panneauDossier(d, slugs);
+  else if (ONGLET === "cliches")    h = panneauCliches(d);
+  else if (ONGLET === "historique") h = panneauHistorique(d);
+  else if (ONGLET === "cr")         h = panneauCr(d);
+  else if (ONGLET === "m_microscopie") h = panneauMicroscopie(d, slugs);
+  else {
+    var m = ONGLET.slice(2), s = saisieDe(d, m), sl = slugs[m];
+    h = s ? rendreModule(s)
+          : '<p class="vide">Ce module n\'est pas encore arrivé pour ce dossier.' +
+            (SERVI && sl ? '<br><br><a class="btn" target="_blank" rel="noopener" href="/modules/' +
+             esc(sl) + "?dossier=" + encodeURIComponent(numero) + operateurUrl() +
+             '">Le saisir maintenant</a>' : "") + "</p>";
+    if (SERVI && sl && s)
+      h += '<p class="note noprint"><a class="btn ghost mini" target="_blank" rel="noopener" ' +
+           'href="/modules/' + esc(sl) + "?dossier=" + encodeURIComponent(numero) +
+           operateurUrl() + '">Rouvrir ce module</a>' +
+           (operateurUrl() ? "" : " — renseigner vos initiales plus haut : les modules " +
+            "n'acceptent pas une saisie sans opérateur.") + "</p>";
+  }
+  $("panneau").innerHTML = h;
+}
+
+function panneauDossier(d, slugs){
+  var h = '<div class="grille">' +
+    tuile("statut", LIB_STATUT[d.statut] || d.statut) + tuile("terme", terme(d)) +
+    tuile("sexe", d.sexe) + tuile("issue", d.type_issue) +
+    tuile("réception", dateCourte(d.date_reception)) + tuile("examen", dateCourte(d.date_examen)) +
+    tuile("clichés", d.cliches) + tuile("dernière reprise", dateCourte(d.derniere_ingestion)) +
+    (d.clos_at ? tuile("clos le", dateCourte(d.clos_at)) : "") + "</div>";
+
+  if (d.indication)
+    h += '<h3>Indication</h3><p style="margin:0">' + esc(d.indication) + "</p>";
+
+  if ((d.alertes || []).length)
+    h += "<h3>Cohérence signalée à la saisie</h3>" +
+      d.alertes.map(function(a){ return '<div class="alerte">' + esc(a) + "</div>"; }).join("");
+
+  if (SERVI){
+    h += '<h3 class="noprint">Remarques</h3><div class="row noprint">' +
+      '<div class="field"><input type="text" id="remarques_' + esc(d.numero) + '" value="' +
+      esc(d.remarques || "") + '" placeholder="note de suivi, décision, ce qui reste à faire"></div>' +
+      '<div class="field" style="flex:0 0 auto"><button class="btn ghost" onclick="poserRemarques(' +
+      js(d.numero) + ')">Enregistrer</button></div></div>';
+  } else if (d.remarques){
+    h += '<h3>Remarques</h3><p style="margin:0">' + esc(d.remarques) + "</p>";
+  }
+
+  h += "<h3>Modules</h3>" +
+    '<div class="scroll"><table><thead><tr><th>Module</th><th>Version</th><th>Schéma</th>' +
+    "<th>Entrée</th><th>Opérateur</th><th>Exporté</th><th>Repris</th>" +
+    (SERVI ? '<th class="noprint"></th>' : "") + "</tr></thead><tbody>";
+  INDEX.modules_attendus.forEach(function(m){
+    var s = saisieDe(d, m), sl = slugs[m];
+    h += "<tr>" +
+      '<td><a href="#" onclick="ONGLET=' + js("m_" + m) + ";ouvrir(" + js(d.numero) +
+        ',true);return false">' + esc(m.replace(/_/g, " ")) + "</a>" +
+        (s ? "" : ' <span class="pastille att">attendu</span>') + "</td>" +
+      '<td class="mono">' + esc(s ? s.module_version : "—") + "</td>" +
+      '<td class="mono">' + esc(s ? s.schema_version : "—") + "</td>" +
+      "<td>" + (s ? '<span class="pastille' + (s.provenance === "poste" ? " ok" : "") + '">' +
+                esc(s.provenance === "poste" ? "poste" : "téléphone") + "</span>" : "—") + "</td>" +
+      "<td>" + esc(s ? (s.operateur || "—") : "—") + "</td>" +
+      "<td>" + esc(s ? dateCourte(s.exported_at) : "—") + "</td>" +
+      "<td>" + esc(s ? dateCourte(s.ingere_at) : "—") + "</td>" +
+      (SERVI ? '<td class="noprint">' + (sl
+        ? '<a class="btn ghost mini" target="_blank" rel="noopener" href="/modules/' + esc(sl) +
+          "?dossier=" + encodeURIComponent(d.numero) + operateurUrl() + '">' +
+          (s ? "Rouvrir" : "Saisir") + "</a>" : "") + "</td>" : "") + "</tr>";
+  });
+  h += "</tbody></table></div>";
+
+  if ((d.anomalies || []).length){
+    h += "<h3>Examen clinique — items anormaux (" + d.anomalies.length + ")</h3>" +
+      '<ul class="liste">' + d.anomalies.map(function(a){
+        return "<li><b>" + esc(a.item_label) + '</b> <span class="note">(' +
+          esc(a.etage_titre) + ")</span>" + (a.anomalies ? " — " + esc(a.anomalies) : "") +
+          (a.precisions ? " <i>" + esc(a.precisions) + "</i>" : "") + "</li>";
+      }).join("") + "</ul>";
+  }
+  if ((d.masses || []).length){
+    h += "<h3>Masses d'organes</h3>" +
+      '<div class="scroll"><table><thead><tr><th>Organe</th><th>Masse (g)</th>' +
+      "<th>z Guihard-Costa</th><th>z Maroun A</th><th>z Maroun B</th></tr></thead><tbody>" +
+      d.masses.map(function(m){
+        return "<tr><td>" + esc(m.libelle) + '</td><td class="num">' + esc(m.valeur) + "</td>" +
+          '<td class="num">' + zSpan(m.z_gc) + '</td><td class="num">' + zSpan(m.z_ma) +
+          '</td><td class="num">' + zSpan(m.z_mb) + "</td></tr>";
+      }).join("") + "</tbody></table></div>" +
+      '<p class="note">Un z est signalé en rouge au-delà de 2 écarts-types. Il ne vaut que ' +
+      "contre la référence qui l'a produit, et le terme doit avoir été saisi dans le module.</p>";
+  }
+  return h;
+}
+
+/* ── Microscopie ──────────────────────────────────────────────────────────
+   Dix-sept grilles possibles, jamais toutes faites. On montre ce qui a été lu,
+   organe par organe, avec le texte que chaque grille a composé elle-même — la
+   grille est observation, l'interprétation se fait ailleurs. Les valeurs
+   posées se comptent mais ne se déplient pas ici : leur forme est propre à
+   chaque organe, et c'est la grille qui sait la lire. */
+function panneauMicroscopie(d, slugs){
+  var ls = saisiesDe(d, "microscopie").slice().sort(function(a, b){
+    return (a.donnees.organe || "").localeCompare(b.donnees.organe || "", "fr");
+  });
+  var lien = SERVI && slugs["microscopie"]
+    ? '<a class="btn" target="_blank" rel="noopener" href="/modules/' +
+      esc(slugs["microscopie"]) + "?dossier=" + encodeURIComponent(d.numero) +
+      operateurUrl() + '">' + (ls.length ? "Ouvrir les grilles" : "Lire au microscope") + "</a>"
+    : "";
+  if (!ls.length)
+    return '<p class="vide">Aucune grille de lecture pour ce dossier.<br>' +
+           '<span class="note">La microscopie n\'est pas attendue sur tous les ' +
+           'dossiers : son absence ne rend pas la fiche incomplète.</span>' +
+           (lien ? "<br><br>" + lien : "") + "</p>";
+
+  var h = '<div class="grille" style="margin-bottom:16px">' +
+    tuile("organes lus", ls.length) +
+    tuile("valeurs posées", ls.reduce(function(n, s){
+      return n + (s.donnees.grille ? compterFeuilles(s.donnees.grille) : 0); }, 0)) +
+    tuile("lecteurs", (function(){
+      var v = []; ls.forEach(function(s){ if (s.operateur && v.indexOf(s.operateur) < 0) v.push(s.operateur); });
+      return v.join(", ") || "—"; })()) +
+    "</div>";
+
+  h += '<div class="scroll"><table><thead><tr><th>Organe</th><th>Grille</th>' +
+       "<th>Entrée</th><th>Lecteur</th><th>Valeurs</th><th>Repris</th><th></th>" +
+       "</tr></thead><tbody>" +
+    ls.map(function(s){
+      var o = s.donnees || {};
+      var sl = slugs[s.module];
+      return "<tr><td><b>" + esc(o.organe || s.module.replace("grille_", "")) + "</b>" +
+        (o.source ? '<div class="note" style="margin:2px 0 0">' + esc(o.source) + "</div>" : "") +
+        "</td><td>" + esc(s.module_version || "—") + "</td><td>" +
+        '<span class="pastille' + (s.provenance === "poste" ? " att" : "") + '">' +
+        esc(s.provenance) + "</span></td><td>" + esc(s.operateur || "—") +
+        '</td><td class="num">' + (o.grille ? compterFeuilles(o.grille) : 0) +
+        "</td><td>" + esc(dateCourte(s.ingere_at)) + "</td><td>" +
+        (SERVI && sl ? '<a class="btn ghost mini" target="_blank" rel="noopener" href="/modules/' +
+          esc(sl) + "?dossier=" + encodeURIComponent(d.numero) + operateurUrl() +
+          '">rouvrir</a>' : "") + "</td></tr>";
+    }).join("") + "</tbody></table></div>";
+
+  ls.forEach(function(s){
+    var o = s.donnees || {};
+    if (!o.compte_rendu) return;
+    h += '<h3>' + esc(o.organe || s.module) + "</h3>" +
+         '<div class="rendu">' + esc(o.compte_rendu) + "</div>";
+  });
+  if (lien) h += '<p class="note noprint" style="margin-top:14px">' + lien + "</p>";
+  return h;
+}
+
+/* Le même décompte que dans l'étui : une feuille non vide est une valeur
+   posée, quelle que soit la forme de la grille. */
+function compterFeuilles(v){
+  if (v === null || v === undefined || v === false || v === "") return 0;
+  if (Array.isArray(v)) return v.reduce(function(n, x){ return n + compterFeuilles(x); }, 0);
+  if (typeof v === "object") return Object.keys(v).reduce(
+    function(n, k){ return n + compterFeuilles(v[k]); }, 0);
+  return 1;
+}
+
+function panneauCliches(d){
+  return '<div class="cliches">' + (d.photos || []).map(function(p){
+    var vig = p.chemin.replace(/([^\/]+)$/, "vignettes/$1");
+    return "<figure>" +
+      '<img loading="lazy" src="' + esc(vig) + '" alt="' + esc(p.label || p.cle) + '"' +
+      ' onerror="this.onerror=null;this.src=' + js(p.chemin) + '">' +
+      "<figcaption>" + esc(p.label || p.cle) +
+        '<div class="m">' + esc(p.module) + (p.etape ? " · " + esc(p.etape) : "") +
+        (p.largeur ? " · " + esc(p.largeur) + "×" + esc(p.hauteur) : "") + "</div>" +
+      "</figcaption></figure>";
+  }).join("") + "</div>" +
+  '<p class="note">Les vignettes viennent de <span class="mono">photos/…/vignettes/</span> et ' +
+  "retombent sur le cliché pleine taille si Pillow n'était pas installé à la reprise.</p>";
+}
+
+/* Le compte rendu. Un brouillon produit à partir des saisies : il ne
+   remplace pas la relecture, il évite de recopier. Chaque rendu est gardé
+   avec sa date et son gabarit, pour pouvoir montrer ce qui a été écrit même
+   après un changement de gabarit ou de table de référence. */
+/* Le dernier brouillon affiché, gardé pendant la session : produire un
+   compte rendu rafraîchit l'index, ce qui reconstruit le volet — sans cela
+   le texte qu'on vient de lire disparaîtrait sous les yeux. */
+var CR_AFFICHE = {numero: null, entete: null, texte: null};
+
+function panneauCr(d){
+  var h = '<div class="row noprint" style="margin-bottom:12px">' +
+    '<div class="field" style="flex:0 1 260px"><label for="crGabarit">Gabarit</label>' +
+    '<select id="crGabarit"><option>chargement…</option></select></div>' +
+    '<div class="field" style="flex:0 0 auto">' +
+    '<button class="btn" onclick="genererCr(' + js(d.numero) + ')">Produire un brouillon</button>' +
+    "</div>" +
+    '<div class="field"><p class="note" id="crNote" style="margin:0"></p></div></div>' +
+    '<div id="crTexte"></div><div id="crListe"></div>';
+  setTimeout(function(){
+    chargerCr(d.numero);
+    if (CR_AFFICHE.numero === d.numero && CR_AFFICHE.texte)
+      afficherCr(CR_AFFICHE.texte, CR_AFFICHE.entete);
+  }, 0);
+  return h;
+}
+function chargerCr(numero){
+  api("/api/gabarits").then(function(o){
+    var g = o.gabarits || {};
+    $("crGabarit").innerHTML = Object.keys(g).length
+      ? Object.keys(g).map(function(k){
+          return '<option value="' + esc(k) + '">' + esc(g[k].titre) + " (v" + esc(g[k].version) + ")</option>";
+        }).join("")
+      : "<option>aucun gabarit</option>";
+    $("crNote").innerHTML = o.jinja === false
+      ? '<span style="color:var(--alert)">Jinja2 absent — le rendu est impossible.</span>'
+      : (o.references && o.references.dispo
+          ? "Écarts-types recalculés ici : " +
+            esc(Object.keys(o.references.sources || {}).map(function(k){
+              return o.references.sources[k]; }).join(", "))
+          : '<span style="color:var(--amber)">Aucune table de référence installée : ' +
+            "les z repris sont ceux des modules. Voir references/LISEZMOI.md.</span>");
+  }).catch(function(e){ $("crNote").textContent = "Gabarits illisibles : " + e.message; });
+  api("/api/dossiers/" + encodeURIComponent(numero) + "/cr").then(function(l){
+    $("crListe").innerHTML = l.length
+      ? "<h3>Brouillons produits</h3>" +
+        '<div class="scroll"><table><thead><tr><th>Quand</th><th>Gabarit</th>' +
+        "<th>Opérateur</th><th>Taille</th><th></th></tr></thead><tbody>" +
+        l.map(function(r){
+          return "<tr><td>" + esc(dateCourte(r.genere_at)) + "</td><td>" + esc(r.gabarit) +
+            ' <span class="note">v' + esc(r.gabarit_version) + "</span></td><td>" +
+            esc(r.operateur || "—") + '</td><td class="num">' + Math.round(r.octets/1024*10)/10 +
+            ' Ko</td><td class="noprint"><button class="btn ghost mini" onclick="relireCr(' +
+            Number(r.id) + ')">Relire</button></td></tr>';
+        }).join("") + "</tbody></table></div>"
+      : '<p class="note">Aucun brouillon produit pour ce dossier.</p>';
+  }).catch(function(){});
+}
+function afficherCr(texte, entete){
+  CR_AFFICHE = {numero: COURANT, entete: entete, texte: texte};
+  if (!$("crTexte")) return;
+  $("crTexte").innerHTML = (entete ? '<h3>' + esc(entete) + "</h3>" : "") +
+    '<div class="row noprint" style="margin-bottom:8px"><div class="field" style="flex:0 0 auto">' +
+    '<button class="btn ghost mini" onclick="copierCr()">Copier</button></div>' +
+    '<div class="field" style="flex:0 0 auto">' +
+    '<button class="btn ghost mini" onclick="window.print()">Imprimer</button></div></div>' +
+    '<pre id="crPre" style="white-space:pre-wrap;font-family:var(--mono);font-size:13px;' +
+    "line-height:1.5;background:#fff;border:1px solid var(--rule);border-radius:3px;" +
+    'padding:14px;margin:0;max-height:70vh;overflow:auto">' + esc(texte) + "</pre>";
+}
+function copierCr(){
+  var t = $("crPre") ? $("crPre").textContent : "";
+  if (navigator.clipboard) navigator.clipboard.writeText(t)
+    .then(function(){ flash("Compte rendu copié."); })
+    .catch(function(){ flash("Copie refusée par le navigateur."); });
+  else flash("Copie indisponible dans ce navigateur.");
+}
+function genererCr(numero){
+  var g = $("crGabarit").value;
+  $("crNote").textContent = "Rendu en cours…";
+  api("/api/dossiers/" + encodeURIComponent(numero) + "/cr", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({gabarit:g, operateur: ($("operateur") || {}).value || null})
+  }).then(function(o){
+    afficherCr(o.texte, "Brouillon — " + o.gabarit);
+    flash("Brouillon produit.");
+    return rafraichir();
+  }).then(function(){ ONGLET = "cr"; ouvrir(numero, true); })
+    .catch(function(e){ $("crNote").innerHTML =
+      '<span style="color:var(--alert)">' + esc(e.message) + "</span>"; });
+}
+function relireCr(id){
+  api("/api/cr/" + id).then(function(o){
+    afficherCr(o.texte, o.gabarit + " — produit le " + dateCourte(o.genere_at));
+  }).catch(function(e){ flash("Illisible : " + e.message); });
+}
+
+function panneauHistorique(d){
+  return '<p class="note" style="margin-top:0">Les saisies remplacées. Rien n\'est écrasé : ' +
+    "une correction crée une nouvelle saisie, l'ancienne reste ici avec sa date.</p>" +
+    '<div class="scroll"><table><thead><tr><th>Module</th><th>Version</th><th>Entrée</th>' +
+    "<th>Reprise</th><th>Archive</th></tr></thead><tbody>" +
+    (d.historique || []).map(function(s){
+      return "<tr><td>" + esc(s.module) + '</td><td class="mono">' + esc(s.module_version) +
+        "</td><td>" + esc(s.provenance) + "</td><td>" + esc(dateCourte(s.ingere_at)) +
+        '</td><td class="mono" style="font-size:11px">' + esc(s.archive) + "</td></tr>";
+    }).join("") + "</tbody></table></div>";
+}
+
+/* ── Export CSV de la liste filtrée ───────────────────────────────────────── */
+$("btnCsv").onclick = function(){
+  var l = filtres();
+  var lignes = [["dossier","statut","terme_sa","terme_jours","sexe","issue",
+                 "date_reception","date_examen","modules","cliches","indication",
+                 "remarques","derniere_reprise"].join(";")];
+  l.forEach(function(d){
+    lignes.push([d.numero, d.statut, d.terme_sa, d.terme_jours, d.sexe, d.type_issue,
+                 d.date_reception, d.date_examen, modulesDe(d).join("|"), d.cliches,
+                 (d.indication || "").replace(/[;\r\n]/g, " "),
+                 (d.remarques || "").replace(/[;\r\n]/g, " "), d.derniere_ingestion]
+                .map(function(v){ return v == null ? "" : v; }).join(";"));
+  });
+  var blob = new Blob(["﻿" + lignes.join("\r\n")], {type:"text/csv;charset=utf-8"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "dossiers_" + new Date().toISOString().slice(0,10) + ".csv";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+  flash(l.length + " ligne(s) exportée(s).");
+};
+
+/* ── Chargement de l'index ────────────────────────────────────────────────── */
+function charger(o, provenance){
+  if (!o || !Array.isArray(o.dossiers))
+    throw new Error("ce fichier ne ressemble pas à un index.json du hub");
+  INDEX = o;
+  INDEX.modules_attendus = o.modules_attendus || [];
+  $("verIndex").textContent = "— " + INDEX.dossiers.length + " dossier(s), index du " +
+                              (o.genere_at || "?").replace("T", " à ");
+  $("fManque").innerHTML = '<option value="">tous les modules</option>' +
+    INDEX.modules_attendus.map(function(m){
+      return '<option value="' + esc(m) + '">' + esc(m.replace(/_/g, " ")) + " absent</option>";
+    }).join("");
+  $("hintSource").textContent = "Index chargé depuis " + provenance +
+    (o.pillow === false ? " — Pillow absent à la reprise, pas de vignettes." : "");
+  rendrePilules();
+  rendreListe();
+  if (COURANT && INDEX.dossiers.filter(function(x){ return x.numero === COURANT; }).length)
+    ouvrir(COURANT, true);
+  else { COURANT = null; $("fiche").hidden = true; $("aucunCas").hidden = false; }
+}
+function lireFichier(f){
+  var fr = new FileReader();
+  fr.onload = function(){
+    try {
+      charger(JSON.parse(String(fr.result)), f.name);
+      flash(INDEX.dossiers.length + " dossier(s) chargé(s).");
+    } catch(e){ flash("Index refusé : " + e.message); }
+  };
+  fr.onerror = function(){ flash("Lecture impossible."); };
+  fr.readAsText(f);
+}
+$("btnPick").onclick = function(){ $("pick").click(); };
+$("pick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (f) lireFichier(f);
+});
+var drop = $("drop");
+["dragenter","dragover"].forEach(function(t){
+  drop.addEventListener(t, function(e){ e.preventDefault(); drop.classList.add("actif"); });
+});
+["dragleave","drop"].forEach(function(t){
+  drop.addEventListener(t, function(e){ e.preventDefault(); drop.classList.remove("actif"); });
+});
+drop.addEventListener("drop", function(e){
+  var f = e.dataTransfer.files[0];
+  if (f) lireFichier(f);
+});
+["q","fManque"].forEach(function(id){
+  $(id).addEventListener("input", function(){ rendreListe(); });
+});
+
+/* ── Mode servi : pilotage ────────────────────────────────────────────────── */
+function operateurUrl(){
+  var f = $("operateur");
+  var v = f ? f.value.trim() : "";
+  return v ? "&operateur=" + encodeURIComponent(v) : "";
+}
+function api(chemin, options){
+  return fetch(chemin, options).then(function(r){
+    return r.json().catch(function(){ return {}; }).then(function(o){
+      if (!r.ok) throw new Error(o.erreur || ("HTTP " + r.status));
+      return o;
+    });
+  });
+}
+function rafraichir(){
+  return api("/api/index").then(function(o){
+    charger(o, "la base");
+    $("secSource").hidden = true;
+    $("secPilote").hidden = false;
+    return api("/api/etat");
+  }).then(function(e){
+    $("tPilote").textContent = e.arrivee + " en attente";
+    $("btnIngerer").disabled = false;
+    $("notePilote").textContent =
+      e.racine + (e.pillow ? "" : " — Pillow absent, pas de vignettes") +
+      (e.rejets ? " — " + e.rejets + " rejet(s) en attente" : "");
+  }).catch(function(e){ flash("Hub injoignable : " + e.message); });
+}
+function poserStatut(numero, statut){
+  api("/api/dossiers/" + encodeURIComponent(numero), {
+    method: "PUT", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({statut: statut})
+  }).then(function(){
+    flash(numero + " → " + (LIB_STATUT[statut] || statut) + ".");
+    return rafraichir();
+  }).catch(function(e){ flash("Échec : " + e.message); });
+}
+function poserRemarques(numero){
+  var t = $("remarques_" + numero);
+  api("/api/dossiers/" + encodeURIComponent(numero), {
+    method: "PUT", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({remarques: t.value})
+  }).then(function(){ flash("Remarques enregistrées."); return rafraichir(); })
+    .catch(function(e){ flash("Échec : " + e.message); });
+}
+function reprendreRejet(nom){
+  api("/api/rejets/" + encodeURIComponent(nom) + "/reprendre", {method:"POST"})
+    .then(function(o){ flash(o.repris + " remis dans arrivee/."); return rafraichir(); })
+    .catch(function(e){ flash("Échec : " + e.message); });
+}
+if (SERVI){
+  $("sousTitre").innerHTML =
+    'Servie par <span class="mono">serveur.py</span>. Seuls le statut et les remarques ' +
+    "se décident ici ; une constatation se corrige dans son module, qui l'enregistre au hub.";
+  try { $("operateur").value = localStorage.getItem("hub_operateur") || ""; } catch(e){}
+  $("operateur").addEventListener("input", function(){
+    try { localStorage.setItem("hub_operateur", this.value.trim()); } catch(e){}
+    if (COURANT) ouvrir(COURANT, true);
+  });
+  /* Déposer, c'est copier dans arrivee/ à la place de l'explorateur — puis
+     reprendre par le chemin habituel. Le geste change, pas le traitement. */
+  function deposer(liste){
+    var fichiers = Array.prototype.filter.call(liste || [], function(f){
+      return /\.json$/i.test(f.name);
+    });
+    if (!fichiers.length){ flash("Aucun .json dans ce qui a été déposé."); return; }
+    var fd = new FormData();
+    fichiers.forEach(function(f){ fd.append("fichiers", f, f.name); });
+    $("rapport").innerHTML = '<p class="note">Dépôt de ' + fichiers.length + " fichier(s)…</p>";
+    api("/api/deposer", {method:"POST", body:fd}).then(function(o){
+      if (o.ignores.length)
+        flash(o.ignores.length + " fichier(s) écarté(s) : " + o.ignores[0].raison + ".");
+      if (!o.deposes.length){ $("rapport").innerHTML = ""; return rafraichir(); }
+      flash(o.deposes.length + " fichier(s) dans arrivee/.");
+      return rafraichir().then(function(){ $("btnIngerer").onclick(); });
+    }).catch(function(e){
+      /* 404 sur cette route : la page est à jour, le serveur non. Flask ne
+         recharge pas son code tout seul — le dire plutôt que de laisser
+         chercher du côté du fichier déposé. */
+      flash(e.message === "HTTP 404"
+        ? "Le serveur tourne encore avec l'ancien code : l'arrêter et le relancer."
+        : "Dépôt refusé : " + e.message);
+      $("rapport").innerHTML = "";
+    });
+  }
+  $("btnDepot").onclick = function(){ $("pickDepot").click(); };
+  $("pickDepot").addEventListener("change", function(){
+    var l = this.files; this.value = "";
+    deposer(l);
+  });
+  var zd = $("depot");
+  ["dragenter","dragover"].forEach(function(ev){
+    zd.addEventListener(ev, function(e){ e.preventDefault(); zd.classList.add("actif"); });
+  });
+  ["dragleave","drop"].forEach(function(ev){
+    zd.addEventListener(ev, function(e){ e.preventDefault(); zd.classList.remove("actif"); });
+  });
+  zd.addEventListener("drop", function(e){ deposer(e.dataTransfer.files); });
+
+  $("btnIngerer").onclick = function(){
+    this.disabled = true;
+    $("rapport").innerHTML = '<p class="note">Reprise en cours…</p>';
+    api("/api/ingerer", {method:"POST"}).then(function(o){
+      $("rapport").innerHTML =
+        '<p class="note"><b>' + o.ingerees + "</b> ingérée(s), <b>" + o.doublons +
+        "</b> doublon(s), <b>" + o.rejets + "</b> rejet(s).</p>" +
+        (o.lignes.length
+          ? '<div class="scroll"><table><thead><tr><th>Fichier</th><th>État</th>' +
+            "<th>Détail</th></tr></thead><tbody>" +
+            o.lignes.map(function(l){
+              return '<tr><td class="mono" style="font-size:12px">' + esc(l.fichier) + "</td>" +
+                "<td>" + (l.etat === "rejet" ? '<span class="pastille chaud">rejet</span>'
+                        : l.etat === "doublon" ? '<span class="pastille">doublon</span>'
+                        : '<span class="pastille ok">ingérée</span>') + "</td>" +
+                "<td>" + esc(l.message) + "</td></tr>";
+            }).join("") + "</tbody></table></div>"
+          : "");
+      return rafraichir();
+    }).catch(function(e){ flash("Reprise impossible : " + e.message); })
+      .then(function(){ $("btnIngerer").disabled = false; });
+  };
+  $("btnReindex").onclick = function(){
+    if (!confirm("Refabriquer les tables par module depuis les JSON en base ?")) return;
+    api("/api/reindexer", {method:"POST"}).then(function(o){
+      flash(o.saisies + " saisie(s) réindexée(s)" +
+            (o.sans_adaptateur ? ", " + o.sans_adaptateur + " sans adaptateur" : "") +
+            (o.sans_document ? ", " + o.sans_document + " laissée(s) en l'état" : "") + ".");
+      return rafraichir();
+    }).catch(function(e){ flash("Échec : " + e.message); });
+  };
+  $("btnRafraichir").onclick = function(){ rafraichir(); };
+
+  /* Créer un cas = ouvrir le module administratif : c'est sa première saisie
+     qui fait naître le dossier dans le hub, il n'y a rien à créer avant. */
+  $("btnNouveau").hidden = false;
+  $("btnNouveau").onclick = function(){
+    if (!operateurUrl()) flash("Renseigner vos initiales en haut : le module les demande.");
+    window.open("/modules/administratif" + operateurUrl().replace(/^&/, "?"), "_blank", "noopener");
+  };
+
+  /* Un module qui enregistre au hub (liaison.js) écrit la date dans
+     localStorage : l'événement « storage » arrive dans cet onglet-ci, qui
+     recharge l'index et la fiche ouverte. Les autres pages sont marquées à
+     recharger à leur prochaine visite. */
+  window.addEventListener("storage", function(e){
+    if (e.key !== "hub_maj") return;
+    rafraichir().then(function(){
+      ["stats", "qualite", "bamara", "cr"].forEach(recharger);
+      flash("Saisie reçue d'un module — fiches à jour.");
+    });
+  });
+  $("btnJournal").onclick = function(){
+    var j = $("journal");
+    if (!j.hidden){ j.hidden = true; return; }
+    api("/api/journal").then(function(o){
+      j.hidden = false;
+      j.innerHTML =
+        (o.rejets.length
+          ? "<h3>Rejets (" + o.rejets.length + ")</h3>" +
+            o.rejets.map(function(r){
+              return '<div class="alerte"><b class="mono">' + esc(r.fichier) + "</b> — " +
+                esc(r.motif.split("\n").slice(2).join(" ").trim().slice(0, 220)) +
+                ' <button class="btn ghost mini" onclick="reprendreRejet(' +
+                js(r.fichier) + ')">Reprendre</button></div>';
+            }).join("")
+          : '<p class="note">Aucun rejet en attente.</p>') +
+        "<h3>Journal</h3>" +
+        '<div class="scroll"><table><thead><tr><th>Quand</th><th>Niveau</th><th>Dossier</th>' +
+        "<th>Message</th></tr></thead><tbody>" +
+        o.journal.map(function(l){
+          return '<tr><td class="mono" style="font-size:12px;white-space:nowrap">' +
+            esc(l.at) + '</td><td><span class="pastille ' +
+            (l.niveau === "rejet" || l.niveau === "erreur" ? "chaud" :
+             l.niveau === "doublon" ? "" : "ok") + '">' + esc(l.niveau) + "</span></td>" +
+            '<td class="num">' + esc(l.dossier || "—") + "</td><td>" + esc(l.message) + "</td></tr>";
+        }).join("") + "</tbody></table></div>";
+    }).catch(function(e){ flash("Journal illisible : " + e.message); });
+  };
+  /* Le bouton « Dossiers » de la barre d'un module revient ici avec
+     ?dossier=… : on ouvre directement la fiche concernée. */
+  var voulu = new URLSearchParams(location.search).get("dossier");
+  if (voulu && /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/.test(voulu)) COURANT = voulu;
+  rafraichir();
+}
+
+/* ── Les pages du hub ─────────────────────────────────────────────────────────
+   Un bandeau, une page à la fois. « Dossiers » garde la vue en deux colonnes ;
+   les autres prennent toute la largeur, parce qu'un tableau de contrôle ou un
+   gabarit en cours d'écriture ne se lit pas dans une colonne de 60 %.
+
+   `servi` marque les pages qui n'ont de sens qu'avec le serveur : hors ligne,
+   avec un simple index déposé, il n'y a ni ingestion, ni sauvegarde, ni
+   gabarit à écrire. Elles ne s'affichent pas plutôt que d'échouer au clic. */
+var PAGES = [
+  { id:"dossiers",   l:"Dossiers",         servi:false },
+  { id:"ingestion",  l:"Ingestion",        servi:true  },
+  { id:"qualite",    l:"Contrôle qualité", servi:true  },
+  { id:"stats",      l:"Statistiques",     servi:true  },
+  { id:"cr",         l:"Comptes rendus",   servi:true  },
+  { id:"bamara",     l:"BaMaRa",           servi:true  },
+  { id:"modules",    l:"Modules",          servi:true  },
+  { id:"sauvegarde", l:"Sauvegarde",       servi:true  },
+  { id:"affichage",  l:"Affichage",        servi:false }
+];
+var PAGE = "dossiers";
+var CHARGEE = {};
+
+function batirRuban(){
+  $("ruban").innerHTML = PAGES.filter(function(p){ return SERVI || !p.servi; })
+    .map(function(p){
+      return '<button type="button" data-page="' + p.id + '"' +
+             (p.id === PAGE ? ' class="on"' : "") + ">" + esc(p.l) + "</button>";
+    }).join("");
+  /* Les initiales vivent dans le bandeau et non dans l'onglet Ingestion :
+     elles servent à ouvrir un module depuis la fiche d'un dossier, donc il
+     faut pouvoir les saisir sans changer de page. Le champ est déplacé, pas
+     recopié — un seul exemplaire, un seul gestionnaire. */
+  if (SERVI){
+    var coin = document.createElement("div");
+    coin.className = "coin";
+    $("ruban").appendChild(coin);
+    var champ = $("operateur");
+    if (champ){
+      var etiq = document.createElement("label");
+      etiq.setAttribute("for", "operateur");
+      etiq.textContent = "Vos initiales";
+      coin.appendChild(etiq);
+      coin.appendChild(champ);
+    }
+  }
+}
+function allerA(id){
+  if (!PAGES.some(function(p){ return p.id === id && (SERVI || !p.servi); })) return;
+  PAGE = id;
+  PAGES.forEach(function(p){
+    var el = $("pg_" + p.id);
+    if (el) el.hidden = p.id !== id;
+  });
+  Array.prototype.forEach.call($("ruban").children, function(b){
+    b.classList.toggle("on", b.dataset.page === id);
+  });
+  var f = CHARGEURS[id];
+  if (f && !CHARGEE[id]){ CHARGEE[id] = true; f(); }
+}
+$("ruban").addEventListener("click", function(e){
+  var b = e.target.closest("button[data-page]");
+  if (b) allerA(b.dataset.page);
+});
+/* Ouvrir un dossier depuis n'importe quelle page ramène à la vue des cas :
+   c'est là qu'on le lit, et nulle part ailleurs. */
+function versDossier(numero){ allerA("dossiers"); ouvrir(numero); }
+
+function recharger(id){ CHARGEE[id] = false; if (PAGE === id){ CHARGEE[id] = true; CHARGEURS[id](); } }
+
+/* ── Briques communes aux pages ──────────────────────────────────────────── */
+function barres(liste, titre){
+  if (!liste || !liste.length) return "";
+  var max = liste.reduce(function(a, x){ return Math.max(a, x.n); }, 0) || 1;
+  return '<div class="bloc"><h3>' + esc(titre) + '</h3><div class="barres">' +
+    liste.map(function(x){
+      return '<div class="barre"><span class="t">' + esc(String(x.cle)) + "</span>" +
+             '<span class="j"><span style="width:' + (100 * x.n / max).toFixed(1) + '%"></span></span>' +
+             '<span class="n">' + x.n + "</span></div>";
+    }).join("") + "</div></div>";
+}
+function poids(o){
+  if (o == null) return "—";
+  if (o < 1024) return o + " o";
+  if (o < 1048576) return (o / 1024).toFixed(0) + " Ko";
+  if (o < 1073741824) return (o / 1048576).toFixed(1) + " Mo";
+  return (o / 1073741824).toFixed(2) + " Go";
+}
+function vide(msg){ return '<p class="note">' + esc(msg) + "</p>"; }
+function telecharger(nom, texte, type){
+  var b = new Blob([texte], {type: type || "application/json"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(b); a.download = nom;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+
+/* ── Statistiques ────────────────────────────────────────────────────────── */
+function pageStats(){
+  $("panStats").innerHTML = vide("Comptage…");
+  api("/api/stats").then(function(o){
+    var attendus = o.attendus || [];
+    var parModule = {};
+    (o.modules || []).forEach(function(m){ parModule[m.cle] = m.n; });
+    var completude = attendus.map(function(m){
+      return { cle: m, n: parModule[m] || 0 };
+    });
+    var d = o.delai;
+    $("panStats").innerHTML =
+      '<div class="grille" style="margin-bottom:20px">' +
+        tuile("dossiers", o.dossiers) + tuile("saisies courantes", o.saisies) +
+        tuile("clichés", o.cliches) + tuile("poids des clichés", poids(o.octets_cliches)) +
+        tuile("délai réception → examen",
+              d ? d.median + " j (de " + d.min + " à " + d.max + ")" : "—") +
+      "</div>" +
+      '<div class="deux">' +
+        "<div>" + barres(o.terme, "Terme") + barres(o.issue, "Issue de grossesse") +
+                  barres(o.maceration, "Macération (Maroun)") + "</div>" +
+        "<div>" + barres(completude, "Dossiers par module") + barres(o.statut, "Statut") +
+                  barres(o.sexe, "Sexe") + barres(o.provenance, "Modalité d'entrée") + "</div>" +
+      "</div>" +
+      barres(o.mois, "Examens par mois") +
+      '<p class="note">Ces chiffres décrivent la base de travail, pas l\'activité du ' +
+      "service : un dossier repris deux fois n'y compte qu'une, un dossier jamais " +
+      "ingéré n'y est pas.</p>";
+  }).catch(function(e){ $("panStats").innerHTML = vide("Statistiques indisponibles : " + e.message); });
+}
+
+/* ── Contrôle qualité ────────────────────────────────────────────────────── */
+function pageQualite(){
+  $("panQualite").innerHTML = vide("Relecture…");
+  api("/api/qualite").then(function(o){
+    var h = "";
+    var lien = function(n){
+      return '<button class="btn ghost mini" type="button" data-va="' + esc(n) + '">' +
+             esc(n) + "</button>";
+    };
+    if (o.termes_discordants.length){
+      h += '<div class="bloc"><h3>Termes discordants entre modules (' +
+           o.termes_discordants.length + ")</h3>" +
+           '<p class="note">Le terme conditionne tous les z-scores. Deux modules qui ' +
+           "ne s'accordent pas sur le terme ne s'accordent sur rien.</p>" +
+           '<div class="scroll"><table><thead><tr><th>Dossier</th><th>Vu par</th>' +
+           "</tr></thead><tbody>" +
+           o.termes_discordants.map(function(x){
+             var v = Object.keys(x.vu_par).map(function(k){
+               return esc(k) + " " + esc(x.vu_par[k]) + " SA"; }).join(", ");
+             return "<tr><td>" + lien(x.dossier) + "</td><td>" + v + "</td></tr>";
+           }).join("") + "</tbody></table></div></div>";
+    }
+    if (o.z_extremes.length){
+      h += '<div class="bloc"><h3>Masses au-delà de 4 écarts-types (' +
+           o.z_extremes.length + ")</h3>" +
+           '<p class="note">Au-delà de quatre écarts-types, l\'hypothèse « faute de ' +
+           "frappe » devient plus probable que l'hypothèse biologique.</p>" +
+           '<div class="scroll"><table><thead><tr><th>Dossier</th><th>Organe</th>' +
+           "<th>Masse</th><th>GC</th><th>Maroun</th><th>MB</th></tr></thead><tbody>" +
+           o.z_extremes.map(function(x){
+             var z = function(v){ return v == null ? "—" :
+               '<span class="z' + (Math.abs(v) > 4 ? " fort" : "") + '">' +
+               (v >= 0 ? "+" : "") + v.toFixed(2) + "</span>"; };
+             return "<tr><td>" + lien(x.dossier) + "</td><td>" + esc(x.organe || "") +
+                    '</td><td class="num">' + (x.valeur == null ? "—" : esc(x.valeur)) + "</td><td>" +
+                    z(x.z_gc) + "</td><td>" + z(x.z_ma) + "</td><td>" + z(x.z_mb) + "</td></tr>";
+           }).join("") + "</tbody></table></div></div>";
+    }
+    if (o.dossiers_anciens.length){
+      h += '<div class="bloc"><h3>Dossiers ouverts depuis plus de deux mois (' +
+           o.dossiers_anciens.length + ")</h3>" +
+           '<div class="scroll"><table><thead><tr><th>Dossier</th><th>Statut</th>' +
+           "<th>Examen</th><th>Jours</th></tr></thead><tbody>" +
+           o.dossiers_anciens.map(function(x){
+             return "<tr><td>" + lien(x.numero) + "</td><td>" + esc(x.statut) +
+                    "</td><td>" + esc(x.date_examen || "—") +
+                    '</td><td class="num">' + x.jours + "</td></tr>";
+           }).join("") + "</tbody></table></div></div>";
+    }
+    if (o.modules_manquants.length){
+      h += '<div class="bloc"><h3>Modules attendus et absents (' +
+           o.modules_manquants.length + " dossier(s))</h3>" +
+           '<div class="scroll"><table><thead><tr><th>Dossier</th><th>Statut</th>' +
+           "<th>Manque</th></tr></thead><tbody>" +
+           o.modules_manquants.map(function(x){
+             return "<tr><td>" + lien(x.dossier) + "</td><td>" + esc(x.statut) +
+                    "</td><td>" + x.modules.map(esc).join(", ") + "</td></tr>";
+           }).join("") + "</tbody></table></div></div>";
+    }
+    if (o.saisies_sans_document)
+      h += '<div class="alerte">' + o.saisies_sans_document + " saisie(s) sans leur JSON " +
+           "en base — <span class=\"mono\">python app/ingest.py --rejouer</span> les rattrape " +
+           "depuis l'archive.</div>";
+    $("panQualite").innerHTML = h || vide("Rien à signaler sur ce qui est en base.");
+  }).catch(function(e){ $("panQualite").innerHTML = vide("Contrôle impossible : " + e.message); });
+}
+$("panQualite").addEventListener("click", function(e){
+  var b = e.target.closest("button[data-va]");
+  if (b) versDossier(b.dataset.va);
+});
+
+/* ── Gabarits de compte rendu ────────────────────────────────────────────── */
+var CR_GABARIT = null;
+function pageCr(){
+  $("panCr").innerHTML = vide("Chargement…");
+  api("/api/gabarits").then(function(o){
+    var noms = Object.keys(o.gabarits);
+    if (!o.jinja){ $("panCr").innerHTML = vide("Jinja2 est absent : pip install flask"); return; }
+    var dossiers = (INDEX && INDEX.dossiers || []).map(function(d){ return d.numero; });
+    $("panCr").innerHTML =
+      '<div class="row" style="margin-bottom:12px">' +
+        '<div class="field" style="flex:0 1 230px"><label for="crNom">Gabarit</label>' +
+          '<select id="crNom">' + noms.map(function(n){
+            return '<option value="' + esc(n) + '">' + esc(o.gabarits[n].titre) +
+                   " (v" + esc(o.gabarits[n].version) + ")</option>"; }).join("") +
+          "</select></div>" +
+        '<div class="field" style="flex:0 1 190px"><label for="crDossier">Essayer sur</label>' +
+          '<select id="crDossier">' + dossiers.map(function(n){
+            return '<option value="' + esc(n) + '">' + esc(n) + "</option>"; }).join("") +
+          "</select></div>" +
+        '<div class="field" style="flex:0 0 auto"><label>&nbsp;</label>' +
+          '<button class="btn" id="crApercu" type="button">Aperçu</button></div>' +
+        '<div class="field" style="flex:0 0 auto"><label>&nbsp;</label>' +
+          '<button class="btn ghost" id="crEnregistrer" type="button">Enregistrer</button></div>' +
+      "</div>" +
+      '<div class="deux"><div><textarea class="editeur" id="crSource" spellcheck="false"></textarea>' +
+      '<p class="note">Les gabarits parcourent la trame et lisent les libellés que les ' +
+      "modules embarquent : ils ne nomment aucun champ, pour ne pas pourrir à chaque " +
+      "diffusion de module. La version précédente est gardée en <span class=\"mono\">.bak</span> " +
+      "à chaque enregistrement.</p></div>" +
+      '<div><div class="rendu" id="crRendu">L\'aperçu rend la source de l\'éditeur sur le ' +
+      "dossier choisi, sans rien enregistrer — ni le gabarit, ni le compte rendu.</div></div></div>";
+    $("crNom").onchange = function(){ crCharger(this.value); };
+    $("crApercu").onclick = crApercu;
+    $("crEnregistrer").onclick = crEnregistrer;
+    if (noms.length) crCharger(noms[0]);
+  }).catch(function(e){ $("panCr").innerHTML = vide("Gabarits illisibles : " + e.message); });
+}
+function crCharger(nom){
+  CR_GABARIT = nom;
+  api("/api/gabarits/" + encodeURIComponent(nom) + "/source").then(function(o){
+    $("crSource").value = o.source;
+  }).catch(function(e){ flash("Lecture impossible : " + e.message); });
+}
+function crApercu(){
+  var d = $("crDossier").value;
+  if (!d){ flash("Aucun dossier sur lequel essayer."); return; }
+  $("crRendu").textContent = "Rendu…";
+  api("/api/gabarits/" + encodeURIComponent(CR_GABARIT) + "/apercu", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({dossier: d, source: $("crSource").value})
+  }).then(function(o){ $("crRendu").textContent = o.texte; })
+    .catch(function(e){ $("crRendu").textContent = "✗ " + e.message; });
+}
+function crEnregistrer(){
+  api("/api/gabarits/" + encodeURIComponent(CR_GABARIT), {
+    method:"PUT", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({source: $("crSource").value})
+  }).then(function(){ flash("Gabarit « " + CR_GABARIT + " » enregistré."); })
+    .catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+}
+
+/* ── Préparation BaMaRa ──────────────────────────────────────────────────── */
+var BAM_REGLAGES = ["site_code","site_label","site_id","hospital_code",
+                    "location_finess","objectives","context","context_precision"];
+function pageBamara(){
+  $("panBamara").innerHTML = vide("Relecture des dossiers…");
+  api("/api/bamara").then(function(o){
+    var r = o.reglages || {};
+    var prets = o.dossiers.filter(function(d){ return d.pret; }).length;
+    var hors = o.dossiers.filter(function(d){ return !d.declarable; }).length;
+    $("panBamara").innerHTML =
+      '<div class="grille" style="margin-bottom:18px">' +
+        tuile("dossiers prêts", prets) +
+        tuile("à compléter", o.dossiers.length - prets - hors) +
+        tuile("hors périmètre", hors) +
+      "</div>" +
+      '<div class="bloc"><h3>Réglages du site</h3>' +
+        '<p class="note">Propres à l\'établissement : ils ne sont pas dans le dépôt, ' +
+        "ils vivent dans <span class=\"mono\">bamara.json</span> à côté de la base. " +
+        "Sans code de site, aucun dossier ne peut partir.</p>" +
+        '<div class="row">' + BAM_REGLAGES.map(function(k){
+          return '<div class="field" style="flex:0 1 220px"><label for="bam_' + k + '">' +
+                 esc(k) + '</label><input type="text" id="bam_' + k + '" value="' +
+                 esc(r[k] == null ? "" : String(r[k])) + '"></div>';
+        }).join("") +
+        '<div class="field" style="flex:0 0 auto"><label>&nbsp;</label>' +
+        '<button class="btn" id="bamEnregistrer" type="button">Enregistrer</button></div></div></div>' +
+      '<div class="bloc"><h3>État des dossiers</h3><div class="scroll"><table>' +
+        "<thead><tr><th>Dossier</th><th>Issue</th><th>État</th><th>Ce qui manque</th>" +
+        "<th></th></tr></thead><tbody>" +
+        o.dossiers.map(function(d){
+          var etat = !d.declarable
+            ? '<span class="pastille">hors périmètre</span>'
+            : d.pret ? '<span class="pastille ok">prêt</span>'
+                     : '<span class="pastille chaud">' + d.bloquants.length + " bloquant(s)</span>";
+          var manque = !d.declarable ? "—"
+            : d.bloquants.concat(d.incomplets).map(function(m){
+                return (m.bloquant ? "<b>" : "") + esc(m.libelle) + (m.bloquant ? "</b>" : "") +
+                       ' <span class="note" style="margin:0">· ' + esc(m.source) + "</span>";
+              }).join("<br>") || "rien";
+          return "<tr><td>" +
+            '<button class="btn ghost mini" type="button" data-va="' + esc(d.dossier) + '">' +
+            esc(d.dossier) + "</button></td><td>" + esc(d.type_issue || "—") + "</td><td>" +
+            etat + "</td><td>" + manque + "</td><td>" +
+            (d.declarable ? '<button class="btn ghost mini" type="button" data-bam="' +
+                            esc(d.dossier) + '">document</button>' : "") + "</td></tr>";
+        }).join("") + "</tbody></table></div></div>" +
+      '<p class="note">Cette page prépare, elle n\'envoie pas : elle ne connaît ni ' +
+      "l'interface de BaMaRa ni ses identifiants. Ce qu'elle produit est le document " +
+      "au format du modèle SDM, à relire avant tout dépôt. Le masque des dates " +
+      "partielles est laissé vide tant que son codage n'est pas confirmé — un code " +
+      "inventé serait pire qu'un champ absent.</p>";
+    $("bamEnregistrer").onclick = function(){
+      var d = {};
+      BAM_REGLAGES.forEach(function(k){
+        var v = $("bam_" + k).value.trim();
+        d[k] = (k === "site_id") ? (v === "" ? null : parseInt(v, 10)) : v;
+      });
+      api("/api/bamara/reglages", {method:"PUT",
+          headers:{"Content-Type":"application/json"}, body: JSON.stringify(d)})
+        .then(function(){ flash("Réglages enregistrés."); recharger("bamara"); })
+        .catch(function(e){ flash("Refusé : " + e.message); });
+    };
+  }).catch(function(e){ $("panBamara").innerHTML = vide("Préparation impossible : " + e.message); });
+}
+$("panBamara").addEventListener("click", function(e){
+  var v = e.target.closest("button[data-va]");
+  if (v){ versDossier(v.dataset.va); return; }
+  var b = e.target.closest("button[data-bam]");
+  if (!b) return;
+  var n = b.dataset.bam;
+  api("/api/bamara/" + encodeURIComponent(n)).then(function(o){
+    telecharger(n + "_bamara.json", JSON.stringify(o.document, null, 1));
+    flash("Document de " + n + " téléchargé.");
+  }).catch(function(e){ flash("Échec : " + e.message); });
+});
+
+/* ── Modules servis ──────────────────────────────────────────────────────── */
+function pageModules(){
+  $("panModules").innerHTML = vide("Lecture du dépôt…");
+  api("/api/modules").then(function(o){
+    var noms = Object.keys(o).sort();
+    var ini = ($("operateur") && $("operateur").value.trim()) || "";
+    $("panModules").innerHTML =
+      '<div class="scroll"><table><thead><tr><th>Module</th><th>Titre</th><th>Version</th>' +
+      "<th>Schéma</th><th>Groupe</th><th>Repris</th><th></th></tr></thead><tbody>" +
+      noms.map(function(n){
+        var m = o[n];
+        var url = "/modules/" + encodeURIComponent(n) + (ini ? "?operateur=" + encodeURIComponent(ini) : "");
+        return '<tr' + (m.ingerable ? "" : ' class="gris"') + '><td class="mono">' + esc(n) +
+               "</td><td>" + esc(m.titre || "—") + "</td><td>" + esc(m.module_version || "—") +
+               "</td><td>" + esc(m.schema_version || "—") + "</td><td>" + esc(m.groupe || "") +
+               "</td><td>" + (m.ingerable ? "oui" :
+                 '<span class="note" style="margin:0">pas d\'adaptateur</span>') +
+               '</td><td><a class="btn ghost mini" ' +
+               'href="' + url + '" target="_blank" rel="noopener">ouvrir</a></td></tr>';
+      }).join("") + "</tbody></table></div>" +
+      '<p class="note">« Repris » dit si le hub sait ranger ce module en base : un ' +
+      "module sans adaptateur s'ouvre et s'exporte, mais son JSON serait rejeté à " +
+      "l'ingestion. Les grilles de microscopie sont dans ce cas.</p>" +
+      '<p class="note">Les versions viennent des fichiers eux-mêmes, pas d\'une liste ' +
+      "tenue à la main : un module rediffusé change ici sans qu'on touche au serveur. " +
+      "Ouvrir un module depuis cette page le sert avec la liaison au hub greffée ; le " +
+      "même fichier ouvert par double-clic reste le document autonome qu'il a toujours été.</p>";
+  }).catch(function(e){ $("panModules").innerHTML = vide("Dépôt illisible : " + e.message); });
+}
+
+/* ── Sauvegarde ──────────────────────────────────────────────────────────── */
+function pageSauvegarde(){
+  $("panSauvegarde").innerHTML = vide("Pesée…");
+  api("/api/sauvegarde").then(function(o){
+    $("panSauvegarde").innerHTML =
+      '<div class="scroll" style="margin-bottom:14px"><table><thead><tr><th>Quoi</th>' +
+      "<th>Fichiers</th><th>Poids</th></tr></thead><tbody>" +
+      o.detail.map(function(d){
+        return '<tr><td class="mono">' + esc(d.quoi) + '</td><td class="num">' +
+               d.fichiers + '</td><td class="num">' + poids(d.octets) + "</td></tr>";
+      }).join("") + '<tr><td><b>total</b></td><td></td><td class="num"><b>' +
+      poids(o.octets) + "</b></td></tr></tbody></table></div>" +
+      '<div class="row"><div class="field" style="flex:1 1 340px">' +
+      '<label for="svDest">Dossier de destination</label>' +
+      '<input type="text" id="svDest" class="mono" placeholder="D:\\sauvegardes" ' +
+      'autocomplete="off"></div><div class="field" style="flex:0 0 auto"><label>&nbsp;</label>' +
+      '<button class="btn" id="svGo" type="button">Sauvegarder</button></div></div>' +
+      '<div id="svRapport"></div>' +
+      '<p class="note">Un chemin absolu, hors du hub — sauvegarder dans le dossier ' +
+      "qu'on sauvegarde ne protège de rien. La base est copiée par la fonction de " +
+      "sauvegarde de SQLite et non par une copie de fichier : un fichier recopié " +
+      "pendant une écriture ne vaut rien, et c'est le jour où l'on en a besoin qu'on " +
+      "s'en aperçoit. Le dépôt n'étant pas sous git sur ce poste, c'est le seul filet.</p>";
+    try { $("svDest").value = localStorage.getItem("hub_sauvegarde") || ""; } catch(e){}
+    $("svGo").onclick = function(){
+      var d = $("svDest").value.trim();
+      if (!d){ flash("Indiquer un dossier."); return; }
+      try { localStorage.setItem("hub_sauvegarde", d); } catch(e){}
+      this.disabled = true;
+      $("svRapport").innerHTML = '<p class="note">Copie en cours…</p>';
+      var bouton = this;
+      api("/api/sauvegarde", {method:"POST", headers:{"Content-Type":"application/json"},
+                              body: JSON.stringify({destination: d})})
+        .then(function(o){
+          $("svRapport").innerHTML = '<div class="alerte">Sauvegardé dans <span class="mono">' +
+            esc(o.destination) + "</span> — " + poids(o.octets) + ".</div>";
+          flash("Sauvegarde terminée.");
+        })
+        .catch(function(e){
+          $("svRapport").innerHTML = "";
+          flash("Sauvegarde refusée : " + e.message);
+        })
+        .then(function(){ bouton.disabled = false; });
+    };
+  }).catch(function(e){ $("panSauvegarde").innerHTML = vide("Pesée impossible : " + e.message); });
+}
+
+/* ── Affichage ───────────────────────────────────────────────────────────── */
+/* Des réglages de confort, gardés dans ce navigateur et nulle part ailleurs :
+   ils ne regardent que celui qui lit, pas le dossier. */
+var THEMES = [
+  { cle:"clair",   l:"Clair",
+    d:"Celui d'origine : papier, encre et un vert de drapé. Prévu pour être lu " +
+      "longtemps et pour s'imprimer sans rien perdre." },
+  { cle:"sombre",  l:"Sombre",
+    d:"Les mêmes rapports de contraste, les luminosités retournées. Pour une " +
+      "salle mal éclairée ou une relecture tardive." },
+  { cle:"w98",     l:"Windows 98",
+    d:"Gris 3D, biseaux et barre de titre bleu marine. Aucune image : le relief " +
+      "vient de quatre bordures de couleurs différentes, comme à l'époque." },
+  { cle:"cli",     l:"Terminal",
+    d:"Une seule police, un seul plan, du phosphore. Les boutons redeviennent " +
+      "du texte entre crochets." }
+];
+function theme(){ try { return localStorage.getItem("hub_theme") || "clair"; } catch(e){ return "clair"; } }
+function poserTheme(c){
+  try { localStorage.setItem("hub_theme", c); } catch(e){}
+  THEMES.forEach(function(x){ document.body.classList.remove("theme-" + x.cle); });
+  if (c !== "clair") document.body.classList.add("theme-" + c);
+  appliquerOptions();
+}
+
+var OPTIONS = [
+  { cle:"compact",       l:"Liste et tableaux compacts",
+    d:"Moins d'air entre les lignes — utile sur un écran de portable." },
+  { cle:"sansVides",     l:"Masquer les champs non renseignés",
+    d:"La fiche ne montre plus que ce qui a été saisi. Attention : un champ vide " +
+      "est une information, et il disparaît aussi." },
+  { cle:"sansVignettes", l:"Masquer les vignettes des clichés",
+    d:"Les légendes restent. Pratique pour relire un dossier à côté de quelqu'un." },
+  { cle:"grand",         l:"Texte agrandi",
+    d:"Toute la page d'un cran au-dessus." }
+];
+function lireOption(c){ try { return localStorage.getItem("hub_opt_" + c) === "1"; } catch(e){ return false; } }
+function appliquerOptions(){
+  OPTIONS.forEach(function(o){ document.body.classList.toggle(o.cle, lireOption(o.cle)); });
+  var c = theme();
+  THEMES.forEach(function(x){
+    document.body.classList.toggle("theme-" + x.cle, x.cle !== "clair" && x.cle === c);
+  });
+}
+function pageAffichage(){
+  var actuel = theme();
+  $("panAffichage").innerHTML =
+    '<div class="bloc"><h3>Thème</h3><div class="row">' +
+    THEMES.map(function(x){
+      return '<div class="field" style="flex:1 1 240px">' +
+        '<label class="chk" style="font-size:14.5px"><input type="radio" name="theme" ' +
+        'data-theme="' + x.cle + '"' + (x.cle === actuel ? " checked" : "") + "> " +
+        esc(x.l) + '</label><p class="note" style="margin:4px 0 0 22px">' + esc(x.d) +
+        "</p></div>";
+    }).join("") + "</div></div>" +
+    OPTIONS.map(function(o){
+      return '<div class="bloc"><label class="chk" style="font-size:14.5px">' +
+        '<input type="checkbox" data-opt="' + o.cle + '"' + (lireOption(o.cle) ? " checked" : "") +
+        "> " + esc(o.l) + '</label><p class="note" style="margin:4px 0 0 22px">' +
+        esc(o.d) + "</p></div>";
+    }).join("") +
+    '<p class="note">Ces réglages restent dans ce navigateur : ils ne partent pas au ' +
+    "hub, ne suivent pas sur un autre poste, et ne changent rien aux données.</p>";
+}
+$("panAffichage").addEventListener("change", function(e){
+  var th = e.target.closest("input[data-theme]");
+  if (th){ poserTheme(th.dataset.theme); return; }
+  var c = e.target.closest("input[data-opt]");
+  if (!c) return;
+  try { localStorage.setItem("hub_opt_" + c.dataset.opt, c.checked ? "1" : "0"); } catch(err){}
+  appliquerOptions();
+});
+
+var CHARGEURS = {
+  qualite: pageQualite, stats: pageStats, cr: pageCr,
+  bamara: pageBamara, modules: pageModules, sauvegarde: pageSauvegarde,
+  affichage: pageAffichage
+};
+[["btnQualite","qualite"],["btnStats","stats"],["btnCrRech","cr"],
+ ["btnBamara","bamara"],["btnModules","modules"]].forEach(function(x){
+  var b = $(x[0]); if (b) b.onclick = function(){ recharger(x[1]); };
+});
+
+appliquerOptions();
+/* La section de pilotage vit désormais dans la page Ingestion. On la déplace
+   plutôt que d'en écrire une seconde : mêmes boutons, mêmes gestionnaires. */
+(function(){
+  var s = $("secPilote");
+  if (s) $("pg_ingestion").appendChild(s);
+})();
+batirRuban();
+allerA("dossiers");
+
+/* Index embarqué : le script d'ingestion peut remplacer la ligne ci-dessous
+   pour produire une page qui s'ouvre déjà remplie. */
+var INDEX_EMBARQUE = null;
+if (!SERVI && INDEX_EMBARQUE) {
+  try { charger(INDEX_EMBARQUE, "index embarqué"); $("secSource").hidden = true; }
+  catch(e){ flash("Index embarqué illisible : " + e.message); }
+}
+
+/* ── Banc d'essai : ?selftest=1 ───────────────────────────────────────────── */
+if (/[?&]selftest=1/.test(location.search)){
+  (function(){
+    var ok = 0, ko = [];
+    function chk(nom, cond){ if (cond) ok++; else ko.push(nom); }
+    var faux = {
+      genere_at: "2026-01-01T00:00:00", modules_attendus: ["administratif","radio","autopsie"],
+      modules: {administratif:{module:"administratif"}, radio:{module:"radio"},
+                autopsie:{module:"autopsie"}},
+      dossiers: [{
+        numero:"26P0123", statut:"en_cours", terme_sa:24, terme_jours:3, sexe:"M",
+        type_issue:"IMG", date_reception:"2026-01-02", date_examen:"2026-01-03",
+        indication:"Contrôle", remarques:"à relire", cliches:1,
+        derniere_ingestion:"2026-01-04 10:00",
+        saisies:[
+          {module:"radio", module_version:"1.0.0", schema_version:"0.1.0", operateur:"RM",
+           exported_at:"2026-01-03", ingere_at:"2026-01-04", archive:"archive/x.json",
+           provenance:"telephone",
+           donnees:{schema_version:"0.1.0",
+                    squelette:{aspect_general:"Normal", cotes:{droite:12, gauche:12}},
+                    hpo:[{code:"HP:0001", term_fr:"Un terme", source:"chip"}]}},
+          {module:"autopsie", module_version:"1.0.2", schema_version:"0.1.0", operateur:"RM",
+           exported_at:"2026-01-03", ingere_at:"2026-01-04", archive:"archive/y.json",
+           provenance:"poste",
+           donnees:{etapes:[{id:"ouverture", titre:"Ouverture", champs:[
+             {id:"situs", label:"Situs", type:"chips", valeurs:["Inversus"]},
+             {id:"ep", label:"Épanchement", type:"num", valeur:null, unite:"mL"},
+             {id:"coeur", label:"Cœur", type:"masse", grammes:12,
+              zscores:{gc:-3.4, ma:null, mb:null}}]}]}}
+        ],
+        photos:[{module:"radio", cle:"k", label:"L", etape:"e",
+                 chemin:"photos/26P0123/radio/k.jpg", largeur:100, hauteur:80}],
+        historique:[{module:"radio", module_version:"0.9.0", provenance:"telephone",
+                     ingere_at:"2026-01-02", archive:"archive/vieux.json"}],
+        anomalies:[{etage_titre:"Général", item_label:"Symétrie",
+                    anomalies:"Asymétrie", precisions:null}],
+        alertes:["une alerte"],
+        masses:[{mesure:"coeur_masse", libelle:"Cœur", valeur:12, z_gc:-3.1, z_ma:null, z_mb:null}]
+      }]
+    };
+    charger(faux, "banc d'essai");
+    chk("index chargé",             INDEX.dossiers.length === 1);
+    chk("liste rendue",             document.querySelectorAll(".cas[data-num]").length === 1);
+    chk("terme lisible",            terme(INDEX.dossiers[0]) === "24 SA + 3 j");
+    chk("date en clair",            dateCourte("2026-01-02") === "02/01/2026");
+    chk("lisible : booléen",        lisible("true") === "oui" && lisible(false) === "non");
+    chk("lisible : liste",          lisible(["a","b"]) === "a · b");
+    chk("filtre plein texte",       ($("q").value = "asym", filtres().length === 0));
+    chk("filtre sur numéro",        ($("q").value = "26P", filtres().length === 1));
+    chk("filtre sur remarques",     ($("q").value = "relire", filtres().length === 1));
+    $("q").value = "";
+    chk("filtre module manquant",   ($("fManque").value = "administratif", filtres().length === 1));
+    chk("filtre module présent",    ($("fManque").value = "radio", filtres().length === 0));
+    $("fManque").value = "";
+    STATUT = "clos"; chk("filtre statut", filtres().length === 0);
+    STATUT = ""; rendrePilules(); rendreListe();
+
+    ouvrir("26P0123");
+    chk("un onglet par module",     document.querySelectorAll('.onglet[data-o^="m_"]').length === 3);
+    chk("onglet clichés",           !!document.querySelector('.onglet[data-o="cliches"]'));
+    chk("onglet historique",        !!document.querySelector('.onglet[data-o="historique"]'));
+    chk("pastille module reçu",     !!document.querySelector('.onglet[data-o="m_radio"] .pt.on'));
+    chk("pastille saisie du poste", !!document.querySelector('.onglet[data-o="m_autopsie"] .pt.poste'));
+    var h = $("panneau").innerHTML;
+    chk("dossier : modules",        h.indexOf("attendu") >= 0 && h.indexOf("administratif") >= 0);
+    chk("dossier : alerte",         h.indexOf("une alerte") >= 0);
+    chk("dossier : z signalé",      h.indexOf("z fort") >= 0);
+    chk("dossier : anomalie",       h.indexOf("Asymétrie") >= 0);
+
+    ONGLET = "m_autopsie"; ouvrir("26P0123", true);
+    h = $("panneau").innerHTML;
+    chk("étapes : titre",           h.indexOf("Ouverture") >= 0);
+    chk("étapes : puces",           h.indexOf("Inversus") >= 0);
+    chk("étapes : masse et z",      h.indexOf("12 g") >= 0 && h.indexOf("-3.40") >= 0);
+    chk("étapes : champ vide gris", h.indexOf('class="gris"') >= 0);
+    chk("étapes : entrée poste",    h.indexOf("tapée sur le poste") >= 0);
+
+    ONGLET = "m_radio"; ouvrir("26P0123", true);
+    h = $("panneau").innerHTML;
+    chk("arbre : sous-objet",       h.indexOf("squelette") >= 0 && h.indexOf("Normal") >= 0);
+    chk("arbre : liste d'objets",   h.indexOf("HP:0001") >= 0 && h.indexOf("term fr") >= 0);
+    chk("arbre : enveloppe exclue", h.indexOf("schema version") < 0);
+    chk("arbre : date à précision", dateVariable({annee:2026,mois:3,jour:14}) === "14/03/2026" &&
+                                    dateVariable({annee:2026,mois:3}) === "03/2026" &&
+                                    dateVariable({annee:2026}) === "2026" &&
+                                    dateVariable({a:1}) === null);
+
+    ONGLET = "m_administratif"; ouvrir("26P0123", true);
+    chk("module absent annoncé",    $("panneau").innerHTML.indexOf("pas encore arrivé") >= 0);
+
+    ONGLET = "cliches"; ouvrir("26P0123", true);
+    h = $("panneau").innerHTML;
+    chk("clichés : vignette",       h.indexOf("vignettes/k.jpg") >= 0);
+    chk("clichés : repli",          h.indexOf("photos/26P0123/radio/k.jpg") >= 0);
+
+    ONGLET = "historique"; ouvrir("26P0123", true);
+    chk("historique : ancienne",    $("panneau").innerHTML.indexOf("archive/vieux.json") >= 0);
+
+    ONGLET = "dossier";
+    chk("échappement HTML",         esc('<b>&"') === "&lt;b&gt;&amp;&quot;");
+    chk("index vide refusé",        (function(){ try { charger({}, "x"); return false; }
+                                                 catch(e){ return true; } })());
+    charger(faux, "banc d'essai"); ouvrir("26P0123");
+    var n = ok + ko.length;
+    var b = document.createElement("div");
+    b.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99;padding:8px 12px;" +
+      "font-family:ui-monospace,monospace;font-size:12px;color:#fff;background:" +
+      (ko.length ? "#9C3A28" : "#0E6B62");
+    b.textContent = (ko.length ? "ÉCHEC : " + ko.join(" · ") + " — " : "OK : ") + ok + "/" + n;
+    document.body.appendChild(b);
+    document.querySelector(".wrap").style.paddingTop = "40px";
+  })();
+}
+</script>
+</body>
+</html>

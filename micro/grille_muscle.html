@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grille de lecture — muscle squelettique</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --alert-soft:#F7EAE7;
+  --amber:#8A6A18; --amber-soft:#F6F0DE;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off button,section.off input,section.off select{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 170px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],input[type=number],textarea{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+input[type=number]{font-family:var(--mono);letter-spacing:.03em}
+textarea{resize:vertical;min-height:60px;font-size:15px}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+/* ── Boutons-clics : toute la saisie sémantique passe par là ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font-family:var(--sans);font-size:14px;line-height:1.25;
+  border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+  border-radius:2px;padding:8px 11px;cursor:pointer;min-height:38px;text-align:left}
+.chip:hover{background:var(--drape-soft)}
+.chip:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.chip.on{background:var(--drape);border-color:var(--drape);color:#fff;font-weight:600}
+.chip.no{background:var(--alert-soft);border-color:var(--alert);color:var(--alert);font-weight:600}
+.chip.sugg{border-color:var(--amber);border-style:dashed}
+.chip[data-act=foeto]::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;background:var(--drape);opacity:.55}
+.chip.on[data-act=foeto]::after{background:#fff}
+.plus{font-size:13px;color:var(--drape);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline dotted}
+.rech{position:relative;margin-top:8px}
+.rech input{font:inherit;font-size:14px;padding:6px 10px;border:1px solid #bbb;border-radius:8px;width:min(100%,24rem)}
+.sugg{position:absolute;z-index:5;background:#fff;border:1px solid #bbb;border-radius:8px;max-height:12rem;overflow:auto;width:min(100%,24rem);display:none}
+.sugg.on{display:block}
+.sugg div{padding:5px 10px;cursor:pointer;font-size:14px}
+.sugg div:hover{background:var(--drape-soft)}
+.sugg small{color:#777}
+.chip .k{font-family:var(--mono);font-size:10px;letter-spacing:.07em;opacity:.75;
+         display:block;text-transform:uppercase}
+
+.item{border-top:1px solid var(--rule);padding:10px 0}
+.item:first-child{border-top:0}
+.item .head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.item .lbl{flex:1 1 240px;min-width:0;font-size:15px}
+.item .meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-soft);
+            display:block;margin-top:2px}
+.item .meta.bon{color:var(--drape)} .item .meta.mauvais{color:var(--alert)}
+.item .meta.moyen{color:var(--amber)}
+.unfold{margin:9px 0 0 0;padding:9px 0 0;border-top:1px dashed var(--rule)}
+.unfold[hidden]{display:none}
+.stop{font-size:13px;line-height:1.35;color:var(--alert);background:var(--alert-soft);
+      border-left:2px solid var(--alert);padding:6px 9px;margin-top:8px}
+.stop b{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+
+.verdict{font-size:14px;line-height:1.4;border-left:3px solid var(--rule);
+         padding:7px 10px;margin-top:11px;background:var(--paper)}
+.verdict.ok{border-color:var(--drape);background:var(--drape-soft)}
+.verdict.warn{border-color:var(--amber);background:var(--amber-soft)}
+.verdict.bad{border-color:var(--alert);background:var(--alert-soft)}
+.verdict b{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+           display:block;color:var(--ink-soft)}
+
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+.sousTitre:first-child{margin-top:0}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:var(--alert-soft)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+pre.cr{font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;
+  padding:12px;margin:0 0 10px;max-height:44vh;overflow:auto}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · lecture microscopique</p>
+  <h1>Grille de lecture — muscle squelettique <span class="ver" id="ver"></span></h1>
+  <p class="sub">Sortie de <code>fiche_muscle.md</code>. Tout se clique ; seuls le dossier, le terme et les comptes se tapent. Document autonome : rien n'est transmis.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Libre, mis en majuscules. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Lecteur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la grille.</div>
+    </div>
+    <div class="field">
+      <label for="sa">Terme (SA)</label>
+      <input type="number" id="sa" min="8" max="45" step="1" inputmode="numeric" placeholder="—">
+      <div class="hint" id="saHint">SA = semaines de gestation + 2. Commande le stade attendu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — Prélèvement -->
+<section id="secPrelevement" class="off">
+  <h2><span class="n">02</span>Prélèvement<span class="tally" id="tPrelevement">—</span></h2>
+  <div id="coteBloc" hidden>
+    <div class="sousTitre">Côté prélevé</div>
+    <div class="chips" id="cote" style="margin-bottom:11px"></div>
+  </div>
+  <div class="chips" id="prelevement"></div>
+  <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
+</section>
+
+<!-- 03 — Rétention -->
+<section id="secRetention" class="off">
+  <h2><span class="n">03</span>Rétention<span class="tally" id="tRetention">—</span></h2>
+  <div id="retention"></div>
+  <div class="chips" id="kcl" style="margin-top:11px"></div>
+  <div class="verdict" id="vRetention"><b>Borne inférieure</b>—</div>
+</section>
+
+<!-- 04 — Maturation -->
+<section id="secMaturation" class="off">
+  <h2><span class="n">04</span>Maturation<span class="tally" id="tMaturation">—</span></h2>
+  <div class="sousTitre" id="stTitre">Stade observé</div>
+  <div class="chips" id="stades"></div>
+  <div id="mesure"></div>
+  <div class="verdict" id="vMaturation"><b>Lecture</b>—</div>
+  <div class="verdict" id="vMesure" hidden><b>Mesure</b>—</div>
+</section>
+
+<!-- 05 — Variantes normales -->
+<section id="secVariantes" class="off">
+  <h2><span class="n">05</span>Variantes normales<span class="tally" id="tVariantes">—</span></h2>
+  <p class="note" style="margin-top:0">Cliquer ce qui est vu et écarté comme normal. Rien de coché ne veut pas dire absent : ça veut dire non regardé.</p>
+  <div class="chips" id="variantes" style="margin-top:10px"></div>
+</section>
+
+<!-- 06 — Signes -->
+<section id="secSignes" class="off">
+  <h2><span class="n">06</span>Signes<span class="tally" id="tSignes">—</span></h2>
+  <p class="note" style="margin-top:0">On coche des signes, pas des diagnostics. Les associations en dessous se déduisent de ce qui est coché : elles s'affichent, elles ne se choisissent pas.</p>
+  <div id="signes" style="margin-top:10px"></div>
+  <div class="sousTitre" style="margin-top:16px">Associations lues</div>
+  <div id="diags"></div>
+</section>
+
+<!-- 07 — Termes FOETO attestés par la fiche -->
+<section id="secFoeto" class="off">
+  <h2><span class="n">07</span>Termes FOETO<span class="tally" id="tFoeto">—</span></h2>
+  <p class="note" style="margin-top:0">Les termes du vocabulaire FOETO que la fiche de l'organe retient comme lésions, par sous-section. Un terme coché est présent ; rien de coché ne veut pas dire absent.</p>
+  <div id="foeto"></div>
+  <button type="button" class="plus" id="foetoPlus" hidden>▸ tous les termes attestés</button>
+  <div class="chips" id="foetoTous" hidden style="margin-top:6px"></div>
+  <div class="rech" id="foetoRech" hidden><input type="text" id="rqFoeto" placeholder="rechercher un terme (3 lettres)…" autocomplete="off"><div class="sugg" id="sgFoeto"></div></div>
+</section>
+
+<!-- 08 — Négatifs obligatoires -->
+<section id="secNegatifs" class="off">
+  <h2><span class="n">08</span>Négatifs obligatoires<span class="tally" id="tNegatifs">—</span></h2>
+  <div class="btns" style="margin-bottom:11px">
+    <button class="btn" id="btnNegAll">Tous vérifiés</button>
+  </div>
+  <div id="negatifs"></div>
+</section>
+
+<!-- 08 — Techniques -->
+<section id="secTechniques" class="off">
+  <h2><span class="n">09</span>Techniques<span class="tally" id="tTechniques">—</span></h2>
+  <p class="note" style="margin-top:0" id="techNote"></p>
+  <div class="chips" id="techniques" style="margin-top:10px"></div>
+</section>
+
+<!-- 09 — Compte rendu -->
+<section id="secCR" class="off">
+  <h2><span class="n">10</span>Compte rendu<span class="tally" id="tCR">—</span></h2>
+  <pre class="cr" id="cr">—</pre>
+  <div class="row">
+    <div class="field" style="flex:1 1 100%">
+      <label for="libre">Remarque libre</label>
+      <textarea id="libre" placeholder="Ce que la grille ne prévoit pas."></textarea>
+    </div>
+  </div>
+  <div class="btns" style="margin-top:10px">
+    <button class="btn" id="btnCopie">Copier le compte rendu</button>
+  </div>
+</section>
+
+<!-- 10 — Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n">11</span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Vider le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- 11 — Diagnostic -->
+<section>
+  <h2><span class="n">12</span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante, aucun fetch : doit fonctionner par double-clic hors réseau.
+
+   Ce module est la SORTIE de fiche_muscle.md, jamais l'inverse. Les bornes, les
+   spécificités et les « ce qu'il ne faut pas conclure » sont recopiés de la
+   fiche ; ils ne se corrigent pas ici mais dans la fiche.
+
+   La grille ne conclut pas : elle contraint la description et rend ses
+   réserves visibles. Un critère non cliqué n'est pas un négatif — c'est un
+   non-regardé, et le compte rendu le dit.
+
+   Fichier ENGENDRÉ par gen_grille.py depuis grilles/muscle.js.
+   Corriger le fragment, pas ce fichier.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  FRAGMENT D'ORGANE — grilles/muscle.js                            ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+/* Grille de lecture — muscle squelettique.
+   Fond : ~/Bureau/fiches_lecture/fiche_muscle.md (§1 à §9).
+   Forme : gen_grille.py, calquée sur grille_poumon.html.
+   Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
+
+var ORGANE  = "muscle";
+var TITRE   = "muscle squelettique";
+var SOURCE  = "fiche_muscle.md";
+var MODULE  = "grille_muscle";
+var VERSION = "1.0.1";
+/* La fiche ne latéralise jamais le muscle : elle le NOMME. Un quadriceps droit et
+   un quadriceps gauche se comparent, un quadriceps et un diaphragme non — c'est le
+   NOM du muscle qui commande la norme, pas son côté (§ 1, § 9.7). */
+var PAIR    = false;
+
+var TITRE_CR    = "MUSCLE SQUELETTIQUE";
+var STADE_TITRE = "Stade de maturation musculaire — échelle de QUADRICEPS, en SA";
+
+var KCL_TXT = "Fœticide par KCl déclaré. Le muscle ne date déjà aucun intervalle post-mortem — il est " +
+              "absent de la Table 15.6 et le mot « muscle » ne rend aucun chunk du chapitre de " +
+              "macération d'[ernst, ch. 37] ; après le geste, plus aucune borne n'est recevable.";
+
+/* Un « retard » lu sur du muscle est d'abord une question de muscle, ensuite une
+   question de terme : chaque muscle a son propre profil et aucun autre que le
+   quadriceps n'est décrit (§ 9.7). */
+var RETARD_NOTE = "Avant de lire un retard : sur quel muscle ? L'échelle ci-dessus est une échelle de " +
+                  "QUADRICEPS. « tous les muscles possèdent dans une certaine mesure leur propre profil " +
+                  "de développement » [soffoet, ch. 10], et la source ne donne le profil d'AUCUN autre " +
+                  "muscle — un retard lu sur le diaphragme ou le psoas peut être un profil de diaphragme " +
+                  "ou de psoas. Le seul retard de maturation musculaire qui porte un nom est la persistance " +
+                  "de myotubes après 18 SA (Steinert congénital), et le discriminant est le terme, pas la lame.";
+
+var AVANCE_NOTE = "Une avance ne se lit pas sur cet organe : l'échelle de [soffoet, ch. 10] n'a que trois " +
+                  "étages et son étage 2 repose sur une source unique et francophone (le mot « Wohlfart » " +
+                  "n'existe que dans soffoet ch. 10, § 9.4). Un calibre déjà uniforme avant 35 SA se " +
+                  "consigne ; il ne se conclut pas.";
+
+var TECH_NOTE = "Les pointillés sont des propositions déduites des clics, jamais des prescriptions. " +
+                "HES, Gomori et PAS sont déjà de pratique de service ; l'immunohistochimie musculaire " +
+                "n'existe dans aucun CR du corpus — la proposer, c'est ouvrir une pratique, pas la rappeler. " +
+                "Tout ce qui exige du congelé est mort avant la première coupe sur un fœtus fixé.";
+
+/* ── 01 · Prélèvement ─────────────────────────────────────────────────────── */
+var PRELEV = [
+  { k:"quadriceps", l:"Quadriceps prélevé et nommé comme tel", grave:true,
+    manque:"« The quadriceps muscle, which is generally used as a reference muscle in pathology… » " +
+           "[keeling, ch. 31] — l'échelle de maturation du § 3 est une échelle de quadriceps et d'aucun " +
+           "autre muscle" },
+  { k:"vasteLat",   l:"Site précisé : vaste latéral en sa partie moyenne",
+    manque:"[soffoet, ch. 10] nomme le site, pas seulement le muscle ; deltoïde, biceps et jambier " +
+           "antérieur sont les références secondaires" },
+  { k:"diaphragme", l:"Diaphragme prélevé ou son aspect noté", grave:true,
+    manque:"« Note should also be made regarding the appearance of the diaphragms, psoas, and " +
+           "paravertébral muscles to give further impression of the severity of any wasting or " +
+           "hypotrophy » [keeling, ch. 31]" },
+  { k:"antagoniste", l:"Muscle ANTAGONISTE de la contracture prélevé",
+    manque:"« the abnormalities are generally most marked in muscles opposing the contracture » " +
+           "[keeling, ch. 31] — le prélèvement standard du service est fixe et n'est jamais adapté " +
+           "à la contracture" },
+  { k:"transversale", l:"Coupe transversale disponible",
+    manque:"calibre, dispersion et pourcentage de noyaux internes ne se lisent que sur coupe " +
+           "transversale — mais AUCUNE source ne le prescrit pour l'HES (§ 9.1) : c'est un trou de " +
+           "sourçage, pas une évidence" },
+  { k:"assez",      l:"Assez de muscle sur la lame pour juger les fascicules", grave:true,
+    manque:"« it is therefore important in the case of the fetus to examine sufficient muscle tissue » " +
+           "[keeling, ch. 31] — la parade au piège des petites fibres rondes est QUANTITATIVE" },
+  { k:"adn",        l:"Fragment en DNAthèque",
+    manque:"« It is imperative that sufficient DNA be stored to enable molecular testing, which will " +
+           "be vital in most cases » [keeling, ch. 31] ; le corpus le fait déjà — « Pour DNAthèque : " +
+           "poumon, muscle » [corpus CR]" },
+  { k:"fibroblastes", l:"Peau prélevée pour CULTURE de fibroblastes",
+    manque:"« A skin sample should be submitted for fibroblast culture storage in case metabolic " +
+           "enzyme testing is required » [keeling, ch. 31] — le corpus prélève de la peau, jamais " +
+           "pour la culture (§ 9.21). C'est irréversible" },
+  { k:"moelle",     l:"Moelle épinière prélevée aux trois niveaux (cervical, distal, lombaire)",
+    manque:"sans la moelle, le muscle seul ne sépare pas neurogène de myogène [soffoet, ch. 22] — " +
+           "le prélèvement se décide ici, la lecture relève de neuropath" },
+  { k:"congele",    l:"Fragment CONGELÉ pour enzymologie",
+    manque:"ATPase, NADH-TR et COX/SDH exigent du congelé : sans lui l'axe du typage est perdu " +
+           "avant la première coupe, quelle que soit la macération" }
+];
+
+/* ── 02 · Rétention ───────────────────────────────────────────────────────────
+   Résultat NÉGATIF du § 2 : le muscle n'a AUCUN rang dans la séquence de
+   macération. Une seule ligne « bon », et elle est empruntée aux autres organes —
+   même construction qu'au thymus, pour la même raison : ne rien interpoler. */
+var MODIF = "délai accéléré par l'anasarque et par un intervalle délivrance-autopsie > 24 h ; sur le " +
+            "muscle aucun modificateur n'est sourcé, ceux-ci sont ceux des organes qui portent la borne";
+
+var RETENTION = [
+  { k:"horsMuscle", l:"Rang de rétention établi sur les AUTRES organes", b:"celle des autres organes",
+    d:"lue hors muscle, Table 15.6", h:1, q:"bon",
+    note:"le muscle squelettique ne figure à aucun des dix rangs de [keeling, ch. 15, Table 15.6], et " +
+         "une recherche des mots « muscle » et « skeletal » dans tout le chapitre 37 d'[ernst] ne rend " +
+         "aucun chunk — la borne portée ici est celle du rein, du foie, du myocarde ou du poumon, " +
+         "jamais celle du muscle ; deux lectures restent ouvertes et aucune n'est sourcée (§ 9.2) : " +
+         "soit le muscle n'a pas été étudié, soit il ne date pas",
+    alerte:MODIF },
+  { k:"basophiliePerdue", l:"Perte de basophilie nucléaire des fibres", b:"—", d:"non situable au muscle",
+    h:0, q:"mauvais",
+    note:"« There is a predictable pattern of loss of nuclear basophilia in the internal organs which " +
+         "should not be mistaken for necrosis » [keeling, ch. 15] — mais le muscle n'est pas dans la " +
+         "table : on ne sait pas quand il perd sa basophilie, on sait seulement qu'il ne faut pas la " +
+         "lire comme une nécrose de fibre" },
+  { k:"contractionBand", l:"« Nécrose musculaire de contraction »", b:"—", d:"borne non sourcée",
+    h:0, q:"mauvais",
+    note:"le terme FOETO:PF.MUS-RET-038 de la base porte une borne « rétention >12h » qui n'existe " +
+         "dans AUCUNE source — ni Table 15.6, ni Table 37.1, ni keeling ch. 31, ni soffoet ch. 10 — et " +
+         "l'expression contraction band n'est sourcée que pour le MYOCARDE [ashworth, ch. 6]. " +
+         "Quatrième occurrence du même défaut dans la série (§ 9.3) : ne pas dater là-dessus" },
+  { k:"debrisGranulaire", l:"Débris granulaire des tissus mous", b:"—", d:"non datable seul", h:0, q:"mauvais",
+    note:"« Degeneration of soft tissues results in granular debris which may be mistaken for bacterial " +
+         "colonisation » [keeling, ch. 15] ; le critère de discrimination est la présence d'une réponse " +
+         "inflammatoire — faire un Gram tissulaire avant de conclure" },
+  { k:"mulberry", l:"Corps « mûre » (mulberry-like bodies) dans les vaisseaux", b:"≈ 2–3 jours",
+    d:"lu hors muscle, [keeling, ch. 15]", h:60, q:"moyen",
+    note:"« should not be mistaken for infective organisms » [keeling, ch. 15] — le muscle est richement " +
+         "vascularisé donc il les porte, mais la borne est celle de l'artefact vasculaire général, elle " +
+         "n'a jamais été mesurée SUR le muscle",
+    alerte:MODIF },
+  { k:"enzymoMorte", l:"Enzymologie négative sur prélèvement fixé", b:"—", d:"jamais un résultat", h:0,
+    q:"mauvais",
+    note:"ATPase, NADH-TR et COX/SDH sont ininterprétables par principe sur du fixé : un COX négatif ne " +
+         "dit RIEN. Le terme MUS-RET-001 de la base existe sans porter cette réserve. Ce qui tombe en " +
+         "premier au muscle n'est pas un axe morphologique, c'est l'axe du typage" }
+];
+
+/* ── 03 · Maturation — l'échelle native de soffoet, en SA, sur le quadriceps ── */
+var STADES = [
+  { k:"ebauche", l:"1 — ébauche : cellules mononucléées et myotubes à noyaux centraux", max:18,
+    note:"« tous les myotubes ont normalement disparu à 18 SA » [soffoet, ch. 10] ; avant 18 SA la lame " +
+         "normale est une AUTRE lame, et le corpus l'écrit correctement — « Au microscope, les muscles ne " +
+         "sont constitués que de myotubes (normal pour le terme déterminé) » [corpus CR]" },
+  { k:"foetal",  l:"2 — aspect fœtal : fibres de Wohlfart « a » (petites) et « b » (grandes) distinguables",
+    max:35,
+    note:"distinguables « normalement entre 18 et 35 SA » [soffoet, ch. 10] — étage reposant sur une " +
+         "SOURCE UNIQUE et francophone : le mot Wohlfart n'a aucune occurrence dans ernst, keeling ni " +
+         "ashworth (§ 9.4). La différence de calibre s'atténue progressivement, ce n'est pas un palier" },
+  { k:"terme",   l:"3 — fin de grossesse : calibre uniforme, fibres « a » et « b » non reconnaissables",
+    max:99,
+    /* Verbatim porteur d'une apostrophe ET de guillemets droits : il ne peut ni tenir
+       dans une chaîne à guillemets doubles ni dans une chaîne à apostrophes sans
+       échappement — et un échappement le rendrait faux à l'affichage. Littéral brut. */
+    note:`« il n'est plus possible de reconnaître des fibres "a" et "b" de Wohlfart après 35 SA » ` +
+         "[soffoet, ch. 10] — le recrutement tardif des fibres de 2e génération vers le phénotype lent, " +
+         "entre 20 et 35 SA, est le mécanisme qui explique cette homogénéisation" }
+];
+
+/* ── 03 bis · Le muscle prélevé, le plan de coupe, le fuseau ──────────────────
+   Deux axes catégoriels imposés par le contrat, et ce sont exactement les deux
+   que la fiche désigne comme conditions de lecture : QUEL muscle (§ 1, § 9.7) et
+   sur QUEL plan (§ 9.1). Le champ numérique unique est le compte de couches
+   capsulaires du fuseau — le seul repère qui gradue 13 à 33 SA (§ 3, § 9.17). */
+var MUSCLES = [
+  { k:"quadriceps",   l:"Quadriceps — muscle de référence" },
+  { k:"diaphragme",   l:"Diaphragme — muscle de commodité" },
+  { k:"psoas",        l:"Psoas" },
+  { k:"paravertebral", l:"Paravertébral" },
+  { k:"antagoniste",  l:"Antagoniste de la contracture" },
+  { k:"oculomoteur",  l:"Muscle oculo-moteur, sur lame d'orbite" },
+  { k:"autre",        l:"Autre muscle, nommé en clair dans la remarque" },
+  { k:"indetermine",  l:"Indéterminé — « soit le diaphragme, soit le muscle pariétal »" },
+  { k:"nonNomme",     l:"NON nommé sur le bloc" }
+];
+
+var PLANS = [
+  { k:"transversal",  l:"Transversal" },
+  { k:"longitudinal", l:"Longitudinal" },
+  { k:"oblique",      l:"Oblique — plan indéterminable" }
+];
+
+var MESURE = {
+  titre:"Muscle prélevé, plan de coupe, fuseau neuromusculaire",
+  defLabel:"muscle prélevé — sans son nom, aucune norme",
+  optLabel:"plan de coupe — commande ce qui est mesurable",
+  defs:MUSCLES, opts:PLANS,
+  champs:[{ id:"couches", label:"Couches capsulaires du fuseau (nb)", min:0, max:15, step:1 }]
+};
+
+/* La chronologie du fuseau d'[ernst, ch. 33], convertie en SA. Les bornes sont
+   celles de la fiche : 1 couche à 14-16 SA, 2 couches à 17 SA, 5 couches au
+   maximum fœtal à 33 SA. Au-delà de 5, on est en territoire postnatal. */
+function fuseauSA(n){
+  if (n <= 0) return { txt:"aucune couche capsulaire comptée", sa:null };
+  if (n === 1) return { txt:"capsule à 1 couche", sa:"≈ 14–16 SA" };
+  if (n === 2) return { txt:"capsule à 2 couches", sa:"≈ 17 SA" };
+  if (n <= 5)  return { txt:"capsule à " + n + " couches", sa:"entre 17 et 33 SA, sans palier sourcé" };
+  return { txt:"capsule à " + n + " couches", sa:"au-dessus du maximum fœtal de 5 couches" };
+}
+
+/* Le muscle NON nommé bloque : c'est le verdict le plus lourd de cette grille.
+   Construction empruntée à peau.js, où la région non nommée rend le stade
+   ininterprétable — ici c'est le NOM du muscle qui joue ce rôle. */
+function verdictMesure(){
+  var mus = E.mesure.def, plan = E.mesure.opt, n = E.mesure.v.couches, sa = num("sa");
+  if (!mus && !plan && n == null && !E.stade)
+    return { cls:"", txt:"Ni muscle nommé, ni plan de coupe, ni fuseau compté — le muscle n'est pas encore lu." };
+
+  var t = [], cls = "ok", res = [];
+
+  if (!mus || mus === "nonNomme" || mus === "indetermine"){
+    cls = "bad";
+    t.push((mus === "nonNomme" ? "Muscle déclaré NON nommé sur le bloc"
+          : mus === "indetermine" ? "Muscle déclaré INDÉTERMINÉ"
+          : "Muscle NON déclaré") +
+           " : la maturation musculaire est ININTERPRÉTABLE et aucun normal ne s'applique. " +
+           "« tous les muscles possèdent dans une certaine mesure leur propre profil de développement » " +
+           "[soffoet, ch. 10], et la source ne donne le profil d'AUCUN muscle autre que le quadriceps " +
+           "(§ 9.7) : un muscle qu'on ne sait pas nommer ne se compare à aucun normal. Ce n'est pas une " +
+           "hypothèse d'école — le corpus l'écrit lui-même : « soit du diaphragme, soit du muscle " +
+           "pariétal » [corpus CR]. Écrire l'indétermination, ne pas la laisser vide.");
+  } else if (mus === "quadriceps"){
+    t.push("Muscle : quadriceps — c'est le muscle de l'échelle du § 3, la lecture de stade est recevable.");
+  } else {
+    cls = "warn";
+    t.push("Muscle : " + par(MUSCLES, mus).l.toLowerCase().split(" —")[0] + " — ce n'est PAS le " +
+           "quadriceps. L'échelle de maturation est une échelle de quadriceps et le corpus ne contient " +
+           "le profil d'aucun autre muscle : un « retard de maturation » lu ici peut être le profil " +
+           "propre de ce muscle (§ 9.7).");
+    if (mus === "oculomoteur")
+      t.push("Les muscles oculo-moteurs sont d'origine mésodermique CRÂNIALE, distincte des somites " +
+             "[keeling, ch. 31] : leur profil de maturation n'est pas celui du quadriceps.");
+    if (mus === "diaphragme")
+      t.push("Le diaphragme arrive aussi sur la lame de foie sans être annoncé — « un peu de tissu " +
+             "musculaire provenant du diaphragme » [corpus CR] : vérifier que le bloc lu est bien un " +
+             "bloc de muscle et non un bord de bloc hépatique.");
+  }
+
+  if (plan === "transversal"){
+    t.push("Coupe transversale : calibre, dispersion et pourcentage de noyaux internes sont lisibles. " +
+           "Aucune source ne PRESCRIT pourtant ce plan pour l'HES — la seule mention du plan de coupe " +
+           "dans les livres concerne l'enzymologie oxydative (§ 9.1) : le plan est nécessaire à la " +
+           "lecture, il n'est pas exigé par un texte.");
+  } else if (plan === "longitudinal"){
+    if (cls === "ok") cls = "warn";
+    t.push("Coupe longitudinale : ni le calibre, ni la dispersion, ni le pourcentage de noyaux internes " +
+           "ne se lisent — les trois mesures des § 3 et § 4 exigent le transversal. Les stries " +
+           "transversales et les chaînes de noyaux centraux des myotubes restent visibles.");
+  } else if (plan === "oblique"){
+    if (cls === "ok") cls = "warn";
+    t.push("Plan indéterminable : un oblique majore faussement le calibre et fait paraître internes des " +
+           "noyaux périphériques. Ne rien chiffrer sur ce plan.");
+  } else {
+    res.push("plan de coupe non déclaré — il commande à peu près tout ce qui est mesurable ici");
+  }
+
+  if (n != null){
+    var f = fuseauSA(n);
+    if (cls === "ok") cls = "warn";
+    t.push("Fuseau neuromusculaire : " + f.txt + (f.sa ? " (" + f.sa + " [ernst, ch. 33])" : "") + ". " +
+           "Ce compte est le SEUL repère qui gradue 13 à 33 SA, là où l'échelle de soffoet est un " +
+           "plateau — mais il n'est validé NULLE PART comme mesure de terme : aucune source ne l'utilise " +
+           "pour dater, aucun CR ne le pratique, aucun terme de la base ne le porte (§ 9.17). Il se " +
+           "consigne comme observation, il ne date pas.");
+    if (n > 5)
+      t.push("Au-dessus de 5 couches, on sort du fœtal : la capsule adulte compte 10 à 15 couches " +
+             "[ernst, ch. 33]. Vérifier le terme et le comptage avant d'en faire quoi que ce soit.");
+    if (plan !== "transversal")
+      res.push("le fuseau se compte sur une capsule coupée en travers — sans plan transversal déclaré, " +
+               "le compte de couches n'est pas qualifié");
+    res.push("un fuseau coupé transversalement mime un groupe de fibres atrophiques encapsulées : " +
+             "ce n'est ni un nerf ni une lésion, il siège dans le périmysium (§ 8, piège 21)");
+  }
+
+  if (sa != null && sa > 18 && E.signes.myotubes === "anormal" && mus === "quadriceps")
+    res.push("myotubes déclarés à " + sa + " SA sur un quadriceps : au-delà de 18 SA leur persistance " +
+             "n'est plus un stade, elle est un signe — le discriminant est le terme, et il vient de la " +
+             "macro, pas de la lame (§ 8, piège 13)");
+  if (sa != null && sa >= 18 && sa <= 35 && E.signes.dispersion === "anormal")
+    res.push("dispersion de calibre déclarée à " + sa + " SA, c'est-à-dire DANS la fenêtre 18–35 SA où " +
+             "la bimodalité des fibres « a » et « b » de Wohlfart est NORMALE : séparer une bimodalité " +
+             "de deux populations d'une dispersion anarchique avant de coter (§ 8, piège 14)");
+  if (!E.prelev.assez)
+    res.push("quantité de muscle non confirmée — la parade au piège des petites fibres rondes est " +
+             "quantitative, pas qualitative");
+  if (!E.stade)
+    res.push("stade de maturation non consigné");
+  if (E.mesure.v.couches == null && sa != null && sa < 18)
+    res.push("sous 18 SA l'échelle de soffoet est un plateau sans gradation interne : le compte de " +
+             "couches capsulaires du fuseau est le seul repère disponible entre 13 et 33 SA");
+
+  if (res.length){ if (cls === "ok") cls = "warn"; t.push("Réserves : " + res.join(" ; ") + "."); }
+  return { cls:cls, txt:t.join(" ") };
+}
+
+/* ── 05 · Variantes normales ──────────────────────────────────────────────────
+   Le muscle fœtal est l'organe de la série où le normal mime le mieux la lésion :
+   quatre de ces sept lignes sont des pièges nommés du § 8. */
+var VARIANTES = [
+  { k:"petitesRondes", l:"Petites fibres rondes — normales chez le FŒTUS" },
+  { k:"wohlfart",      l:"Bimodalité « a » / « b » de Wohlfart entre 18 et 35 SA" },
+  { k:"myotubesJeune", l:"Myotubes avant 18 SA — stade, pas maladie" },
+  { k:"fuseau",        l:"Fuseau neuromusculaire du périmysium, coupé en travers" },
+  { k:"noyauxInternesRares", l:"Quelques noyaux internes, moins de 5 % à terme" },
+  { k:"glycogenePAS",  l:"Répartition inhomogène du glycogène au PAS" },
+  { k:"muscleFoie",    l:"Muscle strié en bordure d'un bloc de foie ou de paroi" },
+  { k:"oculomoteurs",  l:"Muscles oculo-moteurs sur une lame d'orbite" }
+];
+
+/* ── 06 · Signes ──────────────────────────────────────────────────────────────
+   On coche ce qu'on voit, un signe à la fois. Aucun nom de maladie ici : les noms
+   se lisent en dessous, dans DIAGS, par association des signes cochés. */
+var SIGNES = [
+  /* Maturation et calibre */
+  { k:"myotubes",       l:"Myotubes présents — noyaux centraux en chaîne",
+    meta:"normal avant 18 SA, signe après — le terme tranche, pas la lame" },
+  { k:"petitesFibres",  l:"Fibres de petite taille",
+    meta:"« small and rounded as they are in arthrogryposis » chez le fœtus normal" },
+  { k:"dispersion",     l:"Dispersion de calibre",
+    meta:"bimodale = Wohlfart si 18–35 SA ; anarchique = à coter" },
+  { k:"calibreHomogene", l:"Calibre uniforme, fibres « a » et « b » non reconnaissables" },
+  { k:"noyauxInternes",  l:"Noyaux internes au-delà de 5 %",
+    meta:"5–75 % dans la myopathie myotubulaire — les seuils se touchent à 5 %" },
+  { k:"noyauxCentrauxPredom", l:"Prédominance de noyaux centraux" },
+
+  /* Architecture fasciculaire — le seul axe qui survit à la fixation */
+  { k:"fasciculesIncomplets", l:"Fascicules incomplets",
+    meta:"axe qui survit à la fixation ET à la macération" },
+  { k:"adipeux",        l:"Remplacement adipeux intrafasciculaire" },
+  { k:"perimysiumFasc", l:"Fascicules entourés de périmysium",
+    meta:"« said to be a characteristic feature »" },
+  { k:"atrophieGroupee", l:"Atrophie groupée de larges groupes de fibres" },
+  { k:"fibresHypertrophiques", l:"Fibres hypertrophiques isolées, dispersées" },
+  { k:"fibresArrondies", l:"Aspect arrondi des fibres atrophiques" },
+  { k:"atrophieFasciculaire", l:"Atrophie fasciculaire" },
+
+  /* Tissu conjonctif */
+  { k:"fibroseEndomysiale", l:"Prolifération conjonctive de l'endomysium" },
+  { k:"fibrosePerimysiale", l:"Fibrose périmysiale" },
+  { k:"fibresReduites", l:"Diminution du nombre et du diamètre des fibres" },
+  { k:"necroseRegenerationPeu", l:"Nécrose et régénération PEU importantes",
+    meta:"négatif qui vaut critère positif de DMC" },
+
+  /* Inclusions et colorations sur fixé */
+  { k:"batonnets",      l:"Bâtonnets (rods) au Gomori trichrome modifié" },
+  { k:"raggedRed",      l:"Ragged red fibers au Gomori" },
+  { k:"vacuolaire",     l:"Dégénérescence vacuolaire" },
+  { k:"morphoMyotubulaire", l:"Morphologie myotubulaire diffuse" },
+  { k:"hypotrophieGen", l:"Hypotrophie généralisée des fibres" },
+
+  /* Nécrose, inflammation, infection */
+  { k:"necrose",        l:"Nécrose de fibres" },
+  { k:"regeneration",   l:"Régénération (fibres basophiles, noyaux vésiculeux)" },
+  { k:"infiltrat",      l:"Infiltrat inflammatoire intramusculaire",
+    meta:"non spécifique — présent dans plusieurs DMC" },
+  { k:"necroseHemorragique", l:"Nécrose hémorragique des muscles périphériques",
+    meta:"fait évoquer un échovirus, jamais la rétention" },
+
+  /* Contexte macroscopique — lu ailleurs, coché ici parce qu'il commande la lecture */
+  { k:"contractures",   l:"Contractures multiples articulaires (macro)" },
+  { k:"contracturesDistales", l:"Contractures distales seulement (mains, pieds, poignets, chevilles)" },
+  { k:"asymetrie",      l:"Anomalies posturales ASYMÉTRIQUES" },
+  { k:"masseOsseuseNormale", l:"Masse osseuse normale" },
+  { k:"micrognathieMoindre", l:"Micrognathie peu marquée" },
+  { k:"ptergyium",      l:"Ptérygia" },
+  { k:"hydramnios",     l:"Polyhydramnios" },
+  { k:"hypoplasiePulm", l:"Hypoplasie pulmonaire" },
+  { k:"fentePalatine",  l:"Fente palatine" },
+  { k:"oligoamnios",    l:"Oligoamnios documenté" },
+  { k:"anasarque",      l:"Œdème sous-cutané ou anasarque" },
+  { k:"peauRigide",     l:"Peau rigide, bouche fixée ouverte en « O »" },
+  { k:"diaphragmeSureleve", l:"Diaphragme surélevé ou éventré" },
+  { k:"mortNeuronale",  l:"Mort neuronale des cornes antérieures (moelle, 3 niveaux)" },
+  { k:"cornesNormales", l:"Cornes antérieures SANS déplétion ni dégénérescence" },
+  { k:"muscleNormal",   l:"Muscle d'aspect essentiellement normal",
+    meta:"n'exclut aucune maladie létale" }
+];
+
+/* ── 06 bis · Associations — affichées, jamais cochées ────────────────────────
+   Le nom se déduit des signes. « cle » est le signe pivot : sans lui le compte
+   peut être atteint sans que l'association tienne. */
+var DIAGS = [
+  { k:"amyoplasie", l:"Amyoplasie", cle:"adipeux", min:2,
+    signes:["adipeux","fasciculesIncomplets","perimysiumFasc","petitesFibres","contractures"],
+    stop:" — LE PIÈGE CENTRAL de cet organe : « In the case of the normal fetus, muscle fibers are " +
+         "small and rounded as they are in arthrogryposis and this may cause some confusion in " +
+         "interpretation » [keeling, ch. 31]. Le critère qui fait l'amyoplasie chez le nouveau-né est " +
+         "un état NORMAL chez le fœtus. Seuls les fascicules incomplets et le remplacement adipeux ne " +
+         "sont jamais normaux, et la parade est quantitative : examiner assez de muscle. Le quadriceps " +
+         "standard peut aussi être le mauvais muscle, les lésions étant maximales dans l'antagoniste " +
+         "de la contracture." },
+
+  { k:"sma", l:"Amyotrophie spinale infantile", cle:"atrophieGroupee", min:2,
+    signes:["atrophieGroupee","fibresHypertrophiques","fibresArrondies","atrophieFasciculaire",
+            "mortNeuronale"],
+    stop:" — DIVERGENCE FRONTALE ET NON TRANCHÉE, la plus lourde de la fiche (§ 9.9) : [keeling, ch. 31] " +
+         "écrit « Diagnosis by examination of skeletal muscle is straightforward, with the typical " +
+         "appearance of large group atrophy with scattered enlarged individual fibers and generally " +
+         "being readily apparent in routine hematoxylin and eosin-stained sections », quand " +
+         "[soffoet, ch. 10] dit les biopsies délicates et l'examen « ne montre parfois que des lésions " +
+         "minimes ». Écrire laquelle des deux lectures on retient. Et le piège de sens inverse : une " +
+         "disproportion congénitale de types peut être un stade « pre-pathologic » de SMA — mais les " +
+         "deux entités exigent le typage, donc du congelé." },
+
+  { k:"dmc", l:"Dystrophie musculaire congénitale", cle:"fibroseEndomysiale", min:2,
+    signes:["fibroseEndomysiale","fibresReduites","necroseRegenerationPeu","fibrosePerimysiale",
+            "infiltrat"],
+    stop:" — le NÉGATIF est ici un critère POSITIF : « nécrose et régénération sont peu importantes » " +
+         "[soffoet, ch. 10] dans un muscle très fibreux oriente vers une DMC, et c'est lisible au " +
+         "trichrome sur du fixé. Un infiltrat ne fait PAS une myopathie inflammatoire : il est non " +
+         "spécifique dans Fukuyama, Walker-Warburg et le déficit en laminine-α2. Le sous-type ne se " +
+         "nomme pas sans immunohistochimie — et la mérosine couvrirait 40 à 50 % des DMC." },
+
+  { k:"myotubulaire", l:"Myopathie myotubulaire / centronucléaire", cle:"noyauxCentrauxPredom", min:2,
+    signes:["noyauxCentrauxPredom","noyauxInternes","petitesFibres","morphoMyotubulaire"],
+    stop:" — le seuil de la maladie CHEVAUCHE le normal : les noyaux centraux y sont « dans 5 à 75 % " +
+         "des cas » [soffoet, ch. 10] et le normal est « up to 5% » [ernst, ch. 33] — à 5 % les deux se " +
+         "touchent et aucune source ne donne de seuil de décision (§ 9.16). La forme liée à l'X (MTM1, " +
+         "Xq28) ne concerne que les garçons. Le différentiel avec le Steinert exige de l'immuno." },
+
+  { k:"steinert", l:"Dystrophie myotonique congénitale (Steinert)", cle:"myotubes", min:2,
+    signes:["myotubes","petitesFibres","dispersion","hydramnios"],
+    stop:" — la persistance de myotubes n'est un signe qu'APRÈS 18 SA : avant, c'est le stade 1 normal. " +
+         "Le discriminant n'est pas sur la lame, il vient de la macro — une image de myotube sans terme " +
+         "déclaré n'est pas interprétable. Transmission exclusivement maternelle ; le diagnostic " +
+         "définitif est l'analyse ADN des répétitions CTG, pas la lame." },
+
+  { k:"sdaf", l:"Séquence de déformation d'akinésie fœtale (SDAF / FADS)", cle:"contractures", min:2,
+    signes:["contractures","hydramnios","hypoplasiePulm","fentePalatine","anasarque",
+            "diaphragmeSureleve"],
+    stop:" — ce n'est PAS un diagnostic : " +
+         `« the terms "fetal akinesia" and "fetal akinesia deformation sequence (FADS)" do not represent a specific diagnosis but rather describe a phenotype with heterogeneous causes »` +
+         " [keeling, ch. 31], et de même « arthrogryposis is not a " +
+         "disorder but rather a phenotype ». Le tableau « dépend du moment de l'arrêt des mouvements et " +
+         "non de sa cause » [soffoet, ch. 22]. Le « 60 % de formes neurogènes » est un chiffre de " +
+         "DÉTECTION de 1996, pas une prévalence : la source dit elle-même que les formes myogènes sont " +
+         "sous-diagnostiquées. Neurogène contre myogène exige la moelle aux trois niveaux." },
+
+  /* La clé diffère du signe « oligoamnios » : aucun bouton de signe ne doit porter
+     le nom d'une association, sinon le diagnostic redeviendrait cliquable. */
+  { k:"contrainte", l:"Contrainte intra-utérine — séquence oligoamnios", cle:"oligoamnios", min:2,
+    signes:["oligoamnios","asymetrie","masseOsseuseNormale","micrognathieMoindre","contractures"],
+    stop:" — le critère décisif est MACROSCOPIQUE et CLINIQUE, pas microscopique : la lame de muscle ne " +
+         "distingue pas une séquence oligoamnios d'une SDAF neuromusculaire. Les trois séparateurs sont " +
+         "l'asymétrie des anomalies posturales, la masse osseuse normale (l'immobilisation est tardive) " +
+         "et la micrognathie moindre. Chercher la rupture prématurée des membranes, les léiomyomes et " +
+         "les anomalies müllériennes avant de nommer une maladie du muscle." },
+
+  { k:"pterygia", l:"Syndrome des ptérygia multiples", cle:"ptergyium", min:2,
+    signes:["ptergyium","contractures","hydramnios","muscleNormal","cornesNormales","vacuolaire",
+            "hypotrophieGen"],
+    stop:" — UN MUSCLE NORMAL N'EXCLUT PAS un ptérygium létal : « the appearances varied and included " +
+         "features of vacuolar degeneration, dystrophy (with variation in muscle fiber diameter and " +
+         "interstitial fibrosis), myotubular morphology, and generalized hypotrophy, and in one case " +
+         "the appearances were essentially normal » [keeling, ch. 31]. " +
+         "C'est le seul énoncé de la série où une source dit que la lame peut être normale dans une " +
+         "maladie létale. L'examen de la moelle n'y montrait pas de déplétion des cornes antérieures : " +
+         "des cornes normales n'écartent donc pas ce cadre." },
+
+  { k:"distale", l:"Arthrogrypose distale", cle:"contracturesDistales", min:2,
+    signes:["contracturesDistales","muscleNormal","masseOsseuseNormale"],
+    stop:" — dans ce groupe le muscle est NORMAL PAR DÉFINITION : ce sont des contractures congénitales " +
+         "non progressives sans maladie neurologique ni musculaire primitive. Une arthrogrypose distale " +
+         "ne se diagnostique pas sur la lame de quadriceps ; elle est autosomique dominante à " +
+         "expressivité variable, avec 15 sous-types à l'OMIM. Cette ligne est là pour empêcher de " +
+         "chercher une lésion qui n'existera pas." },
+
+  { k:"nemaline", l:"Myopathie à bâtonnets (némaline)", cle:"batonnets", min:1,
+    signes:["batonnets","petitesFibres","dispersion"],
+    stop:" — les rods se voient au Gomori trichrome modifié, donc sur du FIXÉ : c'est l'une des rares " +
+         "myopathies congénitales encore accessibles au service. Mais le cadre morphologique s'est " +
+         "dissous : « Many of the congenital myopathies are caused by mutations in more than one gene. " +
+         "Conversely, mutations in one gene can lead to more than one form of myopathy » " +
+         "[keeling, ch. 31]. Nommer la morphologie, pas la maladie. L'entité est absente du corps de " +
+         "texte de soffoet ch. 10 (§ 9.11)." },
+
+  { k:"inflammatoire", l:"Myopathie inflammatoire congénitale", cle:"infiltrat", min:2,
+    signes:["infiltrat","necrose","regeneration","necroseHemorragique"],
+    stop:" — ENTITÉ CONTESTÉE, et ses critères majeurs sont deux négatifs sur trois : infiltrats, " +
+         "ABSENCE de changements dystrophiques et de myopathie congénitale, marquage mérosine NORMAL " +
+         "(McNeil 2002). Le troisième exige de l'immuno que le service ne pratique pas : le diagnostic " +
+         "est donc, en pratique fœtale, un diagnostic d'exclusion INCOMPLET. Un infiltrat isolé est non " +
+         "spécifique et se voit dans plusieurs DMC. Une nécrose hémorragique des muscles périphériques " +
+         "fait d'abord évoquer un échovirus (types 33 et 27), pas la rétention." },
+
+  { k:"echovirus", l:"Infection congénitale — échovirus", cle:"necroseHemorragique", min:1,
+    signes:["necroseHemorragique","necrose","infiltrat"],
+    stop:" — « Congenital echovirus infection (echovirus types 33 and 27) has also been implicated as a " +
+         "rare cause of stillbirth and may be suspected in the fetus with marked hemorrhagic necrosis, " +
+         "particularly in the peripheral muscles » [keeling, ch. 15]. Piège en sens INVERSE de tous les " +
+         "autres : attribuer cette image à la rétention ferait perdre un diagnostic. Le muscle n'ayant " +
+         "aucun rang de macération, rien ne permet de dire que c'est post-mortem." },
+
+  { k:"dermopathie", l:"Dermopathie restrictive", cle:"peauRigide", min:2,
+    signes:["peauRigide","contractures","hydramnios","hypoplasiePulm","muscleNormal"],
+    stop:" — c'est une akinésie dont le diagnostic est sur la lame de PEAU, pas de muscle : épiderme " +
+         "aminci et hyperkératosique, déficit en élastine dermique, collagène anormalement dense. Et " +
+         "une peau normale ne l'écarte pas avant 24-26 SA : « These abnormalities usually appear after " +
+         "22–24 weeks' gestation, which is why prenatal ultrasound detection may fail » " +
+         "[keeling, ch. 31]. Renvoyer à fiche_peau.md." }
+];
+
+/* ── 07 · Négatifs obligatoires ───────────────────────────────────────────────
+   L'ordre est celui du § 6 de la fiche, « par ordre de rendement ». Le muscle est,
+   avec le cœur, l'un des rares organes où le service en énonce spontanément. */
+var NEGATIFS = [
+  { k:"myotubes", l:"Absence de myotube au-delà de 18 SA", p:"négatif de maturation — 5 CR sur 176",
+    ko:"MYOTUBES PRÉSENTS — au-delà de 18 SA ce n'est plus un stade, c'est un signe (Steinert)" },
+  { k:"dispersion", l:"Absence de dispersion de calibre", p:"homogénéité des fibres [soffoet, ch. 10]",
+    ko:"DISPERSION de calibre — bimodale entre 18 et 35 SA elle est normale (Wohlfart), anarchique elle se cote" },
+  { k:"noyaux", l:"Noyaux périphériques, moins de 5 % de noyaux internes",
+    p:"seul seuil chiffré confirmé par deux livres",
+    ko:"NOYAUX INTERNES au-delà de 5 % — et le normal n'est donné que pour 40 SA (§ 9.15)" },
+  { k:"fascicules", l:"Fascicules complets, sans remplacement adipeux", p:"négatif de l'amyoplasie",
+    ko:"FASCICULES incomplets ou remplacement adipeux — les deux seuls signes jamais normaux chez le fœtus" },
+  { k:"atrophie", l:"Absence d'atrophie fasciculaire ou groupée", p:"négatif de l'amyotrophie spinale",
+    ko:"ATROPHIE groupée ou fasciculaire — et les deux sources divergent sur sa lisibilité en HES (§ 9.9)" },
+  { k:"fibrose", l:"Absence de fibrose endomysiale", p:"négatif de la DMC, à énoncer au trichrome",
+    ko:"FIBROSE endomysiale — avec peu de nécrose et peu de régénération, elle oriente vers une DMC" },
+  { k:"necrose", l:"Absence de nécrose et de régénération",
+    p:"ambigu : leur absence est AUSSI un critère positif de DMC",
+    ko:"NÉCROSE ou régénération présente — n'énoncer ce négatif qu'avec le contexte de fibrose" },
+  { k:"batonnets", l:"Absence de bâtonnets de némaline au Gomori", p:"faisable sur fixé",
+    ko:"BÂTONNETS présents au Gomori" },
+  { k:"raggedRed", l:"Absence de ragged red fibers", p:"déjà pratiqué — 3 CR sur 176",
+    ko:"RAGGED RED FIBERS présentes" },
+  { k:"infiltrat", l:"Absence d'infiltrat inflammatoire",
+    p:"sa présence ne fait pas une myopathie inflammatoire",
+    ko:"INFILTRAT présent — non spécifique, décrit dans Fukuyama, Walker-Warburg et le déficit en laminine-α2" },
+  { k:"muscleNomme", l:"Muscle nommé dans le compte rendu",
+    p:"le corpus écrit lui-même « soit… soit »",
+    ko:"MUSCLE NON NOMMÉ — aucun normal ne s'applique, la maturation est ininterprétable" },
+  { k:"pasNosologique", l:"Le négatif rendu est DESCRIPTIF, pas nosologique",
+    p:"« absence de myopathie » ne s'écrit jamais",
+    ko:"NÉGATIF NOSOLOGIQUE écrit — cinq des six catégories de keeling ne se lisent pas sur cette lame" }
+];
+
+/* ── 08 · Techniques ──────────────────────────────────────────────────────── */
+var TECHNIQUES = [
+  { k:"gomori",   l:"Trichrome de Gomori modifié", q:"bâtonnets, ragged red, fibrose — fait, 3 CR sur 176" },
+  { k:"pas",      l:"PAS", q:"glycogène et polyglucosanes — fait, avec sa réserve d'interprétation" },
+  { k:"trichrome", l:"Trichrome de Masson", q:"fibrose endomysiale et périmysiale, sur fixé" },
+  { k:"merosine", l:"IHC mérosine / laminine-α2", q:"couvrirait 40 à 50 % des DMC — zéro usage dans le corpus" },
+  { k:"dystrophine", l:"IHC dystrophines et sarcoglycanes", q:"détectables dès ~17 SA, non pratiquées" },
+  { k:"collagene6", l:"IHC collagène VI et α-dystroglycane", q:"termes présents en base, usage nul" },
+  { k:"gram",     l:"Gram tissulaire", q:"débris granulaire post-mortem contre colonisation vraie" },
+  { k:"congelation", l:"Congélation d'un fragment pour enzymologie", q:"seule voie vers ATPase, NADH-TR, COX/SDH" },
+  { k:"fibroblastes", l:"Mise en culture de fibroblastes cutanés", q:"irréversible — sans lignée, aucun dosage plus tard" },
+  { k:"adn",      l:"Envoi du congelé en génétique", q:"CTG du Steinert, SMN1, LMNA, CHRNG — le diagnostic définitif" },
+  { k:"moelle",   l:"Prélèvement de moelle aux trois niveaux", q:"condition du diagnostic neurogène" },
+  { k:"me",       l:"Microscopie électronique", q:"associée à l'histochimie par keeling, aucune ME sur muscle au corpus" }
+];
+
+/* ── Propositions de techniques — déduites des clics, jamais imposées ─────── */
+function suggerer(){
+  var s = {};
+  function anormal(k){ return E.signes[k] === "anormal"; }
+  function ret(k){ return E.retention[k] === "present"; }
+
+  /* Les propositions suivent les SIGNES : une technique se demande sur ce qu'on a
+     vu, pas sur le nom qu'on lui donnerait. */
+  if (anormal("fibroseEndomysiale") || anormal("fibrosePerimysiale")){ s.trichrome = 1; s.merosine = 1; }
+  if (anormal("fibresReduites") || anormal("necroseRegenerationPeu")){ s.trichrome = 1; s.merosine = 1; }
+  if (anormal("petitesFibres") || anormal("dispersion")) s.gomori = 1;
+  if (anormal("batonnets") || anormal("raggedRed")) s.gomori = 1;
+  if (anormal("noyauxCentrauxPredom") || anormal("noyauxInternes")) s.adn = 1;
+  if (anormal("myotubes")){ s.adn = 1; s.merosine = 1; }
+  if (anormal("adipeux") || anormal("fasciculesIncomplets")) s.adn = 1;
+  if (anormal("atrophieGroupee") || anormal("atrophieFasciculaire") || anormal("fibresArrondies")){
+    s.moelle = 1; s.adn = 1;
+  }
+  if (anormal("mortNeuronale")) s.moelle = 1;
+  if (anormal("infiltrat")){ s.merosine = 1; s.gram = 1; }
+  if (anormal("necrose") || anormal("necroseHemorragique")) s.gram = 1;
+  if (anormal("contractures") || anormal("ptergyium") || anormal("contracturesDistales")){
+    s.adn = 1; s.moelle = 1;
+  }
+  if (anormal("peauRigide")) s.adn = 1;
+  if (anormal("vacuolaire") || anormal("morphoMyotubulaire") || anormal("hypotrophieGen")) s.me = 1;
+
+  /* Ce qui se décide au moment de l'autopsie et jamais après. */
+  if (!E.prelev.congele && SIGNES.some(function(x){ return E.signes[x.k] === "anormal"; })) s.congelation = 1;
+  if (!E.prelev.fibroblastes && SIGNES.some(function(x){ return E.signes[x.k] === "anormal"; }))
+    s.fibroblastes = 1;
+  if (!E.prelev.moelle && (anormal("contractures") || anormal("atrophieGroupee"))) s.moelle = 1;
+
+  if (ret("debrisGranulaire")) s.gram = 1;
+  if (ret("enzymoMorte")) s.congelation = 1;
+
+  if (E.negatifs.fibrose === "present"){ s.trichrome = 1; s.merosine = 1; }
+  if (E.negatifs.batonnets === "present" || E.negatifs.raggedRed === "present") s.gomori = 1;
+  if (E.negatifs.atrophie === "present") s.moelle = 1;
+  return s;
+}
+
+/* ── Contrôles propres au muscle ──────────────────────────────────────────── */
+async function testsOrgane(chk, clic, set, crTient, pause){
+  /* L'échelle de soffoet, isolément */
+  chk("stade 1 jusqu'à 18 SA",   stadeAttendu(16).k === "ebauche");
+  chk("18 SA bascule au stade 2", stadeAttendu(18).k === "foetal");
+  chk("stade 2 jusqu'à 35 SA",   stadeAttendu(34).k === "foetal");
+  chk("après 35 SA, stade 3",    stadeAttendu(36).k === "terme");
+  chk("échelle en SA déclarée",  STADE_TITRE.indexOf("en SA") >= 0);
+
+  /* La chronologie du fuseau, convertie de gestation en SA */
+  chk("fuseau 1 couche → 14-16 SA", fuseauSA(1).sa === "≈ 14–16 SA");
+  chk("fuseau 2 couches → 17 SA",   fuseauSA(2).sa === "≈ 17 SA");
+  chk("5 couches = maximum fœtal",  fuseauSA(5).sa.indexOf("33 SA") >= 0);
+  chk("au-delà de 5, hors fœtal",   fuseauSA(8).sa.indexOf("maximum fœtal") >= 0);
+
+  /* ── LE verdict bloquant du muscle : un muscle qu'on ne sait pas nommer ── */
+  set("sa", "30");
+  clic("mdef", "nonNomme");
+  chk("muscle non nommé = verdict bloquant", $("vMesure").className.indexOf("bad") >= 0);
+  chk("non nommé : maturation ininterprétable", crTient("ININTERPRÉTABLE") &&
+      crTient("ne se compare à aucun normal"));
+  chk("non nommé : le profil propre est cité", crTient("leur propre profil de développement"));
+  clic("mdef", "nonNomme");
+
+  clic("mdef", "indetermine");
+  chk("indéterminé bloque aussi", $("vMesure").className.indexOf("bad") >= 0 &&
+      crTient("Muscle déclaré INDÉTERMINÉ"));
+  chk("le corpus écrit lui-même « soit… soit »", crTient("soit du diaphragme, soit du muscle pariétal"));
+  clic("mdef", "indetermine");
+
+  clic("mdef", "diaphragme");
+  chk("diaphragme n'est pas le quadriceps", crTient("ce n'est PAS le quadriceps") &&
+      $("vMesure").className.indexOf("bad") < 0);
+  chk("diaphragme : le bord de bloc hépatique", crTient("un peu de tissu musculaire provenant du diaphragme"));
+  clic("mdef", "diaphragme");
+
+  clic("mdef", "oculomoteur");
+  chk("oculo-moteurs d'origine crânienne", crTient("mésodermique CRÂNIALE"));
+  clic("mdef", "oculomoteur");
+
+  clic("mdef", "quadriceps");
+  chk("quadriceps : lecture recevable", crTient("la lecture de stade est recevable"));
+
+  /* Le plan de coupe commande ce qui est mesurable */
+  chk("plan non déclaré en réserve", crTient("plan de coupe non déclaré"));
+  clic("mopt", "longitudinal");
+  chk("longitudinal : rien ne se chiffre", crTient("ne se lisent — les trois mesures"));
+  clic("mopt", "longitudinal");
+  clic("mopt", "oblique");
+  chk("oblique majore le calibre", crTient("majore faussement le calibre"));
+  clic("mopt", "oblique");
+  clic("mopt", "transversal");
+  chk("transversal lisible mais non prescrit", crTient("Aucune source ne PRESCRIT pourtant ce plan"));
+
+  /* Le fuseau : seul repère de 13 à 33 SA, et validé nulle part */
+  set("m_couches", "2");
+  chk("fuseau situé",            crTient("capsule à 2 couches") && crTient("≈ 17 SA"));
+  chk("fuseau non validé comme mesure", crTient("il n'est validé NULLE PART comme mesure de terme"));
+  chk("fuseau : piège d'aspect", crTient("mime un groupe de fibres atrophiques encapsulées"));
+  set("m_couches", "9");
+  chk("au-dessus du maximum fœtal", crTient("la capsule adulte compte 10 à 15 couches"));
+  set("m_couches", "");
+
+  /* Les deux pièges de date, cochés dans les deux sens */
+  function pose(k, v){ if (E.signes[k] !== v) clic("les", k, v); }
+  function ote(k){ if (E.signes[k]) clic("les", k, E.signes[k]); }
+  function tenue(k){ return associations().some(function(a){ return a.d.k === k && a.tenu; }); }
+  SIGNES.forEach(function(x){ ote(x.k); });
+
+  set("sa", "30");
+  pose("myotubes", "anormal");
+  chk("myotubes après 18 SA : réserve de date", crTient("au-delà de 18 SA leur persistance"));
+  chk("le terme vient de la macro", crTient("il vient de la macro, pas de la lame"));
+  set("sa", "16");
+  chk("myotubes à 16 SA : plus de réserve", !crTient("au-delà de 18 SA leur persistance"));
+  chk("sous 18 SA le fuseau est proposé", crTient("le seul repère disponible entre 13 et 33 SA"));
+  ote("myotubes");
+
+  set("sa", "25");
+  pose("dispersion", "anormal");
+  chk("dispersion dans la fenêtre Wohlfart", crTient("où la bimodalité des fibres"));
+  set("sa", "40");
+  chk("hors fenêtre, plus de réserve Wohlfart", !crTient("où la bimodalité des fibres"));
+  ote("dispersion");
+  set("sa", "30");
+
+  /* Le retard de maturation reste d'abord une question de muscle */
+  clic("stade", "ebauche");
+  chk("retard : quel muscle d'abord ?", crTient("Avant de lire un retard : sur quel muscle ?") &&
+      crTient("échelle de QUADRICEPS"));
+  clic("stade", "ebauche");
+  clic("stade", "terme");
+  chk("avance : source unique et francophone", crTient("source unique et francophone"));
+  clic("stade", "terme");
+
+  /* Divergences portées, jamais arbitrées */
+  chk("SMA : divergence frontale non tranchée",
+      par(DIAGS, "sma").stop.indexOf("DIVERGENCE FRONTALE ET NON TRANCHÉE") >= 0);
+  chk("SMA : les deux verbatims sont là",
+      par(DIAGS, "sma").stop.indexOf("readily apparent in routine hematoxylin") >= 0 &&
+      par(DIAGS, "sma").stop.indexOf("ne montre parfois que des lésions minimes") >= 0);
+  chk("calibre : aucun champ numérique",
+      MESURE.champs.every(function(c){ return c.id !== "calibre"; }) && MESURE.champs.length === 1);
+  chk("myotubulaire : les seuils se touchent",
+      par(DIAGS, "myotubulaire").stop.indexOf("CHEVAUCHE le normal") >= 0);
+  chk("muscle sans rang de macération",
+      par(RETENTION, "horsMuscle").note.indexOf("aucun des dix rangs") >= 0);
+  chk("borne « > 12 h » non sourcée",
+      par(RETENTION, "contractionBand").note.indexOf("n'existe dans AUCUNE source") >= 0);
+  chk("contraction band est myocardique",
+      par(RETENTION, "contractionBand").note.indexOf("MYOCARDE") >= 0);
+  chk("l'enzymologie négative n'est pas un déficit",
+      par(RETENTION, "enzymoMorte").note.indexOf("ne dit RIEN") >= 0);
+  chk("un muscle normal n'exclut pas le létal",
+      par(DIAGS, "pterygia").stop.indexOf("N'EXCLUT PAS") >= 0);
+  chk("arthrogrypose distale : muscle normal par définition",
+      par(DIAGS, "distale").stop.indexOf("NORMAL PAR DÉFINITION") >= 0);
+  chk("60 % neurogène = chiffre de détection",
+      par(DIAGS, "sdaf").stop.indexOf("chiffre de DÉTECTION") >= 0 ||
+      par(DIAGS, "sdaf").stop.indexOf("DÉTECTION de 1996") >= 0);
+  chk("le négatif nosologique est interdit",
+      par(NEGATIFS, "pasNosologique").ko.indexOf("cinq des six catégories") >= 0);
+
+  /* Le nom se déduit des signes — il ne se coche pas */
+  chk("aucun bouton ne porte un diagnostic",
+      DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
+
+  /* LE PIÈGE CENTRAL : les petites fibres rondes sont normales chez le fœtus */
+  SIGNES.forEach(function(x){ ote(x.k); });
+  pose("petitesFibres", "anormal");
+  pose("contractures", "anormal");
+  chk("petites fibres seules ne tiennent pas l'amyoplasie", !tenue("amyoplasie"));
+  pose("adipeux", "anormal");
+  pose("fasciculesIncomplets", "anormal");
+  chk("le remplacement adipeux la tient", tenue("amyoplasie"));
+  chk("le piège central est au CR", crTient("un état NORMAL chez le fœtus"));
+  ote("adipeux"); ote("fasciculesIncomplets"); ote("petitesFibres"); ote("contractures");
+
+  /* La DMC se lit sur un négatif qui vaut critère positif */
+  pose("fibroseEndomysiale", "anormal");
+  pose("necroseRegenerationPeu", "anormal");
+  chk("DMC tenue sur fibrose + peu de nécrose", tenue("dmc"));
+  chk("DMC propose la mérosine et le trichrome",
+      suggerer().merosine === 1 && suggerer().trichrome === 1);
+  chk("l'infiltrat ne fait pas la myopathie inflammatoire",
+      par(DIAGS, "dmc").stop.indexOf("ne fait PAS une myopathie inflammatoire") >= 0);
+  ote("fibroseEndomysiale"); ote("necroseRegenerationPeu");
+
+  /* La SMA sans son pivot ne tient pas */
+  pose("fibresHypertrophiques", "anormal");
+  pose("fibresArrondies", "anormal");
+  chk("sans le pivot, la SMA ne tient pas", !tenue("sma") &&
+      crTient("signe pivot non coché : Atrophie groupée"));
+  pose("atrophieGroupee", "anormal");
+  chk("l'atrophie groupée tient la SMA", tenue("sma"));
+  chk("la SMA propose la moelle", suggerer().moelle === 1);
+  ote("fibresHypertrophiques"); ote("fibresArrondies"); ote("atrophieGroupee");
+
+  /* Le piège de sens inverse : la nécrose hémorragique n'est pas post-mortem */
+  pose("necroseHemorragique", "anormal");
+  chk("échovirus se lit", tenue("echovirus"));
+  chk("ne pas l'attribuer à la rétention", crTient("attribuer cette image à la rétention"));
+  chk("nécrose hémorragique propose le Gram", suggerer().gram === 1);
+  ote("necroseHemorragique");
+
+  /* Le muscle normal reste une lecture, pas une exclusion */
+  pose("muscleNormal", "anormal");
+  pose("ptergyium", "anormal");
+  chk("ptérygia tenu sur un muscle normal", tenue("pterygia"));
+  ote("muscleNormal"); ote("ptergyium");
+
+  /* Le prélèvement qui ne se rattrape jamais */
+  chk("fibroblastes proposés dès qu'un signe est coché", (function(){
+    pose("necrose", "anormal");
+    var s = suggerer(); ote("necrose");
+    return s.fibroblastes === 1 && s.congelation === 1;
+  })());
+
+  clic("ret", "debrisGranulaire", "present");
+  chk("débris granulaire propose le Gram", suggerer().gram === 1);
+  clic("ret", "debrisGranulaire", "present");
+
+  /* On rend le banc dans un état VOULU, pas supposé : les deux axes catégoriels
+     sont déjà posés ici, un clic sec les retirerait. Et jamais un « sa » vide —
+     la coquille compare ensuite $("sa").value à String(snap.terme_sa), et
+     String(null) n'est pas la chaîne vide. */
+  if (E.mesure.opt !== "transversal") clic("mopt", "transversal");
+  if (E.mesure.def !== "quadriceps")  clic("mdef", "quadriceps");
+  chk("banc rendu avec ses deux axes posés",
+      E.mesure.def === "quadriceps" && E.mesure.opt === "transversal");
+  set("sa", "30");
+  chk("terme non vide à la sortie du banc", $("sa").value === "30");
+}
+
+/* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
+var FOETO = {"sections":[{"t":"5.12 Myopathie inflammatoire congénitale","termes":[{"id":"FOETO:PF.MUS-MAL-007","l":"Déficit en mérosine (immunohistochimie musculaire)"},{"id":"FOETO:PF.MUS-RET-031","l":"Infiltrat inflammatoire lymphocytaire intramusculaire"}]},{"t":"5.2 Amyoplasie","termes":[{"id":"FOETO:PF.MUS-RET-007","l":"Augmentation du tissu adipeux intramusculaire"},{"id":"FOETO:PF.MUS-RET-019","l":"Fascicules musculaires incomplets avec remplacement adipeux partiel"},{"id":"FOETO:PF.MUS-RET-040","l":"Remplacement adipeux du muscle squelettique"}]},{"t":"5.3 Amyotrophie spinale infantile (SMA)","termes":[{"id":"FOETO:PF.MUS-MAL-002","l":"Atrophie fasciculaire neurogène"},{"id":"FOETO:PF.MUS-RET-006","l":"Atrophie groupée des fibres musculaires"},{"id":"FOETO:PF.MUS-MAL-008","l":"Fibres musculaires hypertrophiques de phénotype lent"},{"id":"FOETO:PF.MUS-RET-022","l":"Fibres musculaires hypertrophiques isolées"}]},{"t":"5.4 Dystrophies musculaires congénitales (DMC)","termes":[{"id":"FOETO:PF.MUS-MAL-001","l":"Absence/réduction de nécrose et régénération musculaire"},{"id":"FOETO:PF.MUS-MAL-005","l":"Diminution du nombre de fibres musculaires"},{"id":"FOETO:PF.MUS-RET-016","l":"Déficit en laminine-α2 (mérosine) en immunohistochimie"},{"id":"FOETO:PF.MUS-RET-024","l":"Fibrose endomysiale"},{"id":"FOETO:PF.MUS-RET-037","l":"Nécrose des fibres musculaires"},{"id":"FOETO:PF.MUS-MAL-012","l":"Prolifération conjonctivo-graisseuse du muscle"},{"id":"FOETO:PF.MUS-RET-043","l":"Régénération des fibres musculaires"},{"id":"FOETO:PF.MUS-RET-045","l":"Tissu conjonctif interstitiel augmenté"}]},{"t":"5.5 Myopathie myotubulaire (centronucléaire liée à l'X)","termes":[{"id":"FOETO:PF.MUS-RET-035","l":"Noyaux centraux dans les fibres musculaires"},{"id":"FOETO:PF.MUS-MAL-011","l":"Petite taille des fibres musculaires"}]},{"t":"5.6 Dystrophie myotonique congénitale sévère (Steinert)","termes":[{"id":"FOETO:PF.MUS-RET-026","l":"Groupement des fibres de type 1 (SMA)"},{"id":"FOETO:PF.MUS-RET-028","l":"Halo périphérique des fibres sur NADH (myotonie congénitale DM1)"},{"id":"FOETO:PF.MUS-MAL-010","l":"Persistance anormale de myotubes"}]},{"t":"5.7 Myopathies congénitales","termes":[{"id":"FOETO:PF.MUS-MAL-003","l":"Bâtonnets de némaline (myopathie à bâtonnets)"},{"id":"FOETO:PF.MUS-MAL-004","l":"Core central (maladie des cores centraux)"},{"id":"FOETO:PF.MUS-RET-008","l":"Cores centraux uniques (central core disease)"},{"id":"FOETO:PF.MUS-RET-009","l":"Corps de némaline (bâtonnets)"},{"id":"FOETO:PF.MUS-RET-014","l":"Disproportion congénitale des types de fibres"},{"id":"FOETO:PF.MUS-RET-029","l":"Hypotrophie sélective des fibres de type 1"},{"id":"FOETO:PF.MUS-RET-033","l":"Minicores multiples (multiminicore disease)"},{"id":"FOETO:PF.MUS-RET-048","l":"Zones dépourvues d'activité enzymatique oxydative (cores)"}]},{"t":"5.8 Syndromes des ptérygia multiples","termes":[{"id":"FOETO:PF.MUS-RET-018","l":"Dégénérescence vacuolaire des fibres musculaires"},{"id":"FOETO:PF.MUS-RET-047","l":"Variation du diamètre des fibres musculaires"}]}],"formes":{"FOETO:PF.MUS-RET-002":["Accumulation de lipides dans les fibres musculaires","Lipid accumulation in muscle fibers","(hors fiche)"],"FOETO:PF.MUS-RET-003":["Accumulation subsarcolemmale de mitochondries","Subsarcolemmal mitochondrial accumulation","(hors fiche)"],"FOETO:PF.MUS-RET-004":["Aspect myotubulaire généralisé des fibres musculaires","Generalized myotubular morphology of muscle fibers","(hors fiche)"],"FOETO:PF.MUS-RET-005":["Atrophie des fibres musculaires","Muscle fiber atrophy","(hors fiche)"],"FOETO:PF.MUS-RET-015":["Déficit en collagène VI en immunohistochimie musculaire","Collagen VI deficiency on muscle immunohistochemistry","(hors fiche)"],"FOETO:PF.MUS-RET-017":["Déficit en α-dystroglycane en immunohistochimie","α-dystroglycan deficiency on immunohistochemistry","(hors fiche)"],"FOETO:PF.MUS-RET-021":["Fibres en anneau (ring fibers)","Ring fibers","(hors fiche)"],"FOETO:PF.MUS-RET-023":["Fibres rouges déchiquetées (ragged-red fibers)","Ragged-red fibers","(hors fiche)"],"FOETO:PF.MUS-RET-025":["Fibrose périmysiale","Perimysial fibrosis","(hors fiche)"],"FOETO:PF.MUS-RET-027":["Halo périnucléaire central dépourvu de myofibrilles","Central perinuclear halo devoid of myofibrils","(hors fiche)"],"FOETO:PF.MUS-RET-030":["Inclusions polyglucosaniques sarcoplasmiques (PAS+ diastase-résistantes)","Sarcoplasmic polyglucosan inclusions (PAS+ diastase-resistant)","(hors fiche)"],"FOETO:PF.MUS-MAL-009":["Lésions dégénératives des fibres musculaires","Muscle fiber degenerative changes","(hors fiche)"],"FOETO:PF.MUS-RET-032":["Masses sarcoplasmiques","Sarcoplasmic masses","(hors fiche)"],"FOETO:PF.MUS-RET-036":["Noyaux internes multiples dans les fibres musculaires","Multiple internal nuclei in muscle fibers","(hors fiche)"],"FOETO:PF.MUS-RET-042":["Réduction de la masse musculaire (hypoplasie musculaire)","Reduced muscle bulk (muscle hypoplasia)","(hors fiche)"],"FOETO:PF.MUS-RET-046":["Vacuoles intracytoplasmiques musculaires (myopathie vacuolaire)","Intracytoplasmic muscle vacuoles (vacuolar myopathy)","(hors fiche)"],"FOETO:PF.MUS-MAL-007":["Déficit en mérosine (immunohistochimie musculaire)","Merosin deficiency on muscle immunohistochemistry"],"FOETO:PF.MUS-RET-031":["Infiltrat inflammatoire lymphocytaire intramusculaire","Intramuscular lymphocytic inflammatory infiltrate"],"FOETO:PF.MUS-RET-007":["Augmentation du tissu adipeux intramusculaire","Increased intramuscular adipose tissue"],"FOETO:PF.MUS-RET-019":["Fascicules musculaires incomplets avec remplacement adipeux partiel","Incomplete muscle fascicles with partial fatty replacement"],"FOETO:PF.MUS-RET-040":["Remplacement adipeux du muscle squelettique","Fatty replacement of skeletal muscle"],"FOETO:PF.MUS-MAL-002":["Atrophie fasciculaire neurogène","Neurogenic fascicular muscle atrophy"],"FOETO:PF.MUS-RET-006":["Atrophie groupée des fibres musculaires","Group muscle fiber atrophy"],"FOETO:PF.MUS-MAL-008":["Fibres musculaires hypertrophiques de phénotype lent","Hypertrophic slow-phenotype muscle fibers"],"FOETO:PF.MUS-RET-022":["Fibres musculaires hypertrophiques isolées","Isolated hypertrophic muscle fibers"],"FOETO:PF.MUS-MAL-001":["Absence/réduction de nécrose et régénération musculaire","Absent or minimal muscle necrosis and regeneration"],"FOETO:PF.MUS-MAL-005":["Diminution du nombre de fibres musculaires","Decreased number of muscle fibers"],"FOETO:PF.MUS-RET-016":["Déficit en laminine-α2 (mérosine) en immunohistochimie","Laminin-α2 (merosin) deficiency on immunohistochemistry"],"FOETO:PF.MUS-RET-024":["Fibrose endomysiale","Endomysial fibrosis"],"FOETO:PF.MUS-RET-037":["Nécrose des fibres musculaires","Muscle fiber necrosis"],"FOETO:PF.MUS-MAL-012":["Prolifération conjonctivo-graisseuse du muscle","Fibrofatty replacement of skeletal muscle"],"FOETO:PF.MUS-RET-043":["Régénération des fibres musculaires","Muscle fiber regeneration"],"FOETO:PF.MUS-RET-045":["Tissu conjonctif interstitiel augmenté","Increased interstitial connective tissue"],"FOETO:PF.MUS-RET-035":["Noyaux centraux dans les fibres musculaires","Centrally located nuclei in muscle fibers"],"FOETO:PF.MUS-MAL-011":["Petite taille des fibres musculaires","Small muscle fiber size"],"FOETO:PF.MUS-RET-026":["Groupement des fibres de type 1 (SMA)","Type 1 fiber grouping (SMA)"],"FOETO:PF.MUS-RET-028":["Halo périphérique des fibres sur NADH (myotonie congénitale DM1)","Peripheral fiber halo on NADH (congenital DM1)"],"FOETO:PF.MUS-MAL-010":["Persistance anormale de myotubes","Abnormal persistence of myotubes"],"FOETO:PF.MUS-MAL-003":["Bâtonnets de némaline (myopathie à bâtonnets)","Nemaline rods (nemaline myopathy)"],"FOETO:PF.MUS-MAL-004":["Core central (maladie des cores centraux)","Central core (central core disease)"],"FOETO:PF.MUS-RET-008":["Cores centraux uniques (central core disease)","Single central cores (central core disease)"],"FOETO:PF.MUS-RET-009":["Corps de némaline (bâtonnets)","Nemaline rods"],"FOETO:PF.MUS-RET-014":["Disproportion congénitale des types de fibres","Congenital fiber-type disproportion"],"FOETO:PF.MUS-RET-029":["Hypotrophie sélective des fibres de type 1","Selective type 1 fiber hypotrophy"],"FOETO:PF.MUS-RET-033":["Minicores multiples (multiminicore disease)","Multiple minicores (multiminicore disease)"],"FOETO:PF.MUS-RET-048":["Zones dépourvues d'activité enzymatique oxydative (cores)","Areas devoid of oxidative enzyme activity (cores)"],"FOETO:PF.MUS-RET-018":["Dégénérescence vacuolaire des fibres musculaires","Vacuolar degeneration of muscle fibers"],"FOETO:PF.MUS-RET-047":["Variation du diamètre des fibres musculaires","Variation in muscle fiber diameter"]}};
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+
+var DB_NAME = "foeto-" + MODULE, DB_VER = 1, db = null;
+
+/* Organe pair : le côté fait partie de la donnée, pas du commentaire. Un rein
+   lu sans son côté n'est pas rattachable à l'imagerie ni à l'autre rein. */
+var COTES = [{ k:"droit", l:"Droit — 1/2" }, { k:"gauche", l:"Gauche — 1/2" },
+             { k:"deux", l:"Les deux — 2/2" }];
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function normDossier(v){ return v.toUpperCase().replace(/\s+/g, ""); }
+function dossierOk(v){ return v.trim().length > 0; } // ponytail: plus de format imposé, seul le uppercase (normDossier) reste
+function num(id){ var e = $(id); if (!e) return null; var v = parseFloat(e.value); return isFinite(v) ? v : null; }
+function par(liste, k){ return liste.filter(function(x){ return x.k === k; })[0] || null; }
+function champs(){ return MESURE ? MESURE.champs : []; }
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", E = null;
+function neuf(){
+  var e = { cote:null, prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
+            negatifs:{}, techniques:{}, foeto:{}, mesure:{ def:null, opt:null, v:{} }, libre:"" };
+  champs().forEach(function(c){ e.mesure.v[c.id] = null; });
+  return e;
+}
+
+/* Le stade attendu au terme saisi. Bornes reconstruites depuis la prose des
+   sources : ce sont des repères, pas des seuils. */
+function stadeAttendu(sa){
+  if (sa == null || !isFinite(sa)) return null;
+  for (var i = 0; i < STADES.length; i++) if (sa < STADES[i].max) return STADES[i];
+  return STADES[STADES.length - 1];
+}
+function bornesTxt(s){
+  var i = STADES.indexOf(s), min = i ? STADES[i-1].max : 0;
+  return s.max === 99 ? "≳ " + min + " SA" : min + "–" + s.max + " SA";
+}
+
+/* ── Construction du DOM — une seule fois, le clic ne fait que repeindre ──── */
+function chip(act, k, l, sous){
+  return '<button type="button" class="chip" data-act="' + act + '" data-k="' + esc(k) + '">' +
+         (sous ? '<span class="k">' + esc(sous) + '</span>' : '') + esc(l) + '</button>';
+}
+function batir(){
+  if (PAIR){
+    $("coteBloc").hidden = false;
+    $("cote").innerHTML = COTES.map(function(c){ return chip("cote", c.k, c.l); }).join("");
+  }
+  $("prelevement").innerHTML = PRELEV.map(function(p){ return chip("prelev", p.k, p.l); }).join("");
+
+  $("retention").innerHTML = RETENTION.map(function(r){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(r.l) +
+      '<span class="meta ' + r.q + '">' + esc(r.b) + " · " + esc(r.d) +
+      " · prédicteur " + r.q + '</span></div>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="present">Présent</button>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="absent">Absent</button>' +
+      '</div></div>';
+  }).join("");
+  $("kcl").innerHTML = chip("kcl", "kcl", "Fœticide par KCl", "geste à déclarer avant toute datation");
+
+  $("stTitre").textContent = STADE_TITRE;
+  $("stades").innerHTML = STADES.map(function(s){ return chip("stade", s.k, s.l); }).join("");
+
+  if (MESURE){
+    var h = '<div class="sousTitre">' + esc(MESURE.titre) + '</div>';
+    h += '<div class="chips" id="mesDefs">' +
+         MESURE.defs.map(function(d){ return chip("mdef", d.k, d.l, MESURE.defLabel); }).join("") + '</div>';
+    if (MESURE.opts && MESURE.opts.length)
+      h += '<div class="chips" id="mesOpts" style="margin-top:6px">' +
+           MESURE.opts.map(function(o){ return chip("mopt", o.k, o.l, MESURE.optLabel); }).join("") + '</div>';
+    h += '<div class="row" style="margin-top:9px">' + MESURE.champs.map(function(c){
+      return '<div class="field"><label for="m_' + c.id + '">' + esc(c.label) + '</label>' +
+             '<input type="number" id="m_' + c.id + '" min="' + c.min + '" max="' + c.max +
+             '" step="' + c.step + '" inputmode="decimal" placeholder="—"></div>';
+    }).join("") + '</div>';
+    $("mesure").innerHTML = h;
+    $("vMesure").hidden = false;
+    $("vMesure").querySelector("b").textContent = MESURE.titre;
+  }
+
+  $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
+
+  /* Un signe peut porter un groupe g (placenta : cordon, membranes, parenchyme sous
+     cordon, marge, systémique) : un sous-titre s'ouvre quand le groupe change. */
+  var gPrec = null;
+  $("signes").innerHTML = SIGNES.map(function(x){
+    var h = "";
+    if (x.g && x.g !== gPrec){ h = '<div class="sousTitre">' + esc(x.g) + '</div>'; gPrec = x.g; }
+    return h + '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+      (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
+      '</div>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="normal">Normal</button>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="anormal">Anormal</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("foeto").innerHTML = FOETO.sections.map(function(s){
+    return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
+           s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
+  }).join("") || '<p class="note">Aucun terme FOETO rattaché à cette fiche.</p>';
+  if (FOETO.sections.length){
+    $("foetoPlus").hidden = false; $("foetoRech").hidden = false;
+    $("foetoPlus").textContent = "▸ tous les termes attestés (" + nbFoeto() + ")";
+  }
+
+  $("negatifs").innerHTML = NEGATIFS.map(function(n){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(n.l) +
+      '<span class="meta">' + esc(n.p) + '</span></div>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="absent">Vérifié</button>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="present">EN DÉFAUT</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("techNote").textContent = TECH_NOTE;
+  $("techniques").innerHTML = TECHNIQUES.map(function(t){ return chip("tech", t.k, t.l, t.q); }).join("");
+}
+
+function nbFoeto(){ return FOETO.sections.reduce(function(a, s){ return a + s.termes.length; }, 0); }
+function foetoLabel(id){
+  var l = null;
+  FOETO.sections.forEach(function(s){ s.termes.forEach(function(t){ if (t.id === id) l = t.l; }); });
+  return l || (FOETO.formes[id] || [id])[0];
+}
+/* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
+function foetoAjouter(id){
+  if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
+    var box = $("foeto").querySelector(".chips");
+    if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
+    box.insertAdjacentHTML("beforeend", chip("foeto", id, foetoLabel(id)));
+  }
+  E.foeto[id] = true;
+  peindre(); enregistrer();
+}
+function rechercherFoeto(q){
+  var sg = $("sgFoeto");
+  q = q.trim().toLowerCase();
+  if (q.length < 3){ sg.classList.remove("on"); return; }
+  var hits = [];
+  Object.keys(FOETO.formes).some(function(id){
+    var f = FOETO.formes[id].filter(function(x){ return x.toLowerCase().indexOf(q) >= 0; })[0];
+    if (f) hits.push({ id:id, l:foetoLabel(id), f:f, hf:FOETO.formes[id].indexOf("(hors fiche)") >= 0 });
+    return hits.length >= 10;
+  });
+  sg.innerHTML = hits.length ? hits.map(function(x){
+    return '<div data-pick="' + esc(x.id) + '">' + esc(x.l) +
+           (x.f !== x.l ? ' <small>— ' + esc(x.f) + '</small>' : '') + (x.hf ? ' <small>(hors fiche)</small>' : '') + '</div>';
+  }).join("") : '<div><small>aucun terme</small></div>';
+  sg.classList.add("on");
+}
+
+/* ── Associations ─────────────────────────────────────────────────────────────
+   Un diagnostic ne se coche pas : il se lit dans l'association des signes. Les
+   faisceaux incomplets sont affichés aussi — 2 signes sur 4 se dit, et dire
+   combien manquent est le seul moyen de distinguer « non trouvé » de « non
+   regardé ». */
+function seuil(d){ return d.min || d.signes.length; }
+function associations(){
+  return DIAGS.map(function(d){
+    var pris  = d.signes.filter(function(k){ return E.signes[k] === "anormal"; });
+    var muets = d.signes.filter(function(k){ return !E.signes[k]; });
+    /* Un signe pivot ne se remplace pas par le nombre : sans lui, le compte peut
+       être atteint sans que l'association tienne. */
+    var pivot = !d.cle || E.signes[d.cle] === "anormal";
+    return { d:d, pris:pris, muets:muets, pivot:pivot,
+             tenu: pivot && pris.length >= seuil(d) };
+  }).filter(function(a){ return a.pris.length; })
+    .sort(function(a, b){ return (b.tenu - a.tenu) || (b.pris.length - a.pris.length); });
+}
+function nomSigne(k){ var s = par(SIGNES, k); return s ? s.l : k; }
+
+/* ── Verdicts communs ─────────────────────────────────────────────────────── */
+function verdictPrelevement(){
+  var n = Object.keys(E.prelev).length, res = [], grave = false;
+  PRELEV.forEach(function(p){
+    if (p.manque && !E.prelev[p.k]){ res.push(p.manque); if (p.grave) grave = true; }
+  });
+  if (PAIR && !E.cote) res.push("côté non déclaré — organe pair");
+  return { n:n, res:res,
+    cls: res.length ? (grave ? "bad" : "warn") : (n === PRELEV.length ? "ok" : ""),
+    txt: n === 0 ? "—"
+       : (n + "/" + PRELEV.length + " item(s) confirmé(s)" +
+          (PAIR && E.cote ? ", " + par(COTES, E.cote).l.toLowerCase().split(" —")[0] : "") + ".") +
+         (res.length ? " Réserves : " + res.join(" ; ") + "." : " Prélèvement complet.") };
+}
+function verdictRetention(){
+  if (E.kcl) return { cls:"bad", borne:null, txt:KCL_TXT };
+  var pres = RETENTION.filter(function(r){ return E.retention[r.k] === "present"; });
+  if (!pres.length) return { cls:"", borne:null,
+    txt: Object.keys(E.retention).length ? "Aucun critère de rétention positif." : "—" };
+  var notes = [];
+  pres.forEach(function(r){ if (r.note) notes.push(r.note); });
+  var bons = pres.filter(function(r){ return r.q !== "mauvais"; });
+  if (!bons.length) return { cls:"warn", borne:null,
+    txt:"Seuls des prédicteurs MAUVAIS sont positifs — aucune borne recevable. " + notes.join(" ; ") + "." };
+  var top = bons.reduce(function(a, b){ return b.h > a.h ? b : a; });
+  if (top.alerte) notes.push(top.alerte);
+  return { cls:"ok", borne:top,
+    txt:"Rétention " + top.b + " — critère : " + top.l.toLowerCase() + " (" + top.d + ")." +
+        (notes.length ? " Réserves : " + notes.join(" ; ") + "." : "") };
+}
+function verdictMaturation(){
+  var sa = num("sa"), att = stadeAttendu(sa), obs = E.stade ? par(STADES, E.stade) : null;
+  if (!obs) return { cls:"", att:att, txt: att
+    ? "Stade attendu à " + sa + " SA : " + att.l.toLowerCase() + ". Confirmer ou choisir."
+    : "Saisir le terme pour afficher le stade attendu." };
+  if (!att) return { cls:"warn", att:null,
+    txt:"Stade " + obs.l.toLowerCase() + " — sans terme, aucune discordance n'est calculable." };
+  var io = STADES.indexOf(obs), ia = STADES.indexOf(att), t, cls;
+  if (io === ia){ cls = "ok"; t = "Maturation conforme au terme : " + obs.l.toLowerCase() + " à " + sa + " SA."; }
+  else if (io < ia){ cls = "warn";
+    t = "Retard de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (RETARD_NOTE ? " " + RETARD_NOTE : ""); }
+  else { cls = "warn";
+    t = "Avance de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (AVANCE_NOTE ? " " + AVANCE_NOTE : ""); }
+  if (obs.note) t += " (" + obs.note + ")";
+  return { cls:cls, att:att, txt:t };
+}
+
+/* ── Peinture ─────────────────────────────────────────────────────────────── */
+function classe(act, v){
+  if (act === "neg") return v === "present" ? "no" : "on";
+  if (act === "les") return v === "anormal" ? "no" : "on";
+  return "on";
+}
+function poser(id, v){
+  var e = $(id), t = e.querySelector("b").textContent;
+  e.className = "verdict" + (v.cls ? " " + v.cls : "");
+  e.innerHTML = "<b>" + esc(t) + "</b>" + esc(v.txt);
+}
+function tally(id, n, sur){ $(id).textContent = n ? n + "/" + sur : "—"; }
+
+function peindreDiags(){
+  var A = associations();
+  if (!A.length){
+    $("diags").innerHTML = '<p class="note" style="margin:0">Aucun signe anormal coché : rien à associer.</p>';
+    return;
+  }
+  $("diags").innerHTML = A.map(function(a){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(a.d.l) +
+      '<span class="meta">' + a.pris.length + "/" + a.d.signes.length + " signe(s), seuil " + seuil(a.d) +
+      (a.muets.length ? " · " + a.muets.length + " non regardé(s)" : "") + '</span></div>' +
+      '<span class="chip ' + (a.tenu ? "on" : "") + '" style="cursor:default">' +
+      (a.tenu ? "association tenue" : "faisceau incomplet") + '</span></div>' +
+      '<div class="unfold">' +
+      '<div class="note" style="margin:0">' +
+      (a.pivot ? "" : "Signe pivot non coché : " + esc(nomSigne(a.d.cle)) + ".<br>") +
+      esc(a.pris.map(nomSigne).join(" · ")) +
+      (a.muets.length ? "<br>Non regardés : " + esc(a.muets.map(nomSigne).join(" · ")) + "." : "") +
+      '</div>' +
+      '<div class="stop"><b>Ce qu\'il ne faut pas conclure</b>' + esc(a.d.stop) + '</div></div></div>';
+  }).join("");
+}
+
+function peindre(){
+  if (PAIR) document.querySelectorAll("#cote .chip").forEach(function(b){
+    b.className = "chip" + (E.cote === b.dataset.k ? " on" : "");
+  });
+  document.querySelectorAll("#prelevement .chip").forEach(function(b){
+    b.className = "chip" + (E.prelev[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#retention .chip").forEach(function(b){
+    b.className = "chip" + (E.retention[b.dataset.k] === b.dataset.v ? " on" : "");
+  });
+  $("kcl").firstChild.className = "chip" + (E.kcl ? " no" : "");
+  document.querySelectorAll("#stades .chip").forEach(function(b){
+    var att = stadeAttendu(num("sa"));
+    b.className = "chip" + (E.stade === b.dataset.k ? " on"
+                          : (att && att.k === b.dataset.k ? " sugg" : ""));
+  });
+  if (MESURE){
+    document.querySelectorAll("#mesDefs .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.def === b.dataset.k ? " on" : "");
+    });
+    if ($("mesOpts")) document.querySelectorAll("#mesOpts .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.opt === b.dataset.k ? " on" : "");
+    });
+  }
+  document.querySelectorAll("#variantes .chip").forEach(function(b){
+    b.className = "chip" + (E.variantes[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#signes .chip").forEach(function(b){
+    b.className = "chip" + (E.signes[b.dataset.k] === b.dataset.v
+                            ? " " + classe("les", b.dataset.v) : "");
+  });
+  peindreDiags();
+  document.querySelectorAll('[data-act="foeto"]').forEach(function(b){
+    b.className = "chip" + (E.foeto[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#negatifs .chip").forEach(function(b){
+    b.className = "chip" + (E.negatifs[b.dataset.k] === b.dataset.v
+                            ? " " + classe("neg", b.dataset.v) : "");
+  });
+  var sug = suggerer();
+  document.querySelectorAll("#techniques .chip").forEach(function(b){
+    b.className = "chip" + (E.techniques[b.dataset.k] ? " on" : (sug[b.dataset.k] ? " sugg" : ""));
+  });
+
+  tally("tPrelevement", Object.keys(E.prelev).length, PRELEV.length);
+  tally("tRetention",   Object.keys(E.retention).length, RETENTION.length);
+  tally("tMaturation",  (E.stade ? 1 : 0) + (MESURE && E.mesure.def ? 1 : 0), MESURE ? 2 : 1);
+  tally("tVariantes",   Object.keys(E.variantes).length, VARIANTES.length);
+  tally("tSignes",     Object.keys(E.signes).length, SIGNES.length);
+  tally("tFoeto",       Object.keys(E.foeto).length, nbFoeto());
+  tally("tNegatifs",    Object.keys(E.negatifs).length, NEGATIFS.length);
+  tally("tTechniques",  Object.keys(E.techniques).length, TECHNIQUES.length);
+
+  poser("vPrelevement", verdictPrelevement());
+  poser("vRetention",   verdictRetention());
+  poser("vMaturation",  verdictMaturation());
+  if (MESURE) poser("vMesure", verdictMesure());
+
+  var cr = composer();
+  $("cr").textContent = cr;
+  $("tCR").textContent = cr.split("\n").length + " lignes";
+}
+
+/* ── Compte rendu — la sortie du module, écrite par les clics ─────────────── */
+function composer(){
+  var sa = num("sa"), L = [];
+  L.push(TITRE_CR + " — grille de lecture");
+  L.push((dossier || "dossier —") + " · " + (sa != null ? sa + " SA" : "terme —") +
+         " · " + ($("operateur").value.trim() || "lecteur —") +
+         (PAIR ? " · " + (E.cote ? par(COTES, E.cote).l : "côté non déclaré") : ""));
+  L.push("");
+
+  L.push("PRÉLÈVEMENT");
+  L.push("  " + verdictPrelevement().txt);
+
+  L.push("");
+  L.push("RÉTENTION");
+  L.push("  " + verdictRetention().txt);
+
+  L.push("");
+  L.push("MATURATION");
+  L.push("  " + verdictMaturation().txt);
+  if (MESURE) L.push("  " + verdictMesure().txt);
+
+  var vus = VARIANTES.filter(function(v){ return E.variantes[v.k]; });
+  if (vus.length){
+    L.push("");
+    L.push("VARIANTES NORMALES VUES ET ÉCARTÉES");
+    L.push("  " + vus.map(function(v){ return v.l.toLowerCase(); }).join(" · "));
+  }
+
+  var anormales = SIGNES.filter(function(x){ return E.signes[x.k] === "anormal"; });
+  var normales  = SIGNES.filter(function(x){ return E.signes[x.k] === "normal"; });
+  L.push("");
+  L.push("SIGNES");
+  if (!anormales.length && !normales.length) L.push("  aucun axe exploré.");
+  anormales.forEach(function(x){ L.push("  " + (x.g ? x.g + " · " : "") + x.l + " — ANORMAL"); });
+  if (normales.length)
+    L.push("  Normaux : " + normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  var muets = SIGNES.filter(function(x){ return !E.signes[x.k]; });
+  if (muets.length)
+    L.push("  Non explorés : " + muets.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+
+  var fo = Object.keys(E.foeto);
+  if (fo.length){
+    L.push("");
+    L.push("TERMES FOETO");
+    fo.forEach(function(id){ L.push("  " + foetoLabel(id) + " [" + id + "]"); });
+  }
+
+  var A = associations();
+  L.push("");
+  L.push("ASSOCIATIONS LUES");
+  if (!A.length) L.push("  aucune : les signes cochés ne dessinent aucune association.");
+  A.forEach(function(a){
+    L.push("  " + a.d.l + " — " + (a.tenu ? "association tenue" : "faisceau incomplet") +
+           " (" + a.pris.length + "/" + a.d.signes.length + ", seuil " + seuil(a.d) + ")");
+    L.push("      · " + a.pris.map(nomSigne).join(" · "));
+    if (!a.pivot) L.push("      · signe pivot non coché : " + nomSigne(a.d.cle));
+    if (a.muets.length) L.push("      · non regardés : " + a.muets.map(nomSigne).join(" · "));
+    L.push("      · ne pas conclure : " + a.d.stop);
+  });
+
+  L.push("");
+  L.push("NÉGATIFS OBLIGATOIRES");
+  NEGATIFS.forEach(function(n){
+    var v = E.negatifs[n.k];
+    L.push("  " + (v === "absent" ? "· " + n.l
+                 : v === "present" ? "! " + n.ko
+                 : "? " + n.l + " — non vérifié"));
+  });
+
+  var t = TECHNIQUES.filter(function(x){ return E.techniques[x.k]; });
+  if (t.length){
+    L.push("");
+    L.push("TECHNIQUES DEMANDÉES");
+    t.forEach(function(x){ L.push("  · " + x.l + " — " + x.q); });
+  }
+
+  if (E.libre.trim()){
+    L.push("");
+    L.push("REMARQUE");
+    E.libre.trim().split("\n").forEach(function(x){ L.push("  " + x); });
+  }
+
+  L.push("");
+  L.push("— La micro décrit ; la conclusion nomme. Grille v" + VERSION + " issue de " + SOURCE + ".");
+  return L.join("\n");
+}
+
+/* ── Clics ────────────────────────────────────────────────────────────────── */
+document.addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest("button[data-act]") : null;
+  if (!b || b.closest("section.off")) return;
+  var k = b.dataset.k, v = b.dataset.v, a = b.dataset.act;
+  if (a === "cote"){ E.cote = E.cote === k ? null : k; }
+  else if (a === "prelev"){ if (E.prelev[k]) delete E.prelev[k]; else E.prelev[k] = true; }
+  else if (a === "ret"){ if (E.retention[k] === v) delete E.retention[k]; else E.retention[k] = v; }
+  else if (a === "kcl"){ E.kcl = !E.kcl; }
+  else if (a === "stade"){ E.stade = E.stade === k ? null : k; }
+  else if (a === "mdef"){ E.mesure.def = E.mesure.def === k ? null : k; }
+  else if (a === "mopt"){ E.mesure.opt = E.mesure.opt === k ? null : k; }
+  else if (a === "var"){ if (E.variantes[k]) delete E.variantes[k]; else E.variantes[k] = true; }
+  else if (a === "les"){ if (E.signes[k] === v) delete E.signes[k]; else E.signes[k] = v; }
+  else if (a === "neg"){ if (E.negatifs[k] === v) delete E.negatifs[k]; else E.negatifs[k] = v; }
+  else if (a === "tech"){ if (E.techniques[k]) delete E.techniques[k]; else E.techniques[k] = true; }
+  else if (a === "foeto"){ if (E.foeto[k]) delete E.foeto[k]; else E.foeto[k] = true; }
+  else return;
+  peindre(); enregistrer();
+});
+document.addEventListener("click", function(ev){
+  var t = ev.target.closest ? ev.target.closest("[data-pick]") : null;
+  if (t){ foetoAjouter(t.dataset.pick); $("rqFoeto").value = ""; $("sgFoeto").classList.remove("on"); }
+});
+$("foetoPlus").onclick = function(){
+  var box = $("foetoTous");
+  if (!box.children.length) box.innerHTML = FOETO.sections.map(function(s){
+    return s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("");
+  }).join("");
+  box.hidden = !box.hidden; peindre();
+};
+$("rqFoeto").addEventListener("input", function(){ rechercherFoeto(this.value); });
+$("btnNegAll").onclick = function(){
+  NEGATIFS.forEach(function(n){ if (!E.negatifs[n.k]) E.negatifs[n.k] = "absent"; });
+  peindre(); enregistrer();
+};
+$("btnCopie").onclick = function(){
+  var t = composer();
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(t).then(function(){ flash("Compte rendu copié."); },
+                                          function(){ flash("Copie refusée par le navigateur."); });
+  else flash("Presse-papiers indisponible en file://.");
+};
+document.addEventListener("input", function(e){
+  var id = e.target.id;
+  if (id.indexOf("m_") === 0) E.mesure.v[id.slice(2)] = num(id);
+  else if (id === "libre") E.libre = e.target.value;
+  else if (id === "sa") majSa();
+  else return;
+  peindre(); enregistrer();
+});
+function majSa(){
+  var sa = num("sa"), att = stadeAttendu(sa), h = $("saHint");
+  h.className = "hint" + (att ? " good" : "");
+  h.textContent = att ? "Stade attendu : " + att.l.toLowerCase() + " (" + bornesTxt(att) + ")."
+                      : "SA = semaines de gestation + 2. Commande le stade attendu.";
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────────
+   localStorage est erratique en file:// et cloisonné par fichier sur certains
+   navigateurs : la saisie va en IndexedDB, y compris les champs texte.       */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction("saisies", mode), out = fn(t.objectStore("saisies"));
+    /* Tester la présence de `result`, pas sa valeur : un get() qui ne trouve rien
+       a bien un `result` (undefined) — comparé à undefined, la requête elle-même
+       était rendue, et un dossier jamais saisi s'annonçait comme restitué. */
+    t.oncomplete = function(){ res(out && "result" in out ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("readonly",  function(s){ return s.get(d); }); }
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  ["secPrelevement","secRetention","secMaturation","secVariantes","secSignes","secFoeto",
+   "secNegatifs","secTechniques","secCR","secSortie"].forEach(function(id){
+    $(id).classList.toggle("off", !ouvert);
+  });
+}
+
+/* ── Collecte / restitution ───────────────────────────────────────────────── */
+function collecter(){
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    organe: ORGANE,
+    source: SOURCE,
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    terme_sa: num("sa"),
+    grille: JSON.parse(JSON.stringify(E)),
+    compte_rendu: composer()
+  };
+}
+function appliquer(o){
+  var g = o.grille || {};
+  E = neuf();
+  ["prelev","retention","variantes","signes","negatifs","techniques","foeto"].forEach(function(c){
+    if (g[c]) E[c] = g[c];
+  });
+  Object.keys(E.foeto).forEach(function(id){
+    if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')) foetoAjouter(id);
+  });
+  E.kcl = !!g.kcl; E.stade = g.stade || null; E.cote = g.cote || null;
+  if (g.mesure){
+    E.mesure.def = g.mesure.def || null;
+    E.mesure.opt = g.mesure.opt || null;
+    champs().forEach(function(c){
+      E.mesure.v[c.id] = (g.mesure.v && g.mesure.v[c.id] != null) ? g.mesure.v[c.id] : null;
+    });
+  }
+  E.libre = g.libre || "";
+  $("sa").value = o.terme_sa != null ? o.terme_sa : "";
+  champs().forEach(function(c){ $("m_" + c.id).value = E.mesure.v[c.id] != null ? E.mesure.v[c.id] : ""; });
+  $("libre").value = E.libre;
+  majSa(); peindre();
+}
+function vider(){
+  E = neuf();
+  ["sa","libre"].forEach(function(id){ $(id).value = ""; });
+  champs().forEach(function(c){ $("m_" + c.id).value = ""; });
+  majSa(); peindre();
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, ok1 = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = ok1 && op, h = $("dossierHint");
+  h.className = "hint" + (v && !ok1 ? " bad" : ok1 ? " good" : "");
+  h.textContent = !v ? "Libre, mis en majuscules. Conditionne l'enregistrement."
+                : ok1 ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                      : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la grille.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json."
+    : ok1 ? "Saisir le lecteur pour activer l'export."
+          : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){
+    dossier = v;
+    vider();
+    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    if (rec){ appliquer(rec); flash("Grille du " + dossier + " restituée."); }
+  } else if (!ok && dossier){
+    dossier = ""; vider();
+  }
+  peindre();
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+$("btnExport").onclick = function(){
+  if (!dossierOk(dossier)) return;
+  var out = collecter();
+  telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+              dossier + "_" + MODULE + ".json");
+  var n = NEGATIFS.filter(function(x){ return E.negatifs[x.k]; }).length;
+  flash("Grille exportée." + (n < NEGATIFS.length ? " ⚠ " + (NEGATIFS.length - n) + " négatif(s) non vérifié(s)." : ""));
+};
+function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.grille) throw new Error("aucune clé « grille »");
+  if (o.dossier) $("dossier").value = normDossier(o.dossier);
+  if (o.operateur) $("operateur").value = o.operateur;
+  return majDossier().then(function(){
+    if (!dossier) throw new Error("numéro de dossier absent ou lecteur manquant");
+    appliquer(o); enregistrer();
+    return true;
+  });
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    Promise.resolve().then(function(){ return relire(JSON.parse(String(fr.result))); })
+      .then(function(){ flash("Grille relue."); })
+      .catch(function(e){ flash("Relecture impossible : " + e.message); });
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la grille du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    await tx("readwrite", function(s){ return s.delete(dossier); });
+    vider(); flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les grilles de TOUS les dossiers sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("readwrite", function(s){ return s.clear(); });
+  vider(); flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Axes de la grille", PRELEV.length + " prélèvement · " + RETENTION.length + " rétention · " +
+                             STADES.length + " stades · " + SIGNES.length + " signes · " +
+                             DIAGS.length + " associations · " +
+                             NEGATIFS.length + " négatifs · " + TECHNIQUES.length + " techniques");
+  ligne("Source", SOURCE + " — la fiche est la source, ce module en est la sortie");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+(async function(){
+  $("ver").textContent = "v" + VERSION;
+  E = neuf();
+  batir(); majSa(); peindre();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — aucune saisie ne sera conservée. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir le fichier avec ?selftest=1 ───────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+  function clic(act, k, v){
+    var s = '[data-act="' + act + '"][data-k="' + k + '"]' + (v ? '[data-v="' + v + '"]' : "");
+    var b = document.querySelector(s);
+    if (!b){ ko.push("bouton introuvable : " + s); return null; }
+    b.click(); return b;
+  }
+  function crTient(t){ return $("cr").textContent.indexOf(t) >= 0; }
+  var pause = function(){ return new Promise(function(r){ setTimeout(r, 30); }); };
+
+  /* Intégrité des tableaux — pure, sans DOM */
+  ["PRELEV","RETENTION","STADES","VARIANTES","SIGNES","DIAGS","NEGATIFS","TECHNIQUES"].forEach(function(nom){
+    var t = { PRELEV:PRELEV, RETENTION:RETENTION, STADES:STADES, VARIANTES:VARIANTES,
+              SIGNES:SIGNES, DIAGS:DIAGS, NEGATIFS:NEGATIFS, TECHNIQUES:TECHNIQUES }[nom];
+    chk("clés uniques dans " + nom, new Set(t.map(function(x){ return x.k; })).size === t.length);
+  });
+  chk("stades ordonnés",      STADES.every(function(s, i){ return !i || s.max > STADES[i-1].max; }));
+  chk("dernier stade ouvert", STADES[STADES.length-1].max === 99);
+  chk("sans terme, pas de stade", stadeAttendu(null) === null);
+  chk("chaque association a son « ne pas conclure »",
+      DIAGS.every(function(d){ return d.stop && d.signes.length >= 2; }));
+  chk("chaque association ne cite que des signes déclarés",
+      DIAGS.every(function(d){ return d.signes.every(function(k){ return !!par(SIGNES, k); }); }));
+  chk("le signe pivot fait partie de l'association",
+      DIAGS.every(function(d){ return !d.cle || d.signes.indexOf(d.cle) >= 0; }));
+  chk("seuil d'association atteignable",
+      DIAGS.every(function(d){ return seuil(d) >= 1 && seuil(d) <= d.signes.length; }));
+  chk("chaque négatif a son défaut", NEGATIFS.every(function(n){ return n.ko && n.p; }));
+  chk("une borne de rétention au moins est bonne",
+      RETENTION.some(function(r){ return r.q === "bon"; }));
+
+  /* Verrou */
+  chk("verrouillé au départ",  $("secSignes").classList.contains("off"));
+  clic("prelev", PRELEV[0].k);
+  chk("clic ignoré sous verrou", !E.prelev[PRELEV[0].k]);
+  set("dossier", "26p0123");
+  chk("lecteur manquant",      $("secSignes").classList.contains("off"));
+  set("operateur", "RM");
+  await pause();
+  chk("déverrouillé",         !$("secSignes").classList.contains("off"));
+  chk("dossier normalisé",     $("dossier").value === "26P0123");
+  chk("export activé",        !$("btnExport").disabled);
+
+  /* Chips */
+  clic("prelev", PRELEV[0].k);
+  chk("chip prélèvement posée", E.prelev[PRELEV[0].k] === true &&
+      document.querySelector('[data-act="prelev"][data-k="' + PRELEV[0].k + '"]').className.indexOf("on") >= 0);
+  clic("prelev", PRELEV[0].k);
+  chk("chip retirée au 2e clic", !E.prelev[PRELEV[0].k]);
+
+  /* Rétention — le fœticide prime sur toute borne */
+  var bon = RETENTION.filter(function(r){ return r.q === "bon"; })[0];
+  clic("ret", bon.k, "present");
+  chk("borne posée",           $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("kcl", "kcl");
+  chk("KCl invalide la datation", $("vRetention").className.indexOf("bad") >= 0);
+  clic("kcl", "kcl");
+  chk("KCl levé, borne revenue", $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("ret", bon.k, "present");
+
+  /* Côté — organe pair */
+  if (PAIR){
+    chk("bloc côté visible",   !$("coteBloc").hidden);
+    chk("côté manquant en réserve",
+        verdictPrelevement().res.indexOf("côté non déclaré — organe pair") >= 0);
+    clic("cote", "droit");
+    chk("côté posé",            E.cote === "droit" && crTient("Droit — 1/2"));
+    clic("cote", "droit");
+    chk("2e clic retire le côté", E.cote === null);
+    clic("cote", "deux");
+  } else {
+    chk("pas de bloc côté sur organe impair", $("coteBloc").hidden);
+  }
+
+  /* Signes et associations */
+  var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
+  chk("rien à associer au départ", $("diags").textContent.indexOf("Aucun signe anormal") >= 0);
+  clic("les", l0.k, "anormal");
+  chk("signe posé anormal",    E.signes[l0.k] === "anormal");
+  chk("association esquissée",  $("diags").textContent.indexOf(d0.l) >= 0);
+  clic("les", l0.k, "anormal");
+  chk("2e clic remet à non exploré", !E.signes[l0.k]);
+  clic("les", l0.k, "normal");
+  chk("normal ne nourrit pas l'association", associations().length === 0);
+  clic("les", l0.k, "normal");
+
+  /* L'association complète se tient, et elle seule */
+  d0.signes.forEach(function(k){ clic("les", k, "anormal"); });
+  var a0 = associations().filter(function(a){ return a.d.k === d0.k; })[0];
+  chk("association tenue",     a0 && a0.tenu);
+  chk("CR : association écrite", crTient(d0.l + " — association tenue"));
+  chk("CR : ne pas conclure",  crTient("ne pas conclure : " + d0.stop));
+  d0.signes.slice(1).forEach(function(k){ clic("les", k, "anormal"); });
+  chk("retirer les signes défait l'association",
+      (associations().filter(function(a){ return a.d.k === d0.k; })[0] || {}).pris.length === 1);
+
+  /* Négatifs */
+  $("btnNegAll").click();
+  chk("tous les négatifs posés", Object.keys(E.negatifs).length === NEGATIFS.length);
+  clic("neg", NEGATIFS[0].k, "present");
+  chk("négatif retourné en rouge", E.negatifs[NEGATIFS[0].k] === "present" &&
+      document.querySelector('[data-act="neg"][data-k="' + NEGATIFS[0].k + '"][data-v="present"]').className.indexOf("no") >= 0);
+  chk("CR : défaut écrit",     crTient("! " + NEGATIFS[0].ko));
+  clic("neg", NEGATIFS[0].k, "absent");
+
+  /* Compte rendu */
+  clic("tech", TECHNIQUES[0].k);
+  set("libre", "Bloc non parvenu.");
+  chk("CR : en-tête dossier",  crTient("26P0123") && crTient("RM"));
+  chk("CR : signe anormal",    crTient(l0.l + " — ANORMAL"));
+  chk("CR : non explorés dits", crTient("Non explorés :"));
+  chk("CR : technique demandée", crTient(TECHNIQUES[0].l));
+  chk("CR : remarque libre",   crTient("Bloc non parvenu."));
+  chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
+
+  /* Contrôles propres à l'organe */
+  await testsOrgane(chk, clic, set, crTient, pause);
+
+  /* Termes FOETO — seulement si la fiche en rattache */
+  if (FOETO.sections.length){
+    var f0 = FOETO.sections[0].termes[0].id;
+    chk("FOETO : sections rendues", $("foeto").querySelectorAll(".sousTitre").length === FOETO.sections.length);
+    clic("foeto", f0);
+    chk("FOETO : terme coché",      E.foeto[f0] === true && $("tFoeto").textContent.indexOf("1/") === 0);
+    chk("FOETO : CR le porte",      crTient("[" + f0 + "]"));
+    chk("FOETO : exporté",          collecter().grille.foeto[f0] === true);
+    set("rqFoeto", foetoLabel(f0).slice(0, 4));
+    chk("FOETO : recherche",        $("sgFoeto").querySelectorAll("[data-pick]").length >= 1);
+    $("sgFoeto").querySelector("[data-pick]").click();
+    chk("FOETO : recherche vidée",  $("rqFoeto").value === "" && !$("sgFoeto").classList.contains("on"));
+    chk("FOETO : id lisible",       /^FOETO:/.test(f0));
+    clic("foeto", f0);
+    Object.keys(E.foeto).forEach(function(id){ delete E.foeto[id]; }); peindre();
+  }
+
+  /* Enveloppe, persistance, relecture — l'organe a pu reposer ses propres signes */
+  if (E.signes[l0.k] !== "anormal"){
+    if (E.signes[l0.k]) clic("les", l0.k, E.signes[l0.k]);
+    clic("les", l0.k, "anormal");
+  }
+  var snap = collecter();
+  chk("enveloppe conforme",    snap.schema_version === SCHEMA && snap.module === MODULE &&
+                               snap.module_version === VERSION && snap.dossier === "26P0123" &&
+                               snap.organe === ORGANE && !!snap.exported_at);
+  chk("version en entête",     $("ver").textContent === "v" + VERSION);
+  chk("CR dans le JSON",       snap.compte_rendu.indexOf(TITRE_CR + " — grille de lecture") === 0);
+
+  await putSaisie(snap);
+  vider();
+  chk("vider efface la grille", Object.keys(E.signes).length === 0);
+  var relu = await getSaisie("26P0123");
+  appliquer(relu);
+  chk("IndexedDB restitue",    E.signes[l0.k] === "anormal" &&
+                               $("sa").value === String(snap.terme_sa));
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+  chk("banc remis à zéro",     Object.keys(E.signes).length === 0 && $("secSignes").classList.contains("off"));
+  await relire(snap);
+  chk("relecture d'un JSON",   E.signes[l0.k] === "anormal" && dossier === "26P0123");
+  var refus = false;
+  try { await relire({module:"autopsie", grille:{}}); } catch(e){ refus = /module/.test(e.message); }
+  chk("JSON d'un autre module refusé", refus);
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>

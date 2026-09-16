@@ -1,0 +1,2368 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grille de lecture — œil fœtal</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --alert-soft:#F7EAE7;
+  --amber:#8A6A18; --amber-soft:#F6F0DE;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off button,section.off input,section.off select{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 170px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],input[type=number],textarea{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+input[type=number]{font-family:var(--mono);letter-spacing:.03em}
+textarea{resize:vertical;min-height:60px;font-size:15px}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+/* ── Boutons-clics : toute la saisie sémantique passe par là ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font-family:var(--sans);font-size:14px;line-height:1.25;
+  border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+  border-radius:2px;padding:8px 11px;cursor:pointer;min-height:38px;text-align:left}
+.chip:hover{background:var(--drape-soft)}
+.chip:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.chip.on{background:var(--drape);border-color:var(--drape);color:#fff;font-weight:600}
+.chip.no{background:var(--alert-soft);border-color:var(--alert);color:var(--alert);font-weight:600}
+.chip.sugg{border-color:var(--amber);border-style:dashed}
+.chip[data-act=foeto]::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;background:var(--drape);opacity:.55}
+.chip.on[data-act=foeto]::after{background:#fff}
+.plus{font-size:13px;color:var(--drape);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline dotted}
+.rech{position:relative;margin-top:8px}
+.rech input{font:inherit;font-size:14px;padding:6px 10px;border:1px solid #bbb;border-radius:8px;width:min(100%,24rem)}
+.sugg{position:absolute;z-index:5;background:#fff;border:1px solid #bbb;border-radius:8px;max-height:12rem;overflow:auto;width:min(100%,24rem);display:none}
+.sugg.on{display:block}
+.sugg div{padding:5px 10px;cursor:pointer;font-size:14px}
+.sugg div:hover{background:var(--drape-soft)}
+.sugg small{color:#777}
+.chip .k{font-family:var(--mono);font-size:10px;letter-spacing:.07em;opacity:.75;
+         display:block;text-transform:uppercase}
+
+.item{border-top:1px solid var(--rule);padding:10px 0}
+.item:first-child{border-top:0}
+.item .head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.item .lbl{flex:1 1 240px;min-width:0;font-size:15px}
+.item .meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-soft);
+            display:block;margin-top:2px}
+.item .meta.bon{color:var(--drape)} .item .meta.mauvais{color:var(--alert)}
+.item .meta.moyen{color:var(--amber)}
+.unfold{margin:9px 0 0 0;padding:9px 0 0;border-top:1px dashed var(--rule)}
+.unfold[hidden]{display:none}
+.stop{font-size:13px;line-height:1.35;color:var(--alert);background:var(--alert-soft);
+      border-left:2px solid var(--alert);padding:6px 9px;margin-top:8px}
+.stop b{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+
+.verdict{font-size:14px;line-height:1.4;border-left:3px solid var(--rule);
+         padding:7px 10px;margin-top:11px;background:var(--paper)}
+.verdict.ok{border-color:var(--drape);background:var(--drape-soft)}
+.verdict.warn{border-color:var(--amber);background:var(--amber-soft)}
+.verdict.bad{border-color:var(--alert);background:var(--alert-soft)}
+.verdict b{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+           display:block;color:var(--ink-soft)}
+
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+.sousTitre:first-child{margin-top:0}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:var(--alert-soft)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+pre.cr{font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;
+  padding:12px;margin:0 0 10px;max-height:44vh;overflow:auto}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · lecture microscopique</p>
+  <h1>Grille de lecture — œil fœtal <span class="ver" id="ver"></span></h1>
+  <p class="sub">Sortie de <code>fiche_oeil.md</code>. Tout se clique ; seuls le dossier, le terme et les comptes se tapent. Document autonome : rien n'est transmis.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Libre, mis en majuscules. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Lecteur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la grille.</div>
+    </div>
+    <div class="field">
+      <label for="sa">Terme (SA)</label>
+      <input type="number" id="sa" min="8" max="45" step="1" inputmode="numeric" placeholder="—">
+      <div class="hint" id="saHint">SA = semaines de gestation + 2. Commande le stade attendu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — Prélèvement -->
+<section id="secPrelevement" class="off">
+  <h2><span class="n">02</span>Prélèvement<span class="tally" id="tPrelevement">—</span></h2>
+  <div id="coteBloc" hidden>
+    <div class="sousTitre">Côté prélevé</div>
+    <div class="chips" id="cote" style="margin-bottom:11px"></div>
+  </div>
+  <div class="chips" id="prelevement"></div>
+  <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
+</section>
+
+<!-- 03 — Rétention -->
+<section id="secRetention" class="off">
+  <h2><span class="n">03</span>Rétention<span class="tally" id="tRetention">—</span></h2>
+  <div id="retention"></div>
+  <div class="chips" id="kcl" style="margin-top:11px"></div>
+  <div class="verdict" id="vRetention"><b>Borne inférieure</b>—</div>
+</section>
+
+<!-- 04 — Maturation -->
+<section id="secMaturation" class="off">
+  <h2><span class="n">04</span>Maturation<span class="tally" id="tMaturation">—</span></h2>
+  <div class="sousTitre" id="stTitre">Stade observé</div>
+  <div class="chips" id="stades"></div>
+  <div id="mesure"></div>
+  <div class="verdict" id="vMaturation"><b>Lecture</b>—</div>
+  <div class="verdict" id="vMesure" hidden><b>Mesure</b>—</div>
+</section>
+
+<!-- 05 — Variantes normales -->
+<section id="secVariantes" class="off">
+  <h2><span class="n">05</span>Variantes normales<span class="tally" id="tVariantes">—</span></h2>
+  <p class="note" style="margin-top:0">Cliquer ce qui est vu et écarté comme normal. Rien de coché ne veut pas dire absent : ça veut dire non regardé.</p>
+  <div class="chips" id="variantes" style="margin-top:10px"></div>
+</section>
+
+<!-- 06 — Signes -->
+<section id="secSignes" class="off">
+  <h2><span class="n">06</span>Signes<span class="tally" id="tSignes">—</span></h2>
+  <p class="note" style="margin-top:0">On coche des signes, pas des diagnostics. Les associations en dessous se déduisent de ce qui est coché : elles s'affichent, elles ne se choisissent pas.</p>
+  <div id="signes" style="margin-top:10px"></div>
+  <div class="sousTitre" style="margin-top:16px">Associations lues</div>
+  <div id="diags"></div>
+</section>
+
+<!-- 07 — Termes FOETO attestés par la fiche -->
+<section id="secFoeto" class="off">
+  <h2><span class="n">07</span>Termes FOETO<span class="tally" id="tFoeto">—</span></h2>
+  <p class="note" style="margin-top:0">Les termes du vocabulaire FOETO que la fiche de l'organe retient comme lésions, par sous-section. Un terme coché est présent ; rien de coché ne veut pas dire absent.</p>
+  <div id="foeto"></div>
+  <button type="button" class="plus" id="foetoPlus" hidden>▸ tous les termes attestés</button>
+  <div class="chips" id="foetoTous" hidden style="margin-top:6px"></div>
+  <div class="rech" id="foetoRech" hidden><input type="text" id="rqFoeto" placeholder="rechercher un terme (3 lettres)…" autocomplete="off"><div class="sugg" id="sgFoeto"></div></div>
+</section>
+
+<!-- 08 — Négatifs obligatoires -->
+<section id="secNegatifs" class="off">
+  <h2><span class="n">08</span>Négatifs obligatoires<span class="tally" id="tNegatifs">—</span></h2>
+  <div class="btns" style="margin-bottom:11px">
+    <button class="btn" id="btnNegAll">Tous vérifiés</button>
+  </div>
+  <div id="negatifs"></div>
+</section>
+
+<!-- 08 — Techniques -->
+<section id="secTechniques" class="off">
+  <h2><span class="n">09</span>Techniques<span class="tally" id="tTechniques">—</span></h2>
+  <p class="note" style="margin-top:0" id="techNote"></p>
+  <div class="chips" id="techniques" style="margin-top:10px"></div>
+</section>
+
+<!-- 09 — Compte rendu -->
+<section id="secCR" class="off">
+  <h2><span class="n">10</span>Compte rendu<span class="tally" id="tCR">—</span></h2>
+  <pre class="cr" id="cr">—</pre>
+  <div class="row">
+    <div class="field" style="flex:1 1 100%">
+      <label for="libre">Remarque libre</label>
+      <textarea id="libre" placeholder="Ce que la grille ne prévoit pas."></textarea>
+    </div>
+  </div>
+  <div class="btns" style="margin-top:10px">
+    <button class="btn" id="btnCopie">Copier le compte rendu</button>
+  </div>
+</section>
+
+<!-- 10 — Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n">11</span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Vider le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- 11 — Diagnostic -->
+<section>
+  <h2><span class="n">12</span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante, aucun fetch : doit fonctionner par double-clic hors réseau.
+
+   Ce module est la SORTIE de fiche_oeil.md, jamais l'inverse. Les bornes, les
+   spécificités et les « ce qu'il ne faut pas conclure » sont recopiés de la
+   fiche ; ils ne se corrigent pas ici mais dans la fiche.
+
+   La grille ne conclut pas : elle contraint la description et rend ses
+   réserves visibles. Un critère non cliqué n'est pas un négatif — c'est un
+   non-regardé, et le compte rendu le dit.
+
+   Fichier ENGENDRÉ par gen_grille.py depuis grilles/oeil.js.
+   Corriger le fragment, pas ce fichier.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  FRAGMENT D'ORGANE — grilles/oeil.js                            ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+/* Grille de lecture — œil fœtal.
+   Fond : ~/Bureau/fiches_lecture/fiche_oeil.md (§1 à §9).
+   Forme : gen_grille.py, calquée sur grille_poumon.html.
+   Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées.
+
+   Trois écarts de fond, tous portés par la fiche et non par cette grille :
+   — l'œil n'est pas un prélèvement de routine, il est conditionnel (§ 1, § 9.15) ;
+   — il est absent des trois barèmes de macération du fonds : l'ordre de rétention
+     est INTERNE au globe et ne se convertit en aucune heure (§ 2.1, § 9.1) ;
+   — il se date par DEUX axes de résistance opposée, et il faut écrire lequel on a
+     utilisé (§ 2.3, § 3.4) — c'est l'axe catégoriel de MESURE. */
+
+var ORGANE  = "oeil";
+var TITRE   = "œil fœtal";
+var SOURCE  = "fiche_oeil.md";
+var MODULE  = "grille_oeil";
+var VERSION = "1.0.1";
+var PAIR    = true;
+
+var TITRE_CR    = "ŒIL";
+var STADE_TITRE = "Repère de maturation le plus avancé effectivement vu";
+
+var KCL_TXT = "Fœticide par KCl déclaré — l'œil n'a de toute façon aucun rang dans les barèmes de " +
+              "macération (ni Table 15.6, ni ernst ch. 37, ni les 23 critères de Genest) : aucune " +
+              "borne horaire n'était recevable avant le geste, aucune ne l'est après. L'ordre du " +
+              "§ 2.2 reste lisible comme ordre interne, jamais comme durée.";
+
+/* Le retard oculaire est le point où l'axe utilisé doit être nommé : la stratification
+   rétinienne est détruite par la lyse alors que la régression vasculaire tient. */
+var RETARD_NOTE = "Nommer l'axe qui a servi (rétinien, antérieur ou vasculaire) : sur un œil " +
+                  "macéré un « retard » rétinien peut n'être que le rang 1 de l'ordre interne. " +
+                  "Et une rétine à dix couches ne se date pas « ≥ 27 SA » mais « ≥ 24–27 SA " +
+                  "selon la source » (§ 9.19) : elle ne doit jamais servir seule à contredire " +
+                  "un terme obstétrical.";
+
+var AVANCE_NOTE = "Une avance sur l'axe vasculaire (hyaloïde déjà régressée) n'est pas une avance " +
+                  "de maturation générale : la régression hyaloïdienne a « a bit of variability, " +
+                  "also between fellow eyes ». Reprendre la datation sur l'axe antérieur, le plus " +
+                  "dense en repères, avant de conclure.";
+
+var TECH_NOTE = "Les pointillés sont des propositions déduites des clics, jamais des prescriptions. " +
+                "Le PAS systématique est une décision de la fiche, pas une prescription de la " +
+                "source (§ 9.16) — le proposer, c'est ouvrir un choix, pas rappeler une règle.";
+
+/* ── 01 · Prélèvement ─────────────────────────────────────────────────────────
+   L'œil est le seul organe du dossier dont le § 1 est une INDICATION autant
+   qu'une check-list : « si nécessaire » (soffoet), 7 CR sur 176 (corpus). */
+var PRELEV = [
+  { k:"indication", l:"Indication du prélèvement écrite (microphtalmie · inflammation · tumeur · TCNA · TORCH)",
+    manque:"le prélèvement oculaire est conditionnel — le manuel l'écrit « si nécessaire » et le " +
+           "corpus ne le trouve que dans 7 CR sur 176 : écrire pourquoi on a décidé de le faire" },
+  { k:"deuxBlocs", l:"Deux blocs — un par œil, identifiés OD / OS", grave:true,
+    manque:"« It is crucial for the pathologist to study both eyes in a case of suspected AHT » — " +
+           "et en microphtalmie unilatérale l'œil adelphe EST l'étalon de mesure" },
+  { k:"planPO", l:"Globe ouvert selon le plan PO (pupille – nerf optique)", grave:true,
+    manque:"sans le plan pupille–nerf optique, ni le DAP, ni l'angle, ni les trois items " +
+           "pronostiques du rétinoblastome ne sont évaluables (§ 8.3)" },
+  { k:"ciliaires", l:"Longues artères ciliaires postérieures repérées avant la coupe",
+    manque:"« The identification of the long posterior ciliary arteries helps to identify the " +
+           "horizontal plane » — le plan se prouve à la macroscopie, pas après" },
+  { k:"nerfOptique", l:"Tête du nerf optique sur la coupe", grave:true,
+    manque:"à défaut de tête de nerf optique, ni l'hémorragie péripapillaire intrasclérale ni le " +
+           "colobome papillaire ne se jugent ; la méningite listérienne du nerf non plus" },
+  { k:"etagees", l:"Coupes étagées (step sections) 4 μm réalisées", grave:true,
+    manque:"« A detailed stepwise sectioning and microscopic investigation of the orbital contents " +
+           "is mandatory to differentiate between anophthalmia and microphthalmia » ; sans elles, " +
+           "ni le négatif d'anophtalmie ni celui de colobome ne sont rendables" },
+  { k:"cristallinIntact", l:"Cristallin NON traversé par la lame",
+    manque:"« cutting through the lens should be avoided, as it usually dislocates » — la pièce " +
+           "cristallinienne n'est plus jugeable" },
+  { k:"blocEntier", l:"Globe < 6–8 mm inclus EN ENTIER, sans ouverture",
+    manque:"en microphtalmie sévère (< 6–8 mm de longueur axiale) on n'ouvre pas : le globe est " +
+           "inclus en entier" },
+  { k:"voiePosterieure", l:"Voie postérieure (toit de l'orbite effondré) quand l'orbite doit être examinée",
+    manque:"la voie postérieure est obligatoire « in cases of microphthalmia (with cyst) or " +
+           "anophthalmia, when the whole contents of the orbit need to be examined in order to " +
+           "decide between the two diagnoses », et « in cases of inflammation, neoplasia, or " +
+           "non-accidental trauma » — verbatim : « par voie interne, en effondrant le toit de l'orbite »" },
+  { k:"paupieres", l:"Paupières respectées et examinées",
+    manque:"« Dans les deux cas, les paupières doivent être soigneusement respectées » — elles " +
+           "portent la fusion / séparation palpébrale, repère de maturation daté (rangs 1 et 16)" },
+  { k:"blocTete", l:"Cryptophtalmie ou cyclopie : bloc de tête, pas d'énucléation",
+    manque:"en cryptophtalmie « the globe is tightly attached to the overlying skin, resulting in " +
+           "damage to the anterior parts of the eye » ; en cyclopie « the eye may not be removed »" },
+  { k:"macro", l:"Macroscopie faite AVANT la coupe : DAP · DC · transillumination · aspect du cristallin",
+    grave:true,
+    manque:"trois données ne sont plus récupérables une fois le globe coupé — la biométrie, la " +
+           "transillumination et l'aspect du cristallin. Le pli périmaculaire « can only be " +
+           "determined by macroscopic evaluation »" },
+  { k:"photo", l:"Photographie de la pièce au grossage",
+    manque:"« photography at grossing is recommended » — le type d'hémorragie (en flammèche, en " +
+           "points, en taches) n'est plus ré-observable ensuite" },
+  { k:"pas", l:"HES ET PAS, les deux systématiques",
+    manque:"« Step sections of 4 μm are cut and routinely stained with H&E and PAS » ; les quatre " +
+           "repères du segment antérieur (Bowman, Descemet, capsule, Bruch) sont des lames dont " +
+           "l'ABSENCE FOCALE est le critère — une absence ne se lit pas sur HES seul (§ 9.16)" },
+  { k:"formol", l:"Formol 10 %, ≥ 24 h, SANS injection dans le vitré",
+    manque:"« There is no need to inject formalin into the vitreous cavity. This procedure should " +
+           "be avoided, as it will lead to additional artifacts without any proven benefits » — " +
+           "la déformation du globe rend le DAP et l'angle ininterprétables" }
+];
+
+/* ── 02 · Rétention ───────────────────────────────────────────────────────────
+   ⚠ L'ŒIL N'A AUCUN RANG DANS L'HORLOGE MULTI-ORGANES. Ce qui suit n'est pas
+   une horloge : c'est l'ordre de résistance INTERNE au globe (verdijk ch. 3),
+   du plus fragile au plus résistant. Aucun « b » ne porte d'heure, et c'est
+   volontaire (§ 2.1, § 9.1). Plus le rang atteint est haut, plus la lyse est
+   avancée — d'où h = numéro de rang. */
+
+/* Modificateur unique et sourcé, l'équivalent pour l'œil des deux modificateurs
+   de l'horloge de keeling. */
+var MODIF = "modificateur unique et sourcé : « Eyes from fetuses who died intrauterine often show " +
+            "more extensive autolysis than eyes from abortions » — devant une MFIU, relever le " +
+            "seuil d'exigence avant tout diagnostic rétinien";
+
+var RETENTION = [
+  { k:"retineFragmentee", l:"Rétine neurosensorielle fragmentée, architecture stratifiée disloquée",
+    b:"rang 1/7 de l'ordre interne", d:"« The retina seems to be most affected by autolytic changes »",
+    h:1, q:"bon",
+    note:"c'est le rang qui commande tout le reste : dès que la rétine est fragmentée, l'axe de " +
+         "datation « nombre de couches » est mort — il ne se rattrape pas, ne s'interpole pas, ne " +
+         "se déduit pas de l'épaisseur. Ce n'est ni une dysplasie rétinienne, ni un décollement. " +
+         "Écrire « non évaluable », pas « rétine normale ». Mais l'œil n'est pas indatable pour " +
+         "autant : l'axe vasculaire (rang 6) tient",
+    alerte:MODIF },
+
+  { k:"cristallinArtefacts", l:"Cristallin : globules, vacuoles, fentes, décollement capsulaire",
+    b:"rang 2/7 de l'ordre interne", d:"« Lens artifacts are present in nearly all fetal and neonatal eyes »",
+    h:2, q:"mauvais",
+    note:"prédicteur MAUVAIS par construction : la base est ~100 %, donc l'artefact n'est pas " +
+         "informatif. Et il est indissociable d'une cataracte vraie — « Fixation and mechanical " +
+         "damage to the lens can induce changes that resemble a nuclear cataract, making it " +
+         "extremely difficult to diagnose on histology alone ». Le négatif de cataracte exige " +
+         "l'inspection macroscopique du cristallin, pas la lame" },
+
+  { k:"pigmentDisperse", l:"Pigment irien / ciliaire dispersé dans le vitré et les deux chambres",
+    b:"rang 3/7 de l'ordre interne",
+    d:"« dispersed throughout the vitreous cavity and the anterior and posterior ocular chamber »",
+    h:3, q:"moyen",
+    note:"interdit deux énoncés : ce n'est ni un essaimage tumoral ni un pigment d'hémorragie " +
+         "ancienne, ET le négatif d'aniridie devient NON RENDABLE — « absence of the pigment " +
+         "epithelium of the iris and ciliary body due to autolysis » a été décrit dans un angle " +
+         "par ailleurs « regular developed ». La dépigmentation irienne de la rubéole est " +
+         "inutilisable sur ce fond",
+    alerte:MODIF },
+
+  { k:"corneeEpithelium", l:"Épithélium et endothélium cornéens raréfiés ou rudimentaires",
+    b:"rang 4/7 de l'ordre interne",
+    d:"« autolytic changes most often affect the corneal epithelium and endothelium »",
+    h:4, q:"moyen",
+    note:"vu et nommé comme tel dans un œil de trisomie 18 par ailleurs normal : « Because of " +
+         "autolysis, the epithelium and endothelium are only rudimentary ». Ce n'est ni une " +
+         "paucité endothéliale, ni une sclérocornée — la sclérocornée se lit sur la structure du " +
+         "stroma et le limbe, pas sur l'endothélium" },
+
+  { k:"stromaCorneenOedeme", l:"Stroma cornéen œdémateux, délité",
+    b:"rang 5/7 de l'ordre interne",
+    d:"« Severe autolysis is characterized by an edematous corneal stroma »",
+    h:5, q:"bon",
+    note:"la source qualifie elle-même ce rang de lyse SÉVÈRE : si le stroma est œdémateux, l'œil " +
+         "entier bascule vers l'ininterprétable. Ce n'est pas l'œdème cornéen central d'une " +
+         "anomalie de Peters",
+    alerte:MODIF },
+
+  { k:"rang6Atteint", l:"Atteinte des structures RÉSISTANTES (EPR · stroma uvéal · choroïde · système hyaloïdien · nerf optique)",
+    b:"rang 6/7 de l'ordre interne",
+    d:"normalement conservées : « The retinal pigment epithelium is usually well preserved »",
+    h:6, q:"moyen",
+    note:"le rang 6 est censé tenir — « If present, the vascular system of the hyaloid artery is " +
+         "usually well-preserved, as is the tunica vasculosa lentis anterior and posterior » et " +
+         "« The optic nerve usually is well-preserved ». S'il est atteint, l'axe de datation " +
+         "VASCULAIRE tombe à son tour et il ne reste aucun axe. C'est aussi le rang qui portait " +
+         "l'argument du CHRPE (« the RPE is usually well preserved and is not prone to artifacts " +
+         "of this kind ») : cet argument ne tient plus" },
+
+  { k:"scleraLysee", l:"Sclérotique elle-même altérée",
+    b:"rang 7/7 de l'ordre interne", d:"« The sclera usually is not affected by autolytic changes »",
+    h:7, q:"moyen",
+    note:"structure la plus résistante du globe : son altération signe une lyse au-delà de tout " +
+         "l'ordre décrit. Aucune source ne donne de durée correspondante — ne pas en inventer une",
+    alerte:MODIF }
+];
+
+/* ── 03 · Maturation — repères datés, pas des stades nommés ───────────────────
+   « Cette fiche ne fabrique pas de stades » : pas d'équivalent oculaire du
+   pseudoglandulaire/canaliculaire/sacculaire/alvéolaire. Ce qui suit est une
+   échelle unique reconstruite depuis les 25 rangs du § 3.1, en gardant un
+   repère par palier et en préfixant le compartiment (R/A/C/V/P). */
+var STADES = [
+  { k:"paupieresFusionnees", l:"P/A — paupières fusionnées, sinus marginal de l'iris présent", max:15 },
+  { k:"neuroblastiques",     l:"R — INBL et ONBL distinguables, couche des cellules ganglionnaires visible", max:19,
+    note:"borne basse de l'axe rétinien ; l'ora serrata du même palier (14 SA chez verdijk, « by " +
+         "the sixth month » chez ernst) est une DIVERGENCE NON tranchée d'environ 10 semaines — " +
+         "elle n'est pas utilisée ici comme jalon discriminant (§ 9.20)" },
+  { k:"bowman",              l:"C — couche de Bowman détectable en microscopie optique", max:24,
+    note:"« Bowman's layer can first be detected by light microscopy about week 17 » ; ernst date " +
+         "le DÉBUT de la synthèse à la semaine 8 — ce n'est pas une divergence, les deux sources " +
+         "ne parlent pas du même événement (§ 3.5)" },
+  { k:"dixCouches",          l:"R — les dix couches rétiniennes identifiables en microscopie optique", max:29,
+    note:"DIVERGENCE NON tranchée de 3 semaines sur le jalon le plus utilisé de la fiche : " +
+         "verdijk « At week 25, all retinal layers … are seen by light microscopy » → 27 SA, " +
+         "keeling « By the 22nd week, the retina is composed of ten layers similar in structure " +
+         "to that in the adult » → 24 SA. Deux sources de même rang, aucun argument pour " +
+         "départager : écrire « ≥ 24–27 SA selon la source », jamais une valeur unique (§ 9.19)" },
+  { k:"paupieresSeparees",   l:"P/A — paupières séparées, sinus marginal de l'iris disparu", max:34,
+    note:"trois valeurs échelonnées sur ~5 semaines (verdijk 29 SA · keeling « completely " +
+         "separated by the end of the seventh month » · ernst « the eyelids open during week 24 ») " +
+         "— non arbitrées. Et la séparation se fait « starting nasally and extending laterally » : " +
+         "une paupière séparée en nasal et fusionnée en temporal est un état intermédiaire NORMAL, " +
+         "pas une asymétrie" },
+  { k:"hyaloideRegressee",   l:"V — artère hyaloïde complètement régressée", max:37,
+    note:"« By week 34, it should have undergone complete regression » (→ 36 SA), avec « a bit of " +
+         "variability, also between fellow eyes » : une asymétrie de régression hyaloïdienne seule " +
+         "ne fait pas une asymétrie de maturation (§ 3.4)" },
+  { k:"tvlRegressee",        l:"V — régression de la TVL antérieure achevée", max:42,
+    note:"« regression is completed around week 35 » (→ 37 SA) ; à 40 SA la TVL antérieure est " +
+         "« almost completely regressed » et l'angle iridocornéen « almost completely developed ». " +
+         "Après ces bornes, les reliquats sont une VARIANTE ; avant elles, la même image est " +
+         "l'état normal (§ 4.2.5, § 8.4)" },
+  { k:"conesBatonnets",      l:"R — cônes et bâtonnets clairement visibles", max:99,
+    note:"le livre inscrit lui-même la réserve dans son dernier repère : « the rods and cones are " +
+         "clearly visible (obviously depending on the degree of autolytic changes) »" }
+];
+
+/* ── 03 bis · Biométrie et les deux axes catégoriels ──────────────────────────
+   Les deux axes de MESURE sont les deux choses que la fiche exige d'écrire et
+   que rien d'autre ne porte :
+     · defs = le PLAN DE COUPE PROUVÉ. § 8.3 : « plan de coupe non PO » ne
+       produit pas une lame lisible. C'est le seul verdict bloquant de la grille.
+     · opts = l'AXE DE DATATION EFFECTIVEMENT UTILISÉ. § 3.4 : la discordance ne
+       s'écrit qu'avec « l'axe utilisé nommé » — et § 2.3 : l'axe rétinien meurt
+       au rang 1 pendant que l'axe vasculaire survit au rang 6. */
+
+var MESURE = {
+  titre:"Biométrie du globe (DAP · DC) et axes de lecture",
+  defLabel:"plan de coupe prouvé — sans lui, ni DAP, ni angle, ni items pronostiques",
+  optLabel:"axe de datation effectivement utilisé — à nommer dans le compte rendu",
+  defs:[
+    { k:"poProuve",   l:"PO prouvé : cornée + pupille + cristallin + rétine postérieure + tête du nerf optique sur la même coupe" },
+    { k:"poPartiel",  l:"PO partiel : tête du nerf optique absente de la coupe" },
+    { k:"blocEntier", l:"Globe entier non ouvert (< 6–8 mm) ou bloc de tête" },
+    { k:"horsPO",     l:"Plan hors PO" }
+  ],
+  opts:[
+    { k:"retinien",  l:"Axe rétinien (stratification) — détruit par la lyse" },
+    { k:"anterieur", l:"Axe antérieur / angulaire — résistance intermédiaire" },
+    { k:"vasculaire",l:"Axe vasculaire fœtal (hyaloïde, TVL) — conservé malgré la lyse" },
+    { k:"aucun",     l:"Aucun axe utilisable — non évaluable pour autolyse" }
+  ],
+  champs:[
+    { id:"dap",        label:"DAP — diamètre antéropostérieur (mm)", min:0, max:30, step:0.1 },
+    { id:"dc",         label:"DC — diamètre cornéen (mm)",           min:0, max:20, step:0.1 },
+    { id:"dapAdelphe", label:"DAP de l'œil adelphe (mm)",            min:0, max:30, step:0.1 }
+  ]
+};
+
+/* Les valeurs intermédiaires du nomogramme (Fig. 2.7, 600 yeux, intervalle de
+   prédiction à 95 %) sont perdues à l'extraction. Il ne reste QUE trois points
+   écrits. Toute autre valeur retourne null : on n'interpole pas (§ 3.2, § 9.3). */
+function normeNomogramme(sa){
+  var P = [{ sa:20, dap:8, dc:4 }, { sa:36, dap:16, dc:8 }, { sa:42, dap:17.5, dc:10 }];
+  for (var i = 0; i < P.length; i++) if (sa === P[i].sa) return P[i];
+  return null;
+}
+function fr(x){ return String(x).replace(".", ","); }
+
+function verdictMesure(){
+  var plan = E.mesure.def, axe = E.mesure.opt, sa = num("sa");
+  var dap = E.mesure.v.dap, dc = E.mesure.v.dc, adel = E.mesure.v.dapAdelphe;
+  var cls = "ok", res = [], t;
+
+  /* 1 — l'observation d'abord : le chiffre s'entre sans son référentiel. */
+  var b = [];
+  if (dap != null) b.push("DAP " + fr(dap) + " mm");
+  if (dc  != null) b.push("DC " + fr(dc) + " mm");
+  if (adel != null) b.push("DAP adelphe " + fr(adel) + " mm");
+  t = b.length ? "Biométrie : " + b.join(" · ") + "." : "Biométrie non mesurée.";
+
+  /* 2 — situer, mais seulement aux trois points publiés. */
+  if (dap != null || dc != null){
+    if (sa == null){
+      cls = "warn";
+      t += " Sans terme, aucune norme n'est appelable.";
+    } else {
+      var n = normeNomogramme(sa);
+      if (!n){
+        cls = "warn";
+        t += " Aucune norme publiée à " + sa + " SA : le nomogramme n'a survécu à l'extraction " +
+             "qu'en trois points (20 SA · 36 SA · terme 42 SA). Ne pas interpoler ; à un âge " +
+             "intermédiaire l'étalon reste l'œil adelphe.";
+      } else {
+        t += " Norme publiée à " + n.sa + " SA : DAP " + fr(n.dap) + " mm, DC " + fr(n.dc) + " mm " +
+             "— valeur à rapporter à l'intervalle de prédiction à 95 % de la Fig. 2.7, pas à la moyenne.";
+        if (dap != null && dap < n.dap)
+          t += " DAP sous la norme : la définition de la microphtalmie (« a total axial length at " +
+               "least two standard deviations below the mean for age ») « cannot be directly " +
+               "applied to fetal eyes » — ne pas la transposer.";
+        if (dap != null && dap > n.dap)
+          t += " DAP au-dessus de la norme : chercher la buphtalmie (globe augmenté, cristallin " +
+               "aplati, excavation papillaire, stries de Haab), même nomogramme, même réserve de fixation.";
+      }
+    }
+  }
+
+  /* 3 — l'œil adelphe est le seul étalon disponible, et sa variabilité normale
+     n'est publiée nulle part : c'est la lacune la plus gênante de la fiche. */
+  if (dap != null && adel != null){
+    var ecart = Math.round(Math.abs(dap - adel) * 10) / 10;
+    t += " Écart entre les deux yeux : " + fr(ecart) + " mm — aucune source ne donne l'écart normal " +
+         "attendu entre les deux yeux d'un même fœtus (§ 9.6) : on ne sait pas à partir de quelle " +
+         "différence une asymétrie devient pathologique. Constater, ne pas seuiller.";
+    if (cls === "ok") cls = "warn";
+  }
+
+  /* 4 — le DC : un seuil existe, il est post-natal, et il ne se transpose pas. */
+  if (dc != null && dc < 10)
+    t += " DC < 10 mm : « A cornea measuring less than 10 mm diameter in an otherwise normal eye is " +
+         "considered to be a microcornea » — mais ce seuil est défini chez le NOUVEAU-NÉ, pas chez " +
+         "le fœtus (§ 9.21). Une microcornée peut exister sans microphtalmie : le dire séparément.";
+  if (dc != null && dc > 13)
+    t += " DC > 13 mm : seuil de mégalocornée, à distinguer de la buphtalmie — même réserve d'âge.";
+
+  /* 5 — le plan de coupe : le seul verdict bloquant. */
+  if (!plan){
+    cls = "bad";
+    t += " PLAN DE COUPE NON DÉCLARÉ — tant qu'il ne l'est pas, la biométrie et l'angle ne sont pas " +
+         "qualifiés et aucune conclusion morphologique n'est recevable.";
+  } else if (plan === "horsPO"){
+    cls = "bad";
+    t += " PLAN HORS PO — la lame n'est pas lisible pour cet organe : ni le DAP, ni l'angle, ni les " +
+         "trois items pronostiques du rétinoblastome (infiltration du nerf optique, envahissement " +
+         "choroïdien, essaimage vitréen) ne sont évaluables. Ne rien conclure ; redemander des coupes.";
+  } else if (plan === "poPartiel"){
+    if (cls === "ok") cls = "warn";
+    t += " Tête du nerf optique absente : ni l'hémorragie intrasclérale péripapillaire, ni le " +
+         "colobome papillaire, ni l'excavation glaucomateuse ne se jugent sur cette coupe.";
+  } else if (plan === "blocEntier"){
+    if (cls === "ok") cls = "warn";
+    t += " Globe non ouvert / bloc de tête : c'est la conduite juste (< 6–8 mm on n'ouvre pas, " +
+         "en cyclopie « the eye may not be removed »), mais l'orientation PO n'est pas garantie sur " +
+         "chaque niveau — lire coupe par coupe.";
+  }
+
+  /* 6 — l'axe de datation, l'autre exigence d'écriture de la fiche. */
+  if (!axe){
+    res.push("axe de datation non nommé — la discordance ne s'écrit qu'avec l'axe utilisé nommé (§ 3.4)");
+  } else if (axe === "retinien"){
+    t += " Axe retenu : rétinien.";
+    if (E.retention.retineFragmentee === "present"){
+      cls = "bad";
+      t += " CONTRADICTION : la rétine est cochée fragmentée (rang 1 de l'ordre interne). L'axe " +
+           "« nombre de couches » est mort — il ne se rattrape pas, ne s'interpole pas, ne se " +
+           "déduit pas de l'épaisseur. Basculer sur l'axe vasculaire, conservé au rang 6.";
+    } else {
+      t += " Rappel : une rétine à dix couches se date « ≥ 24–27 SA selon la source », jamais par " +
+           "une valeur unique (§ 9.19).";
+    }
+  } else if (axe === "vasculaire"){
+    t += " Axe retenu : vasculaire fœtal — c'est l'axe qui survit à la macération, « If present, " +
+         "the vascular system of the hyaloid artery is usually well-preserved, as is the tunica " +
+         "vasculosa lentis anterior and posterior ».";
+    if (E.retention.rang6Atteint === "present"){
+      cls = "bad";
+      t += " Mais le rang 6 est coché atteint : l'axe vasculaire est tombé lui aussi. Aucun axe " +
+           "de datation ne reste — écrire non évaluable.";
+    }
+    if (PAIR && E.cote === "deux")
+      res.push("sur l'axe vasculaire, une différence entre les deux yeux peut être physiologique " +
+               "(« a bit of variability, also between fellow eyes ») : une asymétrie de régression " +
+               "hyaloïdienne seule ne fait pas une asymétrie de maturation");
+  } else if (axe === "anterieur"){
+    t += " Axe retenu : antérieur / angulaire — le plus dense en repères (11 → 40 SA), de " +
+         "résistance intermédiaire : l'angle reste lisible mais son épithélium pigmenté part au rang 3.";
+  } else if (axe === "aucun"){
+    cls = "bad";
+    t += " AUCUN AXE UTILISABLE — écrire « non évaluable pour autolyse », qui n'est pas « normal ». " +
+         "Dans une série publiée d'IMG, 16 % des yeux (4/25 en trisomies 13 et 18) ont été écartés " +
+         "pour lyse sévère : ce n'est pas un échec de lecture, c'est le régime normal de l'organe.";
+  }
+
+  /* 7 — réserves */
+  if (!E.prelev.macro)  res.push("macroscopie non confirmée — DAP, DC, transillumination et aspect du cristallin ne sont plus récupérables après la coupe");
+  if (!E.prelev.planPO) res.push("plan PO non confirmé au prélèvement");
+  if (PAIR && E.cote !== "deux" && adel == null)
+    res.push("œil adelphe non mesuré — c'est le meilleur étalon disponible en microphtalmie unilatérale");
+  if (!E.stade) res.push("aucun repère de maturation coché — la biométrie seule ne date pas un œil");
+  if (res.length){ if (cls === "ok") cls = "warn"; t += " Réserves : " + res.join(" ; ") + "."; }
+  return { cls:cls, txt:t };
+}
+
+/* ── 05 · Variantes normales ──────────────────────────────────────────────────
+   Six entrées du § 4.2, plus les états normaux de la fenêtre temporelle (§ 8.4)
+   qui sont, eux, la même image lue à un autre âge. */
+var VARIANTES = [
+  { k:"embryotoxon",     l:"Embryotoxon postérieur (ligne de Schwalbe proéminente, nodule collagène PAS-négatif)" },
+  { k:"chrpe",           l:"Hypertrophie congénitale de l'EPR (CHRPE)" },
+  { k:"hemIntraoculaire",l:"Hématopoïèse extramédullaire intraoculaire ou orbitaire" },
+  { k:"pliDeLange",      l:"Pli de Lange — pli circulaire à l'ora serrata, architecture inchangée" },
+  { k:"reliquatsTVL",    l:"Reliquats de TVL antérieure (taches étoilées sur le cristallin, brides de la collerette irienne)" },
+  { k:"mittendorf",      l:"Point de Mittendorf (tache blanchâtre à la capsule postérieure)" },
+  { k:"bergmeister",     l:"Papille de Bergmeister" },
+  { k:"hyaloidePresente",l:"Artère hyaloïde présente AVANT 36 SA" },
+  { k:"tvlPresente",     l:"TVL antérieure présente AVANT 37 SA" },
+  { k:"peripherieNonVasc",l:"Rétine périphérique temporale non vascularisée avant la naissance" },
+  { k:"ganglionnairePeriph",l:"Raréfaction ganglionnaire à prédominance PÉRIPHÉRIQUE depuis 21 SA" },
+  { k:"mesenchymeAngle", l:"Trabéculum encore recouvert de mésenchyme avant ~28 SA" },
+  { k:"nerfPeuMyelinise",l:"Nerf optique peu myélinisé et uvée peu pigmentée au terme" },
+  { k:"foveaPlate",      l:"Fovéa sans dépression franche au terme" },
+  { k:"dilatateurIncomplet",l:"Muscle dilatateur de l'iris incomplet avant 34 SA" },
+  { k:"paupiereNasale",  l:"Paupière séparée en nasal, encore fusionnée en temporal" }
+];
+
+/* ── 06 · Signes ──────────────────────────────────────────────────────────────
+   On coche ce qu'on voit, un signe à la fois. Aucun nom de maladie ici : les
+   noms se lisent en dessous, dans DIAGS, par association des signes cochés.
+   Sclérocornée et anomalie de Peters se chevauchent, et la classification y est
+   « not as clear as reported in the literature » — raison de plus de ne cocher
+   que des signes. */
+var SIGNES = [
+  /* Globe, orbite, taille */
+  { k:"orbiteSansStructure", l:"Aucune structure oculaire retrouvée dans l'orbite, coupes étagées épuisées",
+    meta:"critère microscopique ET négatif : n'existe qu'après épuisement des coupes" },
+  { k:"orbiteMesodermique", l:"Orbite petite mais contenant graisse, muscle oculomoteur, glande lacrymale",
+    meta:"ne contredit pas l'anophtalmie" },
+  { k:"residusGlobe",   l:"Résidus ou ébauches de globe : structures scléro-adipeuses à amas pigmentés" },
+  { k:"dapBas",         l:"DAP sous la norme du terme (ou nettement inférieur à l'œil adelphe)" },
+  { k:"dapHaut",        l:"DAP au-dessus de la norme du terme" },
+  { k:"dcBas",          l:"DC abaissé (microcornée), globe par ailleurs de taille conservée" },
+  { k:"globeSymetriquePetit", l:"Œil symétriquement petit avec choroïde ET sclère épaissies",
+    meta:"nanophtalmie — à ne pas confondre avec la microphtalmie relative" },
+  { k:"cristallinAplati", l:"Cristallin aplati" },
+  { k:"excavationPapillaire", l:"Excavation de la tête du nerf optique" },
+  { k:"descemetEnroulee", l:"Enroulement de la membrane de Descemet (Descemet curl)",
+    meta:"traduction histologique des stries de Haab" },
+  { k:"kysteScleralPost", l:"Masse kystique de la sclère postérieure",
+    meta:"microphtalmie avec kyste" },
+  { k:"muscleLisseChoristome", l:"Muscle lisse choristomateux dans la paroi du kyste (IHC)" },
+
+  /* Colobome */
+  { k:"defautParoi",    l:"Défaut de paroi à bords NETS, quadrant inféro-nasal" },
+  { k:"progressifEtage",l:"Apparition et disparition PROGRESSIVES du défaut en coupes étagées",
+    meta:"critère de colobome vrai, pas d'artefact" },
+  { k:"pasPerforation", l:"Aucune perforation mécanique ailleurs sur le globe" },
+  { k:"scleraAmincie",  l:"Sclère amincie sous le défaut, comblé de rétine dysplasique" },
+  { k:"colobomePapille",l:"Défaut papillaire bordé d'EPR, en communication avec la rétine",
+    meta:"se lit à faible grossissement" },
+  { k:"eprBruchDiscordants", l:"Perte choroïdienne dont les limites ne coïncident PAS avec celles de l'EPR, Bruch persistante",
+    meta:"signe de dommage mécanique, pas de colobome" },
+  { k:"globePerfore",   l:"Globe perforé au prélèvement" },
+
+  /* Segment antérieur */
+  { k:"sclerocornee",   l:"Cornée à vaisseaux et lamelles collagènes anormales, opacité périphérique" },
+  { k:"bowmanAbsente",  l:"Absence FOCALE de la couche de Bowman (PAS)" },
+  { k:"descemetAbsente",l:"Absence FOCALE de la membrane de Descemet et de l'endothélium adjacent (PAS)" },
+  { k:"stromaPostAbsent", l:"Absence focale du stroma cornéen postérieur" },
+  { k:"opaciteCentrale",l:"Opacité cornéenne CENTRALE" },
+  { k:"adherenceKeratoLent", l:"Adhérence kératolenticulaire ou iridocornéenne" },
+  { k:"tvlAttacheeCornee", l:"TVL antérieure attachée à la face postérieure de la cornée",
+    meta:"indice indirect de fixation lenticulaire quand la synéchie a été lysée" },
+  { k:"angleRudimentaire", l:"Angle iridocornéen resté rudimentaire au terme" },
+  { k:"schwalbeAnteposee", l:"Ligne de Schwalbe antéposée et ÉLARGIE, brides mésodermiques vers le stroma irien" },
+  { k:"anomaliesIriennes", l:"Corectopie ou hypoplasie du stroma irien" },
+  { k:"anomExtraoculaires", l:"Anomalies extra-oculaires associées (dents, os de la face)" },
+  { k:"descemetEpaissie", l:"Membrane de Descemet ÉPAISSIE avec endothélium anormal",
+    meta:"CHED — « has not yet been reported in a fetus » : hors périmètre fœtal" },
+
+  /* Cristallin */
+  { k:"wedl",           l:"Cellules de Wedl (bladder cells)" },
+  { k:"noyauxRetenus",  l:"Rétention des noyaux dans le nucleus du cristallin" },
+  { k:"lenticone",      l:"Amincissement capsulaire avec bombement du cortex (lenticône)" },
+  { k:"fibreuxSousCapsulaire", l:"Tissu fibreux sous-capsulaire (cataracte polaire)" },
+  { k:"epithCristallinNecrose", l:"Nécrose ou prolifération de l'épithélium cristallinien" },
+  { k:"liquefaction",   l:"Liquéfaction extensive, fibres mal formées, macrophages" },
+  { k:"cristallinCompact", l:"Cristallin « plus compact » ou noyau bien distinguable",
+    meta:"ne suffit pas : « further verification is required »" },
+  { k:"macroCristallin",l:"Aspect cataracté CONFIRMÉ à l'inspection macroscopique ou en échographie",
+    meta:"le seul accès hors lame" },
+  { k:"microphakie",    l:"Cristallin petit, aplati, discoïde (microphakie / sphérophakie)" },
+  { k:"aphakie",        l:"Aphakie ou résorption du cristallin" },
+  { k:"oxalate",        l:"Cristaux biréfringents en lumière polarisée dans le cristallin" },
+
+  /* Vitré et système vasculaire fœtal */
+  { k:"cordonFibrovasc",l:"Cordon fibrovasculaire rétrolenticulaire au contact des procès ciliaires" },
+  { k:"rotationIridoCiliaire", l:"Rotation du complexe irido-ciliaire vers le cristallin",
+    meta:"signe indirect, à faible grossissement" },
+  { k:"metaplasieChondroide", l:"Métaplasie chondroïde intraoculaire" },
+  { k:"calcificationsRetine", l:"Calcifications au contact d'une rétine dystrophique" },
+  { k:"hyaloideApres36", l:"Système hyaloïdien encore présent APRÈS 36 SA" },
+
+  /* Rétine */
+  { k:"rosettesOrganisees", l:"Rosettes rétiniennes à architecture ORGANISÉE, lumière centrale",
+    meta:"lisibles malgré l'autolyse — c'est l'organisation, pas la présence" },
+  { k:"excroissances",  l:"Excroissances rétiniennes",
+    meta:"équivoques, « may be attributed to autolysis » sur œil macéré" },
+  { k:"retineDysplasiqueColobome", l:"Tissu rétinien dysplasique comblant un colobome" },
+  { k:"hemorragieRetinienne", l:"Hémorragie rétinienne" },
+  { k:"surface2030",    l:"Hémorragie couvrant 20–30 % ou plus de la surface rétinienne",
+    meta:"mesure de SURFACE, pas un compte de foyers" },
+  { k:"toutesCouches",  l:"Toutes les couches rétiniennes intéressées par l'hémorragie" },
+  { k:"typeHemorragie", l:"Type d'hémorragie décrit (en flammèche · punctiforme · en tache)" },
+  { k:"pliPerimaculaire", l:"Pli périmaculaire semi-circulaire, en cratère, vu en MACROSCOPIE" },
+  { k:"hemGaineNerf",   l:"Hémorragie de la gaine du nerf optique" },
+  { k:"hemIntrasclerale", l:"Hémorragie intrasclérale péripapillaire",
+    meta:"« highly suspect for AHT »" },
+  { k:"hemosiderine",   l:"Hémosidérine (Perls) dans la rétine, la gaine ou l'orbite" },
+  { k:"lesionAxonale",  l:"Lésion axonale du nerf optique (β-APP, ubiquitine)" },
+  { k:"proliferationFusiforme", l:"Prolifération de cellules mésenchymateuses fusiformes à la jonction vascularisé / non vascularisé" },
+  { k:"neovaisseauxCD34", l:"Néovaisseaux CD34+ franchissant la limitante interne, dans un mésenchyme CD34−" },
+  { k:"neNeQuePli",     l:"Pli périphérique isolé à la jonction, sans prolifération",
+    meta:"artefact de fixation : le pli n'est pas la lésion" },
+  { k:"cd34CentralSeul",l:"CD34 : vaisseaux rétiniens présents seulement du côté CENTRAL du pli",
+    meta:"la preuve objective du pli de Lange" },
+
+  /* Nerf optique, anencéphalie */
+  { k:"nerfAminci",     l:"Nerfs optiques amincis, faits surtout d'éléments conjonctifs" },
+  { k:"nerfNAtteintPasForamen", l:"Nerfs optiques n'atteignant pas le foramen optique" },
+  { k:"chiasmaAbsent",  l:"Chiasma optique absent" },
+  { k:"ganglionnaireCentrale", l:"Raréfaction des cellules ganglionnaires à prédominance CENTRALE, noyaux pycnotiques",
+    meta:"la topographie tranche, pas le compte" },
+  { k:"fibresOptiquesPerdues", l:"Perte de la couche des fibres optiques" },
+  { k:"protuberanceVasculaire", l:"Prolifération vasculaire de la rétine et du vitré dans un contexte anencéphalique" },
+
+  /* Infections */
+  { k:"pseudokystesRetine", l:"Pseudokystes à bradyzoïtes de 4–7 μm dans la rétine" },
+  { k:"pseudokystesNerf", l:"Pseudokystes dans le NERF OPTIQUE",
+    meta:"site souvent oublié : le nerf se regarde même si la rétine est négative" },
+  { k:"ihcToxo",        l:"IHC anti-Toxoplasma positive alors que l'HES ne montrait rien" },
+  { k:"necroseRetinienne", l:"Nécrose rétinienne" },
+  { k:"nevriteOptique", l:"Névrite optique" },
+  { k:"chorioretiniteCicatricielle", l:"Cicatrices choriorétiniennes atrophiques et pigmentées, en cratère" },
+  { k:"gramPositif",    l:"Bacilles Gram positif dans les lésions" },
+  { k:"meningiteNerf",  l:"Méningite du nerf optique" },
+  { k:"cataracteNucleaireNoyaux", l:"Cataracte nucléaire à noyaux karyorrhectiques retenus" },
+  { k:"uveiteNonGranulomateuse", l:"Uvéite non granulomateuse (chorioïdite monomorphonucléée)" },
+  { k:"perteDilatateur",l:"Perte focale de l'épithélium ciliaire et irien avec perte du dilatateur" },
+  { k:"owlsEye",        l:"Inclusions nucléaires de 8–10 μm à halo clair (owls' eyes)" },
+  { k:"placentaCMV",    l:"Placenta porteur des mêmes inclusions cytomégaliques" },
+  { k:"necroseHemorragiqueCalcifiee", l:"Nécrose rétinienne hémorragique étendue AVEC calcification" },
+  { k:"cowdryB",        l:"Inclusions de Cowdry B" },
+  { k:"infiltratChoroidien", l:"Infiltrat lymphocytaire choroïdien",
+    meta:"détectable malgré l'autolyse — son négatif a de la valeur" },
+
+  /* Tumeurs */
+  { k:"masseOrbitaire", l:"Masse orbitaire circonscrite mais non encapsulée, souvent multikystique" },
+  { k:"troisFeuillets", l:"Dérivés des trois feuillets sur la même lame" },
+  { k:"neuroepitheliumImmature", l:"Neuroépithélium IMMATURE, quantifié en champs à 40× sur la lame la plus atteinte" },
+  { k:"yolkSac",        l:"Contingent vitellin (α-fœtoprotéine, glypicane-3)" },
+  { k:"masseRetinienne",l:"Masse rétinienne blanche exophytique derrière le cristallin" },
+  { k:"cellulesRondesBleues", l:"Tumeur à cellules rondes bleues très cellulaire, mitoses fréquentes" },
+  { k:"flexnerWintersteiner", l:"Rosettes de Flexner-Wintersteiner (lumière à fines extensions cytoplasmiques, sans neuropile)" },
+  { k:"fleurettes",     l:"Fleurettes (différenciation photoréceptrice)" },
+  { k:"necroseManchons",l:"Nécrose à manchons périvasculaires de cellules viables, calcifications dans la nécrose" },
+  { k:"infiltrationNerf", l:"Infiltration du nerf optique par la tumeur" },
+  { k:"envahissementChoroidien", l:"Envahissement choroïdien" },
+  { k:"essaimageVitreen", l:"Essaimage vitréen" },
+  { k:"synaptoNSE",     l:"Synaptophysine / NSE positives" },
+  { k:"macrophagesSpumeux", l:"Vaisseaux télangiectasiques à macrophages spumeux dans la paroi",
+    meta:"maladie de Coats — pseudorétinoblastome clinique, pas histologique" },
+  { k:"medullaryEpithelium", l:"Prolifération reproduisant l'épithélium médullaire de la cupule optique embryonnaire, au corps ciliaire" },
+  { k:"heteroplasiques",l:"Éléments hétéroplasiques (cartilage hyalin, muscle, rhabdomyoblastes, tissu cérébral)" },
+  { k:"extensionExtraoculaire", l:"Extension extra-oculaire de la tumeur" }
+];
+
+/* ── 06 bis · Associations — affichées, jamais cochées ────────────────────────
+   Le nom se déduit des signes. « cle » est le signe pivot : sans lui le compte
+   peut être atteint sans que l'association tienne. Sur l'œil fœtal, on décrit
+   « des constellations, on ne coche pas des entités ». */
+var DIAGS = [
+  { k:"anophtalmie", l:"Anophtalmie", cle:"orbiteSansStructure", min:1,
+    signes:["orbiteSansStructure","orbiteMesodermique"],
+    stop:" — le critère est MICROSCOPIQUE et NÉGATIF : il n'existe qu'après épuisement des coupes " +
+         "étagées, « A detailed stepwise sectioning and microscopic investigation of the orbital " +
+         "contents is mandatory to differentiate between anophthalmia and microphthalmia ». " +
+         "Ne jamais écrire « anophtalmie » sur une coupe unique. " +
+         "Trouver de la graisse, du muscle et une glande lacrymale ne contredit pas l'anophtalmie : " +
+         "« The anophthalmic orbit is small, but does contain mesodermal structures like fat, " +
+         "extraocular muscle tissue, and lacrimal gland ». Si des résidus de globe sont retrouvés, " +
+         "c'est une microphtalmie — écrire le doute sous la forme « micro/anophtalmie »." },
+
+  { k:"microphtalmie", l:"Microphtalmie", cle:"dapBas", min:2,
+    signes:["dapBas","residusGlobe","dcBas","cristallinAplati"],
+    stop:" — « The definition of microphthalmia—a total axial length at least two standard " +
+         "deviations below the mean for age—cannot be directly applied to fetal eyes. Although " +
+         "nomograms exist, the measurements are not as precise as in living children, because of " +
+         "fixation and other artifacts. » Le seuil existe et le livre dit de ne pas l'appliquer tel " +
+         "quel. « For unilateral cases, comparison to the fellow eye may be helpful » — mais aucune " +
+         "source ne donne l'écart normal entre deux yeux (§ 9.6). Un DC bas sans DAP bas est une " +
+         "MICROCORNÉE sans microphtalmie : les dire séparément. Ne pas oublier les causes non " +
+         "génétiques : rubéole, CMV, EBV, alcool, thalidomide, acide rétinoïque, anticonvulsivants." },
+
+  { k:"nanophtalmie", l:"Nanophtalmie", cle:"globeSymetriquePetit", min:2,
+    signes:["globeSymetriquePetit","dapBas"],
+    stop:" — la nanophtalmie est un œil SYMÉTRIQUEMENT petit avec choroïde et sclère épaissies, " +
+         "sur un continuum depuis l'œil hypermétrope ; ce n'est pas une microphtalmie antérieure " +
+         "ou postérieure relative. Ne pas les confondre dans la conclusion." },
+
+  { k:"microphtalmieKyste", l:"Microphtalmie avec kyste", cle:"kysteScleralPost", min:2,
+    signes:["kysteScleralPost","muscleLisseChoristome","dapBas","defautParoi"],
+    stop:" — kyste et colobome relèvent du même défaut de fermeture de la fissure embryonnaire : " +
+         "les chercher ensemble. La paroi du kyste est faite de sclère ou de gaine du nerf optique, " +
+         "avec éventuellement du muscle lisse choristomateux (à révéler en IHC) et de la graisse. " +
+         "C'est l'indication n° 1 de la voie postérieure, avec l'orbite entière sur la table." },
+
+  { k:"buphtalmie", l:"Buphtalmie", cle:"dapHaut", min:2,
+    signes:["dapHaut","cristallinAplati","excavationPapillaire","descemetEnroulee"],
+    stop:" — ne pas écrire « glaucome congénital » depuis la micro seule : décrire l'excavation, " +
+         "l'aplatissement du cristallin et l'état de la Descemet. Les stries de Haab sont des " +
+         "« vertical paralimbal Descemet tears », vues histologiquement comme un enroulement. " +
+         "Chercher la cause sur la même lame : irido-trabéculodysgénésie ou anomalie de Peters ; " +
+         "et les formes systémiques (aniridie, NF1, Sturge-Weber). Le DAP se lit sur le même " +
+         "nomogramme que la microphtalmie, avec la même réserve de fixation." },
+
+  { k:"colobome", l:"Colobome", cle:"defautParoi", min:2,
+    signes:["defautParoi","progressifEtage","pasPerforation","scleraAmincie","colobomePapille",
+            "retineDysplasiqueColobome"],
+    stop:" — trois critères CUMULABLES et non interchangeables : bords nets · progressivité en " +
+         "coupes sériées · absence de perforation ailleurs. « In step sections, the gradual " +
+         "appearance and disappearance of a genuine coloboma become visible. » Le colobome est " +
+         "l'une des trois lésions lisibles malgré la lyse (« can be detected in eyes with severe " +
+         "autolytic changes, as these lesions are clearly demarcated ») : son négatif garde de la " +
+         "valeur — mais seulement si les coupes ont été étagées. Il ne se grade pas : il a un " +
+         "SIÈGE, et une règle fonctionnelle non morphologique (« the more posterior the coloboma, " +
+         "the more it affects vision »). La Table 5.1 des syndromes est une liste d'orientation " +
+         "pour la conclusion, pas un critère micro." },
+
+  { k:"artefactMecanique", l:"Dommage mécanique de la paroi — pas un colobome", cle:"eprBruchDiscordants", min:1,
+    signes:["eprBruchDiscordants","globePerfore","defautParoi"],
+    stop:" — contre-exemple donné par la source elle-même : « The choroid is focally missing, " +
+         "whereas Bruch's membrane is still present … The RPE is not absent in exactly the same " +
+         "area as the choroid ». Une perte choroïdienne dont les limites ne coïncident pas avec " +
+         "celles de l'EPR est mécanique. Une perforation ailleurs sur le globe est un indice " +
+         "supplémentaire d'artefact." },
+
+  { k:"dysgenesieSA", l:"Dysgénésie du segment antérieur (terme parapluie)", min:2,
+    signes:["sclerocornee","angleRudimentaire","bowmanAbsente","descemetAbsente","stromaPostAbsent",
+            "schwalbeAnteposee","anomaliesIriennes"],
+    stop:" — la constellation micro constante est à trois termes : « a combination of findings " +
+         "consisting of sclerocornea, rudimentary development of the chamber angle, and " +
+         "cataractous changes (in association with PHPV) ». C'est elle qu'on décrit, pas un nom " +
+         "d'anomalie. Terminologie périmée à ne pas réutiliser : dysgénésie mésodermique, anterior " +
+         "chamber cleavage syndrome — « it has been shown that the affected tissues derive from " +
+         "the neural crest ». Nommer un embryotoxon postérieur ne suffit pas à conclure à une " +
+         "dysgénésie : c'est l'extrémité bénigne du spectre, présent dans 15–30 % de la population." },
+
+  { k:"peters", l:"Anomalie de Peters", cle:"opaciteCentrale", min:3,
+    signes:["opaciteCentrale","adherenceKeratoLent","descemetAbsente","stromaPostAbsent",
+            "angleRudimentaire","tvlAttacheeCornee"],
+    stop:" — sclérocornée et anomalie de Peters SE RECOUVRENT et ne se départagent pas de façon " +
+         "fiable sur l'œil fœtal — sclérocornée et anomalie de Peters se chevauchent, et la " +
+         "classification y est « not as clear as reported in the literature ». " +
+         "Décrire les absences membranaires observées, laisser la conclusion nommer. Et surtout : " +
+         "une ABSENCE de synéchie kératolenticulaire ne réfute PAS Peters sur œil macéré — « The " +
+         "missing attachment of the lens to the cornea, also not detectable in step sections, may " +
+         "be attributed to the severe autolytic changes ». Chercher alors la TVL antérieure " +
+         "attachée à la cornée comme indice indirect." },
+
+  { k:"sclerocorneeC", l:"Sclérocornée", cle:"sclerocornee", min:2,
+    signes:["sclerocornee","bowmanAbsente","descemetAbsente"],
+    stop:" — « Bowman's layer and Descemet membrane (with the adjacent corneal endothelium) may be " +
+         "absent » : l'absence est FOCALE et ne se lit pas sur HES seul, le PAS est nécessaire. Un " +
+         "épithélium ou un endothélium rudimentaire est un rang 4 d'autolyse, pas une sclérocornée : " +
+         "la sclérocornée se lit sur la structure du stroma et le limbe." },
+
+  { k:"axenfeldRieger", l:"Spectre Axenfeld-Rieger", cle:"schwalbeAnteposee", min:2,
+    signes:["schwalbeAnteposee","anomaliesIriennes","anomExtraoculaires"],
+    stop:" — quatre niveaux à ne pas confondre : anomalie d'Axenfeld (Schwalbe antéposée et élargie " +
+         "+ brides) · syndrome d'Axenfeld (+ glaucome juvénile, non jugeable chez le fœtus) · " +
+         "anomalie de Rieger (+ anomalies iriennes) · syndrome de Rieger (+ malformations " +
+         "extra-oculaires, dents et os de la face). Le glaucome ne s'observe pas sur une lame " +
+         "fœtale : ne pas franchir le niveau que la morphologie autorise. Et sur analyse " +
+         "génétique, « the same mutation can result in a spectrum of clinical findings »." },
+
+  { k:"ched", l:"CHED — hors périmètre fœtal", cle:"descemetEpaissie", min:1,
+    signes:["descemetEpaissie","opaciteCentrale"],
+    stop:" — DIVERGENCE de fenêtre, pas de morphologie : « CHED has not yet been reported in a " +
+         "fetus, but it can be present in newborns ». Sur un fœtus, ce nom ne se pose pas. Une " +
+         "Descemet épaissie chez un fœtus demande d'abord d'écarter l'artefact et de rediscuter " +
+         "le terme, pas de reprendre l'étiquette." },
+
+  { k:"cataracte", l:"Cataracte fœtale", cle:"macroCristallin", min:2,
+    signes:["macroCristallin","wedl","noyauxRetenus","lenticone","fibreuxSousCapsulaire",
+            "epithCristallinNecrose","liquefaction","cristallinCompact"],
+    stop:" — LE PIVOT N'EST PAS HISTOLOGIQUE, et c'est voulu : « A clinical inspection in " +
+         "newborns/children respectively a macroscopic inspection of the lens in fetal eyes should " +
+         "be performed to guide the ophthalmic pathologist in diagnosing a fetal cataract ». La " +
+         "cataracte fœtale ne se diagnostique pas sur la lame seule. Fond du problème : « Lens " +
+         "artifacts are present in nearly all fetal and neonatal eyes » — la base est ~100 %, donc " +
+         "l'artefact n'est pas informatif. Un cristallin « plus compact » ou un noyau distinguable " +
+         "ne suffisent pas : « further verification is required to reliably diagnose a cataract ». " +
+         "Et les deux formes les plus difficiles sont celles qui n'ont AUCUN signe positif : " +
+         "« isolated cataracts also can be found; they are much more difficult to diagnose, " +
+         "especially nuclear or total cataracts, which lack the characteristic Wedl cells ». " +
+         "Le type est TOPOGRAPHIQUE " +
+         "(sous-capsulaire, nucléaire, corticale, suturale, totale) : il ne se convertit pas en " +
+         "sévérité. Écrire « aspect compatible avec » et demander la corrélation macro/échographique." },
+
+  { k:"lowe", l:"Microphakie / sphérophakie — évoquer un syndrome de Lowe", cle:"microphakie", min:2,
+    signes:["microphakie","noyauxRetenus","aphakie","oxalate"],
+    stop:" — cristallin « small, flattened, and discoid » avec rétention des noyaux : c'est une " +
+         "orientation pour la conclusion, pas un diagnostic de lame. Une résorption du cristallin " +
+         "s'observe aussi après traumatisme, infection congénitale ou dans un Hallermann-Streiff. " +
+         "Les cristaux d'oxalate biréfringents peuvent être une hyperoxalurie ou une trouvaille " +
+         "isolée : les deux lectures restent ouvertes." },
+
+  { k:"phpv", l:"PHPV — persistance et hyperplasie du vitré primitif", cle:"cordonFibrovasc", min:2,
+    signes:["cordonFibrovasc","rotationIridoCiliaire","metaplasieChondroide","calcificationsRetine",
+            "hyaloideApres36","wedl"],
+    stop:" — DIVERGENCE DE FENÊTRE, non quantifiée par la source : le PHPV est un défaut de " +
+         "régression du système même dont la régression date l'œil. Avant 34–36 SA, un système " +
+         "hyaloïdien présent est NORMAL ; il ne devient un PHPV que par son caractère hyperplasique " +
+         "et fibrovasculaire, pas par sa persistance. La source « ne dit jamais quelle épaisseur, " +
+         "quelle cellularité ou quel diamètre fait basculer un vestige normal en PHPV » (§ 9.8) : " +
+         "la rotation du complexe irido-ciliaire est un SIGNE INDIRECT, pas un seuil. Ne pas " +
+         "appeler PHPV une artère hyaloïde persistante simple avant terme, et ne pas conclure à un " +
+         "rétinoblastome devant une masse rétrolenticulaire. Attention aussi à la rétraction du " +
+         "vitré à la fixation, qui mime un vitré « dense »." },
+
+  { k:"dysplasieRetinienne", l:"Dysplasie rétinienne", cle:"rosettesOrganisees", min:2,
+    signes:["rosettesOrganisees","excroissances","retineDysplasiqueColobome","calcificationsRetine"],
+    /* Guillemets droits dans le verbatim : littéral en apostrophes simples, pas d'échappement. */
+    stop:" — le pivot est la rosette ORGANISÉE : " +
+         '« retinal rosettes usually can be distinguished from retinal fragments by their "organized" architecture »' +
+         ". Un fragment rétinien " +
+         "anguleux sans lumière est un rang 1 d'autolyse, pas une dysplasie. Sur un œil macéré, " +
+         "des excroissances seules ne suffisent pas — la source le dit d'elle-même : « Retina with " +
+         "mild, equivocal retinal excrescences. This finding may be attributed to autolysis ». " +
+         "AUCUN grade ni stade de dysplasie rétinienne fœtale n'existe dans les sources : ne pas " +
+         "en fabriquer un. Et une rosette de dysplasie n'est pas une rosette de " +
+         "Flexner-Wintersteiner : c'est le contenu de la lumière et le fond cellulaire qui " +
+         "séparent, pas la forme ronde." },
+
+  { k:"tcna", l:"Hémorragie rétinienne — contexte de TCNA", cle:"surface2030", min:3,
+    signes:["hemorragieRetinienne","surface2030","toutesCouches","typeHemorragie","pliPerimaculaire",
+            "hemGaineNerf","hemIntrasclerale","lesionAxonale","hemosiderine"],
+    stop:" — l'hémorragie rétinienne n'est PAS pathognomonique : « it can be found in about 20% of " +
+         "neonates shortly after uncomplicated birth ». Ce qui compte est la SURFACE " +
+         "(« Retinal hemorrhages covering 20–30% of the retina must be regarded as a very strong " +
+         "indicator of AHT ») et le NOMBRE DE COUCHES (« Involvement of all separate retinal layers " +
+         "with hemorrhage is frequently observed in AHT cases ») — deux mesures CONTINUES, à rendre " +
+         "telles quelles, jamais converties en stade. « unilateral retinal hemorrhage does not " +
+         "exclude AHT » : l'asymétrie n'est pas un argument d'exclusion, et les deux yeux doivent " +
+         "être examinés. Le pli périmaculaire est documenté hors TCNA (écrasement sévère, " +
+         "secouement lors d'une réanimation par des proches non formés après noyade accidentelle, " +
+         "leucémie) et se distingue du pli de Lange par le CD34. L'hémosidérine borne un PLANCHER, " +
+         "jamais un plafond (6–8 semaines selon la British Child Abuse Working Party, mais " +
+         "persistance documentée à 32 mois) — et une hématopoïèse extramédullaire intraoculaire " +
+         "INVALIDE cette datation. Citer explicitement le différentiel de la Table 6.1." },
+
+  { k:"rop", l:"Rétinopathie du prématuré — différentiel, pas une attente fœtale",
+    cle:"proliferationFusiforme", min:2,
+    signes:["proliferationFusiforme","neovaisseauxCD34","neNeQuePli"],
+    stop:" — PRÉALABLE ABSOLU : « ROP is not seen in fetal eyes because the disease develops after " +
+         "birth in the immature retina. » Sur un fœtus, ce diagnostic ne se pose pas ; il n'entre " +
+         "ici que comme différentiel de l'hémorragie rétinienne. Ce qui fait la ROP est la " +
+         "prolifération fusiforme et les néovaisseaux CD34+, PAS le pli : un pli périphérique se " +
+         "forme à la fixation exactement à cette jonction. Et la jonction vascularisé / non " +
+         "vascularisé est physiologiquement TEMPORALE avant la naissance. Les stades de ROP sont " +
+         "OPHTALMOSCOPIQUES : la source ne distingue que non prolifératif / prolifératif — ne pas " +
+         "grader une lame en stades ROP." },
+
+  { k:"anencephalie", l:"Atteinte oculaire de l'anencéphalie ou de l'hydranencéphalie",
+    cle:"ganglionnaireCentrale", min:2,
+    signes:["ganglionnaireCentrale","nerfAminci","nerfNAtteintPasForamen","chiasmaAbsent",
+            "fibresOptiquesPerdues","protuberanceVasculaire"],
+    stop:" — c'est la TOPOGRAPHIE qui tranche, pas le compte : la réduction ganglionnaire " +
+         "physiologique existe aussi (21 SA) mais elle est à prédominance PÉRIPHÉRIQUE, alors " +
+         "qu'ici la perte commence au CENTRE dès ~14 SA et devient globale vers 21–22 SA. Cette " +
+         "opposition est une DÉDUCTION CROISÉE : la source dit « peripheral-predominant » d'un côté " +
+         "et « central retina » de l'autre, mais ne les oppose jamais explicitement et ne donne " +
+         "aucun seuil chiffré (§ 9.9). Le critère siège sur la structure de RANG 1 de l'ordre " +
+         "d'autolyse : ne rien conclure sur un œil macéré. « At early fetal stages, the eyes may " +
+         "look relatively normal » — un œil normal avant ~14 SA ne réfute rien. Enfin l'œil ne " +
+         "distingue pas les deux entités : « The histopathologic ocular changes in hydranencephaly " +
+         "appear identical to those seen in anencephaly ». Ne pas conclure à une hypoplasie " +
+         "primitive du nerf optique, et ne pas lire la prolifération vasculaire associée comme une ROP." },
+
+  { k:"toxoplasmose", l:"Toxoplasmose oculaire", min:1,
+    signes:["pseudokystesRetine","pseudokystesNerf","ihcToxo","necroseRetinienne","nevriteOptique",
+            "chorioretiniteCicatricielle"],
+    stop:" — FAUX NÉGATIF ATTENDU SUR HES SEULE : « Tissue cysts were not detected by light " +
+         "microscopy in the investigated eyes. However, immunohistochemical stains revealed " +
+         "parasites in the fetal and neonatal eyes ». Chez le fœtus et le nouveau-né, un négatif " +
+         "HES n'est pas un négatif toxoplasmose : l'IHC est le seul test qui a rendu positif dans " +
+         "leur série. Le nerf optique doit être regardé même si la rétine est négative " +
+         "(« pseudocysts also may be present in the optic nerve »). Une cicatrice ne dit pas " +
+         "l'activité : « Most retinal lesions seen after birth do not contain microorganisms ». Ne " +
+         "pas confondre les amas d'EPR hyperplasique post-infectieux avec un CHRPE." },
+
+  { k:"listeriose", l:"Listériose oculaire", cle:"gramPositif", min:2,
+    signes:["gramPositif","meningiteNerf","necroseRetinienne"],
+    stop:" — c'est l'atteinte du NERF, pas de la rétine, qui porte le diagnostic oculaire : la " +
+         "méningite du nerf optique impose d'avoir conservé le nerf sur toute sa longueur " +
+         "intra-orbitaire. Un négatif rendu sur un nerf absent de la coupe n'est pas un négatif." },
+
+  { k:"rubeole", l:"Atteinte oculaire de la rubéole", cle:"cataracteNucleaireNoyaux", min:2,
+    signes:["cataracteNucleaireNoyaux","uveiteNonGranulomateuse","perteDilatateur"],
+    stop:" — « No ocular histological features of rubella may be found after elective pregnancy " +
+         "termination. » Dans le contexte le plus fréquent en fœtopathologie, l'œil peut être " +
+         "normal et un œil normal NE RÉFUTE PAS l'infection. La perte focale de l'épithélium " +
+         "pigmentaire irien et ciliaire est aussi un rang 3 d'autolyse : sur œil macéré ce critère " +
+         "est INUTILISABLE, c'est la cataracte à noyaux retenus qui porte. Un dilatateur incomplet " +
+         "avant 34 SA est normal. Ne pas conclure à une aniridie sur une dépigmentation irienne." },
+
+  { k:"cmv", l:"Infection à cytomégalovirus", cle:"owlsEye", min:1,
+    signes:["owlsEye","placentaCMV","necroseRetinienne"],
+    stop:" — « Not all fetal eyes present the typical histopathological features of CMV infection " +
+         "(enlarged cells with inclusion bodies). The eyes may be very autolytic (especially in " +
+         "cases of intrauterine death), with the " +
+         "retina being fragmented. » L'autolyse détruit d'abord le tissu où l'on cherche " +
+         "l'inclusion : c'est exactement le rang 1. Ne jamais conclure à l'absence de CMV sur une " +
+         "rétine fragmentée — croiser avec le PLACENTA, qui porte les mêmes inclusions et n'est pas " +
+         "soumis à l'autolyse rétinienne." },
+
+  { k:"hsv", l:"Infection herpétique", cle:"necroseHemorragiqueCalcifiee", min:1,
+    signes:["necroseHemorragiqueCalcifiee","cowdryB","necroseRetinienne"],
+    stop:" — ce sont la NÉCROSE et la CALCIFICATION qui rattachent à l'HSV, pas l'hémorragie : la " +
+         "nécrose hémorragique croise le différentiel de l'hémorragie rétinienne (Table 6.1). Les " +
+         "inclusions de Cowdry B ne sont vues qu'« occasionally »." },
+
+  { k:"teratome", l:"Tératome orbitaire", cle:"masseOrbitaire", min:2,
+    signes:["masseOrbitaire","troisFeuillets","neuroepitheliumImmature","yolkSac"],
+    stop:" — SEUL GRADE SOURCÉ DE CETTE FICHE, et il est extra-oculaire : Norris modifié " +
+         "Gonzalez-Crussi, mesuré en champs à faible grossissement (40×) SUR LA LAME QUI EN " +
+         "CONTIENT LE PLUS — grade 1 : pas plus d'un champ · grade 2 : plus d'un mais pas plus de " +
+         "trois · grade 3 : quatre champs ou plus. Sous-échantillonner SOUS-GRADE mécaniquement. " +
+         "Le neuroépithélium immature « may metastasize, comparable to neuroblastoma ». Le " +
+         "composant pronostique majeur est la tumeur vitelline, et l'IHC négative ne met pas à " +
+         "l'abri : « teratomas without a discernible yolk sac component may recur or metastasize " +
+         "as yolk sac tumors »." },
+
+  { k:"retinoblastome", l:"Rétinoblastome", cle:"cellulesRondesBleues", min:2,
+    signes:["masseRetinienne","cellulesRondesBleues","flexnerWintersteiner","fleurettes",
+            "necroseManchons","synaptoNSE"],
+    stop:" — « extremely rare in fetal eyes » : en fœtopathologie c'est un différentiel, pas une " +
+         "attente. La rosette de Flexner-Wintersteiner se reconnaît au contenu de sa lumière — " +
+         "« unlike the center of a Homer Wright rosette, the central lumen does not contain the " +
+         "fiber-rich neuropil » — et non à sa forme ronde : ne pas conclure à un rétinoblastome sur " +
+         "des rosettes de dysplasie. Le piège du pseudorétinoblastome est CLINIQUE, pas " +
+         "histologique : « Benign lesions such as intraocular infection or Coats' disease may be " +
+         "clinically—but not histologically—mistaken for retinoblastoma »." },
+
+  { k:"pronosticRetinoblastome", l:"Items pronostiques du rétinoblastome", min:1,
+    signes:["infiltrationNerf","envahissementChoroidien","essaimageVitreen"],
+    stop:" — ces trois items EXIGENT que le nerf optique et la choroïde soient sur la lame, ce qui " +
+         "renvoie à l'exigence de plan PO. Sur une coupe hors PO ou sans tête de nerf optique, ils " +
+         "ne sont pas « négatifs » : ils sont NON ÉVALUABLES, et c'est cela qu'il faut écrire." },
+
+  { k:"medulloepitheliome", l:"Médulloépithéliome", cle:"medullaryEpithelium", min:1,
+    signes:["medullaryEpithelium","heteroplasiques","extensionExtraoculaire"],
+    stop:" — DIVERGENCE DE CLASSIFICATION NON tranchée : les auteurs constatent que « current " +
+         "criteria for malignancy do not correlate with clinical behavior » et PROPOSENT de " +
+         "remplacer la dichotomie bénin/malin par un grade simple. C'est leur proposition, publiée " +
+         "par eux, pas un standard (§ 9.10) : la fiche l'enregistre sans l'adopter, et classer " +
+         "selon ce schéma serait suivre une source unique contre l'usage établi. « Most cases are " +
+         "diagnosed in children between 2 and 5 years of age; they are exceedingly rare in the " +
+         "fetus or neonate ». Les éléments hétéroplasiques (37 % des cas, forme tératoïde) ont " +
+         "« no effect on prognosis ». « Metastatic disease occurs only in cases with extraocular " +
+         "extension ». Et le piège est symétrique : des lésions bénignes peuvent être prises pour " +
+         "un médulloépithéliome et conduire à une énucléation." },
+
+  { k:"coats", l:"Maladie de Coats", cle:"macrophagesSpumeux", min:1,
+    signes:["macrophagesSpumeux","masseRetinienne"],
+    stop:" — « telangiectatic vasculature with foamy macrophages in the vessel walls and retinal " +
+         "detachment, atrophy, and gliosis » : c'est un pseudorétinoblastome CLINIQUE, que " +
+         "l'histologie tranche. Ne pas franchir dans l'autre sens non plus." }
+];
+
+/* ── 07 · Négatifs obligatoires ───────────────────────────────────────────────
+   Le § 6 de cette fiche est plus lourd que le § 5, et c'est le résultat : il
+   existe une cohorte fœtale caryotypée (101 fœtus) qui MESURE le négatif. Un
+   0/65 en trisomie 21 vaut plus, à la lame, qu'une liste de noms. */
+var NEGATIFS = [
+  { k:"lateralite", l:"Côté déclaré et deux blocs identifiés OD / OS",
+    p:"bascule bloquante : aucun champ œil ne se saisit sans elle",
+    ko:"latéralité NON déclarée — trois raisons sourcées l'exigent : différences inter-yeux en TCNA, " +
+       "œil adelphe comme étalon en microphtalmie unilatérale, variabilité hyaloïdienne entre yeux adelphes" },
+  { k:"dapMesure", l:"DAP mesuré et comparé à l'œil controlatéral",
+    p:"le nomogramme et l'œil adelphe sont les deux seuls étalons",
+    ko:"DAP non mesuré ou non comparé — l'absence de microphtalmie n'est pas appuyée" },
+  { k:"buphtalmie", l:"Absence de buphtalmie", p:"prévalence 1 pour 30 000 naissances",
+    ko:"globe augmenté — chercher cristallin aplati, excavation papillaire, stries de Haab" },
+  { k:"colobome", l:"Absence de colobome, APRÈS coupes étagées",
+    p:"lisible malgré l'autolyse — donc son négatif a de la valeur",
+    ko:"colobome présent, ou coupes non étagées : sans étagement le négatif n'est pas rendable" },
+  { k:"cryptoCyclo", l:"Absence de cryptophtalmie et de cyclopie", p:"conditionne la voie de prélèvement",
+    ko:"cryptophtalmie ou cyclopie — bloc de tête, pas d'énucléation" },
+  { k:"sclerocornee", l:"Absence de sclérocornée", p:"membranes lues au PAS, pas à l'HES seul",
+    ko:"sclérocornée — décrire les absences membranaires, laisser la conclusion nommer" },
+  { k:"angleDecrit", l:"Angle iridocornéen DÉCRIT, pas seulement « vu »",
+    p:"un angle rempli de mésenchyme est normal avant ~28 SA",
+    ko:"angle non décrit — le rang le plus dense de l'axe antérieur est perdu" },
+  { k:"peters", l:"Absence d'adhérence kératolenticulaire",
+    p:"⚠ son absence ne réfute pas Peters sur œil macéré",
+    ko:"adhérence kératolenticulaire — ou négatif rendu à tort sur un œil autolytique" },
+  { k:"aniridie", l:"Épithélium pigmentaire irien présent",
+    p:"⚠ négatif NON rendable si le pigment est dispersé (rang 3)",
+    ko:"épithélium pigmentaire irien absent — rang 3 d'autolyse ou aniridie : non départageable" },
+  { k:"cataracte", l:"Cristallin inspecté MACROSCOPIQUEMENT avant inclusion",
+    p:"« Lens artifacts are present in nearly all fetal and neonatal eyes »",
+    ko:"cristallin non inspecté en macroscopie — le négatif de cataracte n'est pas rendable sur la lame seule" },
+  { k:"phpv", l:"Absence de PHPV",
+    p:"⚠ à distinguer d'une persistance hyaloïdienne physiologique avant 34–36 SA",
+    ko:"cordon fibrovasculaire hyperplasique — ou persistance physiologique lue comme un PHPV" },
+  { k:"hyaloideDatee", l:"Artère hyaloïde et TVL : présence ou absence ÉCRITE et datée",
+    p:"ici l'énoncé positif ET négatif sont tous deux informatifs",
+    ko:"système vasculaire fœtal non renseigné — c'est l'axe de datation qui survit à la macération" },
+  { k:"stratification", l:"État de la stratification rétinienne consigné (dix couches identifiables, ou non évaluable)",
+    p:"§ 3 : 24–27 SA selon la source · § 2.2 rang 1",
+    ko:"stratification rétinienne non consignée — ni le jalon de datation ni la non-évaluabilité ne sont écrits" },
+  { k:"dysplasieRet", l:"Absence de dysplasie rétinienne et de rosettes",
+    p:"rosettes lisibles malgré l'autolyse ; excroissances non énonçables sur macéré",
+    ko:"rosettes ou excroissances rétiniennes présentes" },
+  { k:"hemorragie", l:"Absence d'hémorragie rétinienne — et si présente : % de surface + nombre de couches + type",
+    p:"base de 20 % après accouchement non compliqué",
+    ko:"hémorragie rétinienne non quantifiée — deux mesures continues sont exigées, pas un stade" },
+  { k:"gaineNerf", l:"Absence d'hémorragie de la gaine du nerf optique, précisée uni- ou bilatérale",
+    p:"OR 5,1 unilatérale · OR 7,6 bilatérale",
+    ko:"hémorragie de la gaine — préciser la latéralité, elle change l'odds ratio" },
+  { k:"pronostiques", l:"Absence d'infiltration du nerf optique, d'envahissement choroïdien, d'essaimage vitréen",
+    p:"les trois items pronostiques — exigent le plan PO",
+    ko:"un des trois items pronostiques est présent, ou non évaluable faute de plan PO" },
+  { k:"infiltratChoroidien", l:"Absence d'infiltrat lymphocytaire choroïdien",
+    p:"lisible malgré l'autolyse — son négatif a de la valeur",
+    ko:"infiltrat lymphocytaire choroïdien présent" },
+  { k:"nerfOptiqueMorpho", l:"Nerf optique d'épaisseur normale, chiasma présent",
+    p:"anencéphalie et hydranencéphalie : l'œil ne les distingue pas",
+    ko:"nerf optique aminci ou chiasma absent" },
+  { k:"toxoIHC", l:"Absence de pseudokystes dans la rétine ET dans le nerf optique",
+    p:"⚠ négatif à ne pas rendre sur la seule HES",
+    ko:"pseudokystes présents, ou négatif rendu sans IHC anti-Toxoplasma" },
+  { k:"cmvPlacenta", l:"Absence d'inclusions owl's eye, croisée avec le placenta",
+    p:"⚠ négatif non rendable sur rétine fragmentée",
+    ko:"inclusions présentes, ou négatif rendu sur une rétine fragmentée sans contrôle placentaire" },
+  { k:"listeria", l:"Absence de bacilles Gram positif et de méningite du nerf optique",
+    p:"exige le nerf sur toute sa longueur intra-orbitaire",
+    ko:"bacilles Gram positif ou méningite du nerf optique" },
+  { k:"hsvNecrose", l:"Absence de nécrose rétinienne calcifiée", p:"nécrose + calcification = HSV",
+    ko:"nécrose rétinienne calcifiée" },
+  { k:"nonEvaluable", l:"« Non évaluable pour autolyse » distingué de « normal », structure par structure",
+    p:"16 % des yeux d'une série publiée d'IMG (4/25)",
+    ko:"non-évaluabilité écrite comme une normalité — ce n'est pas un échec de lecture, c'est le régime normal de l'organe" },
+  { k:"t21", l:"Chez un fœtus T21 : le rendement oculaire attendu est NUL",
+    p:"0/65 dans la cohorte — le plus gros effectif du tableau",
+    ko:"anomalie oculaire chez un fœtus T21 — elle n'est PAS expliquée par la trisomie : chercher autre chose" }
+];
+
+/* ── 08 · Techniques ──────────────────────────────────────────────────────── */
+var TECHNIQUES = [
+  { k:"pas",        l:"PAS", q:"continuité de Bowman, Descemet, capsule cristallinienne, Bruch — systématique sur l'œil" },
+  { k:"perls",      l:"Perls / bleu de Prusse", q:"hémosidérine — borne un plancher, jamais un plafond" },
+  { k:"polarisee",  l:"HES en lumière polarisée", q:"cristaux d'oxalate de calcium biréfringents" },
+  { k:"grocott",    l:"Grocott (imprégnation argentique)", q:"bradyzoïtes de Toxoplasma, micro-organismes fongiques" },
+  { k:"gram",       l:"Gram", q:"bacille Gram positif — Listeria" },
+  { k:"cd34",       l:"CD34 (clone QBEnd-10)", q:"pli de Lange vs pli périmaculaire ; néovaisseaux de ROP" },
+  { k:"hemPanel",   l:"Leder · MPO · glycophorine C · CD117", q:"hématopoïèse extramédullaire intraoculaire" },
+  { k:"ihcToxo",    l:"IHC anti-Toxoplasma", q:"obligatoire chez le fœtus : l'HES seule est un faux négatif attendu" },
+  { k:"ihcCmv",     l:"IHC anti-CMV", q:"CMV sans inclusion visible — à croiser avec le placenta" },
+  { k:"bapp",       l:"IHC β-APP / ubiquitine", q:"lésion axonale du nerf optique, contexte TCNA" },
+  { k:"gfap",       l:"GFAP", q:"gliose — ⚠ régulièrement exprimée au-delà de 29 SA, la positivité n'y prouve rien" },
+  { k:"synapto",    l:"Synaptophysine · NSE", q:"tumeur à cellules rondes bleues, cas équivoques" },
+  { k:"afpGpc3",    l:"α-fœtoprotéine + glypicane-3", q:"contingent vitellin — ⚠ une IHC négative ne met pas à l'abri" },
+  { k:"ihcMuscle",  l:"IHC muscle lisse", q:"muscle lisse choristomateux dans la paroi d'un kyste colobomateux" },
+  { k:"macroCrist", l:"Inspection macroscopique du cristallin avant inclusion",
+    q:"pas une technique de laboratoire — la seule voie d'accès à la cataracte fœtale" },
+  { k:"macroCoque", l:"Évaluation macroscopique de la coque avant coupe", q:"pli périmaculaire — perdu dès que la pièce est coupée" },
+  { k:"biometrie",  l:"DAP + DC au pied à coulisse, et l'œil controlatéral", q:"nomogramme à trois points ; l'œil adelphe est l'étalon" },
+  { k:"etagees",    l:"Coupes étagées 4 μm", q:"anophtalmie vs microphtalmie · colobome vrai vs artefact — un protocole, pas une technique" },
+  { k:"placenta",   l:"Reprise du placenta", q:"inclusions cytomégaliques, non soumises à l'autolyse rétinienne" }
+];
+
+/* ── Propositions de techniques — déduites des clics, jamais imposées ─────── */
+function suggerer(){
+  var s = {};
+  function anormal(k){ return E.signes[k] === "anormal"; }
+  function ret(k){ return E.retention[k] === "present"; }
+
+  /* Segment antérieur : toute absence membranaire se lit au PAS. */
+  if (anormal("bowmanAbsente") || anormal("descemetAbsente") || anormal("stromaPostAbsent") ||
+      anormal("sclerocornee") || anormal("schwalbeAnteposee") || anormal("descemetEpaissie")) s.pas = 1;
+
+  /* Cristallin : la lame ne suffit jamais. */
+  if (anormal("wedl") || anormal("noyauxRetenus") || anormal("lenticone") ||
+      anormal("fibreuxSousCapsulaire") || anormal("cristallinCompact") ||
+      anormal("liquefaction") || anormal("epithCristallinNecrose")) s.macroCrist = 1;
+  if (anormal("oxalate") || anormal("liquefaction")) s.polarisee = 1;
+  if (ret("cristallinArtefacts")) s.macroCrist = 1;
+
+  /* Plis, jonctions, néovaisseaux : un seul réactif tranche les deux. */
+  if (anormal("pliPerimaculaire") || anormal("neNeQuePli") || anormal("proliferationFusiforme") ||
+      anormal("cd34CentralSeul") || E.variantes.pliDeLange) s.cd34 = 1;
+
+  /* Hémorragie et sa datation. */
+  if (anormal("hemorragieRetinienne") || anormal("hemGaineNerf") || anormal("hemIntrasclerale") ||
+      anormal("hemosiderine")) s.perls = 1;
+  if (anormal("hemorragieRetinienne") || anormal("pliPerimaculaire")) s.macroCoque = 1;
+  if (anormal("hemGaineNerf") || anormal("hemIntrasclerale")) s.bapp = 1;
+  /* L'HEM invalide le Perls : le panel sert à savoir si on a le droit de dater. */
+  if (anormal("hemosiderine") || E.variantes.hemIntraoculaire) s.hemPanel = 1;
+
+  /* Infections — les trois faux négatifs interdits. */
+  if (anormal("pseudokystesRetine") || anormal("pseudokystesNerf") || anormal("nevriteOptique") ||
+      anormal("chorioretiniteCicatricielle") || anormal("necroseRetinienne")){ s.ihcToxo = 1; s.grocott = 1; }
+  if (anormal("owlsEye") || anormal("necroseRetinienne")){ s.ihcCmv = 1; s.placenta = 1; }
+  if (anormal("meningiteNerf") || anormal("gramPositif") || anormal("necroseRetinienne")) s.gram = 1;
+  /* Une rétine fragmentée dans un contexte infectieux : le placenta prend le relais. */
+  if (ret("retineFragmentee")){ s.placenta = 1; s.ihcCmv = 1; }
+
+  /* Gliose : la borne d'âge est la question, pas le marquage. */
+  if (anormal("fibresOptiquesPerdues") || anormal("ganglionnaireCentrale")) s.gfap = 1;
+
+  /* Tumeurs. */
+  if (anormal("cellulesRondesBleues") || anormal("flexnerWintersteiner") || anormal("masseRetinienne") ||
+      anormal("medullaryEpithelium")) s.synapto = 1;
+  if (anormal("masseOrbitaire") || anormal("troisFeuillets") || anormal("neuroepitheliumImmature") ||
+      anormal("yolkSac")) s.afpGpc3 = 1;
+  if (anormal("kysteScleralPost") || anormal("muscleLisseChoristome")) s.ihcMuscle = 1;
+
+  /* Protocole : ce sont les négatifs qui l'exigent, pas les lésions. */
+  if (anormal("defautParoi") || anormal("eprBruchDiscordants") || anormal("orbiteSansStructure") ||
+      anormal("residusGlobe") || anormal("orbiteMesodermique")) s.etagees = 1;
+  if (anormal("dapBas") || anormal("dapHaut") || anormal("dcBas") || anormal("globeSymetriquePetit")) s.biometrie = 1;
+
+  if (E.negatifs.cataracte === "present") s.macroCrist = 1;
+  if (E.negatifs.colobome === "present") s.etagees = 1;
+  if (E.negatifs.dapMesure === "present") s.biometrie = 1;
+  if (E.negatifs.toxoIHC === "present") s.ihcToxo = 1;
+  if (E.negatifs.cmvPlacenta === "present"){ s.ihcCmv = 1; s.placenta = 1; }
+  if (E.negatifs.listeria === "present") s.gram = 1;
+  if (E.negatifs.hemorragie === "present"){ s.perls = 1; s.macroCoque = 1; }
+  if (E.negatifs.aniridie === "present") s.pas = 1;
+  if (E.negatifs.sclerocornee === "present") s.pas = 1;
+
+  /* Le PAS est systématique dès qu'un œil est lu — décision de la fiche (§ 9.16). */
+  if (E.prelev.planPO) s.pas = 1;
+  return s;
+}
+
+/* ── 09 · Autotest d'organe ───────────────────────────────────────────────────
+   L'autotest de la coque tourne AVANT celui-ci et laisse un état : côté « deux »,
+   DIAGS[0].signes[0] anormal, NEGATIFS[0] à « absent », TECHNIQUES[0] cochée.
+   On ne suppose donc rien : on repose ce dont on a besoin, on nettoie après, et
+   on termine avec #sa numérique (la coque compare ensuite à snap.terme_sa). */
+async function testsOrgane(chk, clic, set, crTient, pause){
+
+  function pose(k, v){ if (E.signes[k] !== v) clic("les", k, v); }
+  function ote(k){ if (E.signes[k]) clic("les", k, E.signes[k]); }
+  function propre(){ SIGNES.forEach(function(x){ ote(x.k); }); }
+  function tenue(k){ return associations().some(function(a){ return a.d.k === k && a.tenu; }); }
+  function plan(k){ if (E.mesure.def !== k) clic("mdef", k); }
+  function axe(k){ if (E.mesure.opt !== k) clic("mopt", k); }
+  function ret(k, v){ if (E.retention[k] !== v) clic("ret", k, v); }
+  function retOte(k){ if (E.retention[k]) clic("ret", k, E.retention[k]); }
+  function cote(k){ if (E.cote !== k) clic("cote", k); }
+  function mes(id, v){ set("m_" + id, v); }
+  function vm(){ return $("vMesure").textContent; }
+
+  /* — Organe pair : la latéralité est bloquante et ne se redéfinit pas. — */
+  cote("droit");
+  await pause();
+  chk("le côté déclaré part au compte rendu", crTient("Droit — 1/2"));
+  chk("la latéralité est le premier négatif obligatoire", NEGATIFS[0].k === "lateralite");
+
+  /* — Rétention : un ordre interne, jamais une horloge (§ 2.1, § 9.1). — */
+  chk("aucune borne de rétention ne porte d'heure",
+      RETENTION.every(function(r){ return r.b.indexOf("rang ") === 0 && !/heure|\bh\b/.test(r.b); }));
+  chk("le KCl rappelle l'absence de barème oculaire", KCL_TXT.indexOf("Genest") >= 0);
+  chk("l'artefact cristallinien est un prédicteur mauvais",
+      par(RETENTION, "cristallinArtefacts").q === "mauvais");
+
+  /* — Nomogramme : trois points publiés, pas un de plus (§ 3.2, § 9.3). — */
+  chk("norme publiée à 20 SA", normeNomogramme(20) !== null);
+  chk("norme publiée à 36 SA", normeNomogramme(36) !== null);
+  chk("norme publiée au terme", normeNomogramme(42).dap === 17.5);
+  chk("aucune interpolation entre les points", normeNomogramme(28) === null);
+
+  /* — Axe 1 de MESURE : le plan de coupe, seul verdict bloquant (§ 8.3). — */
+  set("sa", "28");
+  mes("dap", "12");
+  await pause();
+  chk("plan non déclaré : verdict bloquant", vm().indexOf("PLAN DE COUPE NON DÉCLARÉ") >= 0);
+  plan("horsPO");
+  await pause();
+  chk("plan hors PO : la lame n'est pas lisible", vm().indexOf("PLAN HORS PO") >= 0);
+  chk("hors PO, le rétinoblastome n'est pas stadifiable", vm().indexOf("essaimage vitréen") >= 0);
+  plan("poProuve");
+  await pause();
+  chk("plan PO prouvé : plus de blocage de plan", vm().indexOf("PLAN HORS PO") < 0);
+  chk("à 28 SA, aucune norme n'est appelable", vm().indexOf("Aucune norme publiée à 28 SA") >= 0);
+  chk("on n'interpole pas, l'étalon est l'œil adelphe", vm().indexOf("Ne pas interpoler") >= 0);
+
+  /* La lacune la plus gênante : aucun écart inter-yeux normal n'est publié (§ 9.6). */
+  mes("dapAdelphe", "15");
+  await pause();
+  chk("l'écart inter-yeux se constate sans se seuiller",
+      vm().indexOf("Constater, ne pas seuiller") >= 0);
+
+  /* Le seuil de microcornée existe, mais il est post-natal (§ 9.21). */
+  mes("dc", "8");
+  await pause();
+  chk("le seuil de microcornée porte sa réserve d'âge", vm().indexOf("NOUVEAU-NÉ") >= 0);
+
+  /* — Axe 2 de MESURE : l'axe de datation effectivement utilisé (§ 2.3, § 3.4). — */
+  axe("retinien");
+  ret("retineFragmentee", "present");
+  await pause();
+  chk("rétine fragmentée : l'axe rétinien est mort",
+      vm().indexOf("CONTRADICTION") >= 0 && vm().indexOf("Basculer sur l'axe vasculaire") >= 0);
+  axe("vasculaire");
+  await pause();
+  chk("l'axe vasculaire survit au rang 1", vm().indexOf("CONTRADICTION") < 0);
+  ret("rang6Atteint", "present");
+  await pause();
+  chk("rang 6 atteint : plus aucun axe de datation",
+      vm().indexOf("Aucun axe de datation ne reste") >= 0);
+  axe("aucun");
+  await pause();
+  chk("non évaluable pour autolyse n'est pas normal",
+      vm().indexOf("16 %") >= 0 && vm().indexOf("régime normal de l'organe") >= 0);
+  retOte("retineFragmentee");
+  retOte("rang6Atteint");
+  axe("anterieur");
+
+  /* — Associations : elles se déduisent, elles ne se cliquent pas. — */
+  chk("aucun bouton ne porte un diagnostic", DIAGS.every(function(d){
+    return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]');
+  }));
+
+  propre();
+  pose("rosettesOrganisees", "anormal");
+  await pause();
+  chk("un pivot seul ne tient pas une association", !tenue("dysplasieRetinienne"));
+  pose("excroissances", "anormal");
+  await pause();
+  chk("dysplasie rétinienne : faisceau tenu", tenue("dysplasieRetinienne"));
+  chk("aucun grade de dysplasie n'est proposé",
+      par(DIAGS, "dysplasieRetinienne").stop.indexOf("AUCUN grade") >= 0);
+  ote("rosettesOrganisees");
+  await pause();
+  chk("sans la rosette organisée, le faisceau lâche", !tenue("dysplasieRetinienne"));
+
+  /* Cataracte : le pivot est macroscopique, et c'est voulu. */
+  propre();
+  pose("wedl", "anormal");
+  pose("noyauxRetenus", "anormal");
+  await pause();
+  chk("cataracte : sans inspection macroscopique, rien ne tient", !tenue("cataracte"));
+  pose("macroCristallin", "anormal");
+  await pause();
+  chk("cataracte : le pivot est l'œil, pas la lame", tenue("cataracte"));
+
+  /* — Les divergences sont portées, jamais arbitrées. — */
+  chk("divergence 24 vs 27 SA portée dans le stade",
+      par(STADES, "dixCouches").note.indexOf("DIVERGENCE NON tranchée") >= 0);
+  chk("divergence ora serrata portée",
+      par(STADES, "neuroblastiques").note.indexOf("DIVERGENCE NON tranchée") >= 0);
+  chk("séparation palpébrale : trois valeurs non arbitrées",
+      par(STADES, "paupieresSeparees").note.indexOf("trois valeurs") >= 0);
+  chk("PHPV : fenêtre non quantifiée",
+      par(DIAGS, "phpv").stop.indexOf("DIVERGENCE DE FENÊTRE") >= 0);
+  chk("CHED : hors fenêtre fœtale", par(DIAGS, "ched").stop.indexOf("DIVERGENCE de fenêtre") >= 0);
+  chk("médulloépithéliome : classification non tranchée",
+      par(DIAGS, "medulloepitheliome").stop.indexOf("DIVERGENCE DE CLASSIFICATION") >= 0);
+  chk("anencéphalie : déduction croisée assumée",
+      par(DIAGS, "anencephalie").stop.indexOf("DÉDUCTION CROISÉE") >= 0);
+  chk("ROP : les stades sont ophtalmoscopiques",
+      par(DIAGS, "rop").stop.indexOf("OPHTALMOSCOPIQUES") >= 0);
+  chk("aucun champ de gradation n'a été créé", typeof GRADES === "undefined");
+
+  /* — Compte rendu : ce qui doit s'y trouver. — */
+  propre();
+  pose("orbiteSansStructure", "anormal");
+  pose("orbiteMesodermique", "anormal");
+  await pause();
+  chk("micro/anophtalmie : le doute s'écrit", crTient("micro/anophtalmie"));
+  chk("l'anophtalmie ne se pose pas sur une coupe unique",
+      crTient("Ne jamais écrire « anophtalmie » sur une coupe unique."));
+
+  /* — Nettoyage : on rend l'état à la coque, avec #sa numérique. — */
+  propre();
+  plan("poProuve");
+  set("sa", "36");
+  await pause();
+  chk("aux 36 SA la norme existe", vm().indexOf("Norme publiée à 36 SA") >= 0);
+}
+
+/* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
+var FOETO = {"sections":[{"t":"5.1 Anophtalmie et microphtalmie","termes":[{"id":"FOETO:PF.ORL-MAL-002","l":"Anophtalmie vraie"},{"id":"FOETO:PF.ORL-MAL-022","l":"Microphtalmie"}]},{"t":"5.11 Anencéphalie et hydranencéphalie","termes":[{"id":"FOETO:PF.ORL-MAL-019","l":"Hypoplasie du nerf optique"}]},{"t":"5.2 Colobome","termes":[{"id":"FOETO:PF.ORL-MAL-008","l":"Colobome du nerf optique"},{"id":"FOETO:PF.ORL-MAL-009","l":"Colobome irien (défaut de fermeture de la fissure optique)"},{"id":"FOETO:PF.ORL-MAL-010","l":"Colobome oculaire"},{"id":"FOETO:PF.ORL-MAL-011","l":"Colobome rétinien"}]},{"t":"5.3 Dysgénésies du segment antérieur","termes":[{"id":"FOETO:PF.ORL-MAL-001","l":"Anomalie de Peters"},{"id":"FOETO:PF.ORL-MAL-013","l":"Dysgenèse du segment antérieur"},{"id":"FOETO:PF.ORL-MAL-018","l":"Hypoplasie de l'iris"},{"id":"FOETO:PF.ORL-MAL-024","l":"Opacification cornéenne"},{"id":"FOETO:PF.ORL-MAL-028","l":"Sclérocornée"},{"id":"FOETO:PF.ORL-MAL-030","l":"Synéchies antérieures iridocornéennes"},{"id":"FOETO:PF.ORL-MAL-033","l":"Épaississement de la membrane de Descemet"}]},{"t":"5.4 Buphtalmie","termes":[{"id":"FOETO:PF.ORL-MAL-015","l":"Défect de la membrane de Descemet"}]},{"t":"5.5 Cataracte fœtale","termes":[{"id":"FOETO:PF.ORL-MAL-005","l":"Cataracte congénitale"}]},{"t":"5.6 PHPV — vitré primitif hyperplasique persistant","termes":[{"id":"FOETO:PF.ORL-MAL-021","l":"Masse rétrolenticulaire mésodermique"},{"id":"FOETO:PF.ORL-MAL-032","l":"Vitré hyperplasique primitif persistant (PHPV)"}]},{"t":"5.8.1 Toxoplasmose","termes":[{"id":"FOETO:PF.ORL-MAL-007","l":"Cicatrice choriorétinienne pigmentée"}]},{"t":"5.8.4 Cytomégalovirus","termes":[{"id":"FOETO:PF.ORL-MAL-020","l":"Inclusions intranucléaires virales (œil)"}]}],"formes":{"FOETO:PF.ORL-MAL-003":["Aphaquie congénitale","Congenital aphakia","(hors fiche)"],"FOETO:PF.ORL-MAL-004":["Aplasie du nerf optique","Optic nerve aplasia","(hors fiche)"],"FOETO:PF.ORL-MAL-006":["Choriorétinite","Chorioretinitis","(hors fiche)"],"FOETO:PF.ORL-MAL-012":["Dermoïde cornéen ou limbique","Corneal or limbal dermoid","(hors fiche)"],"FOETO:PF.ORL-MAL-014":["Décollement de rétine","Retinal detachment","(hors fiche)"],"FOETO:PF.ORL-MAL-016":["Ectropion de l'uvée","Ectropion uvea","(hors fiche)"],"FOETO:PF.ORL-MAL-017":["Gliose rétinienne","Retinal gliosis","(hors fiche)"],"FOETO:PF.ORL-NOR-020":["Papilles de Bergmeister (résidus fibreux de la papille optique)","Bergmeister's papillae (fibrous remnants of optic disc)","(hors fiche)"],"FOETO:PF.ORL-MAL-025":["Paucité des cellules endothéliales cornéennes","Corneal endothelial cell paucity","(hors fiche)"],"FOETO:PF.ORL-NOR-021":["Point de Mittendorf (opacité capsulaire postérieure)","Mittendorf's dot (posterior lens capsule opacity)","(hors fiche)"],"FOETO:PF.ORL-MAL-029":["Synophtalmie","Synophthalmia","(hors fiche)"],"FOETO:PF.ORL-MAL-031":["Vestiges de vaisseaux hyaloïdes","Hyaloid vessel remnants","(hors fiche)"],"FOETO:PF.ORL-NOR-034":["Œil et oreille normaux","Œil et oreille normaux","(hors fiche)"],"FOETO:PF.ORL-MAL-002":["Anophtalmie vraie","True anophthalmia"],"FOETO:PF.ORL-MAL-022":["Microphtalmie","Microphthalmia"],"FOETO:PF.ORL-MAL-019":["Hypoplasie du nerf optique","Optic nerve hypoplasia"],"FOETO:PF.ORL-MAL-008":["Colobome du nerf optique","Optic nerve coloboma"],"FOETO:PF.ORL-MAL-009":["Colobome irien (défaut de fermeture de la fissure optique)","Iris coloboma (failure of optic fissure closure)"],"FOETO:PF.ORL-MAL-010":["Colobome oculaire","Ocular coloboma"],"FOETO:PF.ORL-MAL-011":["Colobome rétinien","Retinal coloboma"],"FOETO:PF.ORL-MAL-001":["Anomalie de Peters","Peters anomaly"],"FOETO:PF.ORL-MAL-013":["Dysgenèse du segment antérieur","Anterior segment dysgenesis"],"FOETO:PF.ORL-MAL-018":["Hypoplasie de l'iris","Iris hypoplasia"],"FOETO:PF.ORL-MAL-024":["Opacification cornéenne","Corneal opacity"],"FOETO:PF.ORL-MAL-028":["Sclérocornée","Sclerocornea"],"FOETO:PF.ORL-MAL-030":["Synéchies antérieures iridocornéennes","Anterior iridocorneal synechiae"],"FOETO:PF.ORL-MAL-033":["Épaississement de la membrane de Descemet","Descemet membrane thickening"],"FOETO:PF.ORL-MAL-015":["Défect de la membrane de Descemet","Descemet membrane defect"],"FOETO:PF.ORL-MAL-005":["Cataracte congénitale","Congenital cataract"],"FOETO:PF.ORL-MAL-021":["Masse rétrolenticulaire mésodermique","Retrolental mesodermal mass"],"FOETO:PF.ORL-MAL-032":["Vitré hyperplasique primitif persistant (PHPV)","Persistent hyperplastic primary vitreous (PHPV)"],"FOETO:PF.ORL-MAL-007":["Cicatrice choriorétinienne pigmentée","Pigmented chorioretinal scar"],"FOETO:PF.ORL-MAL-020":["Inclusions intranucléaires virales (œil)","Intranuclear viral inclusions (eye)"]}};
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+
+var DB_NAME = "foeto-" + MODULE, DB_VER = 1, db = null;
+
+/* Organe pair : le côté fait partie de la donnée, pas du commentaire. Un rein
+   lu sans son côté n'est pas rattachable à l'imagerie ni à l'autre rein. */
+var COTES = [{ k:"droit", l:"Droit — 1/2" }, { k:"gauche", l:"Gauche — 1/2" },
+             { k:"deux", l:"Les deux — 2/2" }];
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function normDossier(v){ return v.toUpperCase().replace(/\s+/g, ""); }
+function dossierOk(v){ return v.trim().length > 0; } // ponytail: plus de format imposé, seul le uppercase (normDossier) reste
+function num(id){ var e = $(id); if (!e) return null; var v = parseFloat(e.value); return isFinite(v) ? v : null; }
+function par(liste, k){ return liste.filter(function(x){ return x.k === k; })[0] || null; }
+function champs(){ return MESURE ? MESURE.champs : []; }
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", E = null;
+function neuf(){
+  var e = { cote:null, prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
+            negatifs:{}, techniques:{}, foeto:{}, mesure:{ def:null, opt:null, v:{} }, libre:"" };
+  champs().forEach(function(c){ e.mesure.v[c.id] = null; });
+  return e;
+}
+
+/* Le stade attendu au terme saisi. Bornes reconstruites depuis la prose des
+   sources : ce sont des repères, pas des seuils. */
+function stadeAttendu(sa){
+  if (sa == null || !isFinite(sa)) return null;
+  for (var i = 0; i < STADES.length; i++) if (sa < STADES[i].max) return STADES[i];
+  return STADES[STADES.length - 1];
+}
+function bornesTxt(s){
+  var i = STADES.indexOf(s), min = i ? STADES[i-1].max : 0;
+  return s.max === 99 ? "≳ " + min + " SA" : min + "–" + s.max + " SA";
+}
+
+/* ── Construction du DOM — une seule fois, le clic ne fait que repeindre ──── */
+function chip(act, k, l, sous){
+  return '<button type="button" class="chip" data-act="' + act + '" data-k="' + esc(k) + '">' +
+         (sous ? '<span class="k">' + esc(sous) + '</span>' : '') + esc(l) + '</button>';
+}
+function batir(){
+  if (PAIR){
+    $("coteBloc").hidden = false;
+    $("cote").innerHTML = COTES.map(function(c){ return chip("cote", c.k, c.l); }).join("");
+  }
+  $("prelevement").innerHTML = PRELEV.map(function(p){ return chip("prelev", p.k, p.l); }).join("");
+
+  $("retention").innerHTML = RETENTION.map(function(r){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(r.l) +
+      '<span class="meta ' + r.q + '">' + esc(r.b) + " · " + esc(r.d) +
+      " · prédicteur " + r.q + '</span></div>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="present">Présent</button>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="absent">Absent</button>' +
+      '</div></div>';
+  }).join("");
+  $("kcl").innerHTML = chip("kcl", "kcl", "Fœticide par KCl", "geste à déclarer avant toute datation");
+
+  $("stTitre").textContent = STADE_TITRE;
+  $("stades").innerHTML = STADES.map(function(s){ return chip("stade", s.k, s.l); }).join("");
+
+  if (MESURE){
+    var h = '<div class="sousTitre">' + esc(MESURE.titre) + '</div>';
+    h += '<div class="chips" id="mesDefs">' +
+         MESURE.defs.map(function(d){ return chip("mdef", d.k, d.l, MESURE.defLabel); }).join("") + '</div>';
+    if (MESURE.opts && MESURE.opts.length)
+      h += '<div class="chips" id="mesOpts" style="margin-top:6px">' +
+           MESURE.opts.map(function(o){ return chip("mopt", o.k, o.l, MESURE.optLabel); }).join("") + '</div>';
+    h += '<div class="row" style="margin-top:9px">' + MESURE.champs.map(function(c){
+      return '<div class="field"><label for="m_' + c.id + '">' + esc(c.label) + '</label>' +
+             '<input type="number" id="m_' + c.id + '" min="' + c.min + '" max="' + c.max +
+             '" step="' + c.step + '" inputmode="decimal" placeholder="—"></div>';
+    }).join("") + '</div>';
+    $("mesure").innerHTML = h;
+    $("vMesure").hidden = false;
+    $("vMesure").querySelector("b").textContent = MESURE.titre;
+  }
+
+  $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
+
+  /* Un signe peut porter un groupe g (placenta : cordon, membranes, parenchyme sous
+     cordon, marge, systémique) : un sous-titre s'ouvre quand le groupe change. */
+  var gPrec = null;
+  $("signes").innerHTML = SIGNES.map(function(x){
+    var h = "";
+    if (x.g && x.g !== gPrec){ h = '<div class="sousTitre">' + esc(x.g) + '</div>'; gPrec = x.g; }
+    return h + '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+      (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
+      '</div>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="normal">Normal</button>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="anormal">Anormal</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("foeto").innerHTML = FOETO.sections.map(function(s){
+    return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
+           s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
+  }).join("") || '<p class="note">Aucun terme FOETO rattaché à cette fiche.</p>';
+  if (FOETO.sections.length){
+    $("foetoPlus").hidden = false; $("foetoRech").hidden = false;
+    $("foetoPlus").textContent = "▸ tous les termes attestés (" + nbFoeto() + ")";
+  }
+
+  $("negatifs").innerHTML = NEGATIFS.map(function(n){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(n.l) +
+      '<span class="meta">' + esc(n.p) + '</span></div>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="absent">Vérifié</button>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="present">EN DÉFAUT</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("techNote").textContent = TECH_NOTE;
+  $("techniques").innerHTML = TECHNIQUES.map(function(t){ return chip("tech", t.k, t.l, t.q); }).join("");
+}
+
+function nbFoeto(){ return FOETO.sections.reduce(function(a, s){ return a + s.termes.length; }, 0); }
+function foetoLabel(id){
+  var l = null;
+  FOETO.sections.forEach(function(s){ s.termes.forEach(function(t){ if (t.id === id) l = t.l; }); });
+  return l || (FOETO.formes[id] || [id])[0];
+}
+/* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
+function foetoAjouter(id){
+  if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
+    var box = $("foeto").querySelector(".chips");
+    if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
+    box.insertAdjacentHTML("beforeend", chip("foeto", id, foetoLabel(id)));
+  }
+  E.foeto[id] = true;
+  peindre(); enregistrer();
+}
+function rechercherFoeto(q){
+  var sg = $("sgFoeto");
+  q = q.trim().toLowerCase();
+  if (q.length < 3){ sg.classList.remove("on"); return; }
+  var hits = [];
+  Object.keys(FOETO.formes).some(function(id){
+    var f = FOETO.formes[id].filter(function(x){ return x.toLowerCase().indexOf(q) >= 0; })[0];
+    if (f) hits.push({ id:id, l:foetoLabel(id), f:f, hf:FOETO.formes[id].indexOf("(hors fiche)") >= 0 });
+    return hits.length >= 10;
+  });
+  sg.innerHTML = hits.length ? hits.map(function(x){
+    return '<div data-pick="' + esc(x.id) + '">' + esc(x.l) +
+           (x.f !== x.l ? ' <small>— ' + esc(x.f) + '</small>' : '') + (x.hf ? ' <small>(hors fiche)</small>' : '') + '</div>';
+  }).join("") : '<div><small>aucun terme</small></div>';
+  sg.classList.add("on");
+}
+
+/* ── Associations ─────────────────────────────────────────────────────────────
+   Un diagnostic ne se coche pas : il se lit dans l'association des signes. Les
+   faisceaux incomplets sont affichés aussi — 2 signes sur 4 se dit, et dire
+   combien manquent est le seul moyen de distinguer « non trouvé » de « non
+   regardé ». */
+function seuil(d){ return d.min || d.signes.length; }
+function associations(){
+  return DIAGS.map(function(d){
+    var pris  = d.signes.filter(function(k){ return E.signes[k] === "anormal"; });
+    var muets = d.signes.filter(function(k){ return !E.signes[k]; });
+    /* Un signe pivot ne se remplace pas par le nombre : sans lui, le compte peut
+       être atteint sans que l'association tienne. */
+    var pivot = !d.cle || E.signes[d.cle] === "anormal";
+    return { d:d, pris:pris, muets:muets, pivot:pivot,
+             tenu: pivot && pris.length >= seuil(d) };
+  }).filter(function(a){ return a.pris.length; })
+    .sort(function(a, b){ return (b.tenu - a.tenu) || (b.pris.length - a.pris.length); });
+}
+function nomSigne(k){ var s = par(SIGNES, k); return s ? s.l : k; }
+
+/* ── Verdicts communs ─────────────────────────────────────────────────────── */
+function verdictPrelevement(){
+  var n = Object.keys(E.prelev).length, res = [], grave = false;
+  PRELEV.forEach(function(p){
+    if (p.manque && !E.prelev[p.k]){ res.push(p.manque); if (p.grave) grave = true; }
+  });
+  if (PAIR && !E.cote) res.push("côté non déclaré — organe pair");
+  return { n:n, res:res,
+    cls: res.length ? (grave ? "bad" : "warn") : (n === PRELEV.length ? "ok" : ""),
+    txt: n === 0 ? "—"
+       : (n + "/" + PRELEV.length + " item(s) confirmé(s)" +
+          (PAIR && E.cote ? ", " + par(COTES, E.cote).l.toLowerCase().split(" —")[0] : "") + ".") +
+         (res.length ? " Réserves : " + res.join(" ; ") + "." : " Prélèvement complet.") };
+}
+function verdictRetention(){
+  if (E.kcl) return { cls:"bad", borne:null, txt:KCL_TXT };
+  var pres = RETENTION.filter(function(r){ return E.retention[r.k] === "present"; });
+  if (!pres.length) return { cls:"", borne:null,
+    txt: Object.keys(E.retention).length ? "Aucun critère de rétention positif." : "—" };
+  var notes = [];
+  pres.forEach(function(r){ if (r.note) notes.push(r.note); });
+  var bons = pres.filter(function(r){ return r.q !== "mauvais"; });
+  if (!bons.length) return { cls:"warn", borne:null,
+    txt:"Seuls des prédicteurs MAUVAIS sont positifs — aucune borne recevable. " + notes.join(" ; ") + "." };
+  var top = bons.reduce(function(a, b){ return b.h > a.h ? b : a; });
+  if (top.alerte) notes.push(top.alerte);
+  return { cls:"ok", borne:top,
+    txt:"Rétention " + top.b + " — critère : " + top.l.toLowerCase() + " (" + top.d + ")." +
+        (notes.length ? " Réserves : " + notes.join(" ; ") + "." : "") };
+}
+function verdictMaturation(){
+  var sa = num("sa"), att = stadeAttendu(sa), obs = E.stade ? par(STADES, E.stade) : null;
+  if (!obs) return { cls:"", att:att, txt: att
+    ? "Stade attendu à " + sa + " SA : " + att.l.toLowerCase() + ". Confirmer ou choisir."
+    : "Saisir le terme pour afficher le stade attendu." };
+  if (!att) return { cls:"warn", att:null,
+    txt:"Stade " + obs.l.toLowerCase() + " — sans terme, aucune discordance n'est calculable." };
+  var io = STADES.indexOf(obs), ia = STADES.indexOf(att), t, cls;
+  if (io === ia){ cls = "ok"; t = "Maturation conforme au terme : " + obs.l.toLowerCase() + " à " + sa + " SA."; }
+  else if (io < ia){ cls = "warn";
+    t = "Retard de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (RETARD_NOTE ? " " + RETARD_NOTE : ""); }
+  else { cls = "warn";
+    t = "Avance de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (AVANCE_NOTE ? " " + AVANCE_NOTE : ""); }
+  if (obs.note) t += " (" + obs.note + ")";
+  return { cls:cls, att:att, txt:t };
+}
+
+/* ── Peinture ─────────────────────────────────────────────────────────────── */
+function classe(act, v){
+  if (act === "neg") return v === "present" ? "no" : "on";
+  if (act === "les") return v === "anormal" ? "no" : "on";
+  return "on";
+}
+function poser(id, v){
+  var e = $(id), t = e.querySelector("b").textContent;
+  e.className = "verdict" + (v.cls ? " " + v.cls : "");
+  e.innerHTML = "<b>" + esc(t) + "</b>" + esc(v.txt);
+}
+function tally(id, n, sur){ $(id).textContent = n ? n + "/" + sur : "—"; }
+
+function peindreDiags(){
+  var A = associations();
+  if (!A.length){
+    $("diags").innerHTML = '<p class="note" style="margin:0">Aucun signe anormal coché : rien à associer.</p>';
+    return;
+  }
+  $("diags").innerHTML = A.map(function(a){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(a.d.l) +
+      '<span class="meta">' + a.pris.length + "/" + a.d.signes.length + " signe(s), seuil " + seuil(a.d) +
+      (a.muets.length ? " · " + a.muets.length + " non regardé(s)" : "") + '</span></div>' +
+      '<span class="chip ' + (a.tenu ? "on" : "") + '" style="cursor:default">' +
+      (a.tenu ? "association tenue" : "faisceau incomplet") + '</span></div>' +
+      '<div class="unfold">' +
+      '<div class="note" style="margin:0">' +
+      (a.pivot ? "" : "Signe pivot non coché : " + esc(nomSigne(a.d.cle)) + ".<br>") +
+      esc(a.pris.map(nomSigne).join(" · ")) +
+      (a.muets.length ? "<br>Non regardés : " + esc(a.muets.map(nomSigne).join(" · ")) + "." : "") +
+      '</div>' +
+      '<div class="stop"><b>Ce qu\'il ne faut pas conclure</b>' + esc(a.d.stop) + '</div></div></div>';
+  }).join("");
+}
+
+function peindre(){
+  if (PAIR) document.querySelectorAll("#cote .chip").forEach(function(b){
+    b.className = "chip" + (E.cote === b.dataset.k ? " on" : "");
+  });
+  document.querySelectorAll("#prelevement .chip").forEach(function(b){
+    b.className = "chip" + (E.prelev[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#retention .chip").forEach(function(b){
+    b.className = "chip" + (E.retention[b.dataset.k] === b.dataset.v ? " on" : "");
+  });
+  $("kcl").firstChild.className = "chip" + (E.kcl ? " no" : "");
+  document.querySelectorAll("#stades .chip").forEach(function(b){
+    var att = stadeAttendu(num("sa"));
+    b.className = "chip" + (E.stade === b.dataset.k ? " on"
+                          : (att && att.k === b.dataset.k ? " sugg" : ""));
+  });
+  if (MESURE){
+    document.querySelectorAll("#mesDefs .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.def === b.dataset.k ? " on" : "");
+    });
+    if ($("mesOpts")) document.querySelectorAll("#mesOpts .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.opt === b.dataset.k ? " on" : "");
+    });
+  }
+  document.querySelectorAll("#variantes .chip").forEach(function(b){
+    b.className = "chip" + (E.variantes[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#signes .chip").forEach(function(b){
+    b.className = "chip" + (E.signes[b.dataset.k] === b.dataset.v
+                            ? " " + classe("les", b.dataset.v) : "");
+  });
+  peindreDiags();
+  document.querySelectorAll('[data-act="foeto"]').forEach(function(b){
+    b.className = "chip" + (E.foeto[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#negatifs .chip").forEach(function(b){
+    b.className = "chip" + (E.negatifs[b.dataset.k] === b.dataset.v
+                            ? " " + classe("neg", b.dataset.v) : "");
+  });
+  var sug = suggerer();
+  document.querySelectorAll("#techniques .chip").forEach(function(b){
+    b.className = "chip" + (E.techniques[b.dataset.k] ? " on" : (sug[b.dataset.k] ? " sugg" : ""));
+  });
+
+  tally("tPrelevement", Object.keys(E.prelev).length, PRELEV.length);
+  tally("tRetention",   Object.keys(E.retention).length, RETENTION.length);
+  tally("tMaturation",  (E.stade ? 1 : 0) + (MESURE && E.mesure.def ? 1 : 0), MESURE ? 2 : 1);
+  tally("tVariantes",   Object.keys(E.variantes).length, VARIANTES.length);
+  tally("tSignes",     Object.keys(E.signes).length, SIGNES.length);
+  tally("tFoeto",       Object.keys(E.foeto).length, nbFoeto());
+  tally("tNegatifs",    Object.keys(E.negatifs).length, NEGATIFS.length);
+  tally("tTechniques",  Object.keys(E.techniques).length, TECHNIQUES.length);
+
+  poser("vPrelevement", verdictPrelevement());
+  poser("vRetention",   verdictRetention());
+  poser("vMaturation",  verdictMaturation());
+  if (MESURE) poser("vMesure", verdictMesure());
+
+  var cr = composer();
+  $("cr").textContent = cr;
+  $("tCR").textContent = cr.split("\n").length + " lignes";
+}
+
+/* ── Compte rendu — la sortie du module, écrite par les clics ─────────────── */
+function composer(){
+  var sa = num("sa"), L = [];
+  L.push(TITRE_CR + " — grille de lecture");
+  L.push((dossier || "dossier —") + " · " + (sa != null ? sa + " SA" : "terme —") +
+         " · " + ($("operateur").value.trim() || "lecteur —") +
+         (PAIR ? " · " + (E.cote ? par(COTES, E.cote).l : "côté non déclaré") : ""));
+  L.push("");
+
+  L.push("PRÉLÈVEMENT");
+  L.push("  " + verdictPrelevement().txt);
+
+  L.push("");
+  L.push("RÉTENTION");
+  L.push("  " + verdictRetention().txt);
+
+  L.push("");
+  L.push("MATURATION");
+  L.push("  " + verdictMaturation().txt);
+  if (MESURE) L.push("  " + verdictMesure().txt);
+
+  var vus = VARIANTES.filter(function(v){ return E.variantes[v.k]; });
+  if (vus.length){
+    L.push("");
+    L.push("VARIANTES NORMALES VUES ET ÉCARTÉES");
+    L.push("  " + vus.map(function(v){ return v.l.toLowerCase(); }).join(" · "));
+  }
+
+  var anormales = SIGNES.filter(function(x){ return E.signes[x.k] === "anormal"; });
+  var normales  = SIGNES.filter(function(x){ return E.signes[x.k] === "normal"; });
+  L.push("");
+  L.push("SIGNES");
+  if (!anormales.length && !normales.length) L.push("  aucun axe exploré.");
+  anormales.forEach(function(x){ L.push("  " + (x.g ? x.g + " · " : "") + x.l + " — ANORMAL"); });
+  if (normales.length)
+    L.push("  Normaux : " + normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  var muets = SIGNES.filter(function(x){ return !E.signes[x.k]; });
+  if (muets.length)
+    L.push("  Non explorés : " + muets.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+
+  var fo = Object.keys(E.foeto);
+  if (fo.length){
+    L.push("");
+    L.push("TERMES FOETO");
+    fo.forEach(function(id){ L.push("  " + foetoLabel(id) + " [" + id + "]"); });
+  }
+
+  var A = associations();
+  L.push("");
+  L.push("ASSOCIATIONS LUES");
+  if (!A.length) L.push("  aucune : les signes cochés ne dessinent aucune association.");
+  A.forEach(function(a){
+    L.push("  " + a.d.l + " — " + (a.tenu ? "association tenue" : "faisceau incomplet") +
+           " (" + a.pris.length + "/" + a.d.signes.length + ", seuil " + seuil(a.d) + ")");
+    L.push("      · " + a.pris.map(nomSigne).join(" · "));
+    if (!a.pivot) L.push("      · signe pivot non coché : " + nomSigne(a.d.cle));
+    if (a.muets.length) L.push("      · non regardés : " + a.muets.map(nomSigne).join(" · "));
+    L.push("      · ne pas conclure : " + a.d.stop);
+  });
+
+  L.push("");
+  L.push("NÉGATIFS OBLIGATOIRES");
+  NEGATIFS.forEach(function(n){
+    var v = E.negatifs[n.k];
+    L.push("  " + (v === "absent" ? "· " + n.l
+                 : v === "present" ? "! " + n.ko
+                 : "? " + n.l + " — non vérifié"));
+  });
+
+  var t = TECHNIQUES.filter(function(x){ return E.techniques[x.k]; });
+  if (t.length){
+    L.push("");
+    L.push("TECHNIQUES DEMANDÉES");
+    t.forEach(function(x){ L.push("  · " + x.l + " — " + x.q); });
+  }
+
+  if (E.libre.trim()){
+    L.push("");
+    L.push("REMARQUE");
+    E.libre.trim().split("\n").forEach(function(x){ L.push("  " + x); });
+  }
+
+  L.push("");
+  L.push("— La micro décrit ; la conclusion nomme. Grille v" + VERSION + " issue de " + SOURCE + ".");
+  return L.join("\n");
+}
+
+/* ── Clics ────────────────────────────────────────────────────────────────── */
+document.addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest("button[data-act]") : null;
+  if (!b || b.closest("section.off")) return;
+  var k = b.dataset.k, v = b.dataset.v, a = b.dataset.act;
+  if (a === "cote"){ E.cote = E.cote === k ? null : k; }
+  else if (a === "prelev"){ if (E.prelev[k]) delete E.prelev[k]; else E.prelev[k] = true; }
+  else if (a === "ret"){ if (E.retention[k] === v) delete E.retention[k]; else E.retention[k] = v; }
+  else if (a === "kcl"){ E.kcl = !E.kcl; }
+  else if (a === "stade"){ E.stade = E.stade === k ? null : k; }
+  else if (a === "mdef"){ E.mesure.def = E.mesure.def === k ? null : k; }
+  else if (a === "mopt"){ E.mesure.opt = E.mesure.opt === k ? null : k; }
+  else if (a === "var"){ if (E.variantes[k]) delete E.variantes[k]; else E.variantes[k] = true; }
+  else if (a === "les"){ if (E.signes[k] === v) delete E.signes[k]; else E.signes[k] = v; }
+  else if (a === "neg"){ if (E.negatifs[k] === v) delete E.negatifs[k]; else E.negatifs[k] = v; }
+  else if (a === "tech"){ if (E.techniques[k]) delete E.techniques[k]; else E.techniques[k] = true; }
+  else if (a === "foeto"){ if (E.foeto[k]) delete E.foeto[k]; else E.foeto[k] = true; }
+  else return;
+  peindre(); enregistrer();
+});
+document.addEventListener("click", function(ev){
+  var t = ev.target.closest ? ev.target.closest("[data-pick]") : null;
+  if (t){ foetoAjouter(t.dataset.pick); $("rqFoeto").value = ""; $("sgFoeto").classList.remove("on"); }
+});
+$("foetoPlus").onclick = function(){
+  var box = $("foetoTous");
+  if (!box.children.length) box.innerHTML = FOETO.sections.map(function(s){
+    return s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("");
+  }).join("");
+  box.hidden = !box.hidden; peindre();
+};
+$("rqFoeto").addEventListener("input", function(){ rechercherFoeto(this.value); });
+$("btnNegAll").onclick = function(){
+  NEGATIFS.forEach(function(n){ if (!E.negatifs[n.k]) E.negatifs[n.k] = "absent"; });
+  peindre(); enregistrer();
+};
+$("btnCopie").onclick = function(){
+  var t = composer();
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(t).then(function(){ flash("Compte rendu copié."); },
+                                          function(){ flash("Copie refusée par le navigateur."); });
+  else flash("Presse-papiers indisponible en file://.");
+};
+document.addEventListener("input", function(e){
+  var id = e.target.id;
+  if (id.indexOf("m_") === 0) E.mesure.v[id.slice(2)] = num(id);
+  else if (id === "libre") E.libre = e.target.value;
+  else if (id === "sa") majSa();
+  else return;
+  peindre(); enregistrer();
+});
+function majSa(){
+  var sa = num("sa"), att = stadeAttendu(sa), h = $("saHint");
+  h.className = "hint" + (att ? " good" : "");
+  h.textContent = att ? "Stade attendu : " + att.l.toLowerCase() + " (" + bornesTxt(att) + ")."
+                      : "SA = semaines de gestation + 2. Commande le stade attendu.";
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────────
+   localStorage est erratique en file:// et cloisonné par fichier sur certains
+   navigateurs : la saisie va en IndexedDB, y compris les champs texte.       */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction("saisies", mode), out = fn(t.objectStore("saisies"));
+    /* Tester la présence de `result`, pas sa valeur : un get() qui ne trouve rien
+       a bien un `result` (undefined) — comparé à undefined, la requête elle-même
+       était rendue, et un dossier jamais saisi s'annonçait comme restitué. */
+    t.oncomplete = function(){ res(out && "result" in out ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("readonly",  function(s){ return s.get(d); }); }
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  ["secPrelevement","secRetention","secMaturation","secVariantes","secSignes","secFoeto",
+   "secNegatifs","secTechniques","secCR","secSortie"].forEach(function(id){
+    $(id).classList.toggle("off", !ouvert);
+  });
+}
+
+/* ── Collecte / restitution ───────────────────────────────────────────────── */
+function collecter(){
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    organe: ORGANE,
+    source: SOURCE,
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    terme_sa: num("sa"),
+    grille: JSON.parse(JSON.stringify(E)),
+    compte_rendu: composer()
+  };
+}
+function appliquer(o){
+  var g = o.grille || {};
+  E = neuf();
+  ["prelev","retention","variantes","signes","negatifs","techniques","foeto"].forEach(function(c){
+    if (g[c]) E[c] = g[c];
+  });
+  Object.keys(E.foeto).forEach(function(id){
+    if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')) foetoAjouter(id);
+  });
+  E.kcl = !!g.kcl; E.stade = g.stade || null; E.cote = g.cote || null;
+  if (g.mesure){
+    E.mesure.def = g.mesure.def || null;
+    E.mesure.opt = g.mesure.opt || null;
+    champs().forEach(function(c){
+      E.mesure.v[c.id] = (g.mesure.v && g.mesure.v[c.id] != null) ? g.mesure.v[c.id] : null;
+    });
+  }
+  E.libre = g.libre || "";
+  $("sa").value = o.terme_sa != null ? o.terme_sa : "";
+  champs().forEach(function(c){ $("m_" + c.id).value = E.mesure.v[c.id] != null ? E.mesure.v[c.id] : ""; });
+  $("libre").value = E.libre;
+  majSa(); peindre();
+}
+function vider(){
+  E = neuf();
+  ["sa","libre"].forEach(function(id){ $(id).value = ""; });
+  champs().forEach(function(c){ $("m_" + c.id).value = ""; });
+  majSa(); peindre();
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, ok1 = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = ok1 && op, h = $("dossierHint");
+  h.className = "hint" + (v && !ok1 ? " bad" : ok1 ? " good" : "");
+  h.textContent = !v ? "Libre, mis en majuscules. Conditionne l'enregistrement."
+                : ok1 ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                      : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la grille.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json."
+    : ok1 ? "Saisir le lecteur pour activer l'export."
+          : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){
+    dossier = v;
+    vider();
+    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    if (rec){ appliquer(rec); flash("Grille du " + dossier + " restituée."); }
+  } else if (!ok && dossier){
+    dossier = ""; vider();
+  }
+  peindre();
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+$("btnExport").onclick = function(){
+  if (!dossierOk(dossier)) return;
+  var out = collecter();
+  telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+              dossier + "_" + MODULE + ".json");
+  var n = NEGATIFS.filter(function(x){ return E.negatifs[x.k]; }).length;
+  flash("Grille exportée." + (n < NEGATIFS.length ? " ⚠ " + (NEGATIFS.length - n) + " négatif(s) non vérifié(s)." : ""));
+};
+function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.grille) throw new Error("aucune clé « grille »");
+  if (o.dossier) $("dossier").value = normDossier(o.dossier);
+  if (o.operateur) $("operateur").value = o.operateur;
+  return majDossier().then(function(){
+    if (!dossier) throw new Error("numéro de dossier absent ou lecteur manquant");
+    appliquer(o); enregistrer();
+    return true;
+  });
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    Promise.resolve().then(function(){ return relire(JSON.parse(String(fr.result))); })
+      .then(function(){ flash("Grille relue."); })
+      .catch(function(e){ flash("Relecture impossible : " + e.message); });
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la grille du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    await tx("readwrite", function(s){ return s.delete(dossier); });
+    vider(); flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les grilles de TOUS les dossiers sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("readwrite", function(s){ return s.clear(); });
+  vider(); flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Axes de la grille", PRELEV.length + " prélèvement · " + RETENTION.length + " rétention · " +
+                             STADES.length + " stades · " + SIGNES.length + " signes · " +
+                             DIAGS.length + " associations · " +
+                             NEGATIFS.length + " négatifs · " + TECHNIQUES.length + " techniques");
+  ligne("Source", SOURCE + " — la fiche est la source, ce module en est la sortie");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+(async function(){
+  $("ver").textContent = "v" + VERSION;
+  E = neuf();
+  batir(); majSa(); peindre();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — aucune saisie ne sera conservée. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir le fichier avec ?selftest=1 ───────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+  function clic(act, k, v){
+    var s = '[data-act="' + act + '"][data-k="' + k + '"]' + (v ? '[data-v="' + v + '"]' : "");
+    var b = document.querySelector(s);
+    if (!b){ ko.push("bouton introuvable : " + s); return null; }
+    b.click(); return b;
+  }
+  function crTient(t){ return $("cr").textContent.indexOf(t) >= 0; }
+  var pause = function(){ return new Promise(function(r){ setTimeout(r, 30); }); };
+
+  /* Intégrité des tableaux — pure, sans DOM */
+  ["PRELEV","RETENTION","STADES","VARIANTES","SIGNES","DIAGS","NEGATIFS","TECHNIQUES"].forEach(function(nom){
+    var t = { PRELEV:PRELEV, RETENTION:RETENTION, STADES:STADES, VARIANTES:VARIANTES,
+              SIGNES:SIGNES, DIAGS:DIAGS, NEGATIFS:NEGATIFS, TECHNIQUES:TECHNIQUES }[nom];
+    chk("clés uniques dans " + nom, new Set(t.map(function(x){ return x.k; })).size === t.length);
+  });
+  chk("stades ordonnés",      STADES.every(function(s, i){ return !i || s.max > STADES[i-1].max; }));
+  chk("dernier stade ouvert", STADES[STADES.length-1].max === 99);
+  chk("sans terme, pas de stade", stadeAttendu(null) === null);
+  chk("chaque association a son « ne pas conclure »",
+      DIAGS.every(function(d){ return d.stop && d.signes.length >= 2; }));
+  chk("chaque association ne cite que des signes déclarés",
+      DIAGS.every(function(d){ return d.signes.every(function(k){ return !!par(SIGNES, k); }); }));
+  chk("le signe pivot fait partie de l'association",
+      DIAGS.every(function(d){ return !d.cle || d.signes.indexOf(d.cle) >= 0; }));
+  chk("seuil d'association atteignable",
+      DIAGS.every(function(d){ return seuil(d) >= 1 && seuil(d) <= d.signes.length; }));
+  chk("chaque négatif a son défaut", NEGATIFS.every(function(n){ return n.ko && n.p; }));
+  chk("une borne de rétention au moins est bonne",
+      RETENTION.some(function(r){ return r.q === "bon"; }));
+
+  /* Verrou */
+  chk("verrouillé au départ",  $("secSignes").classList.contains("off"));
+  clic("prelev", PRELEV[0].k);
+  chk("clic ignoré sous verrou", !E.prelev[PRELEV[0].k]);
+  set("dossier", "26p0123");
+  chk("lecteur manquant",      $("secSignes").classList.contains("off"));
+  set("operateur", "RM");
+  await pause();
+  chk("déverrouillé",         !$("secSignes").classList.contains("off"));
+  chk("dossier normalisé",     $("dossier").value === "26P0123");
+  chk("export activé",        !$("btnExport").disabled);
+
+  /* Chips */
+  clic("prelev", PRELEV[0].k);
+  chk("chip prélèvement posée", E.prelev[PRELEV[0].k] === true &&
+      document.querySelector('[data-act="prelev"][data-k="' + PRELEV[0].k + '"]').className.indexOf("on") >= 0);
+  clic("prelev", PRELEV[0].k);
+  chk("chip retirée au 2e clic", !E.prelev[PRELEV[0].k]);
+
+  /* Rétention — le fœticide prime sur toute borne */
+  var bon = RETENTION.filter(function(r){ return r.q === "bon"; })[0];
+  clic("ret", bon.k, "present");
+  chk("borne posée",           $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("kcl", "kcl");
+  chk("KCl invalide la datation", $("vRetention").className.indexOf("bad") >= 0);
+  clic("kcl", "kcl");
+  chk("KCl levé, borne revenue", $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("ret", bon.k, "present");
+
+  /* Côté — organe pair */
+  if (PAIR){
+    chk("bloc côté visible",   !$("coteBloc").hidden);
+    chk("côté manquant en réserve",
+        verdictPrelevement().res.indexOf("côté non déclaré — organe pair") >= 0);
+    clic("cote", "droit");
+    chk("côté posé",            E.cote === "droit" && crTient("Droit — 1/2"));
+    clic("cote", "droit");
+    chk("2e clic retire le côté", E.cote === null);
+    clic("cote", "deux");
+  } else {
+    chk("pas de bloc côté sur organe impair", $("coteBloc").hidden);
+  }
+
+  /* Signes et associations */
+  var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
+  chk("rien à associer au départ", $("diags").textContent.indexOf("Aucun signe anormal") >= 0);
+  clic("les", l0.k, "anormal");
+  chk("signe posé anormal",    E.signes[l0.k] === "anormal");
+  chk("association esquissée",  $("diags").textContent.indexOf(d0.l) >= 0);
+  clic("les", l0.k, "anormal");
+  chk("2e clic remet à non exploré", !E.signes[l0.k]);
+  clic("les", l0.k, "normal");
+  chk("normal ne nourrit pas l'association", associations().length === 0);
+  clic("les", l0.k, "normal");
+
+  /* L'association complète se tient, et elle seule */
+  d0.signes.forEach(function(k){ clic("les", k, "anormal"); });
+  var a0 = associations().filter(function(a){ return a.d.k === d0.k; })[0];
+  chk("association tenue",     a0 && a0.tenu);
+  chk("CR : association écrite", crTient(d0.l + " — association tenue"));
+  chk("CR : ne pas conclure",  crTient("ne pas conclure : " + d0.stop));
+  d0.signes.slice(1).forEach(function(k){ clic("les", k, "anormal"); });
+  chk("retirer les signes défait l'association",
+      (associations().filter(function(a){ return a.d.k === d0.k; })[0] || {}).pris.length === 1);
+
+  /* Négatifs */
+  $("btnNegAll").click();
+  chk("tous les négatifs posés", Object.keys(E.negatifs).length === NEGATIFS.length);
+  clic("neg", NEGATIFS[0].k, "present");
+  chk("négatif retourné en rouge", E.negatifs[NEGATIFS[0].k] === "present" &&
+      document.querySelector('[data-act="neg"][data-k="' + NEGATIFS[0].k + '"][data-v="present"]').className.indexOf("no") >= 0);
+  chk("CR : défaut écrit",     crTient("! " + NEGATIFS[0].ko));
+  clic("neg", NEGATIFS[0].k, "absent");
+
+  /* Compte rendu */
+  clic("tech", TECHNIQUES[0].k);
+  set("libre", "Bloc non parvenu.");
+  chk("CR : en-tête dossier",  crTient("26P0123") && crTient("RM"));
+  chk("CR : signe anormal",    crTient(l0.l + " — ANORMAL"));
+  chk("CR : non explorés dits", crTient("Non explorés :"));
+  chk("CR : technique demandée", crTient(TECHNIQUES[0].l));
+  chk("CR : remarque libre",   crTient("Bloc non parvenu."));
+  chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
+
+  /* Contrôles propres à l'organe */
+  await testsOrgane(chk, clic, set, crTient, pause);
+
+  /* Termes FOETO — seulement si la fiche en rattache */
+  if (FOETO.sections.length){
+    var f0 = FOETO.sections[0].termes[0].id;
+    chk("FOETO : sections rendues", $("foeto").querySelectorAll(".sousTitre").length === FOETO.sections.length);
+    clic("foeto", f0);
+    chk("FOETO : terme coché",      E.foeto[f0] === true && $("tFoeto").textContent.indexOf("1/") === 0);
+    chk("FOETO : CR le porte",      crTient("[" + f0 + "]"));
+    chk("FOETO : exporté",          collecter().grille.foeto[f0] === true);
+    set("rqFoeto", foetoLabel(f0).slice(0, 4));
+    chk("FOETO : recherche",        $("sgFoeto").querySelectorAll("[data-pick]").length >= 1);
+    $("sgFoeto").querySelector("[data-pick]").click();
+    chk("FOETO : recherche vidée",  $("rqFoeto").value === "" && !$("sgFoeto").classList.contains("on"));
+    chk("FOETO : id lisible",       /^FOETO:/.test(f0));
+    clic("foeto", f0);
+    Object.keys(E.foeto).forEach(function(id){ delete E.foeto[id]; }); peindre();
+  }
+
+  /* Enveloppe, persistance, relecture — l'organe a pu reposer ses propres signes */
+  if (E.signes[l0.k] !== "anormal"){
+    if (E.signes[l0.k]) clic("les", l0.k, E.signes[l0.k]);
+    clic("les", l0.k, "anormal");
+  }
+  var snap = collecter();
+  chk("enveloppe conforme",    snap.schema_version === SCHEMA && snap.module === MODULE &&
+                               snap.module_version === VERSION && snap.dossier === "26P0123" &&
+                               snap.organe === ORGANE && !!snap.exported_at);
+  chk("version en entête",     $("ver").textContent === "v" + VERSION);
+  chk("CR dans le JSON",       snap.compte_rendu.indexOf(TITRE_CR + " — grille de lecture") === 0);
+
+  await putSaisie(snap);
+  vider();
+  chk("vider efface la grille", Object.keys(E.signes).length === 0);
+  var relu = await getSaisie("26P0123");
+  appliquer(relu);
+  chk("IndexedDB restitue",    E.signes[l0.k] === "anormal" &&
+                               $("sa").value === String(snap.terme_sa));
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+  chk("banc remis à zéro",     Object.keys(E.signes).length === 0 && $("secSignes").classList.contains("off"));
+  await relire(snap);
+  chk("relecture d'un JSON",   E.signes[l0.k] === "anormal" && dossier === "26P0123");
+  var refus = false;
+  try { await relire({module:"autopsie", grille:{}}); } catch(e){ refus = /module/.test(e.message); }
+  chk("JSON d'un autre module refusé", refus);
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+{
+ "schema_version": "0.3.0",
+ "module": "administratif",
+ "module_version": "2.1.0",
+ "dossier": "26P0123",
+ "operateur": "R. Mathevet",
+ "exported_at": "2026-09-08T11:54:38.539Z",
+ "identite": {
+  "nom_mere": "controle",
+  "nom_naiss": "controle",
+  "prenom_mere": "controle",
+  "ddn_mere": {
+   "annee": 2026,
+   "mois": 3,
+   "jour": 14,
+   "precision": "jour",
+   "mask": 0
+  },
+  "prenom_foetus": "controle",
+  "ipp": "12345678901",
+  "ipp_fetus": "12345678901",
+  "ins": "12345678901",
+  "id_ext": "controle",
+  "opposition": "false"
+ },
+ "circuit": {
+  "date_deces": {
+   "annee": 2026,
+   "mois": 3,
+   "jour": 14,
+   "precision": "jour",
+   "mask": 0
+  },
+  "date_reception": {
+   "annee": 2026,
+   "mois": 3,
+   "jour": 14,
+   "precision": "jour",
+   "mask": 0
+  },
+  "date_examen": {
+   "annee": 2026,
+   "mois": 3,
+   "jour": 14,
+   "precision": "jour",
+   "mask": 0
+  },
+  "medecin": "controle",
+  "medecin_rpps": "12345678901",
+  "service": "controle",
+  "ville_maternite": "controle"
+ },
+ "issue": {
+  "type_issue": "IVG",
+  "terme_sa": 25,
+  "terme_j": 3,
+  "sexe": "M",
+  "voie": "VB",
+  "multiple": "false",
+  "indication": "Constatation de controle.",
+  "bamara": null
+ },
+ "atcd_mat": {
+  "profession_mere": "controle",
+  "groupe_sanguin": "A",
+  "rhesus": "POS",
+  "consanguinite": "true",
+  "fdr": {
+   "hta": true,
+   "diabete": true,
+   "tabac": true,
+   "alcool": true
+  },
+  "atcd_medicaux": "Constatation de controle.",
+  "traitements": "Constatation de controle."
+ },
+ "atcd_obs": {
+  "gestite": 13,
+  "parite": 13,
+  "grossesses": []
+ },
+ "grossesse": {
+  "mode_conception": "SPONTANEE",
+  "amp_type": "FIV",
+  "ddg": {
+   "annee": 2026,
+   "mois": 3,
+   "jour": 14,
+   "precision": "jour",
+   "mask": 0
+  },
+  "lieu_suivi": "controle",
+  "risque_t21": "controle",
+  "bhcg": 1,
+  "pappa": 1,
+  "lcc": 1,
+  "cn": 1,
+  "histoire_clinique": "Constatation de controle.",
+  "contexte_clinique": "Constatation de controle.",
+  "chronologie": []
+ },
+ "prenatal": {
+  "echo_t1": "NORMALE",
+  "echo_t1_details": "Constatation de controle.",
+  "echo_t2": "NORMALE",
+  "echo_t2_details": "Constatation de controle.",
+  "echo_t3": "NORMALE",
+  "echo_t3_details": "Constatation de controle.",
+  "autres_examens": "Constatation de controle."
+ },
+ "coherence": [
+  "gestité 13 → 12 grossesse(s) précédente(s) attendue(s), 0 saisie(s)"
+ ]
+}

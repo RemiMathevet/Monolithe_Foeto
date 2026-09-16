@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grille de lecture — poumon</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --alert-soft:#F7EAE7;
+  --amber:#8A6A18; --amber-soft:#F6F0DE;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off button,section.off input,section.off select{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 170px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],input[type=number],textarea{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+input[type=number]{font-family:var(--mono);letter-spacing:.03em}
+textarea{resize:vertical;min-height:60px;font-size:15px}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+/* ── Boutons-clics : toute la saisie sémantique passe par là ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font-family:var(--sans);font-size:14px;line-height:1.25;
+  border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+  border-radius:2px;padding:8px 11px;cursor:pointer;min-height:38px;text-align:left}
+.chip:hover{background:var(--drape-soft)}
+.chip:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.chip.on{background:var(--drape);border-color:var(--drape);color:#fff;font-weight:600}
+.chip.no{background:var(--alert-soft);border-color:var(--alert);color:var(--alert);font-weight:600}
+.chip.sugg{border-color:var(--amber);border-style:dashed}
+.chip[data-act=foeto]::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;background:var(--drape);opacity:.55}
+.chip.on[data-act=foeto]::after{background:#fff}
+.plus{font-size:13px;color:var(--drape);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline dotted}
+.rech{position:relative;margin-top:8px}
+.rech input{font:inherit;font-size:14px;padding:6px 10px;border:1px solid #bbb;border-radius:8px;width:min(100%,24rem)}
+.sugg{position:absolute;z-index:5;background:#fff;border:1px solid #bbb;border-radius:8px;max-height:12rem;overflow:auto;width:min(100%,24rem);display:none}
+.sugg.on{display:block}
+.sugg div{padding:5px 10px;cursor:pointer;font-size:14px}
+.sugg div:hover{background:var(--drape-soft)}
+.sugg small{color:#777}
+.chip .k{font-family:var(--mono);font-size:10px;letter-spacing:.07em;opacity:.75;
+         display:block;text-transform:uppercase}
+
+.item{border-top:1px solid var(--rule);padding:10px 0}
+.item:first-child{border-top:0}
+.item .head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.item .lbl{flex:1 1 240px;min-width:0;font-size:15px}
+.item .meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-soft);
+            display:block;margin-top:2px}
+.item .meta.bon{color:var(--drape)} .item .meta.mauvais{color:var(--alert)}
+.item .meta.moyen{color:var(--amber)}
+.unfold{margin:9px 0 0 0;padding:9px 0 0;border-top:1px dashed var(--rule)}
+.unfold[hidden]{display:none}
+.stop{font-size:13px;line-height:1.35;color:var(--alert);background:var(--alert-soft);
+      border-left:2px solid var(--alert);padding:6px 9px;margin-top:8px}
+.stop b{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+
+.verdict{font-size:14px;line-height:1.4;border-left:3px solid var(--rule);
+         padding:7px 10px;margin-top:11px;background:var(--paper)}
+.verdict.ok{border-color:var(--drape);background:var(--drape-soft)}
+.verdict.warn{border-color:var(--amber);background:var(--amber-soft)}
+.verdict.bad{border-color:var(--alert);background:var(--alert-soft)}
+.verdict b{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+           display:block;color:var(--ink-soft)}
+
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+.sousTitre:first-child{margin-top:0}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:var(--alert-soft)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+pre.cr{font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;
+  padding:12px;margin:0 0 10px;max-height:44vh;overflow:auto}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · lecture microscopique</p>
+  <h1>Grille de lecture — poumon <span class="ver" id="ver"></span></h1>
+  <p class="sub">Sortie de <code>fiche_poumon.md</code>. Tout se clique ; seuls le dossier, le terme et les comptes se tapent. Document autonome : rien n'est transmis.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Libre, mis en majuscules. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Lecteur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la grille.</div>
+    </div>
+    <div class="field">
+      <label for="sa">Terme (SA)</label>
+      <input type="number" id="sa" min="8" max="45" step="1" inputmode="numeric" placeholder="—">
+      <div class="hint" id="saHint">SA = semaines de gestation + 2. Commande le stade attendu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — Prélèvement -->
+<section id="secPrelevement" class="off">
+  <h2><span class="n">02</span>Prélèvement<span class="tally" id="tPrelevement">—</span></h2>
+  <div class="chips" id="prelevement"></div>
+  <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
+</section>
+
+<!-- 03 — Rétention -->
+<section id="secRetention" class="off">
+  <h2><span class="n">03</span>Rétention<span class="tally" id="tRetention">—</span></h2>
+  <div id="retention"></div>
+  <div class="chips" id="kcl" style="margin-top:11px"></div>
+  <div class="verdict" id="vRetention"><b>Borne inférieure</b>—</div>
+</section>
+
+<!-- 04 — Maturation -->
+<section id="secMaturation" class="off">
+  <h2><span class="n">04</span>Maturation<span class="tally" id="tMaturation">—</span></h2>
+  <div class="sousTitre">Stade observé</div>
+  <div class="chips" id="stades"></div>
+  <div class="sousTitre">Compte radial alvéolaire</div>
+  <div class="chips" id="racdef"></div>
+  <div class="row" style="margin-top:9px">
+    <div class="field"><label for="rac_d">RAC droit</label>
+      <input type="number" id="rac_d" min="0" max="20" step="0.1" inputmode="decimal" placeholder="—"></div>
+    <div class="field"><label for="rac_g">RAC gauche</label>
+      <input type="number" id="rac_g" min="0" max="20" step="0.1" inputmode="decimal" placeholder="—"></div>
+  </div>
+  <div class="verdict" id="vMaturation"><b>Lecture</b>—</div>
+  <div class="verdict" id="vRac"><b>Compte radial</b>—</div>
+</section>
+
+<!-- 05 — Variantes normales -->
+<section id="secVariantes" class="off">
+  <h2><span class="n">05</span>Variantes normales<span class="tally" id="tVariantes">—</span></h2>
+  <p class="note" style="margin-top:0">Cliquer ce qui est vu et écarté comme normal. Rien de coché ne veut pas dire absent : ça veut dire non regardé.</p>
+  <div class="chips" id="variantes" style="margin-top:10px"></div>
+</section>
+
+<!-- 06 — Lésions -->
+<section id="secLesions" class="off">
+  <h2><span class="n">06</span>Lésions<span class="tally" id="tLesions">—</span></h2>
+  <div id="lesions"></div>
+</section>
+
+<!-- 07 — Termes FOETO attestés par la fiche -->
+<section id="secFoeto" class="off">
+  <h2><span class="n">07</span>Termes FOETO<span class="tally" id="tFoeto">—</span></h2>
+  <p class="note" style="margin-top:0">Les termes du vocabulaire FOETO que la fiche de l'organe retient comme lésions, par sous-section. Un terme coché est présent ; rien de coché ne veut pas dire absent.</p>
+  <div id="foeto"></div>
+  <button type="button" class="plus" id="foetoPlus" hidden>▸ tous les termes attestés</button>
+  <div class="chips" id="foetoTous" hidden style="margin-top:6px"></div>
+  <div class="rech" id="foetoRech" hidden><input type="text" id="rqFoeto" placeholder="rechercher un terme (3 lettres)…" autocomplete="off"><div class="sugg" id="sgFoeto"></div></div>
+</section>
+
+<!-- 08 — Négatifs obligatoires -->
+<section id="secNegatifs" class="off">
+  <h2><span class="n">08</span>Négatifs obligatoires<span class="tally" id="tNegatifs">—</span></h2>
+  <div class="btns" style="margin-bottom:11px">
+    <button class="btn" id="btnNegAll">Les six sont vérifiés absents</button>
+  </div>
+  <div id="negatifs"></div>
+</section>
+
+<!-- 08 — Techniques -->
+<section id="secTechniques" class="off">
+  <h2><span class="n">09</span>Techniques<span class="tally" id="tTechniques">—</span></h2>
+  <p class="note" style="margin-top:0">Le poumon fœtal se lit en HES. Le contour tireté marque ce que la grille suggère d'après les clics.</p>
+  <div class="chips" id="techniques" style="margin-top:10px"></div>
+</section>
+
+<!-- 09 — Compte rendu -->
+<section id="secCR" class="off">
+  <h2><span class="n">10</span>Compte rendu<span class="tally" id="tCR">—</span></h2>
+  <pre class="cr" id="cr">—</pre>
+  <div class="row">
+    <div class="field" style="flex:1 1 100%">
+      <label for="libre">Remarque libre</label>
+      <textarea id="libre" placeholder="Ce que la grille ne prévoit pas."></textarea>
+    </div>
+  </div>
+  <div class="btns" style="margin-top:10px">
+    <button class="btn" id="btnCopie">Copier le compte rendu</button>
+  </div>
+</section>
+
+<!-- 10 — Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n">11</span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Vider le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- 11 — Diagnostic -->
+<section>
+  <h2><span class="n">12</span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante, aucun fetch : doit fonctionner par double-clic hors réseau.
+
+   Ce module est la SORTIE de fiche_poumon.md, jamais l'inverse. Les bornes,
+   les spécificités et les « ce qu'il ne faut pas conclure » sont recopiés de
+   la fiche ; ils ne se corrigent pas ici mais dans la fiche.
+
+   La grille ne conclut pas : elle contraint la description et rend ses
+   réserves visibles. Un critère non cliqué n'est pas un négatif — c'est un
+   non-regardé, et le compte rendu le dit.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var MODULE = "grille_poumon";
+var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
+var VERSION = "1.1.1";   /* version du document ; à incrémenter à chaque diffusion */
+var DB_NAME = "foeto-grille-poumon", DB_VER = 1, db = null;
+
+/* ── § 1 — Prélèvement ────────────────────────────────────────────────────── */
+var PRELEV = [
+  { k:"lobes",     l:"Un bloc par lobe principal (5)" },
+  { k:"lateralite",l:"Droit et gauche sur blocs séparés, latéralité notée" },
+  { k:"plevre",    l:"Plèvre ou septum interlobulaire sur le bloc", cle:"rac" },
+  { k:"faisceau",  l:"Faisceau broncho-vasculaire présent" },
+  { k:"coeur",     l:"Poumons prélevés avec le cœur" },
+  { k:"nlobes",    l:"Nombre de lobes consigné" },
+  { k:"trachee",   l:"Larynx et trachée en 3–4 blocs transversaux", cle:"dater" }
+];
+
+/* ── § 2 — Rétention · les six lignes pulmonaires de [Genest I] ───────────────
+   L'ordre d'affichage est celui de la fiche : les deux bons prédicteurs en
+   tête. Les mauvais restent cliquables — ils se voient, ils ne datent pas. */
+var RETENTION = [
+  { k:"basoBronche",   l:"Perte de basophilie de l'épithélium bronchique",
+    h:96,   b:"≥ 96 h",       q:"bon",     d:"spéc. 0,973" },
+  { k:"chondroTrachee",l:"Perte de basophilie des chondrocytes trachéaux",
+    h:168,  b:"≥ 1 semaine",  q:"bon",     d:"spéc. 1,000 · VPP 1,000", dep:"trachee" },
+  { k:"paroiAlv",      l:"Perte de basophilie de la paroi alvéolaire",
+    h:336,  b:"≥ 2 semaines", q:"moyen",   d:"spéc. 0,949" },
+  { k:"detachMuq",     l:"Détachement de l'épithélium muqueux bronchique",
+    h:18,   b:"≥ 18 h",       q:"mauvais", d:"spéc. 0,588 — le pire faux ami du poumon" },
+  { k:"matriceCart",   l:"Altération de la matrice cartilagineuse bronchique",
+    h:24,   b:"≥ 24 h",       q:"mauvais", d:"spéc. 0,625" },
+  { k:"perteMax",      l:"Perte de basophilie maximale du poumon",
+    h:1344, b:"> 8 semaines", q:"mauvais", d:"classement de l'article, non déductible de ses chiffres" }
+];
+
+/* ── § 3 — Stades. Bornes reconstruites depuis la prose (§ 9.17 de la fiche) ── */
+var STADES = [
+  { k:"embryonnaire",     l:"Embryonnaire",      max:8  },
+  { k:"pseudoglandulaire",l:"Pseudoglandulaire", max:18 },
+  { k:"canaliculaire",    l:"Canaliculaire",     max:26 },
+  { k:"sacculaire",       l:"Sacculaire",        max:36,
+    note:"borne basse 26 SA (soffoet) ; keeling donne ~30 SA — 4 semaines d'écart, non tranché" },
+  { k:"alveolaire",       l:"Alvéolaire",        max:99,
+    note:"surtout post-natal" }
+];
+
+var RACDEF = [
+  { k:"resp", l:"Bronchiole respiratoire", d:"soffoet · ernst — c'est la définition dont vient la normale de 2,2" },
+  { k:"term", l:"Bronchiole terminale",    d:"keeling — normales non superposables, ne pas y appliquer le 2,2" }
+];
+
+/* ── § 4 — Variantes normales ─────────────────────────────────────────────── */
+var VARIANTES = [
+  { k:"caryo",   l:"Matériel caryorrhectique abondant" },
+  { k:"squames", l:"Quelques squames éparses" },
+  { k:"repli",   l:"Repliement de l'épithélium des voies aériennes" },
+  { k:"asym",    l:"Asymétrie droite/gauche de maturation" },
+  { k:"anneaux", l:"Demi-anneaux trachéaux" },
+  { k:"media",   l:"Média artériolaire fœtale épaisse" }
+];
+
+/* ── § 5 — Lésions ────────────────────────────────────────────────────────── */
+var LESIONS = [
+  { k:"hypoplasie", l:"Hypoplasie pulmonaire", calc:"ratio",
+    crit:["Poumons petits dans une cage thoracique petite",
+          "Surfaces diaphragmatiques non alignées sur l'apex du cœur",
+          "Pattern 1 — immature ET mal développé",
+          "Pattern 2 — mal développé, maturation appropriée",
+          "Unilatérale", "Bilatérale",
+          "Nombre de bronches diminué (atteinte avant la 16e semaine)"],
+    stop:"Hypoplasie et retard de maturation sont deux axes dissociables — les écrire ensemble écrase l'information la plus discriminante de l'organe. La micro décrit calibre, compte et épaisseur des septa ; l'entité et sa cause se nomment dans la conclusion, après la face, le placenta, les radios, le tronc cérébral et le muscle." },
+  { k:"muscularisation", l:"Muscularisation artériolaire intra-acinaire",
+    crit:["Muscle au contact de la bronchiole respiratoire",
+          "Muscle dans les parois sacculaires ou alvéolaires",
+          "Contexte de hernie diaphragmatique"],
+    stop:"Ce qui compte est le NIVEAU atteint par le muscle, pas son épaisseur : la média fœtale normale est épaisse. soffoet tient toute muscularisation intra-acineuse pour pathologique, ernst la dit problématique sans quantification étendue — divergence d'assertivité à écrire, pas à arbitrer." },
+  { k:"cpam", l:"CPAM / MAKP (Stocker)",
+    crit:["Type 0 — sacs terminaux, épithélium cylindrique pseudostratifié à cellules caliciformes",
+          "Type 1 — kystes 5–100 mm, revêtement cylindrique cilié",
+          "Type 2 — kystes 5–20 mm réguliers, sans cartilage",
+          "Type 3 — kystes < 5 mm, lobe entier, ni cartilage ni cellules mucigènes",
+          "Type 4 — kyste jusqu'à 70 mm, pneumocytes I et II",
+          "Touffes mucigènes", "Fibres musculaires striées (dysplasie rhabdomyomatoïde)",
+          "Îlots de cartilage présents"],
+    stop:"La classification est difficile à appliquer en vie fœtale, et jusqu'à un quart des lésions sont hybrides avec la séquestration. Le cartilage du type 1 : « sans cartilage » et datation avant la 10e semaine chez soffoet, « small islands may be present » chez keeling — ne pas dater là-dessus. Type 4 : chercher un composant solide, le blastome pleuro-pulmonaire est très difficile à écarter." },
+  { k:"sequestration", l:"Séquestration pulmonaire",
+    crit:["Territoire sans communication avec l'arbre bronchique",
+          "Artère systémique issue de l'aorte ou d'une branche",
+          "Intralobaire (souvent lobe inférieur gauche)",
+          "Extralobaire, plèvre propre",
+          "Rétention muqueuse marquée"],
+    stop:"La vascularisation systémique n'est pas un hallmark : elle se voit aussi dans les lobes atteints de CPAM. Le parenchyme interposé peut lui aussi être anormal." },
+  { k:"bronchogenique", l:"Kyste bronchogénique",
+    crit:["Glandes bronchiques dans la paroi du kyste",
+          "Cartilage dans la paroi du kyste",
+          "Pas de connexion à l'arbre trachéo-bronchique (kyste sans air)"],
+    stop:"Sans glandes ni cartilage dans la paroi, rien ne sépare le kyste bronchogénique du kyste œsophagien." },
+  { k:"hyperplasie", l:"Hyperplasie pulmonaire",
+    crit:["Augmentation de volume des DEUX poumons",
+          "Aspect pseudo-tumoral, consistance caoutchouteuse",
+          "Obstruction laryngée ou trachéale retrouvée"],
+    stop:"Des poumons non hypoplasiques malgré un oligoamnios majeur ne réfutent pas l'oligoamnios : ils orientent vers une obstruction haute. Couper le larynx en 3–4 blocs et chercher les autres signes du syndrome de Fraser." },
+  { k:"acd", l:"ACD / MPV — dysplasie alvéolo-capillaire",
+    crit:["Veines pulmonaires malposées, adjacentes aux petites artères",
+          "Épaississement médial des petites artères",
+          "Développement lobulaire déficient, d'allure d'arrêt de maturation",
+          "Raréfaction sévère des capillaires de la paroi alvéolaire",
+          "Capillaires au centre des septa plutôt qu'à la surface luminale"],
+    stop:"L'ACD MIME un arrêt de maturation, la dysplasie alvéolaire congénitale aussi — et cette dernière survient sur des poumons macroscopiquement normaux. Un retard de maturation homogène et isolé sur un poumon de poids normal fait chercher ces deux entités AVANT d'être écrit comme un retard." },
+  { k:"pneumopathie", l:"Pneumopathie infectieuse",
+    crit:["Réaction interstitielle aiguë",
+          "Réaction inflammatoire des vaisseaux ou des lymphatiques",
+          "Agrégats lymphocytaires appliqués à l'épithélium bronchique",
+          "Polynucléaires dans la lumière seulement",
+          "Membranes à teinte bleutée (germes colorables)",
+          "Hyphes (Candida)", "Abcès granulomateux (Listeria)",
+          "« Onion-skinning » des artères (syphilis)",
+          "Inclusions virales"],
+    stop:"Des polynucléaires dans la LUMIÈRE SEULE ne font pas une pneumopathie : la réaction interstitielle ou vasculaire est requise pour la prouver. Le matériel caryorrhectique normal mime les polynucléaires. Un épanchement peut tenir à la macération." },
+  { k:"aspiration", l:"Aspiration — squames, méconium",
+    crit:["Squames en grand nombre (bouchons)",
+          "Matériel granulaire éosinophile, corps méconiaux jaunâtres, mucus",
+          "Quelques macrophages associés"],
+    stop:"Le critère est quantitatif : quelques squames éparses sont normales. Un infiltrat inflammatoire aigu étendu est inhabituel — chez le mort-né, l'aspiration méconiale est le plus souvent un événement terminal, pas causal." },
+  { k:"membranes", l:"Membranes hyalines", nouveauNe:true,
+    crit:["Matériel amorphe éosinophile bordant les voies aériennes terminales",
+          "Épithélium bronchique ou bronchiolaire nécrotique (signe le plus précoce)",
+          "Membranophages, fibroblastes sous-jacents (1–2 jours)",
+          "Pneumocytes de type II régénératifs"],
+    stop:"Lésion de nouveau-né : elle suppose une ventilation post-natale. Hors périmètre du fœtus mort in utero — à connaître pour ne pas la chercher là où elle ne peut pas être." }
+];
+
+/* ── § 6 — Les six négatifs rendus obligatoires par les sources ───────────── */
+var NEGATIFS = [
+  { k:"interstitiel", l:"Absence de réaction interstitielle ou vasculaire",
+    p:"c'est le critère qui prouve ou exclut la pneumopathie (§ 5.8)" },
+  { k:"muscu", l:"Absence de muscularisation des artérioles intra-acinaires",
+    p:"c'est ce qui valide la lecture d'une média fœtale épaisse comme normale (§ 4)" },
+  { k:"malalign", l:"Absence de malalignement des veines pulmonaires",
+    p:"sans lui, un retard de maturation homogène n'est pas interprétable (§ 5.7)" },
+  { k:"viral", l:"Absence d'inclusion virale",
+    p:"au poumon ce négatif garde sa valeur sous macération, là où les autres organes la perdent" },
+  { k:"squames", l:"Absence de squames en excès et de méconium intra-alvéolaire",
+    p:"le critère est quantitatif : dire « squames » sans dire « en excès ou non » ne dit rien" },
+  { k:"lobation", l:"Absence d'anomalie de la lobation",
+    p:"20 des 22 cas résiduels s'associaient à une malformation cardiaque — ce négatif conditionne un AUTRE organe" }
+];
+
+/* ── § 7 — Techniques. sug = clé d'état qui les fait proposer ─────────────── */
+/* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
+var FOETO = {"sections":[{"t":"5.1 Hypoplasie pulmonaire","termes":[{"id":"FOETO:PF.POU-MAL-043","l":"Radial alveolar count réduit"},{"id":"FOETO:PF.POU-MAL-047","l":"Réduction du compte radial alvéolaire"},{"id":"FOETO:PF.POU-MAL-048","l":"Réduction du nombre de divisions bronchiques"}]},{"t":"5.10 Maladie des membranes hyalines — lésion de nouveau-né, pas de fœtus","termes":[{"id":"FOETO:PF.POU-MAL-027","l":"Macrophages membranophages"},{"id":"FOETO:PF.POU-INF-006","l":"Nécrose épithéliale bronchiolaire"}]},{"t":"5.2 Muscularisation artériolaire intra-acinaire","termes":[{"id":"FOETO:PF.POU-VAS-001","l":"Muscularisation artériolaire intra-acinaire pathologique"}]},{"t":"5.3 Malformations congénitales des voies aériennes pulmonaires (CPAM / MAKP)","termes":[{"id":"FOETO:PF.POU-MAL-008","l":"CPAM type 1 — grand kyste"},{"id":"FOETO:PF.POU-MAL-009","l":"CPAM type 2 — petit kyste"},{"id":"FOETO:PF.POU-MAL-010","l":"CPAM type 3 — adénomatoïde solide"},{"id":"FOETO:PF.POU-MAL-011","l":"CPAM type 4 — kyste périphérique"},{"id":"FOETO:PF.POU-MAL-014","l":"Dysplasie acinaire (CPAM type 0)"},{"id":"FOETO:PF.POU-MAL-044","l":"Rhabdomyomatose pulmonaire diffuse"},{"id":"FOETO:PF.POU-MAL-052","l":"Épithélium mucineux métaplasique (CPAM)"}]},{"t":"5.4 Séquestration pulmonaire","termes":[{"id":"FOETO:PF.POU-INF-004","l":"Fibrose et inflammation chronique péri-séquestration"},{"id":"FOETO:PF.POU-MAL-049","l":"Rétention muqueuse intra-kystique"}]},{"t":"5.5 Kyste bronchogénique","termes":[{"id":"FOETO:PF.POU-MAL-023","l":"Kyste bronchogénique"}]},{"t":"5.6 Hyperplasie pulmonaire","termes":[{"id":"FOETO:PF.POU-MAL-019","l":"Hyperplasie pulmonaire"}]},{"t":"5.7 Dysplasie alvéolo-capillaire avec malalignement des veines (ACD/MPV)","termes":[{"id":"FOETO:PF.POU-MAL-025","l":"Lymphangiectasie pulmonaire"}]},{"t":"5.8 Pneumopathie infectieuse — le critère est interstitiel, pas endoluminal","termes":[{"id":"FOETO:PF.POU-MAL-002","l":"Agrégats lymphocytaires péri-bronchiques"},{"id":"FOETO:PF.POU-INF-003","l":"Bronchopneumonie bactérienne"},{"id":"FOETO:PF.POU-INF-005","l":"Inclusions virales pulmonaires"},{"id":"FOETO:PF.POU-INF-001","l":"Inflammation lympho-histiocytaire broncho-alvéolaire"},{"id":"FOETO:PF.POU-INF-007","l":"Pneumonie alba syphilitique"},{"id":"FOETO:PF.POU-INF-008","l":"Pneumonie fongique à Candida"},{"id":"FOETO:PF.POU-INF-009","l":"Pneumonie granulomateuse à Listeria"},{"id":"FOETO:PF.POU-INF-010","l":"Pneumonie interstitielle"},{"id":"FOETO:PF.POU-INF-013","l":"Pneumonie à CMV"},{"id":"FOETO:PF.POU-INF-014","l":"Pneumonie à HSV — nécrose bland"}]},{"t":"5.9 Aspiration — squames, méconium","termes":[{"id":"FOETO:PF.POU-MAL-012","l":"Corps de méconium intra-alvéolaires"},{"id":"FOETO:PF.POU-CLA-002","l":"Squames intrapulmonaires en nombre augmenté"}]}],"formes":{"FOETO:PF.POU-MAL-001":["Absence de cartilage dans la paroi kystique pulmonaire","Absence of cartilage in pulmonary cyst wall","(hors fiche)"],"FOETO:PF.POU-MAL-003":["Agénésie lobaire pulmonaire","Pulmonary lobar agenesis","(hors fiche)"],"FOETO:PF.POU-MAL-004":["Alvéolarisation réduite (déficit NKX2-1)","Reduced alveolarization (NKX2-1 deficiency)","(hors fiche)"],"FOETO:PF.POU-MAL-005":["Anomalie de la lobation pulmonaire","Pulmonary lobation anomaly","(hors fiche)"],"FOETO:PF.POU-INF-002":["Bronchiolite oblitérante nécrosante","Necrotizing obliterative bronchiolitis","(hors fiche)"],"FOETO:PF.POU-MAL-013":["Distension alvéolaire diffuse","Diffuse alveolar distension","(hors fiche)"],"FOETO:PF.POU-MAL-017":["Fibrose interstitielle pulmonaire","Pulmonary interstitial fibrosis","(hors fiche)"],"FOETO:PF.POU-DYS-001":["Hyperplasie des corps neuroendocrines pulmonaires","Pulmonary neuroendocrine body hyperplasia","(hors fiche)"],"FOETO:PF.POU-MAL-018":["Hyperplasie du muscle lisse péribronchiolaire","Peribronchiolar smooth muscle hyperplasia","(hors fiche)"],"FOETO:PF.POU-MAL-020":["Hétérotopie cartilagineuse pulmonaire","Pulmonary cartilaginous heterotopia","(hors fiche)"],"FOETO:PF.POU-MAL-024":["Lobe polyalvéolaire","Polyalveolar lobe","(hors fiche)"],"FOETO:PF.POU-MAL-028":["Matériel lipoprotéinacé intra-alvéolaire (ABCA3)","Intra-alveolar lipoproteinaceous material (ABCA3)","(hors fiche)"],"FOETO:PF.POU-MAL-029":["Membranes hyalines à pigment biliaire","Bilirubin-stained hyaline membranes","(hors fiche)"],"FOETO:PF.POU-MAL-030":["Métaplasie cuboïde bronchiolaire","Bronchiolar cuboidal metaplasia","(hors fiche)"],"FOETO:PF.POU-MAL-031":["Métaplasie malpighienne bronchiolaire","Bronchiolar squamous metaplasia","(hors fiche)"],"FOETO:PF.POU-MAL-033":["Plaques d'élastose aux points de bifurcation","Elastic plaques at airway bifurcations","(hors fiche)"],"FOETO:PF.POU-INF-011":["Pneumonie interstitielle desquamative","Desquamative interstitial pneumonia","(hors fiche)"],"FOETO:PF.POU-MAL-045":["Réaction gigantocellulaire à l'air interstitiel","Giant cell reaction to interstitial air","(hors fiche)"],"FOETO:PF.POU-MAL-050":["Simplification alvéolaire","Alveolar simplification","(hors fiche)"],"FOETO:PF.POU-MAL-051":["Tumeur interstitielle fœtale du poumon (FLIT)","Fetal lung interstitial tumor (FLIT)","(hors fiche)"],"FOETO:PF.POU-MAL-053":["Œdème interstitiel pulmonaire","Pulmonary interstitial edema","(hors fiche)"],"FOETO:PF.POU-MAL-054":["Œdème pulmonaire avec liquide fœtal retenu","Retained fetal lung fluid edema","(hors fiche)"],"FOETO:PF.POU-MAL-043":["Radial alveolar count réduit","Reduced radial alveolar count"],"FOETO:PF.POU-MAL-047":["Réduction du compte radial alvéolaire","Reduced radial alveolar count"],"FOETO:PF.POU-MAL-048":["Réduction du nombre de divisions bronchiques","Reduced bronchial branching generations"],"FOETO:PF.POU-MAL-027":["Macrophages membranophages","Membranophage macrophages"],"FOETO:PF.POU-INF-006":["Nécrose épithéliale bronchiolaire","Bronchiolar epithelial necrosis"],"FOETO:PF.POU-VAS-001":["Muscularisation artériolaire intra-acinaire pathologique","Pathological intra-acinar arteriolar muscularization"],"FOETO:PF.POU-MAL-008":["CPAM type 1 — grand kyste","CPAM type 1 — large cyst"],"FOETO:PF.POU-MAL-009":["CPAM type 2 — petit kyste","CPAM type 2 — small cyst"],"FOETO:PF.POU-MAL-010":["CPAM type 3 — adénomatoïde solide","CPAM type 3 — solid adenomatoid"],"FOETO:PF.POU-MAL-011":["CPAM type 4 — kyste périphérique","CPAM type 4 — peripheral cyst"],"FOETO:PF.POU-MAL-014":["Dysplasie acinaire (CPAM type 0)","Acinar dysplasia (CPAM type 0)"],"FOETO:PF.POU-MAL-044":["Rhabdomyomatose pulmonaire diffuse","Diffuse pulmonary rhabdomyomatosis"],"FOETO:PF.POU-MAL-052":["Épithélium mucineux métaplasique (CPAM)","Mucinous metaplastic epithelium (CPAM)"],"FOETO:PF.POU-INF-004":["Fibrose et inflammation chronique péri-séquestration","Fibrosis and chronic inflammation around sequestration"],"FOETO:PF.POU-MAL-049":["Rétention muqueuse intra-kystique","Intracystic mucus retention"],"FOETO:PF.POU-MAL-023":["Kyste bronchogénique","Bronchogenic cyst"],"FOETO:PF.POU-MAL-019":["Hyperplasie pulmonaire","Pulmonary hyperplasia"],"FOETO:PF.POU-MAL-025":["Lymphangiectasie pulmonaire","Pulmonary lymphangiectasia"],"FOETO:PF.POU-MAL-002":["Agrégats lymphocytaires péri-bronchiques","Peribronchial lymphocytic aggregates"],"FOETO:PF.POU-INF-003":["Bronchopneumonie bactérienne","Bacterial bronchopneumonia"],"FOETO:PF.POU-INF-005":["Inclusions virales pulmonaires","Pulmonary viral inclusions"],"FOETO:PF.POU-INF-001":["Inflammation lympho-histiocytaire broncho-alvéolaire"],"FOETO:PF.POU-INF-007":["Pneumonie alba syphilitique","Pneumonia alba (syphilitic pneumonia)"],"FOETO:PF.POU-INF-008":["Pneumonie fongique à Candida","Candida pneumonia"],"FOETO:PF.POU-INF-009":["Pneumonie granulomateuse à Listeria","Listeria granulomatous pneumonia"],"FOETO:PF.POU-INF-010":["Pneumonie interstitielle","Interstitial pneumonia"],"FOETO:PF.POU-INF-013":["Pneumonie à CMV","Cytomegalovirus pneumonia"],"FOETO:PF.POU-INF-014":["Pneumonie à HSV — nécrose bland","HSV pneumonia — bland necrosis"],"FOETO:PF.POU-MAL-012":["Corps de méconium intra-alvéolaires","Intra-alveolar meconium bodies"],"FOETO:PF.POU-CLA-002":["Squames intrapulmonaires en nombre augmenté","Increased intrapulmonary squamous cells"]}};
+
+var TECHNIQUES = [
+  { k:"gram",      l:"Gram tissulaire",            q:"Y a-t-il des germes ? Cette poussière basophile est-elle bactérienne ?" },
+  { k:"pas",       l:"PAS",                        q:"Ce matériel intra-alvéolaire est-il une protéinose ?" },
+  { k:"cd34",      l:"CD34",                       q:"Les capillaires atteignent-ils la paroi alvéolaire ?" },
+  { k:"evg",       l:"Élastique van Gieson",       q:"La veine chemine-t-elle avec l'artère ?" },
+  { k:"d240",      l:"D2-40 + actine muscle lisse",q:"Ce vaisseau est-il un lymphatique ?" },
+  { k:"elastique", l:"Coloration élastique",       q:"Où s'arrête le poumon séquestré ?" },
+  { k:"orceine",   l:"Orcéine / élastique",        q:"Cette artériole intra-acinaire est-elle muscularisée ?" },
+  { k:"gfap",      l:"GFAP ou CD56",               q:"Ce tissu est-il du cerveau embolisé ?" },
+  { k:"trichrome", l:"Trichrome de Masson",        q:"L'architecture tient-elle sous macération sévère ?" },
+  { k:"sp",        l:"SP-A / SP-B / proSP-C",      q:"Ce déficit du surfactant est-il SP-B ou SP-C ?" },
+  { k:"insuf",     l:"Insufflation au formol",     q:"Question de maturité ou de morphométrie." }
+];
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function normDossier(v){ return v.toUpperCase().replace(/\s+/g, ""); }
+function dossierOk(v){ return v.trim().length > 0; } // ponytail: plus de format imposé, seul le uppercase (normDossier) reste
+function num(id){ var e = $(id); if (!e) return null; var v = parseFloat(e.value); return isFinite(v) ? v : null; }
+function par(liste, k){ return liste.filter(function(x){ return x.k === k; })[0] || null; }
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", E = null;
+function neuf(){
+  return { prelev:{}, retention:{}, kcl:false, stade:null, racdef:null,
+           rac:{d:null, g:null}, variantes:{}, lesions:{}, negatifs:{},
+           techniques:{}, foeto:{}, hypo:{poumons:null, foetal:null, anasarque:false}, libre:"" };
+}
+function nbFoeto(){ return FOETO.sections.reduce(function(a, s){ return a + s.termes.length; }, 0); }
+function foetoLabel(id){
+  var l = null;
+  FOETO.sections.forEach(function(s){ s.termes.forEach(function(t){ if (t.id === id) l = t.l; }); });
+  return l || (FOETO.formes[id] || [id])[0];
+}
+/* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
+function foetoAjouter(id){
+  if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
+    var box = $("foeto").querySelector(".chips");
+    if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
+    box.insertAdjacentHTML("beforeend", chip("foeto", id, foetoLabel(id)));
+  }
+  E.foeto[id] = true;
+  peindre(); enregistrer();
+}
+function rechercherFoeto(q){
+  var sg = $("sgFoeto");
+  q = q.trim().toLowerCase();
+  if (q.length < 3){ sg.classList.remove("on"); return; }
+  var hits = [];
+  Object.keys(FOETO.formes).some(function(id){
+    var f = FOETO.formes[id].filter(function(x){ return x.toLowerCase().indexOf(q) >= 0; })[0];
+    if (f) hits.push({ id:id, l:foetoLabel(id), f:f, hf:FOETO.formes[id].indexOf("(hors fiche)") >= 0 });
+    return hits.length >= 10;
+  });
+  sg.innerHTML = hits.length ? hits.map(function(x){
+    return '<div data-pick="' + esc(x.id) + '">' + esc(x.l) +
+           (x.f !== x.l ? ' <small>— ' + esc(x.f) + '</small>' : '') + (x.hf ? ' <small>(hors fiche)</small>' : '') + '</div>';
+  }).join("") : '<div><small>aucun terme</small></div>';
+  sg.classList.add("on");
+}
+
+/* Le stade attendu au terme saisi. Bornes reconstruites depuis la prose des
+   sources : ce sont des repères, pas des seuils. */
+function stadeAttendu(sa){
+  if (sa == null || !isFinite(sa)) return null;
+  for (var i = 0; i < STADES.length; i++) if (sa < STADES[i].max) return STADES[i];
+  return STADES[STADES.length - 1];
+}
+
+/* ── Construction du DOM — une seule fois, le clic ne fait que repeindre ──── */
+function chip(act, k, l, sous){
+  return '<button type="button" class="chip" data-act="' + act + '" data-k="' + esc(k) + '">' +
+         (sous ? '<span class="k">' + esc(sous) + '</span>' : '') + esc(l) + '</button>';
+}
+function batir(){
+  $("prelevement").innerHTML = PRELEV.map(function(p){ return chip("prelev", p.k, p.l); }).join("");
+
+  $("retention").innerHTML = RETENTION.map(function(r){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(r.l) +
+      '<span class="meta ' + r.q + '">' + esc(r.b) + " · " + esc(r.d) +
+      " · prédicteur " + r.q + '</span></div>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="present">Présent</button>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="absent">Absent</button>' +
+      '</div></div>';
+  }).join("");
+  $("kcl").innerHTML = chip("kcl", "kcl", "Fœticide par KCl", "geste à déclarer avant toute datation");
+
+  $("stades").innerHTML = STADES.map(function(s){ return chip("stade", s.k, s.l); }).join("");
+  $("racdef").innerHTML = RACDEF.map(function(d){ return chip("racdef", d.k, d.l, "définition"); }).join("");
+  $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
+
+  $("lesions").innerHTML = LESIONS.map(function(x){
+    var crit = x.crit.map(function(c, i){
+      return '<button type="button" class="chip" data-act="crit" data-k="' + x.k +
+             '" data-i="' + i + '">' + esc(c) + '</button>';
+    }).join("");
+    var ratio = x.calc !== "ratio" ? "" :
+      '<div class="row" style="margin-bottom:9px">' +
+      '<div class="field"><label for="hypo_poumons">Poids des poumons (g)</label>' +
+      '<input type="number" id="hypo_poumons" min="0" step="0.1" inputmode="decimal" placeholder="—"></div>' +
+      '<div class="field"><label for="hypo_foetal">Poids fœtal (g)</label>' +
+      '<input type="number" id="hypo_foetal" min="0" step="1" inputmode="decimal" placeholder="—"></div>' +
+      '</div><div class="chips" style="margin-bottom:9px">' +
+      chip("anasarque", "anasarque", "Anasarque", "le rapport ne vaut alors rien") +
+      '</div><div class="verdict" id="vRatio"><b>Rapport poumons / fœtus</b>—</div>';
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+      (x.nouveauNe ? '<span class="meta">lésion de nouveau-né — pas de fœtus mort in utero</span>' : "") +
+      '</div>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="normal">Normal</button>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="anormal">Anormal</button>' +
+      '</div><div class="unfold" id="uf_' + x.k + '" hidden>' + ratio +
+      '<div class="chips">' + crit + '</div>' +
+      '<div class="stop"><b>Ce qu\'il ne faut pas conclure</b>' + esc(x.stop) + '</div></div></div>';
+  }).join("");
+
+  $("foeto").innerHTML = FOETO.sections.map(function(s){
+    return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
+           s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
+  }).join("") || '<p class="note">Aucun terme FOETO rattaché à cette fiche.</p>';
+  if (FOETO.sections.length){
+    $("foetoPlus").hidden = false; $("foetoRech").hidden = false;
+    $("foetoPlus").textContent = "▸ tous les termes attestés (" + nbFoeto() + ")";
+  }
+
+  $("negatifs").innerHTML = NEGATIFS.map(function(n){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(n.l) +
+      '<span class="meta">' + esc(n.p) + '</span></div>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="absent">Vérifié absent</button>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="present">PRÉSENT</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("techniques").innerHTML = TECHNIQUES.map(function(t){ return chip("tech", t.k, t.l, t.q); }).join("");
+}
+
+/* ── Verdicts ─────────────────────────────────────────────────────────────── */
+function verdictPrelevement(){
+  var n = Object.keys(E.prelev).length, res = [];
+  if (!E.prelev.plevre) res.push("sans plèvre ni septum sur le bloc, AUCUN compte radial n'est recevable — la ligne de comptage n'a pas de point d'arrivée");
+  if (!E.prelev.trachee) res.push("sans larynx ni trachée, on perd le critère de datation le plus spécifique de l'organe (chondrocytes trachéaux, spéc. 1,000 · VPP 1,000)");
+  return { n:n, res:res,
+    cls: res.length ? (E.prelev.plevre ? "warn" : "bad") : (n === PRELEV.length ? "ok" : ""),
+    txt: n === 0 ? "—"
+       : (n + "/" + PRELEV.length + " item(s) confirmé(s).") +
+         (res.length ? " Réserves : " + res.join(" ; ") + "." : " Prélèvement complet.") };
+}
+function verdictRetention(){
+  var pres = RETENTION.filter(function(r){ return E.retention[r.k] === "present"; });
+  if (E.kcl) return { cls:"bad", borne:null,
+    txt:"Fœticide par KCl déclaré : ses effets sur les tissus fœtaux miment la macération, et le poumon est nommément dans la liste des sites atteints. Aucune borne de rétention ne s'écrit avant vérification du mode d'interruption." };
+  if (!pres.length) return { cls:"", borne:null,
+    txt: Object.keys(E.retention).length ? "Aucun critère de rétention positif." : "—" };
+  var bons = pres.filter(function(r){ return r.q !== "mauvais"; });
+  var notes = [];
+  if (E.retention.detachMuq === "present")
+    notes.push("le détachement épithélial muqueux est constant au-delà de 18 h et ne discrimine presque rien (spéc. 0,588) — lire la basophilie du même épithélium, pas son décollement");
+  if (E.retention.matriceCart === "present")
+    notes.push("la matrice cartilagineuse bronchique est un mauvais prédicteur (spéc. 0,625) ; le cartilage qui date, ce sont les chondrocytes trachéaux");
+  if (!bons.length) return { cls:"warn", borne:null,
+    txt:"Seuls des prédicteurs MAUVAIS sont positifs — aucune borne recevable. " + notes.join(" ; ") + "." };
+  var top = bons.reduce(function(a, b){ return b.h > a.h ? b : a; });
+  if (top.h === 336)
+    notes.push("fenêtre 2–4 semaines : ernst tient qu'aucun organe fœtal ne l'estime bien, la fiche réconcilie par une lecture, pas par une source");
+  return { cls:"ok", borne:top,
+    txt:"Rétention " + top.b + " — critère : " + top.l.toLowerCase() + " (" + top.d + ")." +
+        (notes.length ? " Réserves : " + notes.join(" ; ") + "." : "") };
+}
+function verdictMaturation(){
+  var sa = num("sa"), att = stadeAttendu(sa), obs = E.stade ? par(STADES, E.stade) : null;
+  if (!obs) return { cls:"", att:att, txt: att
+    ? "Stade attendu à " + sa + " SA : " + att.l.toLowerCase() + ". Confirmer ou choisir."
+    : "Saisir le terme pour afficher le stade attendu." };
+  if (!att) return { cls:"warn", att:null, txt:"Stade " + obs.l.toLowerCase() + " — sans terme, aucune discordance n'est calculable." };
+  var io = STADES.indexOf(obs), ia = STADES.indexOf(att), t, cls;
+  if (io === ia){ cls = "ok"; t = "Maturation conforme au terme : " + obs.l.toLowerCase() + " à " + sa + " SA."; }
+  else if (io < ia){ cls = "warn";
+    t = "Retard de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        " Un retard HOMOGÈNE et isolé sur un poumon de poids normal fait chercher l'ACD/MPV et la dysplasie alvéolaire congénitale AVANT d'être écrit comme un retard."; }
+  else { cls = "warn";
+    t = "Avance de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")."; }
+  if (obs.note) t += " (" + obs.note + ")";
+  return { cls:cls, att:att, txt:t };
+}
+function bornesTxt(s){
+  var i = STADES.indexOf(s), min = i ? STADES[i-1].max : 0;
+  return s.max === 99 ? "≳ " + min + " SA" : min + "–" + s.max + " SA";
+}
+function verdictRac(){
+  var d = E.rac.d, g = E.rac.g, sa = num("sa");
+  if (d == null && g == null) return { cls:"", txt: E.racdef ? "Aucun compte saisi." : "—" };
+  if (!E.racdef) return { cls:"bad",
+    txt:"Compte saisi sans définition déclarée. Bronchiole respiratoire et bronchiole terminale sont deux structures différentes : les deux comptes ne sont pas superposables et la normale de 2,2 ne vaut que pour la première." };
+  var res = [];
+  if (!E.prelev.plevre) res.push("bloc sans plèvre ni septum — compte non recevable");
+  if (sa != null && sa <= 24) res.push("à " + sa + " SA le compte n'est pas recevable (soffoet : au-delà de 24 semaines)");
+  else if (sa != null && sa < 32) res.push("keeling ne le tient pour utile qu'après 32–36 semaines ; ernst ne conclut que si la valeur est nettement hors de la fourchette");
+  if (E.racdef === "term") res.push("définition « bronchiole terminale » — ne pas y appliquer la normale de 2,2, qui vient de la définition respiratoire");
+  if (d != null && g != null && Math.abs(d - g) >= 1)
+    res.push("asymétrie D/G de " + Math.abs(d - g).toFixed(1) + " : le degré d'inflation modifie sensiblement les comptes et la variabilité inter-observateur est marquée — multiplier les comptes avant d'y lire une asymétrie de maturation vraie");
+  var v = [];
+  if (d != null) v.push("droit " + d);
+  if (g != null) v.push("gauche " + g);
+  return { cls: res.length ? "warn" : "ok",
+    txt:"Compte radial alvéolaire " + v.join(", ") + " (" + par(RACDEF, E.racdef).l.toLowerCase() + ")." +
+        " Repères : ≈ 2,2 entre 24 et 27 semaines — échelle non déclarée par la source, l'écart possible est de deux semaines — et 4 à 6 au terme." +
+        (res.length ? " Réserves : " + res.join(" ; ") + "." : "") };
+}
+function verdictRatio(){
+  var p = num("hypo_poumons"), f = num("hypo_foetal"), sa = num("sa");
+  if (p == null || f == null || !f) return { cls:"", txt:"Saisir les deux poids." };
+  var r = p / f, seuil = (sa != null && sa >= 28) ? 0.012 : 0.015;
+  var t = "Rapport " + r.toFixed(4) + " pour un seuil de " + seuil +
+          (sa != null ? " (" + (sa >= 28 ? "≥ 28" : "< 28") + " SA)" : " (terme non saisi — seuil du < 28 SA appliqué)") + ".";
+  if (E.hypo.anasarque) return { cls:"bad",
+    txt:t + " ANASARQUE déclarée : le dénominateur est artificiellement augmenté, le rapport est aléatoire et ne doit pas être opposé." };
+  return { cls: r < seuil ? "warn" : "ok",
+    txt:t + (r < seuil ? " Sous le seuil." : " Au-dessus du seuil.") +
+        " Le seuil est reconnu arbitraire par sa propre source (moitié du rapport moyen du groupe 20–27 semaines) ; plancher absolu 1,2 % du poids du corps." };
+}
+
+/* Les techniques suggérées se déduisent des clics — jamais imposées. */
+function suggestions(){
+  function anormal(k){ return E.lesions[k] && E.lesions[k].v === "anormal"; }
+  var s = {};
+  if (anormal("pneumopathie")) s.gram = true;
+  if (anormal("acd")){ s.cd34 = true; s.evg = true; }
+  if (anormal("sequestration")) s.elastique = true;
+  if (anormal("muscularisation")) s.orceine = true;
+  if (anormal("membranes")) s.pas = true;
+  if (anormal("hypoplasie")) s.insuf = true;
+  if (E.negatifs.malalign === "present"){ s.cd34 = true; s.evg = true; }
+  var r = verdictRetention();
+  if (r.borne && r.borne.h >= 336) s.trichrome = true;
+  var m = verdictMaturation();
+  if (m.txt.indexOf("Retard de maturation") === 0){ s.cd34 = true; s.evg = true; }
+  return s;
+}
+
+/* ── Peinture ─────────────────────────────────────────────────────────────── */
+function classe(act, v){
+  if (act === "neg") return v === "present" ? "no" : "on";
+  if (act === "les") return v === "anormal" ? "no" : "on";
+  return "on";
+}
+function poser(id, v){
+  var e = $(id), t = e.querySelector("b").textContent;
+  e.className = "verdict" + (v.cls ? " " + v.cls : "");
+  e.innerHTML = "<b>" + esc(t) + "</b>" + esc(v.txt);
+}
+function tally(id, n, sur){ $(id).textContent = n ? n + "/" + sur : "—"; }
+
+function peindre(){
+  document.querySelectorAll("#prelevement .chip").forEach(function(b){
+    b.className = "chip" + (E.prelev[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#retention .chip").forEach(function(b){
+    b.className = "chip" + (E.retention[b.dataset.k] === b.dataset.v ? " on" : "");
+  });
+  $("kcl").firstChild.className = "chip" + (E.kcl ? " no" : "");
+  document.querySelectorAll("#stades .chip").forEach(function(b){
+    var att = stadeAttendu(num("sa"));
+    b.className = "chip" + (E.stade === b.dataset.k ? " on"
+                          : (att && att.k === b.dataset.k ? " sugg" : ""));
+  });
+  document.querySelectorAll("#racdef .chip").forEach(function(b){
+    b.className = "chip" + (E.racdef === b.dataset.k ? " on" : "");
+  });
+  document.querySelectorAll("#variantes .chip").forEach(function(b){
+    b.className = "chip" + (E.variantes[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#lesions .chip").forEach(function(b){
+    var k = b.dataset.k, st = E.lesions[k];
+    if (b.dataset.act === "les")
+      b.className = "chip" + (st && st.v === b.dataset.v ? " " + classe("les", b.dataset.v) : "");
+    else if (b.dataset.act === "crit")
+      b.className = "chip" + (st && st.c && st.c[b.dataset.i] ? " on" : "");
+    else
+      b.className = "chip" + (E.hypo.anasarque ? " no" : "");
+  });
+  LESIONS.forEach(function(x){
+    $("uf_" + x.k).hidden = !(E.lesions[x.k] && E.lesions[x.k].v === "anormal");
+  });
+  document.querySelectorAll('[data-act="foeto"]').forEach(function(b){
+    b.className = "chip" + (E.foeto[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#negatifs .chip").forEach(function(b){
+    b.className = "chip" + (E.negatifs[b.dataset.k] === b.dataset.v
+                            ? " " + classe("neg", b.dataset.v) : "");
+  });
+  var sug = suggestions();
+  document.querySelectorAll("#techniques .chip").forEach(function(b){
+    b.className = "chip" + (E.techniques[b.dataset.k] ? " on" : (sug[b.dataset.k] ? " sugg" : ""));
+  });
+
+  tally("tPrelevement", Object.keys(E.prelev).length, PRELEV.length);
+  tally("tRetention",   Object.keys(E.retention).length, RETENTION.length);
+  tally("tMaturation",  (E.stade ? 1 : 0) + (E.racdef ? 1 : 0), 2);
+  tally("tVariantes",   Object.keys(E.variantes).length, VARIANTES.length);
+  tally("tLesions",     Object.keys(E.lesions).length, LESIONS.length);
+  tally("tFoeto",       Object.keys(E.foeto).length, nbFoeto());
+  tally("tNegatifs",    Object.keys(E.negatifs).length, NEGATIFS.length);
+  tally("tTechniques",  Object.keys(E.techniques).length, TECHNIQUES.length);
+
+  poser("vPrelevement", verdictPrelevement());
+  poser("vRetention",   verdictRetention());
+  poser("vMaturation",  verdictMaturation());
+  poser("vRac",         verdictRac());
+  if ($("vRatio")) poser("vRatio", verdictRatio());
+
+  var cr = composer();
+  $("cr").textContent = cr;
+  $("tCR").textContent = cr.split("\n").length + " lignes";
+}
+
+/* ── Compte rendu — la sortie du module, écrite par les clics ─────────────── */
+function composer(){
+  var sa = num("sa"), L = [];
+  L.push("POUMON — grille de lecture");
+  L.push((dossier || "dossier —") + " · " + (sa != null ? sa + " SA" : "terme —") +
+         " · " + ($("operateur").value.trim() || "lecteur —"));
+  L.push("");
+
+  var p = verdictPrelevement();
+  L.push("PRÉLÈVEMENT");
+  L.push("  " + p.txt);
+
+  L.push("");
+  L.push("RÉTENTION");
+  L.push("  " + verdictRetention().txt);
+
+  L.push("");
+  L.push("MATURATION");
+  L.push("  " + verdictMaturation().txt);
+  L.push("  " + verdictRac().txt);
+
+  var vus = VARIANTES.filter(function(v){ return E.variantes[v.k]; });
+  if (vus.length){
+    L.push("");
+    L.push("VARIANTES NORMALES VUES ET ÉCARTÉES");
+    L.push("  " + vus.map(function(v){ return v.l.toLowerCase(); }).join(" · "));
+  }
+
+  var anormales = LESIONS.filter(function(x){ return E.lesions[x.k] && E.lesions[x.k].v === "anormal"; });
+  var normales  = LESIONS.filter(function(x){ return E.lesions[x.k] && E.lesions[x.k].v === "normal"; });
+  L.push("");
+  L.push("LÉSIONS");
+  if (!anormales.length && !normales.length) L.push("  aucun axe exploré.");
+  anormales.forEach(function(x){
+    var c = (E.lesions[x.k].c || {});
+    var ret = x.crit.filter(function(_, i){ return c[i]; });
+    L.push("  " + x.l + " — ANORMAL");
+    if (ret.length) ret.forEach(function(t){ L.push("      · " + t); });
+    else L.push("      · marqué anormal sans critère positif coché");
+    if (x.calc === "ratio"){
+      var vr = verdictRatio();
+      if (vr.cls) L.push("      · " + vr.txt);
+    }
+  });
+  if (normales.length)
+    L.push("  Normaux : " + normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  var muets = LESIONS.filter(function(x){ return !E.lesions[x.k]; });
+  if (muets.length)
+    L.push("  Non explorés : " + muets.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+
+  var fo = Object.keys(E.foeto);
+  if (fo.length){
+    L.push("");
+    L.push("TERMES FOETO");
+    fo.forEach(function(id){ L.push("  " + foetoLabel(id) + " [" + id + "]"); });
+  }
+
+  L.push("");
+  L.push("NÉGATIFS OBLIGATOIRES");
+  NEGATIFS.forEach(function(n){
+    var v = E.negatifs[n.k];
+    L.push("  " + (v === "absent" ? "· " + n.l
+                 : v === "present" ? "! " + n.l.replace(/^Absence d'?e?\s*/i, "PRÉSENT — ")
+                 : "? " + n.l + " — non vérifié"));
+  });
+
+  var t = TECHNIQUES.filter(function(x){ return E.techniques[x.k]; });
+  if (t.length){
+    L.push("");
+    L.push("TECHNIQUES DEMANDÉES");
+    t.forEach(function(x){ L.push("  · " + x.l + " — " + x.q); });
+  }
+
+  if (E.libre.trim()){
+    L.push("");
+    L.push("REMARQUE");
+    E.libre.trim().split("\n").forEach(function(x){ L.push("  " + x); });
+  }
+
+  L.push("");
+  L.push("— La micro décrit ; la conclusion nomme. Grille v" + VERSION + " issue de fiche_poumon.md.");
+  return L.join("\n");
+}
+
+/* ── Clics ────────────────────────────────────────────────────────────────── */
+document.addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest("button[data-act]") : null;
+  if (!b || b.closest("section.off")) return;
+  var k = b.dataset.k, v = b.dataset.v, a = b.dataset.act;
+  if (a === "prelev"){ if (E.prelev[k]) delete E.prelev[k]; else E.prelev[k] = true; }
+  else if (a === "ret"){ if (E.retention[k] === v) delete E.retention[k]; else E.retention[k] = v; }
+  else if (a === "kcl"){ E.kcl = !E.kcl; }
+  else if (a === "stade"){ E.stade = E.stade === k ? null : k; }
+  else if (a === "racdef"){ E.racdef = E.racdef === k ? null : k; }
+  else if (a === "var"){ if (E.variantes[k]) delete E.variantes[k]; else E.variantes[k] = true; }
+  else if (a === "les"){
+    var st = E.lesions[k];
+    if (st && st.v === v) delete E.lesions[k];
+    else E.lesions[k] = { v:v, c: st ? st.c : {} };
+  }
+  else if (a === "crit"){
+    var s2 = E.lesions[k]; if (!s2) return;
+    if (!s2.c) s2.c = {};
+    if (s2.c[b.dataset.i]) delete s2.c[b.dataset.i]; else s2.c[b.dataset.i] = true;
+  }
+  else if (a === "anasarque"){ E.hypo.anasarque = !E.hypo.anasarque; }
+  else if (a === "neg"){ if (E.negatifs[k] === v) delete E.negatifs[k]; else E.negatifs[k] = v; }
+  else if (a === "tech"){ if (E.techniques[k]) delete E.techniques[k]; else E.techniques[k] = true; }
+  else if (a === "foeto"){ if (E.foeto[k]) delete E.foeto[k]; else E.foeto[k] = true; }
+  else return;
+  peindre(); enregistrer();
+});
+document.addEventListener("click", function(ev){
+  var t = ev.target.closest ? ev.target.closest("[data-pick]") : null;
+  if (t){ foetoAjouter(t.dataset.pick); $("rqFoeto").value = ""; $("sgFoeto").classList.remove("on"); }
+});
+$("foetoPlus").onclick = function(){
+  var box = $("foetoTous");
+  if (!box.children.length) box.innerHTML = FOETO.sections.map(function(s){
+    return s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("");
+  }).join("");
+  box.hidden = !box.hidden; peindre();
+};
+$("rqFoeto").addEventListener("input", function(){ rechercherFoeto(this.value); });
+$("btnNegAll").onclick = function(){
+  NEGATIFS.forEach(function(n){ if (!E.negatifs[n.k]) E.negatifs[n.k] = "absent"; });
+  peindre(); enregistrer();
+};
+$("btnCopie").onclick = function(){
+  var t = composer();
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(t).then(function(){ flash("Compte rendu copié."); },
+                                          function(){ flash("Copie refusée par le navigateur."); });
+  else flash("Presse-papiers indisponible en file://.");
+};
+document.addEventListener("input", function(e){
+  var id = e.target.id;
+  if (id === "rac_d") E.rac.d = num("rac_d");
+  else if (id === "rac_g") E.rac.g = num("rac_g");
+  else if (id === "hypo_poumons") E.hypo.poumons = num("hypo_poumons");
+  else if (id === "hypo_foetal") E.hypo.foetal = num("hypo_foetal");
+  else if (id === "libre") E.libre = e.target.value;
+  else if (id === "sa"){ majSa(); }
+  else return;
+  peindre(); enregistrer();
+});
+function majSa(){
+  var sa = num("sa"), att = stadeAttendu(sa), h = $("saHint");
+  h.className = "hint" + (att ? " good" : "");
+  h.textContent = att ? "Stade attendu : " + att.l.toLowerCase() + " (" + bornesTxt(att) + ")."
+                      : "SA = semaines de gestation + 2. Commande le stade attendu.";
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────────
+   localStorage est erratique en file:// et cloisonné par fichier sur certains
+   navigateurs : la saisie va en IndexedDB, y compris les champs texte.       */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction("saisies", mode), out = fn(t.objectStore("saisies"));
+    /* Tester la présence de `result`, pas sa valeur : un get() qui ne trouve rien
+       a bien un `result` (undefined) — comparé à undefined, la requête elle-même
+       était rendue, et un dossier jamais saisi s'annonçait comme restitué. */
+    t.oncomplete = function(){ res(out && "result" in out ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("readonly",  function(s){ return s.get(d); }); }
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  ["secPrelevement","secRetention","secMaturation","secVariantes","secLesions","secFoeto",
+   "secNegatifs","secTechniques","secCR","secSortie"].forEach(function(id){
+    $(id).classList.toggle("off", !ouvert);
+  });
+}
+
+/* ── Collecte / restitution ───────────────────────────────────────────────── */
+function collecter(){
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    organe: "poumon",
+    source: "fiche_poumon.md",
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    terme_sa: num("sa"),
+    grille: JSON.parse(JSON.stringify(E)),
+    compte_rendu: composer()
+  };
+}
+function appliquer(o){
+  var g = o.grille || {};
+  E = neuf();
+  ["prelev","retention","variantes","lesions","negatifs","techniques","foeto"].forEach(function(c){
+    if (g[c]) E[c] = g[c];
+  });
+  Object.keys(E.foeto).forEach(function(id){
+    if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')) foetoAjouter(id);
+  });
+  E.kcl = !!g.kcl; E.stade = g.stade || null; E.racdef = g.racdef || null;
+  if (g.rac) E.rac = { d: g.rac.d != null ? g.rac.d : null, g: g.rac.g != null ? g.rac.g : null };
+  if (g.hypo) E.hypo = g.hypo;
+  E.libre = g.libre || "";
+  $("sa").value    = o.terme_sa != null ? o.terme_sa : "";
+  $("rac_d").value = E.rac.d != null ? E.rac.d : "";
+  $("rac_g").value = E.rac.g != null ? E.rac.g : "";
+  $("libre").value = E.libre;
+  if ($("hypo_poumons")){
+    $("hypo_poumons").value = E.hypo.poumons != null ? E.hypo.poumons : "";
+    $("hypo_foetal").value  = E.hypo.foetal  != null ? E.hypo.foetal  : "";
+  }
+  majSa(); peindre();
+}
+function vider(){
+  E = neuf();
+  ["sa","rac_d","rac_g","libre","hypo_poumons","hypo_foetal"].forEach(function(id){
+    if ($(id)) $(id).value = "";
+  });
+  majSa(); peindre();
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, ok1 = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = ok1 && op, h = $("dossierHint");
+  h.className = "hint" + (v && !ok1 ? " bad" : ok1 ? " good" : "");
+  h.textContent = !v ? "Libre, mis en majuscules. Conditionne l'enregistrement."
+                : ok1 ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                      : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la grille.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json."
+    : ok1 ? "Saisir le lecteur pour activer l'export."
+          : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){
+    dossier = v;
+    vider();
+    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    if (rec){ appliquer(rec); flash("Grille du " + dossier + " restituée."); }
+  } else if (!ok && dossier){
+    dossier = ""; vider();
+  }
+  peindre();
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+$("btnExport").onclick = function(){
+  if (!dossierOk(dossier)) return;
+  var out = collecter();
+  telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+              dossier + "_" + MODULE + ".json");
+  var n = NEGATIFS.filter(function(x){ return E.negatifs[x.k]; }).length;
+  flash("Grille exportée." + (n < NEGATIFS.length ? " ⚠ " + (NEGATIFS.length - n) + " négatif(s) non vérifié(s)." : ""));
+};
+function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.grille) throw new Error("aucune clé « grille »");
+  if (o.dossier) $("dossier").value = normDossier(o.dossier);
+  if (o.operateur) $("operateur").value = o.operateur;
+  return majDossier().then(function(){
+    if (!dossier) throw new Error("numéro de dossier absent ou lecteur manquant");
+    appliquer(o); enregistrer();
+    return true;
+  });
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    Promise.resolve().then(function(){ return relire(JSON.parse(String(fr.result))); })
+      .then(function(){ flash("Grille relue."); })
+      .catch(function(e){ flash("Relecture impossible : " + e.message); });
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la grille du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    await tx("readwrite", function(s){ return s.delete(dossier); });
+    vider(); flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les grilles de TOUS les dossiers sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("readwrite", function(s){ return s.clear(); });
+  vider(); flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Axes de la grille", PRELEV.length + " prélèvement · " + RETENTION.length + " rétention · " +
+                             STADES.length + " stades · " + LESIONS.length + " lésions · " +
+                             NEGATIFS.length + " négatifs · " + TECHNIQUES.length + " techniques");
+  ligne("Source", "fiche_poumon.md — la fiche est la source, ce module en est la sortie");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+(async function(){
+  $("ver").textContent = "v" + VERSION;
+  E = neuf();
+  batir(); majSa(); peindre();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — aucune saisie ne sera conservée. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir grille_poumon.html?selftest=1 ─────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+  function clic(act, k, v){
+    var s = '[data-act="' + act + '"][data-k="' + k + '"]' + (v ? '[data-v="' + v + '"]' : "");
+    var b = document.querySelector(s);
+    if (!b){ ko.push("bouton introuvable : " + s); return null; }
+    b.click(); return b;
+  }
+  function crTient(t){ return $("cr").textContent.indexOf(t) >= 0; }
+  var pause = function(){ return new Promise(function(r){ setTimeout(r, 30); }); };
+
+  /* Bornes de stade — pures, sans DOM */
+  chk("stade attendu à 20 SA",     stadeAttendu(20).k === "canaliculaire");
+  chk("stade attendu à 30 SA",     stadeAttendu(30).k === "sacculaire");
+  chk("stade attendu à 38 SA",     stadeAttendu(38).k === "alveolaire");
+  chk("stade attendu à 12 SA",     stadeAttendu(12).k === "pseudoglandulaire");
+  chk("sans terme, pas de stade",  stadeAttendu(null) === null);
+  chk("bornes du sacculaire",      bornesTxt(par(STADES,"sacculaire")) === "26–36 SA");
+  chk("bornes de l'alvéolaire",    bornesTxt(par(STADES,"alveolaire")) === "≳ 36 SA");
+  chk("clés de lésion uniques",    new Set(LESIONS.map(function(x){return x.k;})).size === LESIONS.length);
+  chk("six négatifs obligatoires", NEGATIFS.length === 6);
+  chk("six lignes de rétention",   RETENTION.length === 6);
+  chk("deux bons prédicteurs",     RETENTION.filter(function(r){return r.q==="bon";}).length === 2);
+
+  /* Verrou */
+  chk("verrouillé au départ",      $("secLesions").classList.contains("off"));
+  clic("prelev", "plevre");
+  chk("clic ignoré sous verrou",   !E.prelev.plevre);
+  set("dossier", "26p0123");
+  chk("lecteur manquant",          $("secLesions").classList.contains("off"));
+  set("operateur", "RM");
+  await pause();
+  chk("déverrouillé",             !$("secLesions").classList.contains("off"));
+  chk("dossier normalisé",         $("dossier").value === "26P0123");
+  chk("export activé",            !$("btnExport").disabled);
+
+  /* Prélèvement */
+  clic("prelev", "lobes");
+  chk("chip prélèvement posée",    E.prelev.lobes === true &&
+                                   document.querySelector('[data-act="prelev"][data-k="lobes"]').className.indexOf("on") >= 0);
+  chk("plèvre absente = RAC mort", $("vPrelevement").textContent.indexOf("AUCUN compte radial") >= 0 &&
+                                   $("vPrelevement").className.indexOf("bad") >= 0);
+  clic("prelev", "plevre");
+  chk("trachée absente signalée",  $("vPrelevement").textContent.indexOf("chondrocytes trachéaux") >= 0 &&
+                                   $("vPrelevement").className.indexOf("warn") >= 0);
+  clic("prelev", "lobes");
+  chk("chip retirée au 2e clic",   !E.prelev.lobes);
+
+  /* Rétention */
+  clic("ret", "detachMuq", "present");
+  chk("mauvais seul = pas de borne", $("vRetention").textContent.indexOf("MAUVAIS") >= 0);
+  clic("ret", "basoBronche", "present");
+  chk("borne à 96 h",              $("vRetention").textContent.indexOf("Rétention ≥ 96 h") >= 0);
+  chk("faux ami signalé",          $("vRetention").textContent.indexOf("0,588") >= 0);
+  clic("ret", "chondroTrachee", "present");
+  chk("la meilleure borne gagne",  $("vRetention").textContent.indexOf("Rétention ≥ 1 semaine") >= 0);
+  clic("ret", "paroiAlv", "present");
+  chk("borne à 2 semaines",        $("vRetention").textContent.indexOf("Rétention ≥ 2 semaines") >= 0);
+  chk("fenêtre 2–4 semaines dite", $("vRetention").textContent.indexOf("fenêtre 2–4 semaines") >= 0);
+  chk("trichrome suggéré",         suggestions().trichrome === true);
+  clic("kcl", "kcl");
+  chk("KCl invalide la datation",  $("vRetention").className.indexOf("bad") >= 0 &&
+                                   $("vRetention").textContent.indexOf("nommément") >= 0);
+  clic("kcl", "kcl");
+  chk("KCl levé, borne revenue",   $("vRetention").textContent.indexOf("Rétention ≥ 2 semaines") >= 0);
+
+  /* Maturation */
+  set("sa", "20");
+  chk("stade attendu proposé",     document.querySelector('[data-act="stade"][data-k="canaliculaire"]').className.indexOf("sugg") >= 0);
+  chk("bandeau terme vert",        $("saHint").className.indexOf("good") >= 0);
+  clic("stade", "canaliculaire");
+  chk("maturation conforme",       $("vMaturation").className.indexOf("ok") >= 0 &&
+                                   $("vMaturation").textContent.indexOf("conforme au terme") >= 0);
+  clic("stade", "pseudoglandulaire");
+  chk("retard détecté",            $("vMaturation").textContent.indexOf("Retard de maturation") >= 0);
+  chk("retard renvoie à l'ACD",    $("vMaturation").textContent.indexOf("ACD/MPV") >= 0);
+  chk("CD34 et EVG suggérés",      suggestions().cd34 && suggestions().evg);
+  clic("stade", "canaliculaire");
+
+  /* Compte radial */
+  set("rac_d", "2.4");
+  chk("compte sans définition",    $("vRac").className.indexOf("bad") >= 0 &&
+                                   $("vRac").textContent.indexOf("pas superposables") >= 0);
+  clic("racdef", "resp");
+  chk("recevabilité à 20 SA",      $("vRac").textContent.indexOf("n'est pas recevable") >= 0);
+  set("rac_g", "4.9");
+  chk("asymétrie signalée",        $("vRac").textContent.indexOf("asymétrie D/G") >= 0 &&
+                                   $("vRac").textContent.indexOf("inter-observateur") >= 0);
+  set("sa", "34"); await pause();
+  chk("recevable à 34 SA",         $("vRac").textContent.indexOf("n'est pas recevable") < 0);
+  clic("stade", "sacculaire");
+
+  /* Lésions et rapport de poids */
+  chk("dépli fermé au départ",     $("uf_hypoplasie").hidden);
+  clic("les", "hypoplasie", "anormal");
+  chk("dépli ouvert sur anormal",  !$("uf_hypoplasie").hidden);
+  chk("« ne pas conclure » affiché", $("uf_hypoplasie").textContent.indexOf("deux axes dissociables") >= 0);
+  set("hypo_poumons", "18"); set("hypo_foetal", "2000");
+  chk("seuil 0,012 au-delà de 28 SA", $("vRatio").textContent.indexOf("seuil de 0.012") >= 0);
+  chk("rapport sous le seuil",     $("vRatio").textContent.indexOf("Sous le seuil") >= 0 &&
+                                   $("vRatio").className.indexOf("warn") >= 0);
+  chk("seuil dit arbitraire",      $("vRatio").textContent.indexOf("arbitraire") >= 0);
+  clic("anasarque", "anasarque");
+  chk("anasarque annule le rapport", $("vRatio").className.indexOf("bad") >= 0 &&
+                                     $("vRatio").textContent.indexOf("aléatoire") >= 0);
+  clic("crit", "hypoplasie", null);
+  chk("critère coché",             E.lesions.hypoplasie.c["0"] === true);
+  clic("les", "pneumopathie", "anormal");
+  chk("Gram suggéré",              suggestions().gram === true &&
+                                   document.querySelector('[data-act="tech"][data-k="gram"]').className.indexOf("sugg") >= 0);
+  clic("les", "membranes", "normal");
+  clic("les", "membranes", "normal");
+  chk("3e clic remet à non exploré", !E.lesions.membranes);
+
+  /* Négatifs */
+  $("btnNegAll").click();
+  chk("six négatifs posés",        Object.keys(E.negatifs).length === 6);
+  clic("neg", "malalign", "present");
+  chk("négatif retourné en rouge", E.negatifs.malalign === "present" &&
+                                   document.querySelector('[data-act="neg"][data-k="malalign"][data-v="present"]').className.indexOf("no") >= 0);
+  clic("neg", "malalign", "absent");
+
+  /* Techniques et compte rendu */
+  clic("tech", "gram");
+  chk("technique demandée",        E.techniques.gram === true);
+  set("libre", "Bloc trachéal non parvenu.");
+  chk("CR : en-tête dossier",      crTient("26P0123") && crTient("34 SA") && crTient("RM"));
+  chk("CR : rétention",            crTient("Rétention ≥ 2 semaines"));
+  chk("CR : lésion anormale",      crTient("Hypoplasie pulmonaire — ANORMAL"));
+  chk("CR : non explorés listés",  crTient("Non explorés :") && crTient("membranes hyalines"));
+  chk("CR : négatifs vérifiés",    crTient("· Absence de réaction interstitielle"));
+  chk("CR : technique demandée",   crTient("Gram tissulaire"));
+  chk("CR : remarque libre",       crTient("Bloc trachéal non parvenu."));
+  chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
+
+  /* Enveloppe, persistance, relecture */
+  /* Termes FOETO */
+  var f0 = FOETO.sections[0].termes[0].id;
+  chk("FOETO : sections rendues", $("foeto").querySelectorAll(".sousTitre").length === FOETO.sections.length);
+  clic("foeto", f0);
+  chk("FOETO : terme coché",      E.foeto[f0] === true && $("tFoeto").textContent.indexOf("1/") === 0);
+  chk("FOETO : CR le porte",      crTient("[" + f0 + "]"));
+  chk("FOETO : exporté",          collecter().grille.foeto[f0] === true);
+  set("rqFoeto", foetoLabel(f0).slice(0, 4));
+  chk("FOETO : recherche",        $("sgFoeto").querySelectorAll("[data-pick]").length >= 1);
+  $("sgFoeto").querySelector("[data-pick]").click();
+  chk("FOETO : recherche vidée",  $("rqFoeto").value === "" && !$("sgFoeto").classList.contains("on"));
+  chk("FOETO : id lisible",       /^FOETO:/.test(f0));
+
+  var snap = collecter();
+  chk("enveloppe conforme",        snap.schema_version === SCHEMA && snap.module === MODULE &&
+                                   snap.module_version === VERSION && snap.dossier === "26P0123" &&
+                                   snap.organe === "poumon" && !!snap.exported_at);
+  chk("version en entête",         $("ver").textContent === "v" + VERSION);
+  chk("terme dans le JSON",        snap.terme_sa === 34);
+  chk("grille dans le JSON",       snap.grille.retention.paroiAlv === "present" &&
+                                   snap.grille.lesions.hypoplasie.v === "anormal");
+  chk("CR dans le JSON",           snap.compte_rendu.indexOf("POUMON — grille de lecture") === 0);
+
+  await putSaisie(snap);
+  vider();
+  chk("vider efface la grille",    Object.keys(E.retention).length === 0 && $("cr").textContent.indexOf("Aucun critère") < 0);
+  var relu = await getSaisie("26P0123");
+  appliquer(relu);
+  chk("IndexedDB restitue",        E.retention.paroiAlv === "present" && E.stade === "sacculaire" &&
+                                   $("rac_d").value === "2.4" && $("sa").value === "34");
+  chk("restitution repeint",       $("vRetention").textContent.indexOf("Rétention ≥ 2 semaines") >= 0);
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+  chk("banc remis à zéro",         Object.keys(E.lesions).length === 0 && $("secLesions").classList.contains("off"));
+  await relire(snap);
+  chk("relecture d'un JSON",       E.lesions.hypoplasie.v === "anormal" && dossier === "26P0123");
+  var refus = false;
+  try { await relire({module:"autopsie", grille:{}}); } catch(e){ refus = /module/.test(e.message); }
+  chk("JSON d'un autre module refusé", refus);
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>

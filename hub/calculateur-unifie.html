@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Calculateur Fœtal Unifié</title>
+<style>
+:root{--pri:#1a73e8;--bg:#f5f7fa;--card:#fff;--bdr:#d0d7de;--th:#e8f0fe;--warn:#b00020;--ok:#1b7a3d;--muted:#6b7280;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1e293b;font-size:14px}
+.wrap{max-width:1200px;margin:0 auto;padding:16px}
+h1{font-size:20px;color:var(--pri);margin-bottom:4px}
+.sub{color:var(--muted);font-size:12px;margin-bottom:16px}
+.top-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:14px;margin-bottom:14px}
+.top-bar label{font-weight:600;font-size:13px;display:block;margin-bottom:3px}
+.top-bar select,.top-bar input[type=date]{padding:6px 10px;border:1px solid var(--bdr);border-radius:6px;font-size:14px}
+.top-bar .grp{display:flex;flex-direction:column}
+.link-btn{font-size:12px;color:var(--pri);cursor:pointer;text-decoration:underline;margin-top:2px}
+.sect{background:var(--card);border:1px solid var(--bdr);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.sect-hdr{display:flex;align-items:center;padding:10px 14px;cursor:pointer;user-select:none;background:#f8fafc;border-bottom:1px solid var(--bdr);font-weight:700;font-size:14px;color:#374151}
+.sect-hdr .arrow{margin-right:8px;transition:transform .2s;font-size:10px}
+.sect-hdr.collapsed .arrow{transform:rotate(-90deg)}
+.sect-body{padding:12px 14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.sect-body.hidden{display:none}
+.field{display:flex;flex-direction:column}
+.field label{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:2px}
+.field input{padding:6px 8px;border:1px solid var(--bdr);border-radius:6px;font-size:14px;width:100%}
+.field .unit{font-size:11px;color:var(--muted);margin-top:1px}
+.results{background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:14px;margin-bottom:14px}
+.results h2{font-size:16px;color:#374151;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.btn{padding:6px 14px;border:1px solid var(--bdr);border-radius:6px;background:#f1f5f9;cursor:pointer;font-size:12px;font-weight:600;color:#374151}
+.btn:hover{background:#e2e8f0}
+.btn-pri{background:var(--pri);color:#fff;border-color:var(--pri)}
+.btn-pri:hover{background:#1557b0}
+table.res{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+table.res th,table.res td{border:1px solid var(--bdr);padding:5px 7px;text-align:center;white-space:nowrap}
+table.res th{background:var(--th);font-weight:700;font-size:12px}
+table.res td:first-child{text-align:left;font-weight:600;white-space:normal}
+.z-pos{color:var(--ok)}
+.z-neg{color:var(--pri)}
+.z-warn{color:var(--warn);font-weight:700}
+.sep-row td{background:#f1f5f9;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:4px 7px}
+.alert-box{display:none;padding:10px 14px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;color:var(--warn);font-weight:700;font-size:13px;margin-top:10px}
+.alert-box.show{display:block}
+.stempfle-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.stempfle-grid .formula{border:1px solid var(--bdr);border-radius:8px;padding:12px}
+.stempfle-grid .formula h3{font-size:14px;margin-bottom:8px;color:#374151}
+.stempfle-grid label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:6px}
+.stempfle-grid select{width:100%;padding:5px;border:1px solid var(--bdr);border-radius:4px;font-size:13px;margin-top:2px}
+.stempfle-grid .score{font-size:16px;font-weight:700;color:var(--pri);margin-top:10px}
+.age-box{display:flex;gap:20px;flex-wrap:wrap;margin-top:8px;font-size:14px;font-weight:600}
+.age-box span{color:var(--pri)}
+.auto-tag{font-size:10px;color:var(--ok);font-weight:600}
+@media(max-width:800px){
+  .stempfle-grid{grid-template-columns:1fr}
+  .sect-body{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Calculateur Foetal Unifie</h1>
+<p class="sub">Saisie unique, comparaison multi-references (GC 2002, Maroun, Muller-Brochut 2018, Chitty 2002, Redline). Copiez le tableau dans votre CR.</p>
+
+<div class="top-bar">
+  <div class="grp">
+    <label>Age gestationnel (SA)</label>
+    <select id="ga"><option value="">--</option></select>
+  </div>
+  <div class="grp">
+    <label>Grade de maceration</label>
+    <select id="grade">
+      <option value="0-1">0-1 (absent/leger)</option>
+      <option value="2">2 (modere)</option>
+      <option value="3">3 (avance)</option>
+    </select>
+  </div>
+  <div class="grp">
+    <label>DDR</label>
+    <input type="date" id="ddr" onchange="calcGA()"/>
+  </div>
+  <div class="grp">
+    <label>Date examen</label>
+    <input type="date" id="dateExam" onchange="calcGA()"/>
+    <span class="link-btn" onclick="document.getElementById('dateExam').valueAsDate=new Date();calcGA()">Aujourd'hui</span>
+  </div>
+  <div class="grp" id="gaCalcBox" style="display:none">
+    <label>Terme calcule</label>
+    <span id="gaCalcResult" style="font-size:15px;font-weight:700;color:var(--pri);padding:6px 0"></span>
+  </div>
+</div>
+
+<div class="sect" id="sect-macro">
+  <div class="sect-hdr" onclick="toggleSect(this)"><span class="arrow">&#9660;</span>Biometries macroscopiques</div>
+  <div class="sect-body">
+    <div class="field"><label>Masse corporelle</label><input type="number" step="any" id="in_masse" oninput="recompute()"/><div class="unit">g</div></div>
+    <div class="field"><label>Vertex-Talon (VT)</label><input type="number" step="any" id="in_vt" oninput="recompute()"/><div class="unit">cm</div></div>
+    <div class="field"><label>Vertex-Coccyx (VC)</label><input type="number" step="any" id="in_vc" oninput="recompute()"/><div class="unit">cm</div></div>
+    <div class="field"><label>Perimetre cranien (PC)</label><input type="number" step="any" id="in_pc" oninput="recompute()"/><div class="unit">cm</div></div>
+    <div class="field"><label>Longueur du pied</label><input type="number" step="any" id="in_pied" oninput="recompute()"/><div class="unit">mm</div></div>
+  </div>
+</div>
+
+<div class="sect" id="sect-detail">
+  <div class="sect-hdr" onclick="toggleSect(this)"><span class="arrow">&#9660;</span>Biometries detaillees (MB 2018, 12-20 SA)</div>
+  <div class="sect-body">
+    <div class="field"><label>Crown-Foot Length (CFL)</label><input type="number" step="any" id="in_cfl" oninput="recompute()"/><div class="unit">cm</div></div>
+    <div class="field"><label>Circ. thoracique (TC)</label><input type="number" step="any" id="in_tc" oninput="recompute()"/><div class="unit">cm</div></div>
+    <div class="field"><label>Circ. abdominale (AC)</label><input type="number" step="any" id="in_ac" oninput="recompute()"/><div class="unit">cm</div></div>
+    <div class="field"><label>Longueur de la main</label><input type="number" step="any" id="in_main" oninput="recompute()"/><div class="unit">mm</div></div>
+    <div class="field"><label>Diam. biparietal (BPD)</label><input type="number" step="any" id="in_bpd" oninput="recompute()"/><div class="unit">mm</div></div>
+    <div class="field"><label>Diam. fronto-occipital (FOD)</label><input type="number" step="any" id="in_fod" oninput="recompute()"/><div class="unit">mm</div></div>
+    <div class="field"><label>Diam. thoracique T5</label><input type="number" step="any" id="in_t5" oninput="recompute()"/><div class="unit">mm</div></div>
+    <div class="field"><label>Cervelet</label><input type="number" step="any" id="in_cervelet" oninput="recompute()"/><div class="unit">mm</div></div>
+  </div>
+</div>
+
+<div class="sect" id="sect-os">
+  <div class="sect-hdr" onclick="toggleSect(this)"><span class="arrow">&#9660;</span>Longueurs osseuses</div>
+  <div class="sect-body">
+    <div class="field"><label>Humerus</label><input type="number" step="any" id="in_humerus" oninput="recompute()"/><div class="unit">mm</div></div>
+    <div class="field"><label>Ulna</label><input type="number" step="any" id="in_ulna" oninput="recompute()"/><div class="unit">mm</div></div>
+    <div class="field"><label>Radius</label><input type="number" step="any" id="in_radius" oninput="recompute()"/><div class="unit">mm</div></div>
+    <div class="field"><label>Femur</label><input type="number" step="any" id="in_femur" oninput="recompute()"/><div class="unit">mm</div></div>
+    <div class="field"><label>Tibia</label><input type="number" step="any" id="in_tibia" oninput="recompute()"/><div class="unit">mm</div></div>
+    <div class="field"><label>Fibula</label><input type="number" step="any" id="in_fibula" oninput="recompute()"/><div class="unit">mm</div></div>
+  </div>
+</div>
+
+<div class="sect" id="sect-org">
+  <div class="sect-hdr" onclick="toggleSect(this)"><span class="arrow">&#9660;</span>Masses d'organes</div>
+  <div class="sect-body">
+    <div class="field"><label>Cerveau</label><input type="number" step="any" id="in_cerveau" oninput="recompute()"/><div class="unit">g</div></div>
+    <div class="field"><label>Thymus</label><input type="number" step="any" id="in_thymus" oninput="recompute()"/><div class="unit">g</div></div>
+    <div class="field"><label>Coeur</label><input type="number" step="any" id="in_coeur" oninput="recompute()"/><div class="unit">g</div></div>
+    <div class="field"><label>Poumons (total)</label><input type="number" step="any" id="in_poumons" oninput="manualTotal('poumons');recompute()"/><div class="unit">g <span class="auto-tag" id="auto_poumons"></span></div></div>
+    <div class="field"><label>Poumon droit</label><input type="number" step="any" id="in_poumon_d" oninput="autoSum('poumons')"/><div class="unit">g</div></div>
+    <div class="field"><label>Poumon gauche</label><input type="number" step="any" id="in_poumon_g" oninput="autoSum('poumons')"/><div class="unit">g</div></div>
+    <div class="field"><label>Foie</label><input type="number" step="any" id="in_foie" oninput="recompute()"/><div class="unit">g</div></div>
+    <div class="field"><label>Rate</label><input type="number" step="any" id="in_rate" oninput="recompute()"/><div class="unit">g</div></div>
+    <div class="field"><label>Pancreas</label><input type="number" step="any" id="in_pancreas" oninput="recompute()"/><div class="unit">g</div></div>
+    <div class="field"><label>Surrenales</label><input type="number" step="any" id="in_surrenales" oninput="recompute()"/><div class="unit">g</div></div>
+    <div class="field"><label>Reins (total)</label><input type="number" step="any" id="in_reins" oninput="manualTotal('reins');recompute()"/><div class="unit">g <span class="auto-tag" id="auto_reins"></span></div></div>
+    <div class="field"><label>Rein droit</label><input type="number" step="any" id="in_rein_d" oninput="autoSum('reins')"/><div class="unit">g</div></div>
+    <div class="field"><label>Rein gauche</label><input type="number" step="any" id="in_rein_g" oninput="autoSum('reins')"/><div class="unit">g</div></div>
+  </div>
+</div>
+
+<div class="sect" id="sect-placenta">
+  <div class="sect-hdr" onclick="toggleSect(this)"><span class="arrow">&#9660;</span>Placenta</div>
+  <div class="sect-body">
+    <div class="field"><label>Masse placentaire</label><input type="number" step="any" id="in_placenta" oninput="recompute()"/><div class="unit">g</div></div>
+  </div>
+</div>
+
+<div class="sect" id="sect-stempfle">
+  <div class="sect-hdr" onclick="toggleSect(this)"><span class="arrow">&#9660;</span>Maturite osseuse (Stempfle)</div>
+  <div class="sect-body" style="display:block">
+    <div class="stempfle-grid">
+      <div class="formula">
+        <h3>Formule 1 (16.2 + ...)</h3>
+        <label>Epiphyse femorale distale (DFE)</label><select id="s1_dfe" onchange="calcStempfle()"><option value="0">Absent</option><option value="4.3">Present</option></select>
+        <label>Talus (TAL)</label><select id="s1_tal" onchange="calcStempfle()"><option value="0">Absent</option><option value="1.5">Rond/ovale</option><option value="3">Concave</option></select>
+        <label>Canine inferieure (ICA)</label><select id="s1_ica" onchange="calcStempfle()"><option value="0">Lisse</option><option value="1.5">Alveole</option><option value="3">Cuspide</option><option value="4.5">Couronne</option></select>
+        <label>2e molaire inferieure (ISM)</label><select id="s1_ism" onchange="calcStempfle()"><option value="0">Lisse</option><option value="1.7">Alveole</option><option value="3.4">Cuspide</option><option value="5.1">Couronne</option></select>
+        <label>Branche pubienne superieure (SPR)</label><select id="s1_spr" onchange="calcStempfle()"><option value="0">Absent</option><option value="1.2">Rond/ovale</option><option value="2.4">Haltere</option></select>
+        <label>Metaphyse tibiale inferieure (ITM)</label><select id="s1_itm" onchange="calcStempfle()"><option value="0">Cupping</option><option value="1.8">Plat</option><option value="3.6">Convexe</option></select>
+        <div class="score" id="score1">F1 = 16.20 GW</div>
+      </div>
+      <div class="formula">
+        <h3>Formule 2 (14.6 + ...)</h3>
+        <label>Epiphyse femorale distale (DFE)</label><select id="s2_dfe" onchange="calcStempfle()"><option value="0">Absent</option><option value="5">Present</option></select>
+        <label>Talus (TAL)</label><select id="s2_tal" onchange="calcStempfle()"><option value="0">Absent</option><option value="2.1">Rond/ovale</option><option value="4.1">Concave</option></select>
+        <label>Sternum (STE)</label><select id="s2_ste" onchange="calcStempfle()"><option value="0">Absent</option><option value="2.1">Present</option></select>
+        <label>Branche ischiatique (ISR)</label><select id="s2_isr" onchange="calcStempfle()"><option value="0">Absent</option><option value="1.5">Rond/ovale</option><option value="3">Concavite ant.</option><option value="4.5">Haltere</option></select>
+        <label>Metaphyse radiale inferieure (IRM)</label><select id="s2_irm" onchange="calcStempfle()"><option value="0">Cupping</option><option value="2.2">Plat</option><option value="4.4">Convexe</option></select>
+        <label>Metaphyse tibiale inferieure (ITM)</label><select id="s2_itm" onchange="calcStempfle()"><option value="0">Cupping</option><option value="1.6">Plat</option><option value="3.2">Convexe</option></select>
+        <div class="score" id="score2">F2 = 14.60 GW</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="results">
+  <h2>Tableau comparatif <span><button class="btn btn-pri" onclick="copyTable()">Copier pour CR</button> <button class="btn" onclick="resetAll()">Reinitialiser</button></span></h2>
+  <div id="resWrap"></div>
+  <div class="age-box" id="ageBox"></div>
+  <div class="alert-box" id="lbwrAlert"></div>
+</div>
+</div>
+
+<script>
+// ============================================================
+//  REFERENCE DATA
+// ============================================================
+//
+//  2026-09-08 — 81 cellules corrigees d'apres Macro/autopsie.html 1.4.0 et
+//  Macro/biometrie_clinique.html 1.2.0, apres audit par
+//  hub/outils/verifier_tables.py. Les deux transcriptions divergeaient ; le
+//  depart a ete fait sur des criteres internes, pas sur la provenance :
+//
+//   . MAR_M / MAR_S, lignes 12 et 13 SA (33 cellules) : une case vide du
+//     tableau publie avait ete sautee ici, decalant la fin de ligne d'un rang.
+//     Le module donne des series monotones (rate 0.01 0.02 0.04 0.06 ...),
+//     cette table donnait 0.19 puis 0.30 puis 0.04 — une rate ne retrecit pas.
+//
+//   . GC_O, ecarts-types de poumons, reins et surrenales, 15 classes
+//     (45 cellules) : ils valaient ici la moitie de ceux du module, sur les
+//     trois organes pairs seulement, moyennes identiques. Le sd/moyenne des
+//     cinq organes concordants vaut 0.25 a 0.46 ; le module tient les organes
+//     pairs dans cette fourchette, cette table les mettait a 0.14-0.16.
+//
+//   . GC_M, VT 31-32 SA, VC 39-40 SA, ecart-type de la masse 41-42 SA
+//     (3 cellules) : trois valeurs isolees cassant la regularite d'une courbe
+//     ajustee (432.2 pour 423.2, deux chiffres echanges).
+//
+//  Consequence a garder en tete : sur ces cellules, cette table n'est plus un
+//  temoin independant des modules. Seul l'article publie peut encore les
+//  confirmer. Les tables MB_O et MB_B (Muller-Brochut) n'ont pas ete touchees,
+//  leurs divergences avec le module restent ouvertes.
+//
+
+// --- Guihard-Costa 2002 (macro) ---
+const GC_M={
+"13-14":{masse:{m:55.8,s:14.4},VT:{m:131.8,s:15.4},VC:{m:89.6,s:11.7},PC:{m:89.2,s:11.8},pied:{m:14,s:2.9}},
+"15-16":{masse:{m:108.6,s:24.7},VT:{m:170.4,s:16.2},VC:{m:116.2,s:12.2},PC:{m:116.7,s:12.2},pied:{m:19,s:3}},
+"17-18":{masse:{m:176.1,s:39},VT:{m:207.4,s:17},VC:{m:141.7,s:12.7},PC:{m:142.8,s:12.6},pied:{m:25,s:3.2}},
+"19-20":{masse:{m:267.7,s:57.1},VT:{m:242.9,s:17.8},VC:{m:166.2,s:13.1},PC:{m:167.5,s:12.9},pied:{m:30,s:3.3}},
+"21-22":{masse:{m:392.7,s:79.2},VT:{m:276.8,s:18.6},VC:{m:189.8,s:13.6},PC:{m:190.9,s:13.3},pied:{m:36,s:3.5}},
+"23-24":{masse:{m:559.6,s:105.1},VT:{m:309.2,s:19.4},VC:{m:212.3,s:14.1},PC:{m:212.8,s:13.7},pied:{m:42,s:3.6}},
+"25-26":{masse:{m:773.9,s:134.9},VT:{m:340,s:20.2},VC:{m:233.8,s:14.6},PC:{m:233.4,s:14},pied:{m:48,s:3.8}},
+"27-28":{masse:{m:1038.2,s:168.6},VT:{m:369.3,s:21},VC:{m:254.4,s:15.1},PC:{m:252.7,s:14.4},pied:{m:53,s:3.9}},
+"29-30":{masse:{m:1350.4,s:206.1},VT:{m:397,s:21.8},VC:{m:273.9,s:15.5},PC:{m:270.5,s:14.8},pied:{m:58,s:4.1}},
+"31-32":{masse:{m:1702.5,s:247.6},VT:{m:423.2,s:22.6},VC:{m:292.4,s:16},PC:{m:287,s:15.1},pied:{m:63,s:4.2}},
+"33-34":{masse:{m:2080.2,s:292.9},VT:{m:447.8,s:23.4},VC:{m:309.9,s:16.5},PC:{m:302.1,s:15.5},pied:{m:67,s:4.4}},
+"35-36":{masse:{m:2460.8,s:342.1},VT:{m:470.9,s:24.2},VC:{m:326.5,s:17},PC:{m:315.8,s:15.9},pied:{m:71,s:4.6}},
+"37-38":{masse:{m:2813.1,s:395.3},VT:{m:492.5,s:24.9},VC:{m:342,s:17.5},PC:{m:328.1,s:16.2},pied:{m:74,s:4.7}},
+"39-40":{masse:{m:3095.1,s:452.2},VT:{m:512.5,s:25.7},VC:{m:356.5,s:17.9},PC:{m:339.1,s:16.6},pied:{m:76,s:4.9}},
+"41-42":{masse:{m:3254.9,s:513.1},VT:{m:530.9,s:26.5},VC:{m:370,s:18.4},PC:{m:348.6,s:17},pied:{m:77,s:5.1}}
+};
+
+// --- Guihard-Costa 2002 (organes) ---
+const GC_O={
+"13-14":{thymus:{m:0.09,s:0.07},coeur:{m:0.24,s:0.13},poumons:{m:1.26,s:0.5},foie:{m:3.09,s:0.27},rate:{m:0.06,s:0.04},pancreas:{m:0.09,s:0.01},surrenales:{m:0.29,s:0.11},reins:{m:0.41,s:0.22}},
+"15-16":{thymus:{m:0.17,s:0.12},coeur:{m:0.82,s:0.23},poumons:{m:2.99,s:1.08},foie:{m:5.81,s:1.71},rate:{m:0.12,s:0.08},pancreas:{m:0.28,s:0.08},surrenales:{m:0.56,s:0.19},reins:{m:0.71,s:0.35}},
+"17-18":{thymus:{m:0.31,s:0.19},coeur:{m:1.44,s:0.37},poumons:{m:5.09,s:1.81},foie:{m:9.39,s:3.33},rate:{m:0.23,s:0.13},pancreas:{m:0.42,s:0.16},surrenales:{m:0.91,s:0.31},reins:{m:1.38,s:0.53}},
+"19-20":{thymus:{m:0.53,s:0.3},coeur:{m:2.21,s:0.56},poumons:{m:7.68,s:2.68},foie:{m:14.33,s:5.15},rate:{m:0.38,s:0.2},pancreas:{m:0.57,s:0.24},surrenales:{m:1.32,s:0.46},reins:{m:2.41,s:0.76}},
+"21-22":{thymus:{m:0.87,s:0.45},coeur:{m:3.23,s:0.79},poumons:{m:10.84,s:3.67},foie:{m:21,s:7.15},rate:{m:0.62,s:0.29},pancreas:{m:0.78,s:0.34},surrenales:{m:1.79,s:0.63},reins:{m:3.84,s:1.05}},
+"23-24":{thymus:{m:1.35,s:0.64},coeur:{m:4.55,s:1.07},poumons:{m:14.65,s:4.75},foie:{m:29.63,s:9.35},rate:{m:0.96,s:0.42},pancreas:{m:1.08,s:0.45},surrenales:{m:2.33,s:0.81},reins:{m:5.64,s:1.4}},
+"25-26":{thymus:{m:2.01,s:0.89},coeur:{m:6.21,s:1.39},poumons:{m:19.09,s:5.92},foie:{m:40.27,s:11.75},rate:{m:1.44,s:0.59},pancreas:{m:1.47,s:0.57},surrenales:{m:2.92,s:1.01},reins:{m:7.78,s:1.79}},
+"27-28":{thymus:{m:2.92,s:1.21},coeur:{m:8.2,s:1.76},poumons:{m:24.15,s:7.16},foie:{m:52.89,s:14.33},rate:{m:2.09,s:0.8},pancreas:{m:1.98,s:0.7},surrenales:{m:3.57,s:1.22},reins:{m:10.22,s:2.24}},
+"29-30":{thymus:{m:4.14,s:1.61},coeur:{m:10.48,s:2.17},poumons:{m:29.79,s:8.47},foie:{m:67.29,s:17.1},rate:{m:2.95,s:1.06},pancreas:{m:2.58,s:0.84},surrenales:{m:4.3,s:1.43},reins:{m:12.9,s:2.74}},
+"31-32":{thymus:{m:5.72,s:2.1},coeur:{m:12.98,s:2.63},poumons:{m:35.9,s:9.8},foie:{m:83.1,s:20.07},rate:{m:4.08,s:1.39},pancreas:{m:3.26,s:0.98},surrenales:{m:5.08,s:1.63},reins:{m:15.73,s:3.3}},
+"33-34":{thymus:{m:7.75,s:2.7},coeur:{m:15.6,s:3.14},poumons:{m:42.36,s:11.17},foie:{m:99.87,s:23.23},rate:{m:5.53,s:1.78},pancreas:{m:3.97,s:1.14},surrenales:{m:5.93,s:1.83},reins:{m:18.62,s:3.92}},
+"35-36":{thymus:{m:10.33,s:3.42},coeur:{m:18.21,s:3.69},poumons:{m:48.98,s:12.54},foie:{m:116.97,s:26.58},rate:{m:7.35,s:2.25},pancreas:{m:4.66,s:1.31},surrenales:{m:6.83,s:2.01},reins:{m:21.46,s:4.58}},
+"37-38":{thymus:{m:13.54,s:4.27},coeur:{m:20.63,s:4.28},poumons:{m:55.59,s:13.9},foie:{m:133.64,s:30.12},rate:{m:9.63,s:2.82},pancreas:{m:5.26,s:1.49},surrenales:{m:7.79,s:2.18},reins:{m:24.12,s:5.29}},
+"39-40":{thymus:{m:17.5,s:5.27},coeur:{m:22.68,s:4.92},poumons:{m:61.94,s:15.25},foie:{m:148.97,s:33.85},rate:{m:12.43,s:3.48},pancreas:{m:5.71,s:1.67},surrenales:{m:8.83,s:2.33},reins:{m:26.45,s:6.07}},
+"41-42":{thymus:{m:22.34,s:6.44},coeur:{m:24.49,s:5.58},poumons:{m:67.6,s:16.55},foie:{m:161.94,s:37.78},rate:{m:15.85,s:4.25},pancreas:{m:5.9,s:1.87},surrenales:{m:9.92,s:2.45},reins:{m:28.28,s:6.89}}
+};
+
+// --- Maroun (mean & SD by SA, keys match original) ---
+const MAR_M={
+12:{FL:9,CR:7.4,CH:9.8,HDC:7.1,Body:29.6,brain:4.8,"liver 0 1":1.5,"liver 2":1.4,"liver 3":1.3,"lungs 0 1":0.6,"lungs 2 3":0.9,heart:0.1,"thymus 0 1":0.03,"thymus 2":null,"thymus 3":null,"spleen 0 1":0.01,"spleen 2 3":null,"kidneys 0 1":0.25,"kidneys 2 3":0.19,"adrenals 0 1":0.04,"adrenals 2 3":0.11},
+13:{FL:12,CR:8.7,CH:11.8,HDC:8.5,Body:37.4,brain:6.5,"liver 0 1":2.0,"liver 2":1.7,"liver 3":1.7,"lungs 0 1":1.2,"lungs 2 3":1.2,heart:0.2,"thymus 0 1":0.04,"thymus 2":null,"thymus 3":null,"spleen 0 1":0.02,"spleen 2 3":0.08,"kidneys 0 1":0.3,"kidneys 2 3":0.2,"adrenals 0 1":0.17,"adrenals 2 3":0.17},
+14:{FL:15,CR:9.9,CH:13.7,HDC:9.8,Body:53,brain:9.1,"liver 0 1":2.9,"liver 2":2.4,"liver 3":2.3,"lungs 0 1":2,"lungs 2 3":1.5,heart:0.3,"thymus 0 1":0.05,"thymus 2":0.07,"thymus 3":0.05,"spleen 0 1":0.04,"spleen 2 3":0.14,"kidneys 0 1":0.4,"kidneys 2 3":0.3,"adrenals 0 1":0.3,"adrenals 2 3":0.2},
+15:{FL:18,CR:11.1,CH:15.6,HDC:11.1,Body:76.5,brain:12.7,"liver 0 1":4.2,"liver 2":3.3,"liver 3":3.2,"lungs 0 1":2.9,"lungs 2 3":2.1,heart:0.5,"thymus 0 1":0.07,"thymus 2":0.08,"thymus 3":0.06,"spleen 0 1":0.06,"spleen 2 3":0.17,"kidneys 0 1":0.6,"kidneys 2 3":0.5,"adrenals 0 1":0.5,"adrenals 2 3":0.3},
+16:{FL:21,CR:12.4,CH:17.5,HDC:12.4,Body:108,brain:17.3,"liver 0 1":5.9,"liver 2":4.5,"liver 3":4.2,"lungs 0 1":3.9,"lungs 2 3":2.7,heart:0.8,"thymus 0 1":0.11,"thymus 2":0.12,"thymus 3":0.09,"spleen 0 1":0.09,"spleen 2 3":0.17,"kidneys 0 1":0.9,"kidneys 2 3":0.8,"adrenals 0 1":0.6,"adrenals 2 3":0.4},
+17:{FL:24,CR:13.5,CH:19.3,HDC:13.6,Body:147,brain:22.9,"liver 0 1":8.1,"liver 2":6.1,"liver 3":5.4,"lungs 0 1":5.1,"lungs 2 3":3.5,heart:1,thymus_01:0.18,"thymus 0 1":0.18,"thymus 2":0.18,"thymus 3":0.12,"spleen 0 1":0.13,"spleen 2 3":0.16,"kidneys 0 1":1.3,"kidneys 2 3":1.1,"adrenals 0 1":0.8,"adrenals 2 3":0.5},
+18:{FL:27,CR:14.7,CH:21.1,HDC:14.8,Body:194,brain:29.4,"liver 0 1":10.7,"liver 2":7.9,"liver 3":6.8,"lungs 0 1":6.4,"lungs 2 3":4.4,heart:1.4,"thymus 0 1":0.3,"thymus 2":0.3,"thymus 3":0.2,"spleen 0 1":0.19,"spleen 2 3":0.15,"kidneys 0 1":1.8,"kidneys 2 3":1.5,"adrenals 0 1":1,"adrenals 2 3":0.7},
+19:{FL:30,CR:15.9,CH:22.9,HDC:16,Body:249,brain:37,"liver 0 1":13.8,"liver 2":10.1,"liver 3":8.4,"lungs 0 1":7.9,"lungs 2 3":5.4,heart:1.7,"thymus 0 1":0.4,"thymus 2":0.4,"thymus 3":0.3,"spleen 0 1":0.3,"spleen 2 3":0.15,"kidneys 0 1":2.4,"kidneys 2 3":2,"adrenals 0 1":1.2,"adrenals 2 3":0.8},
+20:{FL:33,CR:17,CH:24.6,HDC:17.2,Body:312,brain:45.5,"liver 0 1":17.2,"liver 2":12.5,"liver 3":10.2,"lungs 0 1":9.5,"lungs 2 3":6.5,heart:2.1,"thymus 0 1":0.6,"thymus 2":0.5,"thymus 3":0.3,"spleen 0 1":0.4,"spleen 2 3":0.17,"kidneys 0 1":3,"kidneys 2 3":2.5,"adrenals 0 1":1.4,"adrenals 2 3":1},
+21:{FL:36,CR:18.2,CH:26.3,HDC:18.3,Body:382,brain:55,"liver 0 1":21.1,"liver 2":15.2,"liver 3":12.3,"lungs 0 1":11.2,"lungs 2 3":7.8,heart:2.6,"thymus 0 1":0.8,"thymus 2":0.7,"thymus 3":0.4,"spleen 0 1":0.5,"spleen 2 3":0.22,"kidneys 0 1":3.8,"kidneys 2 3":3.1,"adrenals 0 1":1.7,"adrenals 2 3":1.2},
+22:{FL:39,CR:19.3,CH:28,HDC:19.4,Body:461,brain:65.4,"liver 0 1":25.5,"liver 2":18.2,"liver 3":14.5,"lungs 0 1":13.1,"lungs 2 3":9.2,heart:3.1,"thymus 0 1":1,"thymus 2":0.9,"thymus 3":0.6,"spleen 0 1":0.7,"spleen 2 3":0.3,"kidneys 0 1":4.6,"kidneys 2 3":3.8,"adrenals 0 1":1.9,"adrenals 2 3":1.4},
+23:{FL:41,CR:20.4,CH:29.6,HDC:20.5,Body:547,brain:76.9,"liver 0 1":30.2,"liver 2":21.6,"liver 3":16.9,"lungs 0 1":15.1,"lungs 2 3":10.7,heart:3.6,"thymus 0 1":1.3,"thymus 2":1.1,"thymus 3":0.7,"spleen 0 1":0.9,"spleen 2 3":0.4,"kidneys 0 1":5.5,"kidneys 2 3":4.6,"adrenals 0 1":2.2,"adrenals 2 3":1.6},
+24:{FL:44,CR:21.5,CH:31.2,HDC:21.6,Body:641,brain:89.3,"liver 0 1":35.4,"liver 2":25.2,"liver 3":19.5,"lungs 0 1":17.3,"lungs 2 3":12.4,heart:4.2,"thymus 0 1":1.6,"thymus 2":1.3,"thymus 3":0.8,"spleen 0 1":1.1,"spleen 2 3":0.6,"kidneys 0 1":6.5,"kidneys 2 3":5.5,"adrenals 0 1":2.5,"adrenals 2 3":1.8},
+25:{FL:47,CR:22.6,CH:32.8,HDC:22.6,Body:743,brain:103,"liver 0 1":41.1,"liver 2":29.1,"liver 3":22.3,"lungs 0 1":19.6,"lungs 2 3":14.1,heart:4.9,"thymus 0 1":1.9,"thymus 2":1.6,"thymus 3":1,"spleen 0 1":1.4,"spleen 2 3":0.8,"kidneys 0 1":7.6,"kidneys 2 3":6.4,"adrenals 0 1":2.8,"adrenals 2 3":2},
+26:{FL:50,CR:23.6,CH:34.3,HDC:23.6,Body:853,brain:117,"liver 0 1":47.1,"liver 2":33.4,"liver 3":25.3,"lungs 0 1":22,"lungs 2 3":16,heart:5.6,"thymus 0 1":2.3,"thymus 2":1.9,"thymus 3":1.2,"spleen 0 1":1.7,"spleen 2 3":1.1,"kidneys 0 1":8.8,"kidneys 2 3":7.4,"adrenals 0 1":3.1,"adrenals 2 3":2.3},
+27:{FL:52,CR:24.7,CH:35.8,HDC:24.5,Body:971,brain:133,"liver 0 1":53.6,"liver 2":37.9,"liver 3":28.6,"lungs 0 1":24.6,"lungs 2 3":18,heart:6.3,"thymus 0 1":2.6,"thymus 2":2.2,"thymus 3":1.4,"spleen 0 1":2.1,"spleen 2 3":1.4,"kidneys 0 1":10.1,"kidneys 2 3":8.4,"adrenals 0 1":3.4,"adrenals 2 3":2.5},
+28:{FL:55,CR:25.7,CH:37.3,HDC:25.5,Body:1096,brain:149,"liver 0 1":60.6,"liver 2":42.7,"liver 3":32,"lungs 0 1":27.4,"lungs 2 3":20.2,heart:7.1,"thymus 0 1":3.1,"thymus 2":2.5,"thymus 3":1.6,"spleen 0 1":2.5,"spleen 2 3":1.8,"kidneys 0 1":11.4,"kidneys 2 3":9.6,"adrenals 0 1":3.7,"adrenals 2 3":2.8},
+29:{FL:57,CR:26.7,CH:38.7,HDC:26.4,Body:1230,brain:166,"liver 0 1":67.9,"liver 2":47.8,"liver 3":35.6,"lungs 0 1":30.2,"lungs 2 3":22.5,heart:7.9,"thymus 0 1":3.5,"thymus 2":2.9,"thymus 3":1.8,"spleen 0 1":3,"spleen 2 3":2.2,"kidneys 0 1":12.9,"kidneys 2 3":10.8,"adrenals 0 1":4.1,"adrenals 2 3":3.1},
+30:{FL:60,CR:27.7,CH:40.1,HDC:27.2,Body:1371,brain:185,"liver 0 1":75.7,"liver 2":53.3,"liver 3":39.4,"lungs 0 1":33.2,"lungs 2 3":24.9,heart:8.7,"thymus 0 1":4,"thymus 2":3.3,"thymus 3":2.1,"spleen 0 1":3.6,"spleen 2 3":2.7,"kidneys 0 1":14.4,"kidneys 2 3":12.1,"adrenals 0 1":4.5,"adrenals 2 3":3.4},
+31:{FL:62,CR:28.7,CH:41.4,HDC:28.1,Body:1520,brain:204,"liver 0 1":83.9,"liver 2":59,"liver 3":43.4,"lungs 0 1":36.3,"lungs 2 3":27.4,heart:9.6,"thymus 0 1":4.5,"thymus 2":3.7,"thymus 3":2.3,"spleen 0 1":4.2,"spleen 2 3":3.3,"kidneys 0 1":16,"kidneys 2 3":13.4,"adrenals 0 1":4.8,"adrenals 2 3":3.8},
+32:{FL:64,CR:29.7,CH:42.8,HDC:28.9,Body:1677,brain:224,"liver 0 1":92.6,"liver 2":65,"liver 3":47.6,"lungs 0 1":39.6,"lungs 2 3":30,heart:10.6,"thymus 0 1":5,"thymus 2":4.2,"thymus 3":2.6,"spleen 0 1":4.8,"spleen 2 3":3.9,"kidneys 0 1":17.7,"kidneys 2 3":14.9,"adrenals 0 1":5.2,"adrenals 2 3":4.1},
+33:{FL:67,CR:30.6,CH:44,HDC:29.7,Body:1842,brain:245,"liver 0 1":102,"liver 2":71.3,"liver 3":52.1,"lungs 0 1":43,"lungs 2 3":32.8,heart:11.6,"thymus 0 1":5.6,"thymus 2":4.6,"thymus 3":2.9,"spleen 0 1":5.5,"spleen 2 3":4.5,"kidneys 0 1":19.5,"kidneys 2 3":16.4,"adrenals 0 1":5.6,"adrenals 2 3":4.5},
+34:{FL:69,CR:31.6,CH:45.3,HDC:30.5,Body:2015,brain:268,"liver 0 1":111,"liver 2":77.9,"liver 3":56.7,"lungs 0 1":46.6,"lungs 2 3":35.7,heart:12.6,"thymus 0 1":6.2,"thymus 2":5.1,"thymus 3":3.2,"spleen 0 1":6.3,"spleen 2 3":5.2,"kidneys 0 1":21.4,"kidneys 2 3":18,"adrenals 0 1":6,"adrenals 2 3":4.8},
+35:{FL:71,CR:32.5,CH:46.5,HDC:31.2,Body:2195,brain:291,"liver 0 1":121,"liver 2":84.8,"liver 3":61.5,"lungs 0 1":50.3,"lungs 2 3":38.7,heart:13.7,"thymus 0 1":6.9,"thymus 2":5.7,"thymus 3":3.5,"spleen 0 1":7.2,"spleen 2 3":6,"kidneys 0 1":23.3,"kidneys 2 3":19.6,"adrenals 0 1":6.5,"adrenals 2 3":5.2},
+36:{FL:73,CR:33.4,CH:47.7,HDC:31.9,Body:2383,brain:315,"liver 0 1":132,"liver 2":92.1,"liver 3":66.5,"lungs 0 1":54.1,"lungs 2 3":41.9,heart:14.8,"thymus 0 1":7.5,"thymus 2":6.2,"thymus 3":3.8,"spleen 0 1":8.1,"spleen 2 3":6.7,"kidneys 0 1":25.4,"kidneys 2 3":21.4,"adrenals 0 1":6.9,"adrenals 2 3":5.6},
+37:{FL:76,CR:34.3,CH:48.9,HDC:32.6,Body:2580,brain:340,"liver 0 1":142,"liver 2":100,"liver 3":71.7,"lungs 0 1":58.1,"lungs 2 3":45.1,heart:16,"thymus 0 1":8.2,"thymus 2":6.8,"thymus 3":4.2,"spleen 0 1":9.1,"spleen 2 3":7.5,"kidneys 0 1":27.5,"kidneys 2 3":23.2,"adrenals 0 1":7.4,"adrenals 2 3":6},
+38:{FL:78,CR:35.2,CH:50,HDC:33.2,Body:2784,brain:366,"liver 0 1":154,"liver 2":107,"liver 3":77.2,"lungs 0 1":62.2,"lungs 2 3":48.5,heart:17.2,"thymus 0 1":8.9,"thymus 2":7.4,"thymus 3":3.9,"spleen 0 1":10.1,"spleen 2 3":8.3,"kidneys 0 1":29.8,"kidneys 2 3":25,"adrenals 0 1":7.8,"adrenals 2 3":6.5},
+39:{FL:80,CR:36.1,CH:51.1,HDC:33.8,Body:2996,brain:394,"liver 0 1":165,"liver 2":116,"liver 3":82.8,"lungs 0 1":66.5,"lungs 2 3":52.1,heart:18.5,"thymus 0 1":9.7,"thymus 2":8,"thymus 3":5,"spleen 0 1":11.2,"spleen 2 3":9.1,"kidneys 0 1":32.1,"kidneys 2 3":27,"adrenals 0 1":8.3,"adrenals 2 3":6.9},
+40:{FL:82,CR:37,CH:52.1,HDC:34.4,Body:3215,brain:422,"liver 0 1":177,"liver 2":124,"liver 3":88.6,"lungs 0 1":70.9,"lungs 2 3":55.7,heart:19.8,"thymus 0 1":10.5,"thymus 2":8.6,"thymus 3":5.4,"spleen 0 1":12.4,"spleen 2 3":9.9,"kidneys 0 1":34.5,"kidneys 2 3":29,"adrenals 0 1":8.8,"adrenals 2 3":7.4},
+41:{FL:84,CR:37.8,CH:53.1,HDC:35,Body:3443,brain:451,"liver 0 1":190,"liver 2":133,"liver 3":94.6,"lungs 0 1":75.4,"lungs 2 3":59.5,heart:21.2,"thymus 0 1":11.3,"thymus 2":9.3,"thymus 3":5.8,"spleen 0 1":13.7,"spleen 2 3":10.7,"kidneys 0 1":37,"kidneys 2 3":31.1,"adrenals 0 1":9.3,"adrenals 2 3":7.9},
+42:{FL:86,CR:38.6,CH:54.1,HDC:35.5,Body:3678,brain:481,"liver 0 1":203,"liver 2":142,"liver 3":101,"lungs 0 1":80.1,"lungs 2 3":63.4,heart:22.5,"thymus 0 1":12.2,"thymus 2":10,"thymus 3":6.2,"spleen 0 1":15,"spleen 2 3":11.5,"kidneys 0 1":39.6,"kidneys 2 3":33.3,"adrenals 0 1":9.9,"adrenals 2 3":8.4},
+43:{FL:88,CR:39.4,CH:55,HDC:36,Body:3922,brain:512,"liver 0 1":216,"liver 2":151,"liver 3":107,"lungs 0 1":84.9,"lungs 2 3":67.4,heart:24,"thymus 0 1":13.1,"thymus 2":10.7,"thymus 3":6.6,"spleen 0 1":16.4,"spleen 2 3":12.2,"kidneys 0 1":42.2,"kidneys 2 3":35.5,"adrenals 0 1":10.4,"adrenals 2 3":8.9}
+};
+const MAR_S={
+12:{FL:3,CR:1.1,CH:1.7,HDC:1.1,Body:14.9,brain:1.4,"liver 0 1":1.2,"liver 2":1.2,"liver 3":1.2,"lungs 0 1":0.9,"lungs 2 3":0.9,heart:0.14,"thymus 0 1":0.06,"thymus 2":null,"thymus 3":null,"spleen 0 1":0.02,"spleen 2 3":null,"kidneys 0 1":0.15,"kidneys 2 3":0.15,"adrenals 0 1":0.18,"adrenals 2 3":0.18},
+13:{FL:3,CR:1.2,CH:1.8,HDC:1.2,Body:14.9,brain:1.4,"liver 0 1":1.2,"liver 2":1.2,"liver 3":1.2,"lungs 0 1":0.9,"lungs 2 3":0.9,heart:0.14,"thymus 0 1":0.06,"thymus 2":null,"thymus 3":null,"spleen 0 1":0.03,"spleen 2 3":0.03,"kidneys 0 1":0.1,"kidneys 2 3":0.1,"adrenals 0 1":0.18,"adrenals 2 3":0.18},
+14:{FL:3,CR:1.2,CH:1.8,HDC:1.2,Body:14.9,brain:2.5,"liver 0 1":1.2,"liver 2":1.2,"liver 3":1.2,"lungs 0 1":0.9,"lungs 2 3":0.9,heart:0.1,"thymus 0 1":0.06,"thymus 2":0.06,"thymus 3":0.06,"spleen 0 1":0.04,"spleen 2 3":0.04,"kidneys 0 1":0.1,"kidneys 2 3":0.1,"adrenals 0 1":0.2,"adrenals 2 3":0.2},
+15:{FL:3,CR:1.2,CH:1.8,HDC:1.2,Body:18.5,brain:3.9,"liver 0 1":1.2,"liver 2":1.2,"liver 3":1.2,"lungs 0 1":0.9,"lungs 2 3":0.9,heart:0.1,"thymus 0 1":0.06,"thymus 2":0.06,"thymus 3":0.06,"spleen 0 1":0.06,"spleen 2 3":0.06,"kidneys 0 1":0.3,"kidneys 2 3":0.3,"adrenals 0 1":0.2,"adrenals 2 3":0.2},
+16:{FL:3,CR:1.3,CH:1.8,HDC:1.3,Body:41,brain:5.4,"liver 0 1":1.5,"liver 2":1.5,"liver 3":1.5,"lungs 0 1":1.2,"lungs 2 3":1.2,heart:0.2,"thymus 0 1":0.06,"thymus 2":0.06,"thymus 3":0.06,"spleen 0 1":0.08,"spleen 2 3":0.08,"kidneys 0 1":0.4,"kidneys 2 3":0.4,"adrenals 0 1":0.3,"adrenals 2 3":0.3},
+17:{FL:3,CR:1.3,CH:1.9,HDC:1.3,Body:53,brain:6.9,"liver 0 1":3,"liver 2":3,"liver 3":3,"lungs 0 1":1.7,"lungs 2 3":1.7,heart:0.4,"thymus 0 1":0.06,"thymus 2":0.06,"thymus 3":0.06,"spleen 0 1":0.12,"spleen 2 3":0.12,"kidneys 0 1":0.6,"kidneys 2 3":0.6,"adrenals 0 1":0.4,"adrenals 2 3":0.4},
+18:{FL:3,CR:1.3,CH:1.9,HDC:1.3,Body:65,brain:8.4,"liver 0 1":4.5,"liver 2":4.5,"liver 3":4.5,"lungs 0 1":2.3,"lungs 2 3":2.3,heart:0.5,"thymus 0 1":0.2,"thymus 2":0.2,"thymus 3":0.2,"spleen 0 1":0.17,"spleen 2 3":0.17,"kidneys 0 1":0.8,"kidneys 2 3":0.8,"adrenals 0 1":0.4,"adrenals 2 3":0.4},
+19:{FL:3,CR:1.3,CH:1.9,HDC:1.3,Body:78,brain:9.8,"liver 0 1":6,"liver 2":6,"liver 3":6,"lungs 0 1":2.8,"lungs 2 3":2.8,heart:0.7,"thymus 0 1":0.3,"thymus 2":0.3,"thymus 3":0.3,"spleen 0 1":0.2,"spleen 2 3":0.22,"kidneys 0 1":1,"kidneys 2 3":1,"adrenals 0 1":0.5,"adrenals 2 3":0.5},
+20:{FL:3,CR:1.4,CH:1.9,HDC:1.4,Body:92,brain:11.3,"liver 0 1":7.5,"liver 2":7.5,"liver 3":7.5,"lungs 0 1":3.4,"lungs 2 3":3.4,heart:0.8,"thymus 0 1":0.4,"thymus 2":0.4,"thymus 3":0.4,"spleen 0 1":0.3,"spleen 2 3":0.29,"kidneys 0 1":1.2,"kidneys 2 3":1.2,"adrenals 0 1":0.6,"adrenals 2 3":0.6},
+21:{FL:3,CR:1.4,CH:2,HDC:1.4,Body:107,brain:12.8,"liver 0 1":9,"liver 2":9,"liver 3":9,"lungs 0 1":4,"lungs 2 3":4,heart:1,"thymus 0 1":0.5,"thymus 2":0.5,"thymus 3":0.5,"spleen 0 1":0.4,"spleen 2 3":0.36,"kidneys 0 1":1.4,"kidneys 2 3":1.4,"adrenals 0 1":0.7,"adrenals 2 3":0.7},
+22:{FL:3,CR:1.4,CH:2,HDC:1.4,Body:122,brain:14.3,"liver 0 1":10.4,"liver 2":10.4,"liver 3":10.4,"lungs 0 1":4.6,"lungs 2 3":4.6,heart:1.1,"thymus 0 1":0.6,"thymus 2":0.6,"thymus 3":0.6,"spleen 0 1":0.4,"spleen 2 3":0.4,"kidneys 0 1":1.6,"kidneys 2 3":1.6,"adrenals 0 1":0.8,"adrenals 2 3":0.8},
+23:{FL:4,CR:1.5,CH:2,HDC:1.4,Body:122,brain:15.8,"liver 0 1":11.9,"liver 2":11.9,"liver 3":11.9,"lungs 0 1":5.3,"lungs 2 3":5.3,heart:1.3,"thymus 0 1":0.8,"thymus 2":0.8,"thymus 3":0.8,"spleen 0 1":0.5,"spleen 2 3":0.5,"kidneys 0 1":1.9,"kidneys 2 3":1.9,"adrenals 0 1":0.8,"adrenals 2 3":0.8},
+24:{FL:4,CR:1.5,CH:2,HDC:1.5,Body:137,brain:17.2,"liver 0 1":13.4,"liver 2":13.4,"liver 3":13.4,"lungs 0 1":5.9,"lungs 2 3":5.9,heart:1.4,"thymus 0 1":0.9,"thymus 2":0.9,"thymus 3":0.9,"spleen 0 1":0.6,"spleen 2 3":0.6,"kidneys 0 1":2.1,"kidneys 2 3":2.1,"adrenals 0 1":0.9,"adrenals 2 3":0.9},
+25:{FL:4,CR:1.5,CH:2.1,HDC:1.5,Body:154,brain:19,"liver 0 1":14.9,"liver 2":14.9,"liver 3":14.9,"lungs 0 1":6.6,"lungs 2 3":6.6,heart:1.6,"thymus 0 1":1.1,"thymus 2":1.1,"thymus 3":1.1,"spleen 0 1":0.7,"spleen 2 3":0.7,"kidneys 0 1":2.4,"kidneys 2 3":2.4,"adrenals 0 1":1,"adrenals 2 3":1},
+26:{FL:4,CR:1.5,CH:2.1,HDC:1.5,Body:171,brain:20,"liver 0 1":16.4,"liver 2":16.4,"liver 3":16.4,"lungs 0 1":7.3,"lungs 2 3":7.3,heart:1.7,"thymus 0 1":1.2,"thymus 2":1.2,"thymus 3":1.2,"spleen 0 1":0.9,"spleen 2 3":0.9,"kidneys 0 1":2.7,"kidneys 2 3":2.7,"adrenals 0 1":1.1,"adrenals 2 3":1.1},
+27:{FL:4,CR:1.6,CH:2.1,HDC:1.5,Body:188,brain:22,"liver 0 1":17.9,"liver 2":17.9,"liver 3":17.9,"lungs 0 1":8,"lungs 2 3":8,heart:1.8,"thymus 0 1":1.4,"thymus 2":1.4,"thymus 3":1.4,"spleen 0 1":1,"spleen 2 3":1,"kidneys 0 1":3,"kidneys 2 3":3,"adrenals 0 1":1.2,"adrenals 2 3":1.2},
+28:{FL:4,CR:1.6,CH:2.2,HDC:1.6,Body:206,brain:23,"liver 0 1":19.3,"liver 2":19.3,"liver 3":19.3,"lungs 0 1":8.7,"lungs 2 3":8.7,heart:2,"thymus 0 1":1.6,"thymus 2":1.6,"thymus 3":1.6,"spleen 0 1":1.1,"spleen 2 3":1.1,"kidneys 0 1":3.3,"kidneys 2 3":3.3,"adrenals 0 1":1.3,"adrenals 2 3":1.3},
+29:{FL:4,CR:1.6,CH:2.2,HDC:1.6,Body:225,brain:25,"liver 0 1":20.8,"liver 2":20.8,"liver 3":20.8,"lungs 0 1":9.5,"lungs 2 3":9.5,heart:2.1,"thymus 0 1":1.8,"thymus 2":1.8,"thymus 3":1.8,"spleen 0 1":1.3,"spleen 2 3":1.3,"kidneys 0 1":3.6,"kidneys 2 3":3.6,"adrenals 0 1":1.4,"adrenals 2 3":1.4},
+30:{FL:4,CR:1.6,CH:2.2,HDC:1.6,Body:244,brain:26,"liver 0 1":22.3,"liver 2":22.3,"liver 3":22.3,"lungs 0 1":10.2,"lungs 2 3":10.2,heart:2.3,"thymus 0 1":2.1,"thymus 2":2.1,"thymus 3":2.1,"spleen 0 1":1.4,"spleen 2 3":1.4,"kidneys 0 1":3.9,"kidneys 2 3":3.9,"adrenals 0 1":1.4,"adrenals 2 3":1.4},
+31:{FL:4,CR:1.7,CH:2.2,HDC:1.7,Body:264,brain:28,"liver 0 1":23.8,"liver 2":23.8,"liver 3":23.8,"lungs 0 1":11,"lungs 2 3":11,heart:2.4,"thymus 0 1":2.3,"thymus 2":2.3,"thymus 3":2.3,"spleen 0 1":1.6,"spleen 2 3":1.6,"kidneys 0 1":4.3,"kidneys 2 3":4.3,"adrenals 0 1":1.5,"adrenals 2 3":1.5},
+32:{FL:4,CR:1.7,CH:2.3,HDC:1.7,Body:285,brain:29,"liver 0 1":25.3,"liver 2":25.3,"liver 3":25.3,"lungs 0 1":11.8,"lungs 2 3":11.8,heart:2.6,"thymus 0 1":2.5,"thymus 2":2.5,"thymus 3":2.5,"spleen 0 1":1.8,"spleen 2 3":1.8,"kidneys 0 1":4.6,"kidneys 2 3":4.6,"adrenals 0 1":1.6,"adrenals 2 3":1.6},
+33:{FL:4,CR:1.7,CH:2.3,HDC:1.7,Body:306,brain:31,"liver 0 1":27,"liver 2":26.7,"liver 3":26.7,"lungs 0 1":12.6,"lungs 2 3":12.6,heart:2.7,"thymus 0 1":2.8,"thymus 2":2.8,"thymus 3":2.8,"spleen 0 1":1.9,"spleen 2 3":1.9,"kidneys 0 1":5,"kidneys 2 3":5,"adrenals 0 1":1.7,"adrenals 2 3":1.7},
+34:{FL:4,CR:1.8,CH:2.3,HDC:1.7,Body:328,brain:32,"liver 0 1":28,"liver 2":28.2,"liver 3":28.2,"lungs 0 1":13.5,"lungs 2 3":13.5,heart:2.9,"thymus 0 1":3.1,"thymus 2":3.1,"thymus 3":3.1,"spleen 0 1":2.1,"spleen 2 3":2.1,"kidneys 0 1":5.4,"kidneys 2 3":5.4,"adrenals 0 1":1.8,"adrenals 2 3":1.8},
+35:{FL:5,CR:1.8,CH:2.3,HDC:1.8,Body:350,brain:33,"liver 0 1":30,"liver 2":29.7,"liver 3":29.7,"lungs 0 1":14.3,"lungs 2 3":14.3,heart:3,"thymus 0 1":3.3,"thymus 2":3.3,"thymus 3":3.3,"spleen 0 1":2.3,"spleen 2 3":2.3,"kidneys 0 1":5.8,"kidneys 2 3":5.8,"adrenals 0 1":1.9,"adrenals 2 3":1.9},
+36:{FL:5,CR:1.8,CH:2.4,HDC:1.8,Body:373,brain:35,"liver 0 1":31,"liver 2":31.2,"liver 3":31.2,"lungs 0 1":15.2,"lungs 2 3":15.2,heart:3.2,"thymus 0 1":3.6,"thymus 2":3.6,"thymus 3":3.6,"spleen 0 1":2.5,"spleen 2 3":2.5,"kidneys 0 1":6.2,"kidneys 2 3":6.2,"adrenals 0 1":2,"adrenals 2 3":2},
+37:{FL:5,CR:1.8,CH:2.4,HDC:1.8,Body:397,brain:36,"liver 0 1":33,"liver 2":33,"liver 3":32.7,"lungs 0 1":16.1,"lungs 2 3":16.1,heart:3.3,"thymus 0 1":3.9,"thymus 2":3.9,"thymus 3":3.9,"spleen 0 1":2.7,"spleen 2 3":2.7,"kidneys 0 1":6.6,"kidneys 2 3":6.6,"adrenals 0 1":2.1,"adrenals 2 3":2.1},
+38:{FL:5,CR:1.9,CH:2.4,HDC:1.8,Body:421,brain:38,"liver 0 1":34,"liver 2":34,"liver 3":34.2,"lungs 0 1":17,"lungs 2 3":17,heart:3.4,"thymus 0 1":4.2,"thymus 2":4.2,"thymus 3":4.2,"spleen 0 1":3,"spleen 2 3":3,"kidneys 0 1":7.1,"kidneys 2 3":7.1,"adrenals 0 1":2.2,"adrenals 2 3":2.2},
+39:{FL:5,CR:1.9,CH:2.4,HDC:1.9,Body:446,brain:39,"liver 0 1":36,"liver 2":36,"liver 3":35.6,"lungs 0 1":18,"lungs 2 3":18,heart:3.6,"thymus 0 1":4.6,"thymus 2":4.6,"thymus 3":4.6,"spleen 0 1":3.2,"spleen 2 3":3.2,"kidneys 0 1":7.5,"kidneys 2 3":7.5,"adrenals 0 1":2.3,"adrenals 2 3":2.3},
+40:{FL:5,CR:1.9,CH:2.5,HDC:1.9,Body:471,brain:41,"liver 0 1":37,"liver 2":37,"liver 3":37.1,"lungs 0 1":18.9,"lungs 2 3":18.9,heart:3.7,"thymus 0 1":4.9,"thymus 2":4.9,"thymus 3":4.9,"spleen 0 1":3.4,"spleen 2 3":3.4,"kidneys 0 1":8,"kidneys 2 3":8,"adrenals 0 1":2.4,"adrenals 2 3":2.4},
+41:{FL:5,CR:1.9,CH:2.5,HDC:1.9,Body:497,brain:42,"liver 0 1":39,"liver 2":39,"liver 3":38.6,"lungs 0 1":19.9,"lungs 2 3":19.9,heart:3.9,"thymus 0 1":5.3,"thymus 2":5.3,"thymus 3":5.3,"spleen 0 1":3.7,"spleen 2 3":3.7,"kidneys 0 1":8.4,"kidneys 2 3":8.4,"adrenals 0 1":2.5,"adrenals 2 3":2.5},
+42:{FL:5,CR:2,CH:2.5,HDC:2,Body:524,brain:44,"liver 0 1":40,"liver 2":40,"liver 3":40,"lungs 0 1":20.9,"lungs 2 3":20.9,heart:4,"thymus 0 1":5.6,"thymus 2":5.6,"thymus 3":5.6,"spleen 0 1":4,"spleen 2 3":4,"kidneys 0 1":8.9,"kidneys 2 3":8.9,"adrenals 0 1":2.6,"adrenals 2 3":2.6},
+43:{FL:5,CR:2,CH:2.5,HDC:2,Body:551,brain:45,"liver 0 1":42,"liver 2":42,"liver 3":42,"lungs 0 1":21.9,"lungs 2 3":21.9,heart:4.2,"thymus 0 1":6,"thymus 2":6,"thymus 3":6,"spleen 0 1":4.2,"spleen 2 3":4.2,"kidneys 0 1":9.4,"kidneys 2 3":9.4,"adrenals 0 1":2.7,"adrenals 2 3":2.7}
+};
+
+// --- Muller-Brochut 2018 biometries (12-20 SA, mean/sd/n) ---
+const MB_B={
+12:{CRL:{m:6.82,s:0.73},CFL:{m:8.85,s:1},HC:{m:7.03,s:0.69},TC:{m:5.97,s:0.68},AC:{m:5.32,s:0.76},Foot:{m:0.9,s:0.12},Hand:{m:0.84,s:0.14},BPD:{m:2,s:1},FOD:{m:2.72,s:0.32},T5:{m:1.59,s:0.15},Humerus:{m:0.71,s:0.11},Femur:{m:0.71,s:0.12},Cerebellum:{m:9.9,s:1.41}},
+13:{CRL:{m:7.99,s:0.78},CFL:{m:11.11,s:1.02},HC:{m:7.99,s:0.82},TC:{m:6.72,s:0.57},AC:{m:5.51,s:0.72},Foot:{m:1.15,s:0.11},Hand:{m:1,s:0.11},BPD:{m:2.24,s:0.19},FOD:{m:2.85,s:0.23},T5:{m:1.85,s:0.18},Humerus:{m:0.93,s:0.13},Femur:{m:0.89,s:0.15},Cerebellum:{m:11.8,s:0.49}},
+14:{CRL:{m:9.51,s:0.82},CFL:{m:13.2,s:1.19},HC:{m:9.2,s:0.89},TC:{m:7.81,s:0.62},AC:{m:6.56,s:0.8},Foot:{m:1.42,s:0.19},Hand:{m:1.27,s:0.16},BPD:{m:2.55,s:0.19},FOD:{m:3.31,s:0.17},T5:{m:2.19,s:0.16},Humerus:{m:1.25,s:0.14},Femur:{m:1.21,s:0.15},Cerebellum:{m:13.01,s:1.09}},
+15:{CRL:{m:10.67,s:0.83},CFL:{m:15.34,s:1.2},HC:{m:10.78,s:1.21},TC:{m:9.08,s:0.79},AC:{m:7.83,s:1.36},Foot:{m:1.72,s:0.19},Hand:{m:1.52,s:0.19},BPD:{m:3.04,s:0.25},FOD:{m:3.71,s:0.24},T5:{m:2.47,s:0.18},Humerus:{m:1.56,s:0.15},Femur:{m:1.55,s:0.15},Cerebellum:{m:13.84,s:0.88}},
+16:{CRL:{m:11.53,s:1.03},CFL:{m:16.77,s:1.21},HC:{m:12.01,s:0.72},TC:{m:10.29,s:0.66},AC:{m:8.42,s:0.99},Foot:{m:2.03,s:0.12},Hand:{m:1.75,s:0.21},BPD:{m:3.42,s:0.20},FOD:{m:4.19,s:0.22},T5:{m:2.75,s:0.15},Humerus:{m:1.85,s:0.14},Femur:{m:1.83,s:0.15},Cerebellum:{m:14.96,s:0.86}},
+17:{CRL:{m:12.73,s:0.55},CFL:{m:18.55,s:0.9},HC:{m:13.27,s:0.79},TC:{m:11.11,s:0.79},AC:{m:8.56,s:1.05},Foot:{m:2.34,s:0.14},Hand:{m:1.97,s:0.16},BPD:{m:3.63,s:0.23},FOD:{m:4.33,s:0.28},T5:{m:2.98,s:0.23},Humerus:{m:2.12,s:0.13},Femur:{m:2.13,s:0.13},Cerebellum:{m:16.25,s:0.88}},
+18:{CRL:{m:13.89,s:0.66},CFL:{m:20.49,s:0.65},HC:{m:14.58,s:0.97},TC:{m:11.9,s:0.88},AC:{m:9.45,s:0.76},Foot:{m:2.62,s:0.21},Hand:{m:2.32,s:0.2},BPD:{m:3.89,s:0.36},FOD:{m:4.93,s:0.22},T5:{m:3.24,s:0.25},Humerus:{m:2.41,s:0.12},Femur:{m:2.45,s:0.17},Cerebellum:{m:17.65,s:0.5}},
+19:{CRL:{m:15.18,s:0.71},CFL:{m:22.88,s:1.58},HC:{m:15.82,s:1.35},TC:{m:12.64,s:0.47},AC:{m:10.34,s:1.3},Foot:{m:2.95,s:0.18},Hand:{m:2.42,s:0.08},BPD:{m:4.3,s:0.28},FOD:{m:5.44,s:0.32},T5:{m:3.4,s:0.2},Humerus:{m:2.75,s:0.12},Femur:{m:2.9,s:0.21},Cerebellum:{m:19.25,s:0.35}},
+20:{CRL:{m:16.67,s:0.46},CFL:{m:25.48,s:1.23},HC:{m:16.88,s:0.68},TC:{m:14.23,s:0.13},AC:{m:11.97,s:1.12},Foot:{m:3.31,s:0.18},Hand:{m:2.72,s:0.15},BPD:{m:4.38,s:0.04},FOD:{m:5.93,s:0.04},T5:{m:3.63,s:0.08},Humerus:{m:3,s:0.11},Femur:{m:3.1,s:0.14},Cerebellum:{m:20,s:0}}
+};
+
+// --- Muller-Brochut 2018 organes (12-20 SA) ---
+const MB_O={
+12:{Fetus:{m:17.86,s:4.80},Brain:{m:3.6,s:2.03},Thymus:{m:0.10,s:0.06},Heart:{m:0.15,s:0.09},Lungs:{m:0.49,s:0.24},Liver:{m:1.15,s:0.43},Spleen:{m:0.05,s:0.07},Kidneys:{m:0.24,s:0.13},Adrenals:{m:0.10,s:0.06},Placenta:{m:39.02,s:42.32},Right_Lung:{m:null},Left_Lung:{m:null},Right_Kidney:{m:null},Left_Kidney:{m:null}},
+13:{Fetus:{m:28.11,s:6.41},Brain:{m:5.26,s:1.14},Thymus:{m:0.14,s:0.06},Heart:{m:0.21,s:0.06},Lungs:{m:0.89,s:0.29},Liver:{m:1.49,s:0.30},Spleen:{m:0.34,s:0.07},Kidneys:{m:0.61,s:0.21},Adrenals:{m:0.12,s:0.05},Placenta:{m:43.86,s:14.91},Right_Lung:{m:0.45,s:0.16},Left_Lung:{m:0.39,s:0.14},Right_Kidney:{m:0.91,s:0.03},Left_Kidney:{m:0.91,s:0.03}},
+14:{Fetus:{m:45.88,s:10.58},Brain:{m:7.96,s:2.03},Thymus:{m:0.11,s:0.05},Heart:{m:0.33,s:0.12},Lungs:{m:1.52,s:0.43},Liver:{m:2.36,s:0.52},Spleen:{m:0.55,s:0.04},Kidneys:{m:0.63,s:0.13},Adrenals:{m:0.25,s:0.08},Placenta:{m:51.64,s:21.53},Right_Lung:{m:0.81,s:0.23},Left_Lung:{m:0.67,s:0.22},Right_Kidney:{m:0.18,s:0.08},Left_Kidney:{m:0.18,s:0.07}},
+15:{Fetus:{m:69.41,s:13.07},Brain:{m:11.33,s:2.21},Thymus:{m:0.17,s:0.06},Heart:{m:0.46,s:0.15},Lungs:{m:2.34,s:0.58},Liver:{m:3.37,s:0.66},Spleen:{m:0.65,s:0.15},Kidneys:{m:1.05,s:0.25},Adrenals:{m:0.41,s:0.33},Placenta:{m:63.44,s:17.18},Right_Lung:{m:1.23,s:0.39},Left_Lung:{m:0.99,s:0.33},Right_Kidney:{m:0.25,s:0.05},Left_Kidney:{m:0.25,s:0.06}},
+16:{Fetus:{m:98.60,s:11.60},Brain:{m:15.48,s:3.19},Thymus:{m:0.19,s:0.05},Heart:{m:0.64,s:0.12},Lungs:{m:3.04,s:0.55},Liver:{m:4.63,s:0.78},Spleen:{m:0.79,s:0.06},Kidneys:{m:1.17,s:0.33},Adrenals:{m:0.47,s:0.36},Placenta:{m:74.24,s:18.09},Right_Lung:{m:1.69,s:0.32},Left_Lung:{m:1.44,s:0.25},Right_Kidney:{m:0.51,s:0.19},Left_Kidney:{m:0.35,s:0.08}},
+17:{Fetus:{m:125.21,s:17.84},Brain:{m:20.13,s:2.62},Thymus:{m:0.22,s:0.13},Heart:{m:0.80,s:0.19},Lungs:{m:3.93,s:0.61},Liver:{m:6.07,s:1.07},Spleen:{m:0.96,s:0.14},Kidneys:{m:1.50,s:0.35},Adrenals:{m:0.61,s:0.28},Placenta:{m:97.24,s:24.08},Right_Lung:{m:2.13,s:0.36},Left_Lung:{m:1.77,s:0.29},Right_Kidney:{m:0.55,s:0.17},Left_Kidney:{m:0.56,s:0.17}},
+18:{Fetus:{m:172.04,s:25.16},Brain:{m:26.26,s:4.48},Thymus:{m:0.24,s:0.06},Heart:{m:1.14,s:0.36},Lungs:{m:4.89,s:0.76},Liver:{m:7.92,s:1.21},Spleen:{m:1.21,s:0.15},Kidneys:{m:1.76,s:0.51},Adrenals:{m:0.90,s:0.23},Placenta:{m:91.64,s:16.91},Right_Lung:{m:2.67,s:0.45},Left_Lung:{m:2.24,s:0.35},Right_Kidney:{m:0.88,s:0.35},Left_Kidney:{m:0.86,s:0.29}},
+19:{Fetus:{m:228.47,s:43.37},Brain:{m:34.58,s:5.02},Thymus:{m:0.29,s:0.09},Heart:{m:1.65,s:0.43},Lungs:{m:6.09,s:0.25},Liver:{m:10.77,s:1.45},Spleen:{m:0.90,s:0.24},Kidneys:{m:2.13,s:0.41},Adrenals:{m:1.05,s:0.24},Placenta:{m:120.83,s:29.96},Right_Lung:{m:3.37,s:0.90},Left_Lung:{m:2.79,s:0.14},Right_Kidney:{m:null},Left_Kidney:{m:null}},
+20:{Fetus:{m:306.50,s:26.71},Brain:{m:46,s:0.57},Thymus:{m:0.26,s:0.14},Heart:{m:1.99,s:0.18},Lungs:{m:6.64,s:1.15},Liver:{m:12.76,s:1.23},Spleen:{m:0.55,s:0.26},Kidneys:{m:2.63,s:0.63},Adrenals:{m:1.27,s:0.32},Placenta:{m:116,s:22.98},Right_Lung:{m:3.63,s:0.95},Left_Lung:{m:2.97,s:0.74},Right_Kidney:{m:1.22,s:0.17},Left_Kidney:{m:1.16,s:0.16}}
+};
+
+// --- Chitty 2002 (P50 et SD, 12-42 SA) ---
+const CHI={};
+(function(){
+const raw={
+12:{Humerus:[7.1,1.8],Ulna:[7.3,1.8],Radius:[5.5,1.7],Femur:[7.7,1.8],Tibia:[7.6,1.7],Fibula:[6.8,1.7],Pied:[8.9,1.6]},
+13:{Humerus:[10.7,1.9],Ulna:[9.6,1.8],Radius:[8.2,1.8],Femur:[10.9,1.8],Tibia:[9.2,1.8],Fibula:[8.5,1.7],Pied:[11.7,1.7]},
+14:{Humerus:[14.1,1.9],Ulna:[12.4,1.9],Radius:[11,1.8],Femur:[14.1,1.9],Tibia:[11.4,1.8],Fibula:[10.8,1.8],Pied:[14.6,1.8]},
+15:{Humerus:[17.3,2],Ulna:[15.3,1.9],Radius:[13.9,1.9],Femur:[17.2,1.9],Tibia:[14.1,1.9],Fibula:[13.5,1.9],Pied:[17.6,1.9]},
+16:{Humerus:[20.4,2],Ulna:[18.2,2],Radius:[16.7,1.9],Femur:[20.3,2],Tibia:[16.9,1.9],Fibula:[16.4,1.9],Pied:[20.6,2]},
+17:{Humerus:[23.4,2],Ulna:[21.2,2],Radius:[19.3,2],Femur:[23.3,2.1],Tibia:[19.9,2],Fibula:[19.3,2],Pied:[23.6,2.1]},
+18:{Humerus:[26.2,2.1],Ulna:[24,2.1],Radius:[21.9,2],Femur:[26.3,2.1],Tibia:[22.8,2],Fibula:[22.2,2],Pied:[26.6,2.2]},
+19:{Humerus:[28.9,2.1],Ulna:[26.8,2.1],Radius:[24.4,2.1],Femur:[29.2,2.2],Tibia:[25.7,2.1],Fibula:[25.1,2.1],Pied:[29.6,2.3]},
+20:{Humerus:[31.5,2.2],Ulna:[29.4,2.2],Radius:[26.7,2.1],Femur:[32.1,2.2],Tibia:[28.5,2.1],Fibula:[27.9,2.1],Pied:[32.6,2.5]},
+21:{Humerus:[34,2.2],Ulna:[32,2.2],Radius:[28.9,2.2],Femur:[34.9,2.3],Tibia:[31.2,2.2],Fibula:[30.5,2.2],Pied:[35.6,2.6]},
+22:{Humerus:[36.3,2.2],Ulna:[34.4,2.3],Radius:[30.9,2.2],Femur:[37.6,2.3],Tibia:[33.8,2.2],Fibula:[33.1,2.2],Pied:[38.6,2.7]},
+23:{Humerus:[38.6,2.3],Ulna:[36.6,2.3],Radius:[32.9,2.3],Femur:[40.3,2.4],Tibia:[36.4,2.3],Fibula:[35.5,2.3],Pied:[41.5,2.8]},
+24:{Humerus:[40.7,2.3],Ulna:[38.8,2.4],Radius:[34.7,2.3],Femur:[42.9,2.5],Tibia:[38.8,2.3],Fibula:[37.9,2.3],Pied:[44.4,2.9]},
+25:{Humerus:[42.8,2.4],Ulna:[40.9,2.4],Radius:[36.5,2.4],Femur:[45.5,2.5],Tibia:[41,2.4],Fibula:[40.1,2.4],Pied:[47.2,3]},
+26:{Humerus:[44.8,2.4],Ulna:[42.8,2.5],Radius:[38.1,2.4],Femur:[48,2.6],Tibia:[43.2,2.4],Fibula:[42.2,2.4],Pied:[50,3.1]},
+27:{Humerus:[46.7,2.4],Ulna:[44.7,2.5],Radius:[39.7,2.4],Femur:[50.4,2.6],Tibia:[45.3,2.5],Fibula:[44.3,2.5],Pied:[52.7,3.2]},
+28:{Humerus:[48.5,2.5],Ulna:[46.5,2.6],Radius:[41.2,2.5],Femur:[52.7,2.7],Tibia:[47.3,2.5],Fibula:[46.2,2.6],Pied:[55.3,3.3]},
+29:{Humerus:[50.2,2.5],Ulna:[48.2,2.6],Radius:[42.6,2.5],Femur:[55,2.8],Tibia:[49.2,2.6],Fibula:[48,2.6],Pied:[57.9,3.4]},
+30:{Humerus:[51.9,2.6],Ulna:[49.8,2.7],Radius:[43.9,2.6],Femur:[57.1,2.8],Tibia:[51,2.6],Fibula:[49.8,2.7],Pied:[60.4,3.5]},
+31:{Humerus:[53.5,2.6],Ulna:[51.3,2.7],Radius:[45.1,2.6],Femur:[59.2,2.9],Tibia:[52.7,2.7],Fibula:[51.5,2.7],Pied:[62.8,3.6]},
+32:{Humerus:[55,2.6],Ulna:[52.7,2.8],Radius:[46.4,2.7],Femur:[61.2,2.9],Tibia:[54.4,2.7],Fibula:[53.1,2.8],Pied:[65.1,3.8]},
+33:{Humerus:[56.4,2.7],Ulna:[54.1,2.8],Radius:[47.5,2.7],Femur:[63.1,3],Tibia:[55.9,2.8],Fibula:[54.6,2.8],Pied:[67.3,3.9]},
+34:{Humerus:[57.8,2.7],Ulna:[55.4,2.9],Radius:[48.6,2.8],Femur:[64.9,3],Tibia:[57.5,2.8],Fibula:[56.1,2.9],Pied:[69.4,4]},
+35:{Humerus:[59.1,2.8],Ulna:[56.7,2.9],Radius:[49.6,2.8],Femur:[66.6,3.1],Tibia:[58.9,2.9],Fibula:[57.5,2.9],Pied:[71.4,4.1]},
+36:{Humerus:[60.3,2.8],Ulna:[57.9,3],Radius:[50.6,2.9],Femur:[68.2,3.2],Tibia:[60.3,2.9],Fibula:[58.8,3],Pied:[73.3,4.2]},
+37:{Humerus:[61.5,2.8],Ulna:[59.1,3],Radius:[51.6,2.9],Femur:[69.7,3.2],Tibia:[61.6,3],Fibula:[60.1,3],Pied:[75,4.3]},
+38:{Humerus:[62.6,2.9],Ulna:[60.2,3.1],Radius:[52.5,3],Femur:[71.1,3.3],Tibia:[62.9,3],Fibula:[61.3,3.1],Pied:[76.7,4.4]},
+39:{Humerus:[63.7,2.9],Ulna:[61.2,3.1],Radius:[53.3,3],Femur:[72.4,3.3],Tibia:[64.1,3.1],Fibula:[62.5,3.1],Pied:[78.2,4.5]},
+40:{Humerus:[64.7,3],Ulna:[62.2,3.2],Radius:[54.2,3],Femur:[73.6,3.4],Tibia:[65.2,3.1],Fibula:[63.6,3.2],Pied:[79.6,4.6]},
+41:{Humerus:[65.6,3],Ulna:[63.2,3.2],Radius:[55,3.1],Femur:[74.6,3.5],Tibia:[66.4,3.2],Fibula:[64.7,3.3],Pied:[80.8,4.7]},
+42:{Humerus:[66.5,3],Ulna:[64.1,3.3],Radius:[55.7,3.1],Femur:[75.6,3.5],Tibia:[67.4,3.2],Fibula:[65.8,3.3],Pied:[81.9,4.8]}
+};
+for(const sa in raw){CHI[sa]={};for(const b in raw[sa]){CHI[sa][b]={m:raw[sa][b][0],s:raw[sa][b][1]};}}
+})();
+
+// --- Redline (18-42 SA) ---
+const RED={
+18:{m:107,s:23},19:{m:113,s:25},20:{m:130,s:26},21:{m:150,s:25},
+22:{m:189,s:89},23:{m:190,s:41},24:{m:190,s:42},25:{m:197,s:70},
+26:{m:226,s:100},27:{m:240,s:77},28:{m:223,s:66},29:{m:269,s:96},
+30:{m:324,s:88},31:{m:314,s:105},32:{m:325,s:77},33:{m:351,s:83},
+34:{m:381,s:84},35:{m:411,s:99},36:{m:447,s:110},37:{m:467,s:107},
+38:{m:493,s:103},39:{m:500,s:103},40:{m:510,s:100},41:{m:524,s:100},42:{m:532,s:99}
+};
+
+// ============================================================
+//  MEASUREMENT DEFINITIONS
+// ============================================================
+
+function gcKey(sa){if(sa<13||sa>42)return null;const b=sa%2===1?sa:sa-1;return`${b}-${b+1}`;}
+function marGradeKey(organ,grade){
+  const map={'0-1':{foie:'liver 0 1',poumons:'lungs 0 1',thymus:'thymus 0 1',rate:'spleen 0 1',reins:'kidneys 0 1',surrenales:'adrenals 0 1'},
+    '2':{foie:'liver 2',poumons:'lungs 2 3',thymus:'thymus 2',rate:'spleen 2 3',reins:'kidneys 2 3',surrenales:'adrenals 2 3'},
+    '3':{foie:'liver 3',poumons:'lungs 2 3',thymus:'thymus 3',rate:'spleen 2 3',reins:'kidneys 2 3',surrenales:'adrenals 2 3'}};
+  return map[grade]?.[organ]||null;
+}
+
+const ITEMS=[
+// BIOMETRIES MACROSCOPIQUES
+{id:'masse',label:'Masse corporelle',u:'g',sec:'BIOMETRIES MACROSCOPIQUES',
+ gc:{d:'M',k:'masse',c:1},mar:{k:'Body',c:1},mbo:{k:'Fetus',c:1}},
+{id:'vt',label:'Vertex-Talon (VT)',u:'cm',sec:'BIOMETRIES MACROSCOPIQUES',
+ gc:{d:'M',k:'VT',c:10},mar:{k:'CH',c:1}},
+{id:'vc',label:'Vertex-Coccyx (VC)',u:'cm',sec:'BIOMETRIES MACROSCOPIQUES',
+ gc:{d:'M',k:'VC',c:10},mar:{k:'CR',c:1},mbb:{k:'CRL',c:1}},
+{id:'pc',label:'Perimetre cranien (PC)',u:'cm',sec:'BIOMETRIES MACROSCOPIQUES',
+ gc:{d:'M',k:'PC',c:10},mar:{k:'HDC',c:1},mbb:{k:'HC',c:1}},
+{id:'pied',label:'Longueur du pied',u:'mm',sec:'BIOMETRIES MACROSCOPIQUES',
+ gc:{d:'M',k:'pied',c:1},mar:{k:'FL',c:1},mbb:{k:'Foot',c:0.1},chi:{k:'Pied',c:1}},
+// BIOMETRIES DETAILLEES
+{id:'cfl',label:'Crown-Foot Length (CFL)',u:'cm',sec:'BIOMETRIES DETAILLEES',mbb:{k:'CFL',c:1}},
+{id:'tc',label:'Circ. thoracique (TC)',u:'cm',sec:'BIOMETRIES DETAILLEES',mbb:{k:'TC',c:1}},
+{id:'ac',label:'Circ. abdominale (AC)',u:'cm',sec:'BIOMETRIES DETAILLEES',mbb:{k:'AC',c:1}},
+{id:'main',label:'Longueur de la main',u:'mm',sec:'BIOMETRIES DETAILLEES',mbb:{k:'Hand',c:0.1}},
+{id:'bpd',label:'Diam. biparietal (BPD)',u:'mm',sec:'BIOMETRIES DETAILLEES',mbb:{k:'BPD',c:0.1}},
+{id:'fod',label:'Diam. fronto-occipital (FOD)',u:'mm',sec:'BIOMETRIES DETAILLEES',mbb:{k:'FOD',c:0.1}},
+{id:'t5',label:'Diam. thoracique T5',u:'mm',sec:'BIOMETRIES DETAILLEES',mbb:{k:'T5',c:0.1}},
+{id:'cervelet',label:'Cervelet',u:'mm',sec:'BIOMETRIES DETAILLEES',mbb:{k:'Cerebellum',c:1}},
+// LONGUEURS OSSEUSES
+{id:'humerus',label:'Humerus',u:'mm',sec:'LONGUEURS OSSEUSES',chi:{k:'Humerus',c:1},mbb:{k:'Humerus',c:0.1}},
+{id:'ulna',label:'Ulna',u:'mm',sec:'LONGUEURS OSSEUSES',chi:{k:'Ulna',c:1}},
+{id:'radius',label:'Radius',u:'mm',sec:'LONGUEURS OSSEUSES',chi:{k:'Radius',c:1}},
+{id:'femur',label:'Femur',u:'mm',sec:'LONGUEURS OSSEUSES',chi:{k:'Femur',c:1},mbb:{k:'Femur',c:0.1}},
+{id:'tibia',label:'Tibia',u:'mm',sec:'LONGUEURS OSSEUSES',chi:{k:'Tibia',c:1}},
+{id:'fibula',label:'Fibula',u:'mm',sec:'LONGUEURS OSSEUSES',chi:{k:'Fibula',c:1}},
+// MASSES D'ORGANES
+{id:'cerveau',label:'Cerveau',u:'g',sec:"MASSES D'ORGANES",mar:{k:'brain',c:1},mbo:{k:'Brain',c:1}},
+{id:'thymus',label:'Thymus',u:'g',sec:"MASSES D'ORGANES",gc:{d:'O',k:'thymus',c:1},marg:'thymus',mbo:{k:'Thymus',c:1}},
+{id:'coeur',label:'Coeur',u:'g',sec:"MASSES D'ORGANES",gc:{d:'O',k:'coeur',c:1},mar:{k:'heart',c:1},mbo:{k:'Heart',c:1}},
+{id:'poumons',label:'Poumons (total)',u:'g',sec:"MASSES D'ORGANES",gc:{d:'O',k:'poumons',c:1},marg:'poumons',mbo:{k:'Lungs',c:1}},
+{id:'poumon_d',label:'Poumon droit',u:'g',sec:"MASSES D'ORGANES",mbo:{k:'Right_Lung',c:1}},
+{id:'poumon_g',label:'Poumon gauche',u:'g',sec:"MASSES D'ORGANES",mbo:{k:'Left_Lung',c:1}},
+{id:'foie',label:'Foie',u:'g',sec:"MASSES D'ORGANES",gc:{d:'O',k:'foie',c:1},marg:'foie',mbo:{k:'Liver',c:1}},
+{id:'rate',label:'Rate',u:'g',sec:"MASSES D'ORGANES",gc:{d:'O',k:'rate',c:1},marg:'rate',mbo:{k:'Spleen',c:1}},
+{id:'pancreas',label:'Pancreas',u:'g',sec:"MASSES D'ORGANES",gc:{d:'O',k:'pancreas',c:1}},
+{id:'surrenales',label:'Surrenales',u:'g',sec:"MASSES D'ORGANES",gc:{d:'O',k:'surrenales',c:1},marg:'surrenales',mbo:{k:'Adrenals',c:1}},
+{id:'reins',label:'Reins (total)',u:'g',sec:"MASSES D'ORGANES",gc:{d:'O',k:'reins',c:1},marg:'reins',mbo:{k:'Kidneys',c:1}},
+{id:'rein_d',label:'Rein droit',u:'g',sec:"MASSES D'ORGANES",mbo:{k:'Right_Kidney',c:1}},
+{id:'rein_g',label:'Rein gauche',u:'g',sec:"MASSES D'ORGANES",mbo:{k:'Left_Kidney',c:1}},
+// PLACENTA
+{id:'placenta',label:'Masse placentaire',u:'g',sec:'PLACENTA',mbo:{k:'Placenta',c:1},red:true},
+];
+
+// ============================================================
+//  INIT
+// ============================================================
+const gaSelect=document.getElementById('ga');
+for(let i=12;i<=43;i++){const o=document.createElement('option');o.value=i;o.textContent=i+' SA';gaSelect.appendChild(o);}
+gaSelect.addEventListener('change',recompute);
+document.getElementById('grade').addEventListener('change',recompute);
+
+function calcGA(){
+  const ddr=document.getElementById('ddr').valueAsDate;
+  const exam=document.getElementById('dateExam').valueAsDate;
+  const box=document.getElementById('gaCalcBox');
+  const res=document.getElementById('gaCalcResult');
+  if(!ddr||!exam||exam<=ddr){box.style.display='none';return;}
+  const diffDays=Math.floor((exam-ddr)/(1000*60*60*24));
+  const sa=Math.floor(diffDays/7);
+  const jours=diffDays%7;
+  res.textContent=`${sa} SA + ${jours} j`;
+  box.style.display='';
+  if(sa>=12&&sa<=43){gaSelect.value=sa;recompute();}
+}
+
+function toggleSect(hdr){hdr.classList.toggle('collapsed');hdr.nextElementSibling.classList.toggle('hidden');}
+
+const pairMap={poumons:{d:'in_poumon_d',g:'in_poumon_g',total:'in_poumons',tag:'auto_poumons'},reins:{d:'in_rein_d',g:'in_rein_g',total:'in_reins',tag:'auto_reins'}};
+const manualOverride={poumons:false,reins:false};
+
+function autoSum(organ){
+  if(manualOverride[organ])return;
+  const p=pairMap[organ];
+  const d=parseFloat(document.getElementById(p.d).value);
+  const g=parseFloat(document.getElementById(p.g).value);
+  const tot=document.getElementById(p.total);
+  if(!isNaN(d)&&!isNaN(g)){
+    tot.value=Math.round((d+g)*1000)/1000;
+    document.getElementById(p.tag).textContent='(auto)';
+  }else if(!isNaN(d)||!isNaN(g)){
+    tot.value=(!isNaN(d)?d:g);
+    document.getElementById(p.tag).textContent='(partiel)';
+  }
+  recompute();
+}
+function manualTotal(organ){manualOverride[organ]=true;document.getElementById(pairMap[organ].tag).textContent='';}
+
+// ============================================================
+//  COMPUTE Z-SCORE
+// ============================================================
+function zs(val,mean,sd){if(val==null||mean==null||sd==null||sd===0)return null;return(val-mean)/sd;}
+function zFmt(z){if(z==null)return null;const r=Math.round(z*100)/100;return(r>=0?'+':'')+r.toFixed(2);}
+function zClass(z){if(z==null)return'';if(Math.abs(z)>2)return'z-warn';return z>=0?'z-pos':'z-neg';}
+
+function lookupZ(item,sa,rawVal,grade){
+  const res={gc:null,mar:null,mbb:null,mbo:null,chi:null,red:null};
+  if(rawVal==null||isNaN(rawVal))return res;
+
+  // GC
+  if(item.gc){
+    const gk=gcKey(sa);
+    const src=item.gc.d==='M'?GC_M:GC_O;
+    const ref=src[gk]?.[item.gc.k];
+    if(ref)res.gc=zs(rawVal*item.gc.c,ref.m,ref.s);
+  }
+  // Maroun (direct key)
+  if(item.mar){
+    const mm=MAR_M[sa]?.[item.mar.k];
+    const ms=MAR_S[sa]?.[item.mar.k];
+    if(mm!=null&&ms!=null)res.mar=zs(rawVal*item.mar.c,mm,ms);
+  }
+  // Maroun (graded organ)
+  if(item.marg){
+    const gk=marGradeKey(item.marg,grade);
+    if(gk){
+      const mm=MAR_M[sa]?.[gk];
+      const ms=MAR_S[sa]?.[gk];
+      if(mm!=null&&ms!=null)res.mar=zs(rawVal,mm,ms);
+    }
+  }
+  // MB biom
+  if(item.mbb&&sa>=12&&sa<=20){
+    const ref=MB_B[sa]?.[item.mbb.k];
+    if(ref&&ref.m!=null&&ref.s)res.mbb=zs(rawVal*item.mbb.c,ref.m,ref.s);
+  }
+  // MB org
+  if(item.mbo&&sa>=12&&sa<=20){
+    const ref=MB_O[sa]?.[item.mbo.k];
+    if(ref&&ref.m!=null&&ref.s)res.mbo=zs(rawVal*item.mbo.c,ref.m,ref.s);
+  }
+  // Chitty
+  if(item.chi&&sa>=12&&sa<=42){
+    const ref=CHI[sa]?.[item.chi.k];
+    if(ref)res.chi=zs(rawVal*item.chi.c,ref.m,ref.s);
+  }
+  // Redline
+  if(item.red&&sa>=18&&sa<=42){
+    const ref=RED[sa];
+    if(ref)res.red=zs(rawVal,ref.m,ref.s);
+  }
+  return res;
+}
+
+// ============================================================
+//  RENDER
+// ============================================================
+function recompute(){
+  const sa=parseInt(gaSelect.value);
+  const grade=document.getElementById('grade').value;
+  if(!sa){document.getElementById('resWrap').innerHTML='<p style="color:#6b7280;font-size:13px">Selectionnez un age gestationnel pour voir les resultats.</p>';return;}
+
+  let html='<table class="res"><thead><tr><th>Mesure</th><th>Valeur</th><th>GC 2002</th><th>Maroun</th><th>MB 2018</th><th>Chitty</th><th>Redline</th></tr></thead><tbody>';
+  let curSec='';
+  let hasRows=false;
+  let copyRows=[];
+  let copyHdr='Mesure\tValeur\tGC 2002\tMaroun\tMB 2018\tChitty\tRedline';
+
+  ITEMS.forEach(item=>{
+    const el=document.getElementById('in_'+item.id);
+    if(!el)return;
+    const raw=parseFloat(el.value);
+    if(isNaN(raw))return;
+    hasRows=true;
+
+    if(item.sec!==curSec){
+      curSec=item.sec;
+      html+=`<tr class="sep-row"><td colspan="7">${curSec}</td></tr>`;
+      copyRows.push('\n'+curSec);
+    }
+
+    const z=lookupZ(item,sa,raw,grade);
+    const cols=['gc','mar','mbb','mbo','chi','red'];
+    // merge mbb+mbo into single "MB 2018" column: prefer mbo for organs, mbb for biom
+    let mbZ=z.mbb!=null?z.mbb:z.mbo;
+
+    function cell(v){return v!=null?`<td class="${zClass(v)}">${zFmt(v)}</td>`:'<td>—</td>';}
+    function cellTxt(v){return v!=null?zFmt(v):'—';}
+
+    html+=`<tr><td>${item.label}</td><td>${raw} ${item.u}</td>${cell(z.gc)}${cell(z.mar)}${cell(mbZ)}${cell(z.chi)}${cell(z.red)}</tr>`;
+    copyRows.push(`${item.label}\t${raw} ${item.u}\t${cellTxt(z.gc)}\t${cellTxt(z.mar)}\t${cellTxt(mbZ)}\t${cellTxt(z.chi)}\t${cellTxt(z.red)}`);
+  });
+
+  html+='</tbody></table>';
+  if(!hasRows)html='<p style="color:#6b7280;font-size:13px">Entrez des mesures ci-dessus pour voir les resultats.</p>';
+  document.getElementById('resWrap').innerHTML=html;
+
+  // Age statural
+  let ageHtml='';
+  const femur=parseFloat(document.getElementById('in_femur')?.value);
+  const pcVal=parseFloat(document.getElementById('in_pc')?.value);
+  const bpdVal=parseFloat(document.getElementById('in_bpd')?.value);
+  if(!isNaN(femur)&&!isNaN(pcVal)&&!isNaN(bpdVal)){
+    const pcMm=pcVal*10,bpdMm=bpdVal;
+    const hadlock=11.38+0.07*(pcMm/10)*(femur/10)+0.98*(bpdMm/10);
+    ageHtml+=`Hadlock (1984) : <span>${hadlock.toFixed(1)} SA</span> &nbsp;|&nbsp; `;
+    copyRows.push(`\nAGE STATURAL\nHadlock (1984) : ${hadlock.toFixed(1)} SA`);
+  }
+  if(!isNaN(femur)){
+    const adalian=0.434*femur+6.93;
+    ageHtml+=`Adalian (2002) : <span>${adalian.toFixed(1)} SA</span>`;
+    copyRows.push(`Adalian (2002) : ${adalian.toFixed(1)} SA`);
+  }
+  document.getElementById('ageBox').innerHTML=ageHtml;
+
+  // Stempfle
+  calcStempfle();
+
+  // LBWR
+  const masse=parseFloat(document.getElementById('in_masse')?.value);
+  const poumons=parseFloat(document.getElementById('in_poumons')?.value);
+  const alertEl=document.getElementById('lbwrAlert');
+  if(!isNaN(masse)&&masse>0&&!isNaN(poumons)&&poumons>0){
+    const lbwr=poumons/masse;
+    const threshold=sa<28?0.012:0.015;
+    if(lbwr<threshold){
+      alertEl.innerHTML=`Hypoplasie pulmonaire (De Paepe) : LBWR = ${lbwr.toFixed(4)} &lt; ${threshold} (seuil ${sa<28?'avant':'apres'} 28 SA)`;
+      alertEl.classList.add('show');
+      copyRows.push(`\nALERTE : LBWR = ${lbwr.toFixed(4)} < ${threshold} — Hypoplasie pulmonaire (De Paepe)`);
+    }else{alertEl.classList.remove('show');}
+  }else{alertEl.classList.remove('show');}
+
+  // Store for copy
+  window._copyData=`BIOMETRIES FOETALES — ${sa} SA — Grade maceration ${grade}\n\n${copyHdr}\n${copyRows.join('\n')}`;
+
+  // Stempfle copy
+  const s1=parseFloat(document.getElementById('score1').textContent.match(/[\d.]+/)?.[0]);
+  const s2=parseFloat(document.getElementById('score2').textContent.match(/[\d.]+/)?.[0]);
+  if(s1>16.2||s2>14.6){
+    window._copyData+=`\n\nMATURITE OSSEUSE (Stempfle)\nFormule 1 : ${s1?.toFixed(2)||'—'} GW\nFormule 2 : ${s2?.toFixed(2)||'—'} GW`;
+  }
+}
+
+function calcStempfle(){
+  const v=id=>parseFloat(document.getElementById(id).value)||0;
+  const s1=16.2+v('s1_dfe')+v('s1_tal')+v('s1_ica')+v('s1_ism')+v('s1_spr')+v('s1_itm');
+  const s2=14.6+v('s2_dfe')+v('s2_tal')+v('s2_ste')+v('s2_isr')+v('s2_irm')+v('s2_itm');
+  document.getElementById('score1').textContent=`F1 = ${s1.toFixed(2)} GW`;
+  document.getElementById('score2').textContent=`F2 = ${s2.toFixed(2)} GW`;
+}
+
+function copyTable(){
+  if(!window._copyData){alert('Aucune donnee a copier.');return;}
+  navigator.clipboard.writeText(window._copyData).then(()=>{
+    const btn=document.querySelector('.btn-pri');
+    const orig=btn.textContent;
+    btn.textContent='Copie !';
+    setTimeout(()=>btn.textContent=orig,1500);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=window._copyData;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
+function resetAll(){
+  document.querySelectorAll('input[type=number]').forEach(el=>el.value='');
+  document.querySelectorAll('select').forEach(el=>el.selectedIndex=0);
+  gaSelect.value='';
+  document.getElementById('resWrap').innerHTML='';
+  document.getElementById('ageBox').innerHTML='';
+  document.getElementById('lbwrAlert').classList.remove('show');
+  manualOverride.poumons=false;manualOverride.reins=false;
+  document.getElementById('auto_poumons').textContent='';
+  document.getElementById('auto_reins').textContent='';
+  calcStempfle();
+}
+</script>
+</body>
+</html>

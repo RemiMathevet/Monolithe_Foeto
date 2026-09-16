@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grille de lecture — placenta, membranes et cordon</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --alert-soft:#F7EAE7;
+  --amber:#8A6A18; --amber-soft:#F6F0DE;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off button,section.off input,section.off select{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 170px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],input[type=number],textarea{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+input[type=number]{font-family:var(--mono);letter-spacing:.03em}
+textarea{resize:vertical;min-height:60px;font-size:15px}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+/* ── Boutons-clics : toute la saisie sémantique passe par là ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font-family:var(--sans);font-size:14px;line-height:1.25;
+  border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+  border-radius:2px;padding:8px 11px;cursor:pointer;min-height:38px;text-align:left}
+.chip:hover{background:var(--drape-soft)}
+.chip:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.chip.on{background:var(--drape);border-color:var(--drape);color:#fff;font-weight:600}
+.chip.no{background:var(--alert-soft);border-color:var(--alert);color:var(--alert);font-weight:600}
+.chip.sugg{border-color:var(--amber);border-style:dashed}
+.chip[data-act=foeto]::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;background:var(--drape);opacity:.55}
+.chip.on[data-act=foeto]::after{background:#fff}
+.plus{font-size:13px;color:var(--drape);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline dotted}
+.rech{position:relative;margin-top:8px}
+.rech input{font:inherit;font-size:14px;padding:6px 10px;border:1px solid #bbb;border-radius:8px;width:min(100%,24rem)}
+.sugg{position:absolute;z-index:5;background:#fff;border:1px solid #bbb;border-radius:8px;max-height:12rem;overflow:auto;width:min(100%,24rem);display:none}
+.sugg.on{display:block}
+.sugg div{padding:5px 10px;cursor:pointer;font-size:14px}
+.sugg div:hover{background:var(--drape-soft)}
+.sugg small{color:#777}
+.chip .k{font-family:var(--mono);font-size:10px;letter-spacing:.07em;opacity:.75;
+         display:block;text-transform:uppercase}
+
+.item{border-top:1px solid var(--rule);padding:10px 0}
+.item:first-child{border-top:0}
+.item .head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.item .lbl{flex:1 1 240px;min-width:0;font-size:15px}
+.item .meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-soft);
+            display:block;margin-top:2px}
+.item .meta.bon{color:var(--drape)} .item .meta.mauvais{color:var(--alert)}
+.item .meta.moyen{color:var(--amber)}
+.unfold{margin:9px 0 0 0;padding:9px 0 0;border-top:1px dashed var(--rule)}
+.unfold[hidden]{display:none}
+.stop{font-size:13px;line-height:1.35;color:var(--alert);background:var(--alert-soft);
+      border-left:2px solid var(--alert);padding:6px 9px;margin-top:8px}
+.stop b{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+
+.verdict{font-size:14px;line-height:1.4;border-left:3px solid var(--rule);
+         padding:7px 10px;margin-top:11px;background:var(--paper)}
+.verdict.ok{border-color:var(--drape);background:var(--drape-soft)}
+.verdict.warn{border-color:var(--amber);background:var(--amber-soft)}
+.verdict.bad{border-color:var(--alert);background:var(--alert-soft)}
+.verdict b{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+           display:block;color:var(--ink-soft)}
+
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+.sousTitre:first-child{margin-top:0}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:var(--alert-soft)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+pre.cr{font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;
+  padding:12px;margin:0 0 10px;max-height:44vh;overflow:auto}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · lecture microscopique</p>
+  <h1>Grille de lecture — placenta, membranes et cordon <span class="ver" id="ver"></span></h1>
+  <p class="sub">Sortie de <code>fiche_placenta.md</code>. Tout se clique ; seuls le dossier, le terme et les comptes se tapent. Document autonome : rien n'est transmis.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Libre, mis en majuscules. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Lecteur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la grille.</div>
+    </div>
+    <div class="field">
+      <label for="sa">Terme (SA)</label>
+      <input type="number" id="sa" min="8" max="45" step="1" inputmode="numeric" placeholder="—">
+      <div class="hint" id="saHint">SA = semaines de gestation + 2. Commande le stade attendu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — Prélèvement -->
+<section id="secPrelevement" class="off">
+  <h2><span class="n">02</span>Prélèvement<span class="tally" id="tPrelevement">—</span></h2>
+  <div id="coteBloc" hidden>
+    <div class="sousTitre">Côté prélevé</div>
+    <div class="chips" id="cote" style="margin-bottom:11px"></div>
+  </div>
+  <div class="chips" id="prelevement"></div>
+  <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
+</section>
+
+<!-- 03 — Rétention -->
+<section id="secRetention" class="off">
+  <h2><span class="n">03</span>Rétention<span class="tally" id="tRetention">—</span></h2>
+  <div id="retention"></div>
+  <div class="chips" id="kcl" style="margin-top:11px"></div>
+  <div class="verdict" id="vRetention"><b>Borne inférieure</b>—</div>
+</section>
+
+<!-- 04 — Maturation -->
+<section id="secMaturation" class="off">
+  <h2><span class="n">04</span>Maturation<span class="tally" id="tMaturation">—</span></h2>
+  <div class="sousTitre" id="stTitre">Stade observé</div>
+  <div class="chips" id="stades"></div>
+  <div id="mesure"></div>
+  <div class="verdict" id="vMaturation"><b>Lecture</b>—</div>
+  <div class="verdict" id="vMesure" hidden><b>Mesure</b>—</div>
+</section>
+
+<!-- 05 — Variantes normales -->
+<section id="secVariantes" class="off">
+  <h2><span class="n">05</span>Variantes normales<span class="tally" id="tVariantes">—</span></h2>
+  <p class="note" style="margin-top:0">Cliquer ce qui est vu et écarté comme normal. Rien de coché ne veut pas dire absent : ça veut dire non regardé.</p>
+  <div class="chips" id="variantes" style="margin-top:10px"></div>
+</section>
+
+<!-- 06 — Signes -->
+<section id="secSignes" class="off">
+  <h2><span class="n">06</span>Signes<span class="tally" id="tSignes">—</span></h2>
+  <p class="note" style="margin-top:0">On coche des signes, pas des diagnostics. Les associations en dessous se déduisent de ce qui est coché : elles s'affichent, elles ne se choisissent pas.</p>
+  <div id="signes" style="margin-top:10px"></div>
+  <div class="sousTitre" style="margin-top:16px">Associations lues</div>
+  <div id="diags"></div>
+</section>
+
+<!-- 07 — Termes FOETO attestés par la fiche -->
+<section id="secFoeto" class="off">
+  <h2><span class="n">07</span>Termes FOETO<span class="tally" id="tFoeto">—</span></h2>
+  <p class="note" style="margin-top:0">Les termes du vocabulaire FOETO que la fiche de l'organe retient comme lésions, par sous-section. Un terme coché est présent ; rien de coché ne veut pas dire absent.</p>
+  <div id="foeto"></div>
+  <button type="button" class="plus" id="foetoPlus" hidden>▸ tous les termes attestés</button>
+  <div class="chips" id="foetoTous" hidden style="margin-top:6px"></div>
+  <div class="rech" id="foetoRech" hidden><input type="text" id="rqFoeto" placeholder="rechercher un terme (3 lettres)…" autocomplete="off"><div class="sugg" id="sgFoeto"></div></div>
+</section>
+
+<!-- 08 — Négatifs obligatoires -->
+<section id="secNegatifs" class="off">
+  <h2><span class="n">08</span>Négatifs obligatoires<span class="tally" id="tNegatifs">—</span></h2>
+  <div class="btns" style="margin-bottom:11px">
+    <button class="btn" id="btnNegAll">Tous vérifiés</button>
+  </div>
+  <div id="negatifs"></div>
+</section>
+
+<!-- 08 — Techniques -->
+<section id="secTechniques" class="off">
+  <h2><span class="n">09</span>Techniques<span class="tally" id="tTechniques">—</span></h2>
+  <p class="note" style="margin-top:0" id="techNote"></p>
+  <div class="chips" id="techniques" style="margin-top:10px"></div>
+</section>
+
+<!-- 09 — Compte rendu -->
+<section id="secCR" class="off">
+  <h2><span class="n">10</span>Compte rendu<span class="tally" id="tCR">—</span></h2>
+  <pre class="cr" id="cr">—</pre>
+  <div class="row">
+    <div class="field" style="flex:1 1 100%">
+      <label for="libre">Remarque libre</label>
+      <textarea id="libre" placeholder="Ce que la grille ne prévoit pas."></textarea>
+    </div>
+  </div>
+  <div class="btns" style="margin-top:10px">
+    <button class="btn" id="btnCopie">Copier le compte rendu</button>
+  </div>
+</section>
+
+<!-- 10 — Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n">11</span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Vider le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- 11 — Diagnostic -->
+<section>
+  <h2><span class="n">12</span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante, aucun fetch : doit fonctionner par double-clic hors réseau.
+
+   Ce module est la SORTIE de fiche_placenta.md, jamais l'inverse. Les bornes, les
+   spécificités et les « ce qu'il ne faut pas conclure » sont recopiés de la
+   fiche ; ils ne se corrigent pas ici mais dans la fiche.
+
+   La grille ne conclut pas : elle contraint la description et rend ses
+   réserves visibles. Un critère non cliqué n'est pas un négatif — c'est un
+   non-regardé, et le compte rendu le dit.
+
+   Fichier ENGENDRÉ par gen_grille.py depuis grilles/placenta.js.
+   Corriger le fragment, pas ce fichier.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  FRAGMENT D'ORGANE — grilles/placenta.js                            ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+/* Grille de lecture — placenta, membranes et cordon (micro).
+   Fond : ~/Bureau/fiches_lecture/diffusion/fiche_placenta.md (§1 à §9) et
+          fiche_retention.md §5 (les quatre seaux de Genest II).
+   Forme : gen_grille.py, calquée sur grille_rein.html.
+   Cinq grandes sections de signes (Rémi, 14/09) : cordon · membranes · parenchyme sous
+   cordon (bloc adjacent à l'insertion, plaque choriale) · marge (rouleau et parenchyme
+   marginal) · parenchyme systémique (les trois blocs pleine épaisseur des deux tiers centraux).
+   Le placenta n'a pas UN référentiel : Amsterdam pour les lésions, Vogel pour la maturation,
+   Genest pour la rétention, et les seuils francophones à côté. Les divergences sont PORTÉES
+   dans les champs, jamais arbitrées ; l'observation s'entre avant son barème. */
+
+var ORGANE  = "placenta";
+var TITRE   = "placenta, membranes et cordon";
+var SOURCE  = "fiche_placenta.md";
+var MODULE  = "grille_placenta";
+var VERSION = "1.0.1";
+var PAIR    = false;
+
+var TITRE_CR    = "PLACENTA";
+var STADE_TITRE = "Type villositaire dominant (Vogel, Table 1.2 — GW lues en SA)";
+
+var KCL_TXT = "Fœticide par KCl déclaré — la mort est datée par le geste. Les quatre seaux de Genest " +
+              "ne servent plus à dater, seulement à vérifier que la lame est compatible avec l'intervalle déclaré.";
+
+/* Le retard de maturation d'Amsterdam repose sur les membranes vasculo-syncytiales — qui
+   diminuent avec le délai avant fixation [benirschke, ch. 6]. */
+var RETARD_NOTE = "Un défaut de membranes vasculo-syncytiales mesure en partie la logistique : le collapsus " +
+                  "capillaire après la délivrance les réduit. Sans délai délivrance→fixation énoncé, le retard " +
+                  "de maturation se décrit, il ne se conclut pas.";
+
+/* L'avance est la lésion la plus portée — et présente chez un tiers des témoins normaux. */
+var AVANCE_NOTE = "« Maturation accélérée » : 32,4 % d'une série de 1 022 grossesses eutrophiques à terme sans " +
+                  "facteur de risque [vogel, ch. 8, Table 8.2]. Sur un fœtus retenu, la rétention fabrique " +
+                  "le trépied entier (nœuds ↑, villosités avasculaires, cytotrophoblaste continu) [keeling, ch. 4].";
+
+var TECH_NOTE = "Les pointillés sont des propositions déduites des clics, jamais des prescriptions. " +
+                "Un placenta se lit en multi-référentiels : chaque seuil cité porte sa source et son unité.";
+
+/* ── 01 · Prélèvement — le minimum consensuel d'Amsterdam, plus les gestes francophones ── */
+var PRELEV = [
+  { k:"rouleau",    l:"Rouleau de membranes, du point de rupture au bord placentaire", grave:true,
+    manque:"sans rouleau complet, ni chorionicité, ni athérose pariétale, ni stade de chorioamniotite : « from the " +
+           "rupture edge to the placental margin » [amsterdam]" },
+  { k:"cordon2",    l:"Deux sections de cordon : pôle fœtal et ≈ 5 cm de l'insertion, hors clamp", grave:true,
+    manque:"une coupe trop près de l'insertion fabrique une fausse artère unique : 92 % des cordons ont une " +
+           "anastomose de Hyrtl [benirschke, ch. 11] ; éviter clamp et ponction [ernst, ch. 36]" },
+  { k:"blocs3",     l:"Trois blocs pleine épaisseur dans les deux tiers centraux", grave:true,
+    manque:"3 blocs = 62 % des villites, 6–7 blocs = 85 % [amsterdam] ; en dessous de trois, tout négatif " +
+           "multifocal perd son sens" },
+  { k:"insertion",  l:"Un bloc adjacent au site d'insertion du cordon", grave:true,
+    manque:"c'est le bloc qui documente l'ectasie vasculaire fœtale et les réponses inflammatoires fœtale et " +
+           "maternelle [amsterdam]" },
+  { k:"marge",      l:"Parenchyme marginal inclus dans le rouleau",
+    manque:"la marge porte l'hémorragie marginale, l'hémosidérine et l'infarctus périphérique — sans elle, pas de " +
+           "circumvallé histologique" },
+  { k:"basalTang",  l:"Bloc tangentiel de la face maternelle, parallèle à la basale",
+    manque:"« en-face blocks of the basal plate often yield more decidual spiral arteries » [keeling, ch. 4] — " +
+           "geste [soffoet, ch. 15] hors Amsterdam, qui sert l'athérose" },
+  { k:"normales",   l:"Zones normales prélevées, pas seulement les lésions",
+    manque:"« it is not desirable to take only abnormal areas » [benirschke, ch. 1] — un bloc dépensé sur un " +
+           "infarctus typique est retiré au dépistage des lésions multifocales" },
+  { k:"transmural", l:"Épaisseur > cassette : tiers supérieur + tiers inférieur, ou cinquième bloc",
+    manque:"la DVH se lit sur les deux tiers inférieurs comparés au tiers sous-chorial : sans la pleine " +
+           "épaisseur, le critère est amputé" },
+  { k:"poids",      l:"Poids net qualifié frais / fixé, sans cordon ni membranes",
+    manque:"fixation : +3 à 6 % [amsterdam] ; poids net = cordon coupé à ≈ 5 cm, membranes parées [vogel, ch. 2]" },
+  { k:"caryo",      l:"Caryotype prélevé sur la plaque choriale, à frais, avant le reste",
+    manque:"« le chorion (plaque choriale) est l'élément qui se développera le mieux en culture après mort " +
+           "fœtale » [soffoet, ch. 15]" },
+  { k:"congele",    l:"Fragment congelé",
+    manque:"« Un fragment de placenta peut être congelé pour d'éventuelles études ultérieures » [soffoet, ch. 15]" }
+];
+
+/* ── 02 · Rétention — les quatre seaux de Genest II, pas une heure ─────────── */
+var MODIF = "témoin de réfrigération [Genest II] : aucun des quinze critères n'apparaît sur un placenta de " +
+            "nouveau-né vivant réfrigéré 14 jours — un délai de fixation n'explique pas ces signes";
+
+var RETENTION = [
+  { k:"karyoIntravasc", l:"Caryorrhexis intravasculaire villositaire", b:"≥ 6 h",
+    d:"sens. 0,935 · spéc. 1,000 · kappa 0,896", h:6, q:"bon",
+    note:"le premier seau ; 0 cas sur 15 en dessous de 6 h, 29 sur 31 au-delà [Genest II]. C'est aussi ce " +
+         "qu'Amsterdam appelle VSK : sur un mort-né, ne pas la compter comme malperfusion fœtale", alerte:MODIF },
+  { k:"lumMultifocal",  l:"Anomalies luminales des vaisseaux souches, multifocales (10–25 %)", b:"≥ 48 h",
+    d:"sens. 0,944 · spéc. 1,000", h:48, q:"bon",
+    note:"septation fibroblastique, oblitération — les mêmes images que l'oblitération de vaisseau souche de la " +
+         "FVM : au-delà de 48 h, « global changes of FVM must be interpreted with caution » [khong2019, ch. 25]",
+    alerte:MODIF },
+  { k:"lumEtendu",      l:"Anomalies luminales des vaisseaux souches, étendues (> 25 %)", b:"≥ 14 j",
+    d:"sens. 0,777 · spéc. 0,976 · kappa 0,539", h:336, q:"moyen",
+    note:"reproductibilité discutable entre deux lecteurs [Genest II]", alerte:MODIF },
+  { k:"fibroseEtendue", l:"Fibrose étendue des villosités terminales (> 25 % avasculaires, hyalinisées)", b:"≥ 14 j",
+    d:"sens. 1,000 · spéc. 0,928 · VPP 0,750", h:336, q:"moyen",
+    note:"le troisième seau ; sensible, moins spécifique — c'est aussi le stade terminal de la FVM et de la " +
+         "villite avec oblitération", alerte:MODIF },
+  { k:"microcalcif",    l:"Microcalcification stromale « poussiéreuse »", b:"≥ 24 h",
+    d:"sens. 0,478", h:24, q:"mauvais",
+    note:"mauvais prédicteur : une sensibilité de 0,478 ne date rien seule [Genest II]" },
+  { k:"whartonNecrose", l:"Nécrose de la gelée de Wharton", b:"≥ 48 h", d:"sens. 0,733 · spéc. 0,843", h:48, q:"mauvais",
+    note:"mauvais prédicteur ; et la perte de turgescence biaise longueur ET diamètre du cordon [keeling, ch. 4]" },
+  { k:"mbTropho",       l:"Épaississement / minéralisation de la membrane basale trophoblastique", b:"≥ 48 h",
+    d:"sens. 0,333", h:48, q:"mauvais",
+    note:"artefact de macération [keeling, ch. 15] souvent porté comme lésion ; sensibilité 0,333" },
+  { k:"cordonVascNecrose", l:"Nécrose vasculaire du cordon", b:"≥ 7 j", d:"sens. 0,600 · spéc. 1,000", h:168, q:"moyen",
+    note:"spécifique, peu sensible ; ne pas la confondre avec la myonécrose au méconium, périphérique et " +
+         "adjacente à la gelée [benirschke, ch. 16]" },
+  { k:"mediaPycnotique", l:"Noyaux pycnotiques et plissés de la média ombilicale", b:"—", d:"non datable seule", h:0, q:"mauvais",
+    note:"« mimicking neutrophils » [ernst, ch. 36] — mime une funisite, ne date rien" }
+];
+
+/* ── 03 · Maturation — la seule table datée du corpus, [vogel, ch. 1] Table 1.2 ── */
+/* Type dominant par champ moyen grossissement. Les bornes sont reconstruites depuis la table :
+   ce sont des repères, pas des seuils. Nomenclature à quatre types (vogel) — benirschke et
+   ernst en comptent cinq, les colonnes ne se superposent pas terme à terme. */
+var STADES = [
+  { k:"immatDom",   l:"Intermédiaires immatures (centrales) dominantes > 50 %, souches ≈ 20 %, pas de terminales", max:22 },
+  { k:"matureDeb",  l:"Intermédiaires matures ≈ 50 %, immatures > 30 %, terminales < 10 %", max:26 },
+  { k:"matureDom",  l:"Intermédiaires matures > 50 %, immatures < 20 %, terminales ≈ 20 %", max:30 },
+  { k:"termMontee", l:"Intermédiaires matures ≥ 40 %, terminales 30–40 %, MVS 10–15 %", max:38,
+    note:"[ernst, ch. 36] place le croisement terminales / intermédiaires matures à 32 SA ; [vogel] entre 36 et " +
+         "40 — quatre semaines d'écart, non arbitré" },
+  { k:"termDom",    l:"Terminales dominantes (< 60 %), intermédiaires matures > 30 %, MVS ≈ 40 %", max:99,
+    note:"les unités circulatoires fœto-maternelles n'existent pas avant 32 SA : leur absence avant n'est pas " +
+         "une lésion [vogel, ch. 2]" }
+];
+
+/* ── 03 bis · Les deux comptes — nœuds syncytiaux et capillaires ─────────────
+   Le compte est une observation ; le barème est l'interprétation qui vient après. */
+var MESURE = {
+  titre:"Nœuds syncytiaux et capillaires par villosité terminale",
+  defLabel:"barème des nœuds déclaré",
+  optLabel:"coloration du compte capillaire",
+  defs:[{ k:"amsterdam",  l:"Amsterdam : > 33 % des villosités, hors péri-infarctus" },
+        { k:"khong",      l:"khong2019 : > 30 %, deux tiers inférieurs des sections centrales" },
+        { k:"benirschke", l:"benirschke : > 20 % avant 34 SA, > 30 % de 100 villosités au terme" }],
+  opts:[{ k:"hes",  l:"HES" },
+        { k:"cd34", l:"CD34" }],
+  champs:[{ id:"noeuds",      label:"Villosités portant un nœud (%)", min:0, max:100, step:1 },
+          { id:"capillaires", label:"Capillaires par villosité terminale (max compté)", min:0, max:40, step:1 }]
+};
+
+function seuilNoeuds(bareme, sa){
+  if (bareme === "amsterdam")  return { s:33, l:"> 33 % [amsterdam]" };
+  if (bareme === "khong")      return { s:30, l:"> 30 % des deux tiers inférieurs [khong2019, ch. 17]" };
+  if (sa != null && sa < 34)   return { s:20, l:"> 20 % avant 34 SA [benirschke, ch. 19]" };
+  return { s:30, l:"> 30 % de 100 villosités [benirschke, ch. 19]" };
+}
+
+function verdictMesure(){
+  var n = E.mesure.v.noeuds, cap = E.mesure.v.capillaires, sa = num("sa");
+  var t = [], cls = "", res = [];
+  if (n == null && cap == null) return { cls:"", txt:"Nœuds et capillaires non comptés — les deux comptes restent ouverts." };
+
+  if (n != null){
+    var B = ["amsterdam", "khong", "benirschke"].map(function(b){ var s = seuilNoeuds(b, sa); return { k:b, s:s.s, l:s.l }; });
+    var hauts = B.filter(function(b){ return n > b.s; }), bas = B.filter(function(b){ return n <= b.s; });
+    var tn = "Nœuds : " + n + " % des villosités (normal mesuré au terme : 28 % [khong2019, ch. 17]).";
+    if (!E.mesure.def){
+      tn += " Barème non déclaré — le compte est consigné, l'interprétation reste ouverte : ";
+      if (!hauts.length) tn += "sous les trois seuils.";
+      else if (!bas.length){ tn += "au-dessus des trois seuils."; cls = "warn"; }
+      else { tn += "augmenté selon " + hauts.map(function(b){ return b.l; }).join(" et ") + ", pas selon " +
+                   bas.map(function(b){ return b.l; }).join(" ni ") + " — les barèmes ne s'accordent pas ici, déclarer lequel on retient."; cls = "warn"; }
+    } else {
+      var ref = par(B, E.mesure.def);
+      tn += " Barème retenu : " + ref.l + " — " + (n > ref.s ? "nœuds AUGMENTÉS." : "nœuds non augmentés.");
+      if (n > ref.s) cls = "warn";
+      if (hauts.length && bas.length) tn += " Les trois barèmes divergent sur ce compte.";
+    }
+    tn += " Kappa 0,25 à 0,60 selon l'entraînement, le plus mauvais sur les placentas presque normaux [khong2019, ch. 17].";
+    t.push(tn);
+    if (E.mesure.opt === "bordure") res.push("nœuds comptés en bordure de lésion — « areas adjacent to infarcts should not be relied on » [amsterdam]");
+    if (RETENTION.some(function(r){ return E.retention[r.k] === "present"; }))
+      res.push("rétention présente : elle fabrique les nœuds augmentés [keeling, ch. 4] — décrire, ne pas conclure");
+    if (!E.prelev.blocs3) res.push("trois blocs centraux non confirmés — le dénominateur des nœuds est la section centrale sans lésion macroscopique");
+  }
+
+  if (cap != null){
+    var tc = "Capillaires : " + cap + " par villosité terminale.";
+    if (E.mesure.opt === "hes")
+      tc += cap > 10 ? " En HES, > 10 = chorangiose selon Altshuler [benirschke, ch. 30] — mais 8–15 est la normale au CD34 : compte à confirmer en CD34 avant de nommer."
+                     : " En HES, ≤ 10 : sous le seuil d'Altshuler (6 à 8 au terme [lherminecoulomb]).";
+    else if (E.mesure.opt === "cd34")
+      tc += cap > 15 ? " Au CD34, > 15 dépasse la fourchette normale non chorangiosique (8–15) [benirschke, ch. 30]."
+                     : " Au CD34, dans la fourchette normale 8–15 [benirschke, ch. 30] — une chorangiose HES peut disparaître ici, et la source le dit.";
+    else { tc += " Coloration non déclarée — le compte est consigné ; le seuil HES (> 10) tombe à l'intérieur de la normale CD34 (8–15) : la coloration décide, pas le chiffre."; if (!cls) cls = "warn"; }
+    if (cap > 10 && E.mesure.opt === "hes" && !cls) cls = "warn";
+    t.push(tc);
+  }
+  if (res.length){ if (cls !== "bad") cls = "warn"; t.push("Réserves : " + res.join(" ; ") + "."); }
+  return { cls:cls || "ok", txt:t.join(" ") };
+}
+
+/* ── 05 · Variantes normales — ce qu'il faut savoir NE PAS appeler pathologique ── */
+var VARIANTES = [
+  { k:"metaplasie",   l:"Métaplasie malpighienne de l'amnios (jusqu'à 60 % des placentas à terme, près du cordon)" },
+  { k:"calcifBasales", l:"Calcifications du tiers basal, physiologiques à terme" },
+  { k:"fibrinoides",  l:"Fibrinoïde de Langhans (sous-chorial), de Rohr et de Nitabuch" },
+  { k:"fibrineMarge", l:"Fibrine périvillositaire < 10 %, autour des souches, en sous-chorial et au bord" },
+  { k:"trophoNitabuch", l:"Trophoblaste extravilleux au-delà de Nitabuch" },
+  { k:"muscleParietal", l:"Muscle lisse dans les vaisseaux de la caduque pariétale (non remodelés)" },
+  { k:"coussinMyxoide", l:"Coussin myxoïde intimal d'un vaisseau chorial, sans fibrine ni calcification" },
+  { k:"vitellin",     l:"Reliquat du sac vitellin (plaque blanche sous-amniotique) ; reliquats du canal vitellin et de l'ouraque" },
+  { k:"cellulesX",    l:"Îlots de trophoblaste extravilleux (cellules X) dans la chambre intervilleuse" },
+  { k:"kystes",       l:"Kystes amniotiques et kystes des septa" },
+  { k:"fauxNoeud",    l:"Faux nœud du cordon (gelée ou dilatation vasculaire asymétrique)" },
+  { k:"remodelageT2", l:"Artérioles partiellement remodelées au deuxième trimestre" },
+  { k:"lymphoDecid",  l:"Lymphocytes et cellules NK épars dans la caduque (le plasmocyte, lui, n'est pas normal)" },
+  { k:"vacuolLaeve",  l:"Trophoblaste extravilleux vacuolisé du chorion lisse (lipides, pinocytose)" },
+  { k:"circummargine", l:"Insertion circummarginée (sans signification selon Fox et Sen ; keeling sépare le circumvallé total)" },
+  { k:"congestion",   l:"Congestion villositaire (vaisseaux distendus, non multipliés — diabète maternel)" }
+];
+
+/* ── 06 · Signes — cinq grandes sections, un signe à la fois, aucun nom de maladie ── */
+var G1 = "Cordon", G2 = "Membranes", G3 = "Parenchyme sous cordon — plaque choriale et bloc d'insertion",
+    G4 = "Marge — rouleau et parenchyme marginal", G5 = "Parenchyme systémique — trois blocs pleine épaisseur";
+
+var SIGNES = [
+  /* Cordon */
+  { g:G1, k:"aou",             l:"Artère ombilicale unique sur coupe à circonférence complète, ≥ 5 cm de l'insertion",
+    meta:"Hyrtl dans 92 % des cordons" },
+  { g:G1, k:"phlebiteOmb",     l:"Phlébite ombilicale (polynucléaires dans la paroi veineuse)", meta:"FIR stade 1" },
+  { g:G1, k:"arteriteOmb",     l:"Artérite ombilicale, une ou deux artères", meta:"FIR stade 2" },
+  { g:G1, k:"funisiteNecro",   l:"Funisite nécrosante, extension à la gelée de Wharton", meta:"FIR stade 3 Amsterdam ; dans les stades 1–2 chez Van Hoeven" },
+  { g:G1, k:"thromboseOmb",    l:"Thrombose d'un vaisseau ombilical" },
+  { g:G1, k:"myonecrose",      l:"Nécrose de la paroi vasculaire, périphérique, adjacente à la gelée", meta:"méconium, < 1 % des placentas méconiaux" },
+  { g:G1, k:"hematomeCordon",  l:"Hématome funiculaire avec organisation, lignes de Zahn ou polynucléaires",
+    meta:"sans les trois : artefact [ernst, ch. 36]" },
+  { g:G1, k:"striction",       l:"Striction : gelée absente ou subtotale, cordon extrêmement spiralé" },
+  { g:G1, k:"cordonGrele",     l:"Gelée de Wharton condensée en liseré, ± microcalcifications diffuses (cordon grêle)",
+    meta:"diamètre < 8 mm ; biaisé par la rétention" },
+  { g:G1, k:"oedemeCordon",    l:"Œdème de la gelée, cordon épais", meta:"diabète maternel, hydrops" },
+  { g:G1, k:"meconiumWharton", l:"Macrophages méconiaux dans la gelée de Wharton", meta:"plus tardif que les membranes ; « many hours »" },
+  { g:G1, k:"vaisseauxMembraneux", l:"Insertion vélamenteuse ou vaisseaux membraneux (insertion marginale comprise)",
+    meta:"vasa praevia = rapport à l'orifice interne, non diagnosticable sur la pièce" },
+  { g:G1, k:"variceOmb",       l:"Varice ou ectasie d'un vaisseau ombilical" },
+  { g:G1, k:"hypertorsion",    l:"Hypertorsion avec indentations périphériques du cordon", meta:"le patron, pas l'index" },
+
+  /* Membranes */
+  { g:G2, k:"sousChorionite",  l:"Polynucléaires maternels dans le fibrinoïde sous-chorial / chorionite", meta:"MIR stade 1 Amsterdam = stade 1–2 de Blanc" },
+  { g:G2, k:"chorioamniotite", l:"Polynucléaires dans le chorion fibreux et/ou l'amnios", meta:"MIR stade 2 Amsterdam = stade 3 de Blanc" },
+  { g:G2, k:"necrosante",      l:"Chorioamniotite nécrosante : caryorrhexis des polynucléaires, nécrose amniocytaire, membrane basale hyperéosinophile",
+    meta:"MIR stade 3 — n'existe pas chez Blanc" },
+  { g:G2, k:"microabces",      l:"Polynucléaires confluents ou microabcès sous-choriaux", meta:"MIR grade 2" },
+  { g:G2, k:"migrationAmnios", l:"Polynucléaires en migration vers l'amnios (sens de la chimiotaxie)",
+    meta:"un foyer au site de rupture n'est pas une ascension" },
+  { g:G2, k:"meconiumAmnios",  l:"Macrophages méconiaux dans l'amnios" },
+  { g:G2, k:"meconiumChorion", l:"Macrophages méconiaux dans le chorion et la caduque capsulaire" },
+  { g:G2, k:"amniosDegenere",  l:"Amnios vacuolisé, hérissé, nécrosé (méconium prolongé, laparoschisis)",
+    meta:"mime une surcharge" },
+  { g:G2, k:"amniosNodosum",   l:"Amnios nodosum : nodules de vernix PAS et bleu alcian positifs, non kératinisés" },
+  { g:G2, k:"atherose",        l:"Athérose aiguë déciduale : nécrose fibrinoïde, macrophages spumeux, vaisseau dilaté" },
+  { g:G2, k:"muscularisation", l:"Muscularisation persistante des artérioles spiralées (défaut de remodelage)" },
+  { g:G2, k:"hypertrophieMurale", l:"Hypertrophie murale des vaisseaux déciduaux, paroi > 1/3 de la circonférence",
+    meta:"formulation dimensionnellement fautive, partagée par deux sources" },
+  { g:G2, k:"thromboseDeciduale", l:"Thrombose récente d'une artère déciduale", meta:"item francophone de l'athérose" },
+  { g:G2, k:"lymphocytesT",    l:"Infiltrat lymphocytaire T péri-artériel décidual" },
+  { g:G2, k:"deciduitePlasmo", l:"Plasmocytes dans la caduque (déciduite plasmocytaire)" },
+  { g:G2, k:"necroseDeciduale", l:"Nécrose déciduale membraneuse", meta:"preuve insuffisante pour la MVM [amsterdam]" },
+  { g:G2, k:"hemosiderine",    l:"Hémosidérine dans les membranes (bleu de Prusse positif)" },
+  { g:G2, k:"collageneDense",  l:"Dépôt collagène dense sans inflammation", meta:"RPM > 1 semaine : l'inflammation est partie, la fibrose reste" },
+  { g:G2, k:"brides",          l:"Brides ou feuillets amniotiques ; chorion nodosum" },
+  { g:G2, k:"pseudokyste",     l:"Pseudokyste du chorion lisse, îlots de fibrinoïde à cellules X", meta:"preuve insuffisante pour la MVM [amsterdam]" },
+
+  /* Parenchyme sous cordon */
+  { g:G3, k:"vasculiteChoriale", l:"Vasculite des vaisseaux de la plaque choriale", meta:"FIR stade 1 ; deux vaisseaux = un seul coupé tangentiellement ?" },
+  { g:G3, k:"ectasie",         l:"Ectasie d'un vaisseau chorial ou souche ≥ 4 fois le diamètre des vaisseaux voisins",
+    meta:"seul seuil chiffré, absent d'Amsterdam" },
+  { g:G3, k:"thrombusChorial", l:"Thrombus d'un vaisseau chorial : récent (fibrine adhérente), en organisation (néo-intima), organisé, ancien (calcifié)",
+    meta:"le seul signe de FVM qui ne se fabrique pas après la mort" },
+  { g:G3, k:"fibrineIntramurale", l:"Dépôt de fibrine intramural sous-endothélial (non occlusif par définition)",
+    meta:"isolé (1–2) : signification incertaine" },
+  { g:G3, k:"coussinFibrine",  l:"Coussin myxoïde intimal AVEC fibrine ou calcification" },
+  { g:G3, k:"souchesKystiques", l:"Villosités souches dilatées, kystiques, œdémateuses, mêlées de villosités normales" },
+  { g:G3, k:"vaisseauxTortueux", l:"Vaisseaux souches à paroi épaisse, tortueux, anévrismaux, manchons de mésenchyme lâche" },
+  { g:G3, k:"citernes",        l:"Citernes centrales de matériel myxoïde (acide hyaluronique, bleu alcian)", meta:"moins nombreuses que dans la môle" },
+  { g:G3, k:"trophoNormalPMD", l:"Trophoblaste normal, contours lisses, sans pseudo-inclusion, sur des souches kystiques",
+    meta:"le critère négatif qui écarte la môle" },
+  { g:G3, k:"magistral",       l:"Patron vasculaire magistral de la plaque choriale (gros vaisseaux non dichotomiques)" },
+  { g:G3, k:"chorangiome",     l:"Nodule capillaire expansif d'une souche sous-choriale, péricytes présents" },
+  { g:G3, k:"langhansExces",   l:"Fibrinoïde sous-chorial de Langhans épais, chorioamnion épaissi",
+    meta:"faux négatif géométrique : l'inflammation « will not be seen » [khong2019, ch. 13]" },
+  { g:G3, k:"infiltratChorialBasal", l:"Infiltrat granulocytaire maternel bien limité de la plaque choriale basale",
+    meta:"≈ 66 % des MFIU macérées — pas une chorioamniotite [vogel, ch. 14]" },
+  { g:G3, k:"amniosDecolle",   l:"Amnios décollé de la plaque choriale", meta:"traction sur le cordon au 3e stade — artefact" },
+
+  /* Marge */
+  { g:G4, k:"infarctusPeriph", l:"Infarctus périphérique (marginal)", meta:"à terme, hors du seuil des 5 % non périphériques" },
+  { g:G4, k:"hemorragieMarginale", l:"Hémorragie marginale ancienne, hématome marginal" },
+  { g:G4, k:"hemosiderineMarge", l:"Hémosidérine et fibrine au bord, membranes à insertion enroulée (circumvallé histologique)" },
+  { g:G4, k:"villositesAtrophiques", l:"Villosités marginales atrophiques, fibrine périvillositaire de bord",
+    meta:"la zone prélevée décide du chiffre" },
+  { g:G4, k:"dvhSousChorial",  l:"Paucité villositaire focale sous-choriale ou péri-lésionnelle", meta:"ne qualifie pas pour la DVH" },
+  { g:G4, k:"ruptureFoyer",    l:"Foyer intense de polynucléaires au site de rupture", meta:"ne signe pas une infection ascendante" },
+  { g:G4, k:"caduqueCapsulaire", l:"Caduque capsulaire nécrosée / hémorragique au bord" },
+
+  /* Parenchyme systémique */
+  { g:G5, k:"infarctus",       l:"Infarctus : collapsus de la chambre intervilleuse ET perte de basophilie du trophoblaste, jusqu'aux « ghost villi »",
+    meta:"ne s'organise jamais ; tout infarctus compte avant terme, > 5 % non périphérique à terme" },
+  { g:G5, k:"hrp",             l:"Hématome rétroplacentaire adhérent : sang et fibrine (frais) ; polynucléaires, macrophages, sidérophages (chronique)",
+    meta:"l'adhérence, pas la taille" },
+  { g:G5, k:"dvh",             l:"Hypoplasie villositaire distale : terminales rares, fines, allongées, deux tiers inférieurs",
+    meta:"≥ 30 % d'une lame pleine épaisseur ; focal/diffus = nombre de lames" },
+  { g:G5, k:"matAcceleree",    l:"Villosités d'aspect terme pour le terme, nœuds ↑, fibrine intervilleuse, alternant avec des plages de paucité",
+    meta:"32,4 % des témoins normaux [vogel]" },
+  { g:G5, k:"agglutination",   l:"Villosités agglutinées par la fibrine (2 à 20), touchant d'autres villosités", meta:"« villi should not ever be directly touching »" },
+  { g:G5, k:"noeudsAugmentes", l:"Nœuds syncytiaux augmentés (≥ 5 noyaux, bombant), hors bordure de lésion", meta:"voir le compte du § 03 bis" },
+  { g:G5, k:"avascTrophoVivant", l:"Villosités avasculaires à trophoblaste VIVANT (lésion « inside out »)",
+    meta:"le critère positif de FVM — le sépare de l'infarctus" },
+  { g:G5, k:"vsk",             l:"Caryorrhexis stromale-vasculaire villositaire (VSK)", meta:"post-mortem dès 6 h : le premier seau de Genest" },
+  { g:G5, k:"obliterationSouche", l:"Oblitération de vaisseau souche : septation fibroblastique, sclérose de collapsus" },
+  { g:G5, k:"thrombusSouche",  l:"Thrombus mural ou occlusif d'un vaisseau souche" },
+  { g:G5, k:"foyersPetits",    l:"Petits foyers de villosités avasculaires (< 5 villosités par foyer)", meta:"patron global — pas le grade" },
+  { g:G5, k:"foyersLarges",    l:"Foyers larges d'avascularité, cumul ≥ 45 villosités sur 3 sections ou > 15 par section",
+    meta:"haut grade Amsterdam ; khong2019 abandonne le dénominateur" },
+  { g:G5, k:"hemorragieIntravill", l:"Hémorragie intravillositaire", meta:"aussi produite par aspiration, extraction manuelle, césarienne" },
+  { g:G5, k:"villite",         l:"Villite chronique lymphohistiocytaire, foyers < 10 villosités contiguës" },
+  { g:G5, k:"villiteLarge",    l:"Villite chronique, ≥ 1 foyer > 10 villosités contiguës, sur > 1 coupe", meta:"haut grade Amsterdam ; diffus > 30 % (Amsterdam) ou > 5 % (quatre autres sources)" },
+  { g:G5, k:"villitePlasmo",   l:"Villite à prédominance plasmocytaire", meta:"CMV à chercher avant de nommer une VUE" },
+  { g:G5, k:"villiteObliteration", l:"Villite avec destruction d'un vaisseau souche musculaire", meta:"« villitis with stem vessel obliteration »" },
+  { g:G5, k:"avascAvecVillite", l:"Villosités avasculaires dans un placenta avec villite", meta:"se rapporte avec la villite, pas comme FVM" },
+  { g:G5, k:"intervilliteChronique", l:"Histiocytes mononucléés dans la chambre intervilleuse (intervillite chronique)" },
+  { g:G5, k:"pnIntervilleux",  l:"Polynucléaires dans la chambre intervilleuse", meta:"« intervillositis » déconseillé pour ce signe" },
+  { g:G5, k:"perivillite",     l:"Périvillite", meta:"12,5 % des prééclampsies ; « not evident in fetal infections »" },
+  { g:G5, k:"inclusionsVirales", l:"Inclusions virales (CMV en œil de hibou), parvovirus" },
+  { g:G5, k:"fibrineEIVconserve", l:"Fibrinoïde périvillositaire comblant l'espace, chambre intervilleuse CONSERVÉE, villosités épargnées dans la lésion",
+    meta:"conservé = fibrine ; collabé = infarctus" },
+  { g:G5, k:"fibrineTransmurale", l:"Fibrinoïde transmural, de la plaque choriale à la basale, > 50 % d'une lame" },
+  { g:G5, k:"fibrine2550",     l:"Fibrinoïde sur 25–50 % d'une lame", meta:"« increased » (khong2019) ou « borderline » (recurrent)" },
+  { g:G5, k:"fibrineBasale3mm", l:"Fibrinoïde basal encastrant les villosités sur ≥ 3 mm le long du plancher", meta:"le seul chiffre partagé par toutes les sources" },
+  { g:G5, k:"populationMonotone", l:"Population villositaire monotone (≥ 10 villosités) à capillaires centraux" },
+  { g:G5, k:"mvsReduites",     l:"Membranes vasculo-syncytiales réduites pour le terme", meta:"≈ 40 % au terme ; diminuent avec le délai avant fixation" },
+  { g:G5, k:"cytotrophoContinu", l:"Cytotrophoblaste en couche continue au-delà du terme attendu" },
+  { g:G5, k:"capillairesSup10", l:"Villosités terminales à > 10 capillaires, 10 villosités, 10 champs, hors zones ischémiques",
+    meta:"quatre lectures d'Altshuler ; coloration à nommer" },
+  { g:G5, k:"villositesRondes", l:"Villosités terminales grandes, rondes, à vascularisation proéminente au faible grossissement",
+    meta:"congestion ou chorangiose : compter, ne pas juger la surface" },
+  { g:G5, k:"pericytes",       l:"Capillaires à couche de péricytes et membrane basale discontinue, villosités intermédiaires et souches",
+    meta:"chorangiomatose — la chorangiose a une paroi normale" },
+  { g:G5, k:"oedemeDiffus",    l:"Œdème villositaire diffus, circonférentiel, stroma pâle, trophoblaste conservé", meta:"patron hydrops — immun ou non" },
+  { g:G5, k:"oedemeFocal",     l:"Œdème villositaire focal, irrégulier, non circonférentiel, entre villosités normales", meta:"chercher la FVM (débris caryorrhectiques)" },
+  { g:G5, k:"hofbauer",        l:"Cellules de Hofbauer et canaux stromaux proéminents" },
+  { g:G5, k:"erythroblastes",  l:"Au moins un érythroblaste dans la plupart des champs au fort grossissement", meta:"seuil 10 / 10 champs [ernst, ch. 36]" },
+  { g:G5, k:"nrbcIntervilleux", l:"Hématies nucléées nombreuses dans la chambre intervilleuse (côté maternel)", meta:"hémorragie fœto-maternelle ; HbF" },
+  { g:G5, k:"vacuolesIntracell", l:"Vacuoles intracellulaires vides du trophoblaste, des cellules de Hofbauer, de l'endothélium", meta:"intra = surcharge ; inter = œdème" },
+  { g:G5, k:"granuleuxEosino", l:"Matériel granuleux éosinophile intracellulaire" },
+  { g:G5, k:"minéralisationMB", l:"Minéralisation de la membrane basale trophoblastique", meta:"artefact de macération" },
+  { g:G5, k:"implantationSuperficielle", l:"Cellules géantes ↑ et trophoblaste extravilleux immature au site d'implantation", meta:"implantation trop superficielle [lherminecoulomb]" },
+  { g:G5, k:"atheroseBasale",  l:"Athérose ou muscularisation persistante des artères spiralées de la plaque basale", meta:"identique à la pariétale" },
+  { g:G5, k:"proliferationTropho", l:"Prolifération trophoblastique circonférentielle ou atypique", meta:"→ fiche fille 5.14 ; Ki-67 décide" },
+  { g:G5, k:"calcifPoussiere", l:"Microcalcifications stromales poussiéreuses diffuses", meta:"rétention (mauvais prédicteur), pas une lésion" }
+];
+
+/* ── 06 bis · Associations — affichées, jamais cochées ──────────────────────── */
+var DIAGS = [
+  { k:"mvm", l:"Malperfusion vasculaire maternelle (MVM)", min:2,
+    signes:["infarctus","hrp","dvh","matAcceleree","agglutination","noeudsAugmentes","atherose","muscularisation",
+            "hypertrophieMurale","atheroseBasale","implantationSuperficielle","cordonGrele","infarctusPeriph"],
+    stop:" — Amsterdam définit la MVM par une LISTE, pas par une phrase, et chaque seuil hérite du 62 % des trois " +
+         "blocs. Îlots de cellules X, pseudokystes et nécrose déciduale membraneuse : « insufficient evidence » " +
+         "[amsterdam]. L'infarctus périphérique à terme et les zones péri-infarctus ne comptent pas. Sur un fœtus " +
+         "retenu, le trépied de la maturation accélérée est fabriqué par la rétention : le décrire, ne pas le conclure " +
+         "sans l'intervalle." },
+
+  { k:"fvm", l:"Malperfusion vasculaire fœtale (FVM)", cle:"avascTrophoVivant", min:2,
+    signes:["avascTrophoVivant","vsk","obliterationSouche","thrombusSouche","thrombusChorial","ectasie",
+            "fibrineIntramurale","foyersPetits","foyersLarges","coussinFibrine","oedemeFocal"],
+    stop:" — le trophoblaste VIVANT sur villosité avasculaire est le critère positif, avant tout comptage. Haut " +
+         "grade = 45 villosités cumulées sur TROIS sections [amsterdam] ; khong2019 garde le 45 et abandonne le " +
+         "dénominateur ; le bas grade n'est jamais défini par Amsterdam et « < 5 villosités par foyer » qualifie le " +
+         "patron global, pas le grade. Après la mort, tout se fabrique sauf le thrombus ; > 48 h, prudence. Avec " +
+         "villite : « chronic villitis with associated avascular villi »." },
+
+  { k:"mir", l:"Réponse inflammatoire maternelle (chorioamniotite aiguë)", min:1,
+    signes:["sousChorionite","chorioamniotite","necrosante","microabces","migrationAmnios"],
+    stop:" — un stade sans le nom de l'école est ininterprétable : le stade 3 de Blanc est le stade 2 d'Amsterdam, " +
+         "la nécrose n'existe pas chez Blanc, et vogel compte des régions et des granulocytes par champ. Travail " +
+         "> 12 h : 75 % d'infection amniotique — un confondeur, pas un facteur de risque. Le foyer du site de " +
+         "rupture ne signe pas l'ascension ; le méconium inhibe les polynucléaires, et sa causalité est divergente. " +
+         "Sur macéré, l'infiltrat chorial basal maternel est présent dans 66 % des cas." },
+
+  { k:"fir", l:"Réponse inflammatoire fœtale (vasculite choriale, funisite)", min:1,
+    signes:["vasculiteChoriale","phlebiteOmb","arteriteOmb","funisiteNecro"],
+    stop:" — Amsterdam : phlébite → artérite → funisite nécrosante ; Van Hoeven met la gelée de Wharton DANS les " +
+         "stades 1–2 : les deux échelles se croisent. Absente si la mort a précédé la chorioamniotite ; la média " +
+         "pycnotique du fœtus mort mime les polynucléaires. Deux vaisseaux atteints : envisager un seul, coupé " +
+         "tangentiellement." },
+
+  { k:"vue", l:"Villite chronique d'étiologie indéterminée (VUE)", cle:"villite", min:1,
+    signes:["villite","villiteLarge","villiteObliteration","avascAvecVillite","intervilliteChronique"],
+    stop:" — six définitions du grade : « diffus » = 30 % chez Amsterdam, 5 % chez quatre autres sources ; vogel " +
+         "exige un cluster de 5–10 villosités. Trois blocs = 62 % des villites : une villite absente sur quatre " +
+         "blocs est le régime normal de la méthode. Plasmocytes prédominants → CMV avant de nommer une VUE. " +
+         "Récidive 10 à 37 % : résultat critique à notifier [recurrent]. Le grade histologique ne prédit pas la " +
+         "sévérité du RCIU." },
+
+  { k:"villiteInfectieuse", l:"Villite infectieuse", cle:"villitePlasmo", min:1,
+    signes:["villitePlasmo","inclusionsVirales","villite"],
+    stop:" — la VUE est une définition PAR EXCLUSION : elle exclut ce qui a une cause. Les inclusions de CMV " +
+         "survivent à la macération ; les tréponèmes sont rares dans le placenta du fœtus macéré et abondants " +
+         "dans le foie : un Warthin-Starry placentaire négatif ne dit rien." },
+
+  { k:"mpfd", l:"Fibrine périvillositaire massive / infarctus du plancher (MPFD, MFI)", cle:"fibrineEIVconserve", min:2,
+    signes:["fibrineEIVconserve","fibrineTransmurale","fibrine2550","fibrineBasale3mm"],
+    stop:" — cinq systèmes de seuils, aucun chez Amsterdam : 25–50 % / > 50 % d'UNE LAME (khong2019), 25 % de la " +
+         "MASSE macroscopique comme plancher (recurrent), > 50 % d'un CHAMP MPF (vogel), 25 % de la lame " +
+         "(benirschke), 30 % de la masse (soffoet). Nommer le référentiel et l'unité. Les 3 mm basaux sont le seul " +
+         "accord. 20 % des témoins sans facteur de risque ont des Gitterinfarcts ; la rétention prolongée fabrique " +
+         "l'excès de fibrine. « Maternal floor infarction » n'est pas un infarctus." },
+
+  { k:"dvm", l:"Retard de maturation villositaire (DVM)", cle:"populationMonotone", min:2,
+    signes:["populationMonotone","mvsReduites","cytotrophoContinu"],
+    stop:" — après 36 SA, rarement avant 34 ; ≥ 10 villosités monotones, ≥ 30 % d'une lame pleine épaisseur ; " +
+         "« the thresholds for significance of this lesion are unclear at present » [amsterdam]. Les MVS diminuent " +
+         "avec le délai avant fixation. Diabète et obésité maternels : les DEUX sens de maturation sont décrits " +
+         "[keeling, ch. 4]. Le cadre de vogel (7 entités, % d'un champ MPF) n'est pas convertible." },
+
+  { k:"chorangiose", l:"Chorangiose villositaire", cle:"capillairesSup10", min:1,
+    signes:["capillairesSup10","villositesRondes"],
+    stop:" — quatre lectures divergentes d'un seul article (Altshuler 1984) : les « trois » et les « dix » sont " +
+         "échangés entre benirschke et keeling. Le seuil HES (> 10) tombe DANS la normale CD34 (8–15) : ne jamais " +
+         "la porter sans la coloration. Congestion = vaisseaux distendus, chorangiose = vaisseaux multipliés ; " +
+         "vidange et injection fabriquent l'image dans les deux sens. Deux voies causales, dont une non hypoxique " +
+         "(hyperinsulinisme, IGF-2)." },
+
+  { k:"chorangiomatose", l:"Chorangiomatose / chorangiome", cle:"pericytes", min:1,
+    signes:["pericytes","chorangiome","villositesRondes"],
+    stop:" — la chorangiose est le seul membre de la famille à paroi capillaire normale : péricytes et membrane " +
+         "basale discontinue font la chorangiomatose, le nodule fait le chorangiome. Texte et Table 24.1 de " +
+         "khong2019 se contredisent sur « branching ». Un chorangiome bordé de trophoblaste nécrosant n'est pas un " +
+         "choriocarcinome : « chorangioma, with associated trophoblastic proliferation »." },
+
+  { k:"pmd", l:"Dysplasie mésenchymateuse placentaire (PMD)", cle:"trophoNormalPMD", min:3,
+    signes:["souchesKystiques","vaisseauxTortueux","citernes","trophoNormalPMD","magistral","thrombusChorial","hypertorsion"],
+    stop:" — le second membre de la définition est NÉGATIF : absence de prolifération trophoblastique, souches " +
+         "proximales (la môle atteint les villosités distales). C'est un stade, pas un grade : < 20 SA les signes " +
+         "sont discrets, les kystes migrent vers la plaque choriale. p57 avec témoin interne — un p57 négatif sans " +
+         "témoin est une manipulation ratée. nRBC dans la chambre intervilleuse = hémorragie fœto-maternelle, HbF." },
+
+  { k:"hydrops", l:"Œdème villositaire diffus — anasarque", cle:"oedemeDiffus", min:2,
+    signes:["oedemeDiffus","hofbauer","erythroblastes","oedemeCordon"],
+    stop:" — « with the exception of certain infections or large chorangiomas, it is impossible to diagnose with " +
+         "certainty the cause of hydrops from pathologic examination of the placenta alone » [benirschke, ch. 23] ; " +
+         "la maladie hémolytique ne se diagnostique pas sur le placenta isolé. Circonférentiel et régulier = " +
+         "hydrops ; irrégulier et non circonférentiel = chercher la FVM. Trois gradations de l'œdème dans un même " +
+         "chapitre." },
+
+  { k:"surcharge", l:"Maladie de surcharge", cle:"vacuolesIntracell", min:1,
+    signes:["vacuolesIntracell","granuleuxEosino","hofbauer","oedemeDiffus"],
+    stop:" — la vacuole VIDE est la règle (produit soluble) ; certaines surcharges donnent un matériel granuleux " +
+         "sans vacuole ; la quantité dépend du terme. « Fetal death or edema does not give rise to vacuolation » " +
+         "[benirschke, ch. 24] : ne pas imputer à la macération. Trois vacuolisations ne sont pas des surcharges : " +
+         "trophoblaste extravilleux du chorion lisse, amnios du laparoschisis, amnios sous méconium. Résine et " +
+         "coupes semi-fines montrent ce que la paraffine cache." },
+
+  { k:"meconium", l:"Exposition prolongée au méconium", min:2,
+    signes:["meconiumAmnios","meconiumChorion","meconiumWharton","amniosDegenere","myonecrose"],
+    stop:" — 1–3 h contre 24–48 h : la profondeur de pénétration ORDONNE, elle ne date pas. Le fer positif tranche " +
+         "l'hémosidérine ; un bleu de Prusse négatif n'affirme pas le méconium (la bile se colore mal). Le fœtus " +
+         "très immature ne défèque pas — avec les deux modèles opposés du corpus. Myonécrose : < 1 % des placentas " +
+         "méconiaux, « many hours »." },
+
+  { k:"oligoamnios", l:"Amnios nodosum — oligoamnios prolongé", cle:"amniosNodosum", min:1,
+    signes:["amniosNodosum","collageneDense"],
+    stop:" — le nodule est du vernix (PAS, bleu alcian) ; il n'existe pas tôt : oligoamnios à 16 SA et amnios " +
+         "normal, absent à 600 g / 27 semaines. Ne pas confondre avec la métaplasie malpighienne (kératinisation " +
+         "focale, placenta mature, près du cordon). Rare sur le cordon ; le jumeau monoamniotique est protégé." },
+
+  { k:"cordonComplication", l:"Complication funiculaire", min:2,
+    signes:["striction","hypertorsion","thromboseOmb","hematomeCordon","cordonGrele","vaisseauxMembraneux","variceOmb","aou"],
+    stop:" — 80 % des thromboses ombilicales ont une autre complication du cordon. L'index de spiralisation : le " +
+         "seuil de pathologie d'un auteur (0,3/cm) est dix fois plus bas que la normale d'un autre (2–2,5/cm), " +
+         "19 % de discordance artère/veine, 69 % de variation le long du cordon. L'artère unique exige la " +
+         "circonférence complète et une coupe loin de l'insertion. Un hématome sans organisation, lignes de Zahn " +
+         "ni polynucléaires est un artefact ; chercher ponction, amniocentèse, transfusion. Vasa praevia ne se " +
+         "lit pas sur la pièce." },
+
+  { k:"arteriopathie", l:"Artériopathie déciduale — athérose, défaut de remodelage", cle:"atherose", min:1,
+    signes:["atherose","muscularisation","hypertrophieMurale","thromboseDeciduale","lymphocytesT","atheroseBasale"],
+    stop:" — le seuil mural « diamètre > 1/3 de la circonférence » est dimensionnellement fautif, et deux sources " +
+         "indépendantes le partagent ; trois formulations dans un même chapitre. Sur 53 placentas, quatre athéroses " +
+         "n'ont été vues qu'après revue des QUATRE rouleaux. Identique en caduque pariétale, basale ou lit " +
+         "placentaire. Le muscle lisse pariétal est normal : c'est l'épaisseur relative qui devient lésionnelle." }
+];
+
+/* ── 07 · Négatifs obligatoires — chacun conditionne la lecture d'une lésion ── */
+var NEGATIFS = [
+  { k:"delaiFixation", l:"Délai délivrance → fixation et mode de fixation consignés", p:"la MVS mesure en partie la logistique",
+    ko:"délai avant fixation NON consigné — les membranes vasculo-syncytiales et le retard de maturation ne sont pas interprétables" },
+  { k:"retention", l:"État de macération et durée de rétention consignés", p:"> 48 h, la FVM se fabrique partout",
+    ko:"intervalle de rétention NON consigné — villosités avasculaires, nœuds et cytotrophoblaste continu se décrivent sans se conclure" },
+  { k:"thrombus", l:"Présence ou absence de thrombus énoncée", p:"« true thrombi do not form in the fetal vasculature after death »",
+    ko:"thrombus NON recherché — le seul signe de FVM qui ne se fabrique pas après la mort manque" },
+  { k:"infiltratVillo", l:"Infiltrat villositaire cherché devant des villosités avasculaires", p:"villite avec oblitération ≡ FVM sans ce critère",
+    ko:"infiltrat villositaire NON cherché — FVM et villite avec oblitération sont « histologically indistinguishable »" },
+  { k:"nbBlocs", l:"Nombre de blocs et de rouleaux examinés écrit", p:"3 blocs = 62 % des villites ; l'athérose dépend du nombre de rouleaux",
+    ko:"nombre de blocs et de rouleaux NON écrit — aucun négatif multifocal n'est qualifié" },
+  { k:"siteNoeuds", l:"Site des coupes ayant servi aux nœuds déclaré (central, sans lésion macroscopique)", p:"kappa au plus mauvais sur les presque normaux",
+    ko:"site des nœuds NON déclaré — un compte en bordure de lésion est irrecevable" },
+  { k:"tablePoids", l:"Table de poids et échelle du terme nommées", p:"Amsterdam demande des tables locales ; vogel est la seule percentilée",
+    ko:"table de poids NON nommée — un percentile sans sa table ne dit rien ; +3 à 6 % après fixation" },
+  { k:"troisVaisseaux", l:"Trois vaisseaux du cordon confirmés sur coupe à circonférence complète", p:"Hyrtl fabrique une fausse artère unique près de l'insertion",
+    ko:"nombre de vaisseaux NON confirmé sur coupe complète — artère unique ni retenue ni écartée" },
+  { k:"clamp", l:"Segment de cordon sans marque de clamp ni de ponction", p:"[ernst, ch. 36]",
+    ko:"cordon prélevé sur clamp ou ponction — hématome et hémorragie périvasculaire non interprétables" },
+  { k:"geste", l:"Gestes instrumentaux et prélèvements fœtaux exclus (ponction, amniocentèse, transfusion, extraction)", p:"ils produisent hémorragie intravillositaire et hématomes",
+    ko:"gestes NON exclus — hématome du cordon et hémorragie intravillositaire ne se disent pas spontanés" },
+  { k:"travail", l:"Durée du travail connue", p:"11 % d'infection amniotique si < 6 h, 75 % si > 12 h",
+    ko:"durée du travail INCONNUE — le taux de chorioamniotite est confondu" },
+  { k:"meconium", l:"Présence ou absence de méconium énoncée", p:"il inhibe les polynucléaires",
+    ko:"méconium NON énoncé — l'infiltrat et son absence sont biaisés" },
+  { k:"siteRupture", l:"Site de rupture des membranes situé par rapport au rouleau", p:"un foyer intense au site de rupture ne signe pas l'ascension",
+    ko:"site de rupture NON situé — le foyer du rouleau n'est pas interprétable" },
+  { k:"coloration", l:"Coloration du compte capillaire nommée", p:"> 10 en HES est dans la normale CD34",
+    ko:"coloration NON nommée — la chorangiose ne se porte pas" },
+  { k:"chorionicite", l:"Chorionicité et méthode (rouleau, coupe en T, clivabilité) — si multiple", p:"le nombre de feuillets est la donnée divergente",
+    ko:"chorionicité NON établie par une méthode nommée" }
+];
+
+/* ── 08 · Techniques ──────────────────────────────────────────────────────── */
+var TECHNIQUES = [
+  { k:"cd34",      l:"CD31 / CD34", q:"espaces vasculaires ; compte capillaire au CD34 (8–15 normal) ; vaisseaux primitifs de la PMD" },
+  { k:"msa",       l:"Actine muscle-spécifique (MSA)", q:"couche continue de péricytes — chorangiomatose contre chorangiose" },
+  { k:"reticuline", l:"Réticuline", q:"réseau en treillis du chorangiome" },
+  { k:"p57",       l:"p57KIP2 avec témoin interne", q:"génome maternel — PMD, môle ; caduque et trophoblaste extravilleux positifs dans tous les cas" },
+  { k:"hbf",       l:"Hémoglobine F", q:"hématies nucléées dans la chambre intervilleuse — hémorragie fœto-maternelle" },
+  { k:"pasAlcian", l:"PAS et bleu alcian", q:"nodules de vernix de l'amnios nodosum ; citernes hyaluroniques de la PMD" },
+  { k:"perls",     l:"Bleu de Prusse (Perls)", q:"hémosidérine contre méconium — le fer positif tranche, le négatif n'affirme rien" },
+  { k:"gram",      l:"Gram tissulaire, frottis de plaque choriale", q:"infection bactérienne — à adresser en microbiologie" },
+  { k:"warthin",   l:"Warthin-Starry — sur le FOIE", q:"tréponèmes rares dans le placenta macéré, abondants dans le foie" },
+  { k:"ihcViral",  l:"IHC CMV / parvovirus", q:"utile sur tissu autolysé" },
+  { k:"surcharge", l:"PAS-diastase, Luxol, CD68, phosphatase acide", q:"typage d'une surcharge (sialidose, Gaucher)" },
+  { k:"resine",    l:"Résine époxy, coupes semi-fines, ME", q:"vacuoles invisibles en paraffine ; > 30 diagnostics sur 100 CVS" },
+  { k:"series",    l:"Coupes sériées", q:"nœuds syncytiaux : la majorité sont des artefacts de coupe" },
+  { k:"rouleaux",  l:"Rouleaux de membranes supplémentaires", q:"athérose vue dans 4 cas sur 53 seulement après les 4 rouleaux" },
+  { k:"blocs6",    l:"Blocs parenchymateux supplémentaires (6–7)", q:"villite : 62 % à 3 blocs, 85–95 % à 6" },
+  { k:"tricrome",  l:"Trichrome", q:"architecture sous macération — non sourcé pour le placenta dans ce corpus" },
+  { k:"adn",       l:"Caryotype (plaque choriale) / envoi du congelé", q:"PMD (mosaïque), môle, surcharge" }
+];
+
+/* ── Propositions de techniques — déduites des clics, jamais imposées ─────── */
+function suggerer(){
+  var s = {};
+  function anormal(k){ return E.signes[k] === "anormal"; }
+  function ret(k){ return E.retention[k] === "present"; }
+
+  if (anormal("capillairesSup10") || anormal("villositesRondes")) s.cd34 = 1;
+  if (anormal("pericytes") || anormal("chorangiome")){ s.msa = 1; s.reticuline = 1; s.cd34 = 1; }
+  if (anormal("souchesKystiques") || anormal("citernes") || anormal("trophoNormalPMD") || anormal("proliferationTropho")){ s.p57 = 1; s.adn = 1; }
+  if (anormal("citernes") || anormal("amniosNodosum")) s.pasAlcian = 1;
+  if (anormal("nrbcIntervilleux")) s.hbf = 1;
+  if (anormal("hemosiderine") || anormal("hemosiderineMarge") || anormal("meconiumChorion") || anormal("meconiumAmnios")) s.perls = 1;
+  if (anormal("chorioamniotite") || anormal("necrosante") || anormal("microabces") || anormal("funisiteNecro") || anormal("arteriteOmb")) s.gram = 1;
+  if (anormal("villitePlasmo") || anormal("inclusionsVirales")){ s.ihcViral = 1; s.warthin = 1; }
+  if (anormal("vacuolesIntracell") || anormal("granuleuxEosino")){ s.surcharge = 1; s.resine = 1; s.adn = 1; }
+  if (anormal("noeudsAugmentes") || anormal("matAcceleree")) s.series = 1;
+  if (anormal("atherose") || anormal("muscularisation") || anormal("hypertrophieMurale")) s.rouleaux = 1;
+  if (anormal("villite") || anormal("villiteLarge")) s.blocs6 = 1;
+  if (anormal("oedemeDiffus") || anormal("hofbauer")){ s.surcharge = 1; s.ihcViral = 1; }
+
+  if (E.mesure.v.capillaires != null && E.mesure.opt !== "cd34" && E.mesure.v.capillaires > 10) s.cd34 = 1;
+  if (ret("fibroseEtendue") || ret("lumEtendu")) s.tricrome = 1;
+  if (E.negatifs.coloration === "present") s.cd34 = 1;
+  if (E.negatifs.nbBlocs === "present") s.blocs6 = 1;
+  if (E.negatifs.infiltratVillo === "present") s.blocs6 = 1;
+  return s;
+}
+
+/* ── Contrôles propres au placenta ────────────────────────────────────────── */
+async function testsOrgane(chk, clic, set, crTient, pause){
+  /* Cinq grandes sections, dans l'ordre demandé */
+  var groupes = SIGNES.map(function(x){ return x.g; }).filter(function(g, i, a){ return a.indexOf(g) === i; });
+  chk("cinq sections de signes",   groupes.length === 5 && groupes[0] === G1 && groupes[1] === G2 &&
+                                   groupes[2] === G3 && groupes[3] === G4 && groupes[4] === G5);
+  chk("sous-titres rendus",        $("signes").querySelectorAll(".sousTitre").length === 5);
+  chk("chaque signe a sa section", SIGNES.every(function(x){ return !!x.g; }));
+
+  /* Maturation : Vogel, et la divergence ernst portée */
+  chk("Vogel : 20 SA → immatures dominantes", stadeAttendu(20).k === "immatDom");
+  chk("Vogel : 28 SA → matures dominantes",   stadeAttendu(28).k === "matureDom");
+  chk("Vogel : 40 SA → terminales",           stadeAttendu(40).k === "termDom");
+  chk("croisement ernst / vogel porté",       par(STADES, "termMontee").note.indexOf("32 SA") >= 0);
+
+  /* Rétention : les quatre seaux, avec leurs performances */
+  chk("premier seau ≥ 6 h",        par(RETENTION, "karyoIntravasc").h === 6 && par(RETENTION, "karyoIntravasc").q === "bon");
+  chk("mauvais prédicteurs nommés", par(RETENTION, "microcalcif").q === "mauvais" && par(RETENTION, "mbTropho").q === "mauvais");
+  chk("témoin de réfrigération",   par(RETENTION, "karyoIntravasc").alerte.indexOf("réfrigéré") >= 0);
+
+  /* Les comptes s'entrent sans barème */
+  set("sa", "38");
+  set("m_noeuds", "31");
+  chk("nœuds acceptés sans barème",   crTient("le compte est consigné, l'interprétation reste ouverte"));
+  chk("31 % : augmenté selon khong et benirschke, pas Amsterdam",
+      crTient("augmenté selon > 30 % des deux tiers inférieurs") && crTient("pas selon > 33 % [amsterdam]"));
+  clic("mdef", "amsterdam");
+  chk("Amsterdam retenu : non augmentés", crTient("nœuds non augmentés"));
+  clic("mdef", "khong");
+  chk("khong retenu : augmentés",  crTient("nœuds AUGMENTÉS"));
+  set("sa", "30"); clic("mdef", "benirschke");
+  chk("benirschke avant 34 SA : seuil 20 %", crTient("> 20 % avant 34 SA"));
+  set("sa", "38"); clic("mdef", "benirschke");
+  set("m_noeuds", "");
+
+  set("m_capillaires", "12");
+  chk("capillaires sans coloration : consigné", crTient("la coloration décide, pas le chiffre"));
+  clic("mopt", "hes");
+  chk("12 en HES : chorangiose d'Altshuler, à confirmer en CD34", crTient("> 10 = chorangiose selon Altshuler") && suggerer().cd34 === 1);
+  clic("mopt", "cd34");
+  chk("12 au CD34 : normal",       crTient("dans la fourchette normale 8–15"));
+  clic("mopt", "cd34");
+  set("m_capillaires", "");
+
+  /* Doctrine portée dans les stops */
+  chk("MVM : liste, pas phrase",   par(DIAGS, "mvm").stop.indexOf("LISTE") >= 0);
+  chk("FVM : trois sections",      par(DIAGS, "fvm").stop.indexOf("TROIS sections") >= 0 && par(DIAGS, "fvm").stop.indexOf("bas grade") >= 0);
+  chk("villite : 30 % vs 5 %",     par(DIAGS, "vue").stop.indexOf("30 %") >= 0 && par(DIAGS, "vue").stop.indexOf("5 %") >= 0);
+  chk("MPFD : cinq systèmes",      par(DIAGS, "mpfd").stop.indexOf("cinq systèmes") >= 0);
+  chk("chorangiose : coloration",  par(DIAGS, "chorangiose").stop.indexOf("CD34") >= 0);
+  chk("hydrops : verrou Benirschke", par(DIAGS, "hydrops").stop.indexOf("impossible to diagnose") >= 0);
+  chk("PMD : critère négatif",     par(DIAGS, "pmd").stop.indexOf("NÉGATIF") >= 0);
+  chk("chorioamniotite : écoles",  par(DIAGS, "mir").stop.indexOf("Blanc") >= 0 && par(DIAGS, "mir").stop.indexOf("vogel") >= 0);
+  chk("surcharge : macération ne vacuolise pas", par(DIAGS, "surcharge").stop.indexOf("does not give rise to vacuolation") >= 0);
+  chk("méconium : ordonne, ne date pas", par(DIAGS, "meconium").stop.indexOf("ORDONNE") >= 0);
+
+  /* Le nom se déduit des signes — il ne se coche pas */
+  chk("aucun bouton ne porte un diagnostic",
+      DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
+
+  function pose(k, v){ if (E.signes[k] !== v) clic("les", k, v); }
+  function ote(k){ if (E.signes[k]) clic("les", k, E.signes[k]); }
+  function tenue(k){ return associations().some(function(a){ return a.d.k === k && a.tenu; }); }
+
+  /* FVM : sans le trophoblaste vivant, le compte ne tient pas */
+  pose("vsk", "anormal"); pose("obliterationSouche", "anormal");
+  chk("FVM sans pivot ne tient pas", !tenue("fvm") && crTient("signe pivot non coché"));
+  pose("avascTrophoVivant", "anormal");
+  chk("FVM avec le trophoblaste vivant", tenue("fvm"));
+  ote("vsk"); ote("obliterationSouche"); ote("avascTrophoVivant");
+
+  /* Rétention présente : les nœuds se décrivent, ne se concluent pas */
+  clic("ret", "karyoIntravasc", "present");
+  set("m_noeuds", "40");
+  chk("rétention → réserve sur les nœuds", crTient("elle fabrique les nœuds augmentés"));
+  set("m_noeuds", "");
+  clic("ret", "karyoIntravasc", "present");
+
+  /* Signes → techniques */
+  pose("pericytes", "anormal");
+  chk("péricytes → MSA et réticuline", suggerer().msa === 1 && suggerer().reticuline === 1);
+  ote("pericytes");
+  pose("trophoNormalPMD", "anormal");
+  chk("PMD → p57", suggerer().p57 === 1);
+  ote("trophoNormalPMD");
+  pose("villitePlasmo", "anormal");
+  chk("plasmocytes → IHC virale", suggerer().ihcViral === 1);
+  ote("villitePlasmo");
+
+  /* Le CR porte la section du signe */
+  pose("aou", "anormal");
+  chk("CR : section devant le signe", crTient(G1 + " · " + par(SIGNES, "aou").l + " — ANORMAL"));
+  ote("aou");
+}
+
+/* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
+var FOETO = {"sections":[{"t":"5.1 Malperfusion vasculaire maternelle (MVM)","termes":[{"id":"FOETO:PP.PAR-VAS-015","l":"MVM — Infarctus"}]},{"t":"5.1.1 Infarctus","termes":[{"id":"FOETO:PP.PLA-NOR-020","l":"Augmentation des nœuds syncytiaux dans les villosités avasculaires"},{"id":"FOETO:PP.PLA-CLA-003","l":"Dégénérescence syncytiale"},{"id":"FOETO:PP.PAR-VAS-012","l":"Infarctus villositaire"},{"id":"FOETO:PP.PLA-VAS-022","l":"Infarctus villositaire ancien"},{"id":"FOETO:PP.PLA-VAS-023","l":"Infarctus villositaire ancien (villosités fantomatiques)"},{"id":"FOETO:PP.PLA-VAS-024","l":"Infarctus villositaire placentaire"},{"id":"FOETO:PP.PLA-VAS-025","l":"Infarctus villositaire récent"},{"id":"FOETO:PP.PLA-VAS-056","l":"Villosités fantômes (ghosts villositaires)"}]},{"t":"5.1.2 Hématome rétroplacentaire","termes":[{"id":"FOETO:PP.PLA-VAS-003","l":"Congestion villositaire par obstruction vasculaire fœtale récente"},{"id":"FOETO:PP.PLA-VAS-013","l":"Hématome décidual basal (hématome rétroplacentaire)"},{"id":"FOETO:PP.PAR-VAS-009","l":"Hématome rétroplacentaire"},{"id":"FOETO:PP.PBA-VAS-003","l":"Hématome rétroplacentaire basal"},{"id":"FOETO:PP.PLA-VAS-017","l":"Hémorragie rétroplacentaire"}]},{"t":"5.1.3 Hypoplasie villositaire distale","termes":[{"id":"FOETO:PP.PLA-DYS-016","l":"Hypoplasie villositaire distale"},{"id":"FOETO:PP.PAR-MAL-001","l":"Hypoplasie villositaire distale (déficience des villosités terminales)"},{"id":"FOETO:PP.PAR-VAS-014","l":"MVM — Hypoplasie villositaire distale"}]},{"t":"5.1.4 Maturation villositaire accélérée et nœuds syncytiaux — trois seuils, trois dénominateurs","termes":[{"id":"FOETO:PP.PLA-NOR-125","l":"Nœuds syncytiaux (changement de Tenney-Parker)"},{"id":"FOETO:PP.PLA-NOR-126","l":"Nœuds syncytiaux (changements de Tenney-Parker)"},{"id":"FOETO:PP.PAR-NOR-009","l":"Nœuds syncytiaux (vrais)"}]},{"t":"5.1.5 Agglutination villositaire","termes":[{"id":"FOETO:PP.PAR-CLA-001","l":"Agglutination villositaire"},{"id":"FOETO:PP.PLA-CLA-001","l":"Agglutination villositaire par fibrinoïde périvillositaire"}]},{"t":"5.1.6 Artériopathie déciduale","termes":[{"id":"FOETO:PP.PAR-VAS-001","l":"Artériopathie déciduale"},{"id":"FOETO:PP.AUP-VAS-003","l":"Athérose aiguë des artères spiralées"},{"id":"FOETO:PP.PAR-MET-003","l":"Athérose aiguë déciduale"},{"id":"FOETO:PP.PLA-MET-003","l":"Athérose des vaisseaux déciduaux"},{"id":"FOETO:PP.PLA-NOR-019","l":"Augmentation des cellules trophoblastiques géantes du site d'implantation"},{"id":"FOETO:PP.PLA-DYS-006","l":"Défaut de remodelage des artères spiralées"},{"id":"FOETO:PP.AUP-VAS-002","l":"Défaut de transformation physiologique des artères utéro-placentaires"},{"id":"FOETO:PP.PLA-DYS-007","l":"Défaut de transformation physiologique des artères utéroplacentaires"},{"id":"FOETO:PP.PBA-MET-003","l":"Excès de trophoblaste extravilleux"},{"id":"FOETO:PP.PAR-NOR-007","l":"Excès de trophoblaste multinucléé dans la basale"},{"id":"FOETO:PP.PLA-DYS-011","l":"Hypertrophie murale des artérioles décidales"},{"id":"FOETO:PP.PLA-NOR-085","l":"Hypertrophie pariétale des vaisseaux déciduals membranaires"},{"id":"FOETO:PP.PLA-DYS-018","l":"Implantation superficielle du placenta"},{"id":"FOETO:PP.PAR-VAS-013","l":"MVM — Artériopathie déciduale"},{"id":"FOETO:PP.PAR-VAS-017","l":"Nécrose fibrinoïde de la paroi artérielle déciduale"},{"id":"FOETO:PP.AUP-VAS-005","l":"Nécrose fibrinoïde pariétale des artères spiralées"}]},{"t":"5.10.1 Une définition double, dont le second membre est négatif","termes":[{"id":"FOETO:PP.PAR-DYS-003","l":"Dysplasie mésenchymateuse placentaire"}]},{"t":"5.10.3 Macroscopie — et un mot qui mérite sa définition","termes":[{"id":"FOETO:PP.PLA-DYS-013","l":"Hypertrophie placentaire"},{"id":"FOETO:PP.PLA-DYS-029","l":"Placentomégalie"},{"id":"FOETO:PP.PLA-MET-021","l":"Placentomégalie avec aspect pâle"}]},{"t":"5.10.4 Histologie","termes":[{"id":"FOETO:PP.PLA-DYS-002","l":"Citerne villeuse"},{"id":"FOETO:PP.PLA-DYS-017","l":"Hémorragie fœto-maternelle à érythroblastes dans l'espace intervilleux"},{"id":"FOETO:PP.PLA-DYS-019","l":"Infiltrat stromal Alcian blue positif"},{"id":"FOETO:PP.PLA-DYS-024","l":"Manchon mésenchymateux péri-vasculaire"},{"id":"FOETO:PP.PLA-DYS-031","l":"Pseudo-inclusion trophoblastique"},{"id":"FOETO:PP.PLA-DYS-035","l":"Stroma villositaire hyalinisé"},{"id":"FOETO:PP.PLA-DYS-037","l":"Stroma villositaire myxomateux"},{"id":"FOETO:PP.PLA-DYS-041","l":"Vaisseau-tronc villositaire à paroi épaisse"},{"id":"FOETO:PP.PLA-DYS-042","l":"Villosité choriale élargie et œdémateuse"}]},{"t":"5.10.5 Deux marqueurs, et il faut lire le sens de l'empreinte avant la lame","termes":[{"id":"FOETO:PP.PLA-DYS-027","l":"Perte d'expression de l'actine musculaire lisse dans le stroma villositaire"},{"id":"FOETO:PP.PLA-DYS-028","l":"Perte d'expression de p57kip2 dans le stroma villositaire"},{"id":"FOETO:PP.PLA-DYS-032","l":"Rétention trophoblastique de l'expression de p57kip2"}]},{"t":"5.10.8 Différentiels","termes":[{"id":"FOETO:PP.PLA-DYS-010","l":"Hyperplasie trophoblastique"},{"id":"FOETO:PP.PLA-TUM-022","l":"Môle hydatiforme complète"},{"id":"FOETO:PP.PLA-TUM-023","l":"Môle hydatiforme partielle"},{"id":"FOETO:PP.PLA-DYS-038","l":"Thrombohématome sous-chorial"},{"id":"FOETO:PP.PLA-DYS-043","l":"Villosité hydropique diffuse sans vascularisation"}]},{"t":"5.11.10 Érythroblastes circulants — un chiffre qui exclut, et qui ne date rien seul","termes":[{"id":"FOETO:PP.PLA-RET-002","l":"Augmentation des érythroblastes intravasculaires"},{"id":"FOETO:PP.PLA-NOR-218","l":"Érythroblastes dans les vaisseaux fœtaux villositaires"},{"id":"FOETO:PP.PAR-TUM-002","l":"Érythroblastes fœtaux en excès dans la circulation placentaire"}]},{"t":"5.11.2 Le verrou de la section — deux exceptions, et deux seulement","termes":[{"id":"FOETO:PP.PAR-RET-007","l":"Œdème villositaire"}]},{"t":"5.11.3 Les deux patrons d'œdème villositaire — un seul évoque l'hydrops","termes":[{"id":"FOETO:PP.PLA-INF-035","l":"Stroma villositaire œdémateux avec augmentation des cellules de Hofbauer"}]},{"t":"5.11.5 L'EMH villositaire — un marqueur de durée, pas d'intensité, et pas un discriminant","termes":[{"id":"FOETO:PP.PLA-NOR-146","l":"Précurseurs hématopoïétiques non érythroïdes circulants"},{"id":"FOETO:PP.PAR-RET-006","l":"Érythroblastose placentaire (érythropoïèse extra-hépatique villositaire)"},{"id":"FOETO:PP.PLA-NOR-220","l":"Érythropoïèse extramédullaire stromale"}]},{"t":"5.12.1 Le siège est intracellulaire, et c'est ce qui la sépare de l'œdème","termes":[{"id":"FOETO:PP.PLA-MET-012","l":"Histiocytes de surcharge dans les tissus placentaires"},{"id":"FOETO:PP.PLA-MET-030","l":"Placenta des mucopolysaccharidoses et de la sialidose (surcharge lysosomale étiquetée)"},{"id":"FOETO:PP.PLA-MET-022","l":"Produits de stockage anormaux dans le trophoblaste et les macrophages stromaux"},{"id":"FOETO:PP.PAR-MET-007","l":"Vacuolisation des cellules de Hofbauer"},{"id":"FOETO:PP.PLA-NOR-184","l":"Vacuolisation des macrophages stromaux villositaires"},{"id":"FOETO:PP.PAR-MET-009","l":"Vacuolisation du cytotrophoblaste villositaire"},{"id":"FOETO:PP.PLA-MET-028","l":"Vacuolisation du stroma villositaire"},{"id":"FOETO:PP.PAR-MET-010","l":"Vacuolisation du syncytiotrophoblaste"}]},{"t":"5.12.3 La vacuole est vide parce que le produit est parti — quatre conséquences","termes":[{"id":"FOETO:PP.PAR-MET-002","l":"Accumulation lysosomale de glycogène dans le placenta"},{"id":"FOETO:PP.PLA-MET-014","l":"Inclusions lysosomales membraneuses dans le placenta"},{"id":"FOETO:PP.PLA-MET-023","l":"Vacuoles claires liées à une membrane dans les cellules placentaires (MEB)"},{"id":"FOETO:PP.PLA-MET-027","l":"Vacuolisation du cytotrophoblaste extravilleux"}]},{"t":"5.12.4 Table 20.1 « Patterns of vacuolation » — et ses témoins négatifs","termes":[{"id":"FOETO:PP.PLA-MET-001","l":"Accumulation de cholestérol et lipides dans le syncytiotrophoblaste"}]},{"t":"5.12.5 Gaucher — le tableau et le texte du même chapitre se contredisent","termes":[{"id":"FOETO:PP.PAR-MET-004","l":"Calcifications"},{"id":"FOETO:PP.PLA-MET-005","l":"Calcifications intraplacentaires"},{"id":"FOETO:PP.PLA-MET-006","l":"Calcifications placentaires dans les lésions fibrinoïdes"},{"id":"FOETO:PP.PLA-MET-015","l":"Infiltrat de cellules de Gaucher dans le stroma villositaire"}]},{"t":"5.12.6 Trois vacuolisations qui ne sont PAS des surcharges","termes":[{"id":"FOETO:PP.PLA-MET-025","l":"Vacuolisation de l'épithélium amniotique"}]},{"t":"5.12.7 Colorations, et le seul chiffre de rendement de la section","termes":[{"id":"FOETO:PP.PLA-MET-011","l":"Granules PAS-positifs intracytoplasmiques dans les vacuoles"}]},{"t":"5.2.1 Le critère qui sépare la FVM de l'infarctus","termes":[{"id":"FOETO:PP.PLA-VAS-001","l":"Atrophie et fibrose villositaires par obstruction vasculaire fœtale"},{"id":"FOETO:PP.PLA-DYS-008","l":"Extravasation érythrocytaire stromale villositaire"},{"id":"FOETO:PP.PLA-DYS-023","l":"Malperfusion vasculaire fœtale placentaire"}]},{"t":"5.2.2 Les deux patrons, et le trou du bas grade","termes":[{"id":"FOETO:PP.PLA-VAS-007","l":"Ectasie vasculaire des troncs villositaires"},{"id":"FOETO:PP.PLA-VAS-010","l":"Grands foyers de villosités avasculaires"},{"id":"FOETO:PP.PLA-VAS-027","l":"Malperfusion vasculaire fœtale globale"},{"id":"FOETO:PP.PAR-VAS-016","l":"Malperfusion vasculaire fœtale segmentaire"},{"id":"FOETO:PP.PLA-MAL-035","l":"Thrombose d'artère ombilicale"},{"id":"FOETO:PP.PLA-MAL-036","l":"Thrombose de veine ombilicale"},{"id":"FOETO:PP.PLA-VAS-039","l":"Thrombose des vaisseaux fœtaux"},{"id":"FOETO:PP.PLA-VAS-041","l":"Thrombose des vaisseaux ombilicaux"},{"id":"FOETO:PP.PLA-MAL-037","l":"Thrombose des veines de surface placentaire"},{"id":"FOETO:PP.PLA-VAS-045","l":"Thrombus dans les vaisseaux placentaires fœtaux"},{"id":"FOETO:PP.PAR-VAS-020","l":"Thrombus de la plaque choriale"},{"id":"FOETO:PP.PLA-VAS-046","l":"Thrombus des vaisseaux des villosités-troncs"},{"id":"FOETO:PP.PLA-VAS-057","l":"Thrombus non occlusif des vaisseaux fœtaux placentaires"},{"id":"FOETO:PP.PLA-DYS-039","l":"Thrombus vasculaire placentaire fœtal"}]},{"t":"5.2.4 Le vocabulaire — anciens termes et termes actuels","termes":[{"id":"FOETO:PP.PLA-NOR-053","l":"Coussinets myxoïdes intimaux des vaisseaux de la plaque choriale"},{"id":"FOETO:PP.PLA-VAS-004","l":"Dépôt de fibrine intramural dans les grands vaisseaux placentaires"},{"id":"FOETO:PP.PAR-VAS-004","l":"Endovasculite hémorragique"},{"id":"FOETO:PP.VAC-VAS-002","l":"Endovasculite hémorragique allanto-choriale"},{"id":"FOETO:PP.PLA-DYS-009","l":"Fibrine intramural vasculaire"},{"id":"FOETO:PP.PLA-DYS-020","l":"Karyorrhexie stromale villositaire"},{"id":"FOETO:PP.PLA-CLA-006","l":"Karyorrhexie stromale-vasculaire des villosités"},{"id":"FOETO:PP.PLA-VAS-028","l":"Oblitération des vaisseaux des villosités-troncs"},{"id":"FOETO:PP.PLA-DYS-033","l":"Sclérose fibromusculaire des vaisseaux tronculaires"},{"id":"FOETO:PP.PAR-VAS-025","l":"Vasculopathie thrombotique fœtale"},{"id":"FOETO:PP.PAR-VAS-026","l":"Villosités avasculaires"},{"id":"FOETO:PP.PLA-CLA-017","l":"Villosités avasculaires avec dégénérescence (karyorrhexie, calcifications, ferrugination)"}]},{"t":"5.2.5 Dater un thrombus de gros vaisseau — quatre stades","termes":[{"id":"FOETO:PP.PLA-MET-004","l":"Calcification dystrophique des vaisseaux fœtaux placentaires"},{"id":"FOETO:PP.PLA-DYS-001","l":"Calcification vasculaire placentaire"},{"id":"FOETO:PP.PLA-MAL-006","l":"Calcification vasculaire placentaire (veines choriales)"},{"id":"FOETO:PP.PLA-VAS-044","l":"Thrombus calcifié dans les vaisseaux fœtaux placentaires"},{"id":"FOETO:PP.PLA-VAS-047","l":"Thrombus en organisation dans les vaisseaux fœtaux placentaires"},{"id":"FOETO:PP.PLA-VAS-049","l":"Thrombus organisé dans les vaisseaux fœtaux placentaires"},{"id":"FOETO:PP.PLA-VAS-050","l":"Thrombus organisé dans un vaisseau chorioniaque"},{"id":"FOETO:PP.PLA-VAS-051","l":"Thrombus récent dans les vaisseaux fœtaux placentaires"}]},{"t":"5.2.6 Deux lésions à seuil, souvent mal employées","termes":[{"id":"FOETO:PP.PLA-DYS-004","l":"Dilatation vasculaire fœtale villositaire"},{"id":"FOETO:PP.PLA-VAS-008","l":"Ectasie vasculaire fœtale placentaire"},{"id":"FOETO:PP.VAC-VAS-003","l":"FVM — Ectasie vasculaire choriale"},{"id":"FOETO:PP.PLA-DYS-040","l":"Vaisseau de la plaque choriale à paroi épaisse et ectasique"}]},{"t":"5.3.1 Chorioamniotite aiguë — trois systèmes qui ne se superposent pas","termes":[{"id":"FOETO:PP.PLA-INF-004","l":"Chorioamnionite"},{"id":"FOETO:PP.PLA-INF-005","l":"Chorioamnionite aiguë"},{"id":"FOETO:PP.PLA-INF-007","l":"Chorioamniotite aiguë"},{"id":"FOETO:PP.PCH-INF-002","l":"Chorioamniotite aiguë de la plaque choriale"},{"id":"FOETO:PP.PCH-INF-001","l":"Chorionite subchoriale aiguë"},{"id":"FOETO:PP.PLA-INF-019","l":"Infiltrat neutrophilique intervillositaire et intravillositaire (microabcès)"},{"id":"FOETO:PP.PCH-INF-003","l":"Microabcès sous-chorial (critère de grade 2 du MIR)"},{"id":"FOETO:PP.PAR-INF-016","l":"RIF1 — Vasculite choriale"},{"id":"FOETO:PP.PLA-INF-040","l":"Vasculite des vaisseaux chorioniques et ombilicaux"}]},{"t":"5.4.2 Prévalence — un facteur 37, et sa cause est nommée","termes":[{"id":"FOETO:PP.PLA-INF-042","l":"Villosite chronique"}]},{"t":"5.4.5 Ce qui sépare une VUE d'une villite infectieuse","termes":[{"id":"FOETO:PP.PLA-INF-020","l":"Infiltrat plasmocytaire villositaire"},{"id":"FOETO:PP.PAR-INF-008","l":"Villite chronique lympho-plasmocytaire"},{"id":"FOETO:PP.PLA-INF-041","l":"Villite d'étiologie inconnue"}]},{"t":"5.4.6 Deux qualificatifs qu'Amsterdam impose au compte rendu","termes":[{"id":"FOETO:PP.PLA-VAS-053","l":"Vasculopathie fœtale oblitérante"},{"id":"FOETO:PP.PLA-VAS-054","l":"Vasculopathie oblitérante fœtale (VCEI)"}]},{"t":"5.5.3 Les quatre systèmes de seuils, côte à côte","termes":[{"id":"FOETO:PP.PLA-VAS-005","l":"Dépôt de fibrine périvillositaire massive (infarctus du plancher maternel)"},{"id":"FOETO:PP.PAR-CLA-002","l":"Dépôt massif de fibrinoïde périvillositaire"},{"id":"FOETO:PP.PLA-VAS-006","l":"Dépôt périvillositaire de fibrinoïde"},{"id":"FOETO:PP.PAR-VAS-003","l":"Dépôts fibrinoïdes périvillositaires massifs (NIDF / maternal floor infarction)"},{"id":"FOETO:PP.PLA-VAS-019","l":"Infarctus du plancher maternel"},{"id":"FOETO:PP.PLA-VAS-021","l":"Infarctus maternel du plancher placentaire"}]},{"t":"5.6.1 Cadre [amsterdam] — 3 entités, seuil de 30 % d'UNE lame pleine épaisseur","termes":[{"id":"FOETO:PP.PLA-DYS-005","l":"Distribution non périphérique des capillaires villositaires"},{"id":"FOETO:PP.PLA-CLA-016","l":"Paucité des membranes vasculo-syncytiales"}]},{"t":"5.6.2 Cadre [vogel, ch. 8] — 7 entités, gradation en % d'UN champ MPF","termes":[{"id":"FOETO:PP.PAR-VAS-002","l":"Chorangiose"},{"id":"FOETO:PP.PAR-VAS-008","l":"Hypercapillarisation des villosités terminales (chorangiose)"}]},{"t":"5.7.2 Amnios nodosum — le nodule est du vernix, et il a un plancher chronologique","termes":[{"id":"FOETO:PP.MEM-CLA-001","l":"Amnios nodosum"},{"id":"FOETO:PP.PLA-MAL-001","l":"Amnios nodosum (membrane de séparation gémellaire)"}]},{"t":"5.7.5 Méconium dans les membranes — la seule chronologie chiffrée du corpus, et elle est réfutée sur place","termes":[{"id":"FOETO:PP.PLA-NOR-063","l":"Dégénérescence ballonnisante de l'épithélium amniotique"},{"id":"FOETO:PP.PLA-INF-008","l":"Dégénérescence de l'épithélium amniotique par le méconium"},{"id":"FOETO:PP.PLA-INF-010","l":"Dépôt de méconium dans le chorion"},{"id":"FOETO:PP.MEM-CLA-002","l":"Macrophages chargés de méconium (délai 24-48h)"},{"id":"FOETO:PP.PLA-CLA-009","l":"Modifications dégénératives de l'amnion"}]},{"t":"5.8.1 Spiralisation — la divergence est interne à une seule source","termes":[{"id":"FOETO:PP.PLA-MAL-016","l":"Hyperenroulement du cordon ombilical"},{"id":"FOETO:PP.PLA-MAL-017","l":"Hypo-enroulement du cordon ombilical"}]},{"t":"5.8.2 Longueur — trois classes, pas deux","termes":[{"id":"FOETO:PP.PLA-MAL-011","l":"Cordon ombilical court"}]},{"t":"5.8.3 Vélamenteuse, vaisseaux membraneux, vasa praevia — trois objets distincts","termes":[{"id":"FOETO:PP.PLA-MAL-022","l":"Insertion marginale du cordon ombilical (battledore)"},{"id":"FOETO:PP.PLA-MAL-023","l":"Insertion vélamenteuse du cordon (grossesse multiple)"},{"id":"FOETO:PP.COR-MAL-001","l":"Insertion vélamenteuse du cordon ombilical"},{"id":"FOETO:PP.PLA-MAL-042","l":"Vasa praevia"},{"id":"FOETO:PP.PLA-MAL-043","l":"Vasa praevia (grossesse gémellaire)"}]},{"t":"5.8.4 Artère ombilicale unique — le faux positif de prélèvement le mieux documenté","termes":[{"id":"FOETO:PP.COR-MAL-002","l":"Artère ombilicale unique"},{"id":"FOETO:PP.PLA-MAL-005","l":"Artère ombilicale unique (grossesse gémellaire)"}]},{"t":"5.8.5 Sténose, cordon grêle, thrombose","termes":[{"id":"FOETO:PP.COR-MAL-003","l":"Cordon ombilical grêle (diamètre réduit)"},{"id":"FOETO:PP.PLA-DYS-003","l":"Cordon ombilical épaissi avec excès de gelée de Wharton"},{"id":"FOETO:PP.PLA-MAL-014","l":"Déficit en gelée de Wharton"},{"id":"FOETO:PP.PLA-CLA-004","l":"Fibrose stromale des villosités souches"},{"id":"FOETO:PP.PLA-VAS-012","l":"Hématome du cordon ombilical"},{"id":"FOETO:PP.PLA-MAL-039","l":"Torsion / coarctation du cordon ombilical"},{"id":"FOETO:PP.PLA-NOR-224","l":"Œdème de la gelée de Wharton"}]},{"t":"5.8.6 Myonécrose vasculaire au méconium","termes":[{"id":"FOETO:PP.COR-VAS-001","l":"MAVM (meconium associated vascular myonecrosis)"},{"id":"FOETO:PP.PLA-INF-028","l":"Myonécrose vasculaire ombilicale induite par le méconium"},{"id":"FOETO:PP.PLA-MAL-029","l":"Nécrose de la paroi artérielle ombilicale"},{"id":"FOETO:PP.PLA-INF-031","l":"Nécrose musculaire vasculaire méconique (cordon/surface placentaire)"},{"id":"FOETO:PP.PLA-CLA-013","l":"Nécrose musculaire vasculaire ombilicale"}]},{"t":"5.9.1 Deux découpages qui ne se recouvrent pas","termes":[{"id":"FOETO:PP.PAR-DYS-001","l":"Chorangiomatose placentaire"},{"id":"FOETO:PP.PLA-TUM-010","l":"Chorangiose placentaire"}]},{"t":"8.1 Post-mortem et rétention in utero","termes":[{"id":"FOETO:PP.PLA-VAS-009","l":"Fibrine intervilleuse augmentée"}]},{"t":"8.3 Prélèvement, plan de coupe, coloration","termes":[{"id":"FOETO:PP.PLA-TUM-003","l":"Cellules anormales dans l'espace intervillositaire"},{"id":"FOETO:PP.PLA-RET-011","l":"Nécrose de l'épithélium amniotique (jumeau décédé)"}]}],"formes":{"FOETO:PP.PAR-NOR-001":["ANSCT augmentés","increased syncytial knots","(hors fiche)"],"FOETO:PP.PBA-INF-002":["Abcès décidual","decidual abscess","(hors fiche)"],"FOETO:PP.PBA-MAL-001":["Absence de décidue basale interposée entre villosités choriales et myomètre","Absence of intervening (basal) decidua between chorionic villi and myometrium","(hors fiche)"],"FOETO:PP.PAR-MET-001":["Accumulation de glycogène dans le syncytiotrophoblaste","Syncytiotrophoblast glycogen accumulation","(hors fiche)"],"FOETO:PP.PLA-MET-002":["Accumulation de macrophages placentaires (placenta maternel obèse)","Placental macrophage accumulation (maternal obesity)","(hors fiche)"],"FOETO:PP.PLA-TUM-001":["Adénome hépatocellulaire placentaire","Placental hepatocellular adenoma","(hors fiche)"],"FOETO:PP.PLA-NOR-002":["Amas syncytiaux recouvrant les capillaires avec épaississement de la membrane basale","Syncytial clumps overlying capillaries with basement membrane thickening","(hors fiche)"],"FOETO:PP.PAR-NOR-002":["Anastomose vasculaire fœto-fœtale (jumeaux monochorioniques)","Feto-fetal vascular anastomosis (monochorionic twins)","(hors fiche)"],"FOETO:PP.PLA-NOR-005":["Apoptose du cytotrophoblaste","Cytotrophoblast apoptosis","(hors fiche)"],"FOETO:PP.AUP-NOR-000":["Artères utéro-placentaires normales (remodelage physiologique)","normal uteroplacental arteries with physiologic remodeling","(hors fiche)"],"FOETO:PP.PBA-VAS-001":["Artériopathie déciduale de la plaque basale","decidual vasculopathy of the basal plate","(hors fiche)"],"FOETO:PP.AUP-INF-001":["Artérite déciduale","decidual arteritis","(hors fiche)"],"FOETO:PP.PCH-VAS-004":["Asymétrie de la paroi des vaisseaux de la plaque choriale","asymmetric wall thickening of the chorionic plate vessels","(hors fiche)"],"FOETO:PP.PLA-NOR-016":["Augmentation de l'index prolifératif des cytotrophoblastes villositaires","Increased proliferative index of villous cytotrophoblasts","(hors fiche)"],"FOETO:PP.PLA-NOR-017":["Augmentation de la densité des cytotrophoblastes villositaires","Increased villous cytotrophoblast density","(hors fiche)"],"FOETO:PP.PAR-NOR-003":["Autre (histo)","other histological finding","(hors fiche)"],"FOETO:PP.PAR-NOR-004":["Autre (label)","other (label)","(hors fiche)"],"FOETO:PP.PAR-NOR-005":["Autre (région)","other (region)","(hors fiche)"],"FOETO:PP.PLA-TUM-002":["Calcification d'un chorangiome","Chorangioma calcification","(hors fiche)"],"FOETO:PP.PLA-MAL-007":["Calcifications du cordon ombilical","Umbilical cord calcifications","(hors fiche)"],"FOETO:PP.PLA-NOR-025":["Calcifications placentaires","Placental calcifications","(hors fiche)"],"FOETO:PP.PLA-NOR-026":["Calcifications placentaires absentes ou rares","Absent or rare placental calcifications","(hors fiche)"],"FOETO:PP.PLA-INF-001":["Cellules amniotiques infectées (inclusions virales amniotiques)","Infected amniotic cells (viral amniotic inclusions)","(hors fiche)"],"FOETO:PP.PLA-INF-002":["Cellules avec hémophagocytose dans la circulation fœtale placentaire","Hemophagocytic cells in fetal placental vasculature","(hors fiche)"],"FOETO:PP.PLA-INF-003":["Cellules géantes multinucléées de type Langhans dans les villosités","Langhans-type multinucleated giant cells in villi","(hors fiche)"],"FOETO:PP.PLA-NOR-035":["Cellules musculaires lisses myométriales dans la décidua","Myometrial smooth muscle cells in decidua","(hors fiche)"],"FOETO:PP.PLA-TUM-004":["Cellules tumorales non hématopoïétiques dans la circulation fœtale placentaire","Non-hematopoietic tumor cells in fetal placental vasculature","(hors fiche)"],"FOETO:PP.PLA-TUM-005":["Chorangiocarcinome placentaire","Chorangiocarcinoma","(hors fiche)"],"FOETO:PP.PLA-TUM-007":["Chorangiome myxoïde","Myxoid chorangioma","(hors fiche)"],"FOETO:PP.PAR-DYS-002":["Chorangiome placentaire","Placental chorangioma","(hors fiche)"],"FOETO:PP.PLA-TUM-008":["Chorangiome à stroma fibreux","Fibrous chorangioma","(hors fiche)"],"FOETO:PP.PLA-INF-006":["Chorioamnionite chronique","Chronic chorioamnionitis","(hors fiche)"],"FOETO:PP.MEM-INF-003":["Chorioamniotite chronique","Chronic chorioamnionitis","(hors fiche)"],"FOETO:PP.MEM-INF-005":["Chorioamniotite subaiguë","Subacute chorioamnionitis","(hors fiche)"],"FOETO:PP.PLA-TUM-011":["Chorioangiome","Chorioangioma","(hors fiche)"],"FOETO:PP.PBA-MAL-002":["Contact villo-myométrial direct (accreta histologique)","Chorionic villi in direct contact with myometrium (histologic accreta)","(hors fiche)"],"FOETO:PP.COR-NOR-000":["Cordon normal","normal umbilical cord","(hors fiche)"],"FOETO:PP.PLA-NOR-057":["Dilatation des citernes du réticulum endoplasmique syncytial","Syncytiotrophoblast endoplasmic reticulum cisternae dilatation","(hors fiche)"],"FOETO:PP.PLA-CLA-002":["Distorsion/perte des microvillosités syncytiales","Syncytial microvillous distortion and loss","(hors fiche)"],"FOETO:PP.PAR-MET-005":["Drépanocytose placentaire","placental changes of sickle cell disease with sickled maternal erythrocytes in the intervillous space","(hors fiche)"],"FOETO:PP.DBA-NOR-000":["Décidue basale normale","normal decidua basalis","(hors fiche)"],"FOETO:PP.DME-NOR-000":["Décidue des membranes normale","normal decidua capsularis of the membranes","(hors fiche)"],"FOETO:PP.MEM-INF-006":["Déciduite aiguë","Acute deciduitis","(hors fiche)"],"FOETO:PP.MEM-INF-007":["Déciduite chronique","Chronic deciduitis","(hors fiche)"],"FOETO:PP.PAR-INF-015":["Déciduite chronique","Chronic deciduitis","(hors fiche)"],"FOETO:PP.PLA-NOR-062":["Dédifférenciation des cellules musculaires lisses artérielles villeuses","Villous arterial smooth muscle cell dedifferentiation","(hors fiche)"],"FOETO:PP.PLA-NOR-064":["Dénudation focale du syncytiotrophoblaste","Focal syncytiotrophoblast denudation","(hors fiche)"],"FOETO:PP.PLA-INF-009":["Dépôt de C4d dans les villosités (immunohistochimie)","Villous C4d deposition (immunohistochemistry)","(hors fiche)"],"FOETO:PP.PLA-MET-008":["Dépôts d'hémosidérine dans les membranes","Hemosiderin deposits in fetal membranes","(hors fiche)"],"FOETO:PP.PLA-NOR-069":["Dépôts de fibrinoïde dans la plaque basale","Fibrinoid deposits in the basal plate","(hors fiche)"],"FOETO:PP.PLA-MET-009":["Dépôts de globotriaosylcéramide dans les cellules musculaires lisses du cordon","Globotriaosylceramide deposits in umbilical cord smooth muscle cells","(hors fiche)"],"FOETO:PP.PLA-MET-010":["Dépôts de glycogène dans les capillaires placentaires","Glycogen deposits in placental capillaries","(hors fiche)"],"FOETO:PP.COR-CLA-002":["Enchevêtrement / nœud des cordons ombilicaux (jumeaux monoamniotiques)","Umbilical cord entanglement / knotting (monoamniotic twins)","(hors fiche)"],"FOETO:PP.EVI-NOR-000":["Espace villeux normal","normal villous compartment","(hors fiche)"],"FOETO:PP.PLA-NOR-077":["Fibrinoïde de type fibrine","Fibrin-type fibrinoid","(hors fiche)"],"FOETO:PP.PLA-NOR-078":["Fibrinoïde de type matriciel","Matrix-type fibrinoid","(hors fiche)"],"FOETO:PP.COR-INF-006":["Funiculite aiguë (réponse fœtale à l'infection)","Acute funiculitis (fetal inflammatory response)","(hors fiche)"],"FOETO:PP.PLA-INF-012":["Funiculite périphérique à micro-abcès (candidose)","Peripheral funiculitis with micro-abscesses (candidal)","(hors fiche)"],"FOETO:PP.WHA-NOR-000":["Gelée de Wharton normale","normal Wharton jelly","(hors fiche)"],"FOETO:PP.PLA-INF-015":["Hyperplasie histiocytaire chorionique","Chorionic histiocytic hyperplasia","(hors fiche)"],"FOETO:PP.PLA-DYS-012":["Hypertrophie musculaire des vaisseaux des villosités-troncs","Muscular hypertrophy of stem villous vessels","(hors fiche)"],"FOETO:PP.PLA-DYS-014":["Hypertrophie villositaire des vaisseaux fœtaux (hypervasculaire)","Villous fetal vessel hypervascularity","(hors fiche)"],"FOETO:PP.PLA-DYS-015":["Hypoplasie placentaire","Placental hypoplasia","(hors fiche)"],"FOETO:PP.PLA-VAS-011":["Hématome d'infarction placentaire","Placental infarction haematoma","(hors fiche)"],"FOETO:PP.PLA-VAS-014":["Hématome décidual marginal","Marginal decidual hematoma","(hors fiche)"],"FOETO:PP.PLA-VAS-015":["Hématome marginal placentaire","Marginal placental haematoma","(hors fiche)"],"FOETO:PP.PLA-MAL-018":["Hématopoïèse extra-médullaire du cordon ombilical","Extramedullary hematopoiesis in umbilical cord","(hors fiche)"],"FOETO:PP.PLA-TUM-013":["Hématopoïèse extramédullaire dans le tissu hépatique ectopique placentaire","Extramedullary hematopoiesis in placental ectopic liver tissue","(hors fiche)"],"FOETO:PP.PAR-VAS-010":["Hémorragie intervilleuse","intervillous hemorrhage","(hors fiche)"],"FOETO:PP.PAR-MET-006":["Hémosidérine dans les macrophages chorioniques","Hemosiderin in chorionic macrophages","(hors fiche)"],"FOETO:PP.PLA-RET-005":["Hémosidérose chorioamniotique diffuse chronique","Diffuse chronic chorioamniotic hemosiderosis","(hors fiche)"],"FOETO:PP.PLA-MET-013":["Hémosidérose membranaire placentaire","Placental membrane haemosiderosis","(hors fiche)"],"FOETO:PP.PLA-TUM-014":["Hémosidérose stromale placentaire","Placental stromal hemosiderosis","(hors fiche)"],"FOETO:PP.PAR-MAL-007":["Implantation sur cicatrice de césarienne avec déhiscence / amincissement myométrial (contexte du PAS)","Caesarean scar implantation with myometrial dehiscence/thinning (PAS setting)","(hors fiche)"],"FOETO:PP.PLA-INF-016":["Inclusions cytomégalovirus placentaires (cellules en œil de hibou)","CMV placental inclusions (owl-eye cells)","(hors fiche)"],"FOETO:PP.PLA-INF-017":["Inclusions herpétiques dans le trophoblaste/caduque","Herpetic inclusions in trophoblast/decidua","(hors fiche)"],"FOETO:PP.PLA-INF-018":["Inclusions virales intranucléaires et intracytoplasmiques dans les villosités (CMV)","Viral nuclear and cytoplasmic inclusions in villi (CMV)","(hors fiche)"],"FOETO:PP.PLA-TUM-015":["Infarctus de chorangiome","Chorangioma infarction","(hors fiche)"],"FOETO:PP.PLA-VAS-020":["Infarctus marginal","Marginal infarct","(hors fiche)"],"FOETO:PP.PLA-VAS-026":["Infarctus villositaire subaigu","Subacute placental infarct","(hors fiche)"],"FOETO:PP.PLA-INF-021":["Inflammation chronique déciduale","Chronic decidual inflammation","(hors fiche)"],"FOETO:PP.PLA-MAL-020":["Insertion excentrée du cordon ombilical","Eccentric umbilical cord insertion","(hors fiche)"],"FOETO:PP.PLA-MAL-021":["Insertion furcate du cordon ombilical","Furcate cord insertion","(hors fiche)"],"FOETO:PP.IAC-NOR-000":["Interface amnios/chorion normale","normal amniochorionic interface","(hors fiche)"],"FOETO:PP.ICD-NOR-000":["Interface chorion/décidue normale","normal choriodecidual interface","(hors fiche)"],"FOETO:PP.PAR-INF-002":["Intervillosite chronique histiocytaire","Chronic histiocytic intervillositis","(hors fiche)"],"FOETO:PP.PLA-MAL-024":["Kyste allantoïque du cordon ombilical","Allantoic cyst of umbilical cord","(hors fiche)"],"FOETO:PP.PLA-NOR-092":["Kyste choriamniotique microscopique (membranes)","Microscopic chorioamniotic cyst (membranes)","(hors fiche)"],"FOETO:PP.PLA-NOR-094":["Kyste d'îlot cellulaire trophoblastique","Trophoblastic cell island cyst","(hors fiche)"],"FOETO:PP.PLA-MAL-025":["Kyste de la gelée de Wharton","Wharton's jelly cyst","(hors fiche)"],"FOETO:PP.PLA-MAL-026":["Kyste omphalomésentérique du cordon ombilical","Omphalomesenteric cyst of umbilical cord","(hors fiche)"],"FOETO:PP.PLA-NOR-095":["Kyste trophoblastique extravilleux","Extravillous trophoblast cyst","(hors fiche)"],"FOETO:PP.PLA-NOR-096":["Kystes des îlots cellulaires trophoblastiques","Cysts of trophoblastic cell islands","(hors fiche)"],"FOETO:PP.PLA-INF-023":["Kystes toxoplasmiques placentaires","Toxoplasma cysts in placenta","(hors fiche)"],"FOETO:PP.PLA-TUM-016":["Léiomyome placentaire","Placental leiomyoma","(hors fiche)"],"FOETO:PP.PLA-MET-016":["Macrophages avec hémosidérine dans la chorioamniotique","Hemosiderin-laden macrophages in chorioamnion","(hors fiche)"],"FOETO:PP.PLA-MET-017":["Macrophages avec pigment ferrique dans le cordon et les membranes","Iron-laden macrophages in cord and membranes","(hors fiche)"],"FOETO:PP.PLA-MET-018":["Macrophages chargés d'hémosidérine dans les membranes","Hemosiderin-laden macrophages in membranes","(hors fiche)"],"FOETO:PP.PLA-RET-009":["Macrophages chargés de méconium dans la décidua maternelle","Meconium-laden macrophages in maternal decidua","(hors fiche)"],"FOETO:PP.PAR-CLA-003":["Macrophages pigmentés au méconium","Meconium-laden macrophages","(hors fiche)"],"FOETO:PP.PAR-INF-003":["Maladies inflammatoires chroniques du placenta","chronic inflammatory lesions of the placenta","(hors fiche)"],"FOETO:PP.PLA-INF-025":["Micro-abcès placentaires en cocarde (listériose)","Placental ring micro-abscesses (listeriosis)","(hors fiche)"],"FOETO:PP.PLA-INF-026":["Microabcès sous-amniotiques du cordon (Candida)","Subamniotic cord microabscesses","(hors fiche)"],"FOETO:PP.PLA-CLA-008":["Microfractures de l'amnios","Amniotic microfractures","(hors fiche)"],"FOETO:PP.PLA-MET-019":["Minéralisation segmentaire des villosités","Segmental villous mineralization","(hors fiche)"],"FOETO:PP.PLA-DYS-046":["Mosaïcisme confiné au placenta (CPM)","Confined placental mosaicism (CPM)","(hors fiche)"],"FOETO:PP.PLA-INF-029":["Méconium subamniotique","Subamniotic meconium","(hors fiche)"],"FOETO:PP.PLA-TUM-025":["Métastase placentaire (tumeur secondaire d'origine maternelle ou fœtale)","Placental metastasis (secondary tumour of maternal or fetal origin)","(hors fiche)"],"FOETO:PP.PAR-VAS-018":["Nécrose fibrinoïde intravillositaire","Intravillous fibrinoid necrosis","(hors fiche)"],"FOETO:PP.PLA-CLA-012":["Nécrose laminaire de la décidua des membranes","Laminar necrosis of membrane decidua","(hors fiche)"],"FOETO:PP.MEM-CLA-003":["Nécrose laminaire des membranes","Laminar necrosis of the membranes","(hors fiche)"],"FOETO:PP.PLA-CLA-014":["Nécrose primaire du cytotrophoblaste","Cytotrophoblast primary necrosis","(hors fiche)"],"FOETO:PP.PLA-CLA-015":["Nécrose syncytiale focale","Focal syncytial necrosis","(hors fiche)"],"FOETO:PP.COR-CLA-001":["Nœud vrai du cordon ombilical","True umbilical cord knot","(hors fiche)"],"FOETO:PP.PLA-MAL-049":["Partage placentaire inégal entre jumeaux (discordance de territoire placentaire)","Unequal placental sharing between twins (discordant placental territory)","(hors fiche)"],"FOETO:PP.PAR-NOR-014":["Pattern placentaire du tabagisme maternel","Placental pattern of maternal smoking (nicotine abuse)","(hors fiche)"],"FOETO:PP.PLA-DYS-026":["Persistance de trophoblastes endovasculaires intramuraux au troisième trimestre","Third-trimester persistence of intramural endovascular trophoblast","(hors fiche)"],"FOETO:PP.PAR-MAL-003":["Placenta accreta spectrum","placenta accreta spectrum","(hors fiche)"],"FOETO:PP.PLA-MAL-030":["Placenta circummarginal","Circummarginate placenta","(hors fiche)"],"FOETO:PP.PLA-MAL-031":["Placenta circumvallé","Circumvallate placenta","(hors fiche)"],"FOETO:PP.PLA-MAL-044":["Placenta praevia (implantation basse / recouvrante)","Placenta praevia (previa)","(hors fiche)"],"FOETO:PP.PAR-INF-018":["Placentite / villite syphilitique (Treponema pallidum)","Syphilitic placentitis / villitis (Treponema pallidum)","(hors fiche)"],"FOETO:PP.PLA-INF-032":["Placentite hématogène","Hematogenous placentitis","(hors fiche)"],"FOETO:PP.PAR-INF-017":["Placentite palustre (intervillite chronique à Plasmodium avec pigment malarique)","Placental malaria (chronic intervillositis with malarial pigment/haemozoin)","(hors fiche)"],"FOETO:PP.PAR-TUM-001":["Placentomégalie avec villosités hydriques","Placentomegaly with hydropic villi","(hors fiche)"],"FOETO:PP.PBA-NOR-000":["Plaque basale normale","normal basal plate","(hors fiche)"],"FOETO:PP.PCH-NOR-000":["Plaque choriale normale","normal chorionic plate","(hors fiche)"],"FOETO:PP.PLA-DYS-030":["Prolifération de trophoblastes intermédiaires périvilleuse","Perivillous intermediate trophoblast proliferation","(hors fiche)"],"FOETO:PP.PLA-TUM-017":["Prolifération endothéliale intravasculaire dans les chorangiomes","Intravascular endothelial proliferation in chorangioma","(hors fiche)"],"FOETO:PP.PLA-INF-033":["Périvasculite chronique déciduale","Decidual chronic perivasculitis","(hors fiche)"],"FOETO:PP.PLA-MAL-050":["RCIU sélectif du jumeau monochorionique (types I-III de Gratacós)","Selective intrauterine growth restriction in monochorionic twins (Gratacós types I–III)","(hors fiche)"],"FOETO:PP.PLA-MAL-033":["Remnant musculaire d'artère ombilicale atrophiée","Muscular remnant of atrophied umbilical artery","(hors fiche)"],"FOETO:PP.PLA-VAS-033":["Rupture syncytiale avec érythroblastes périvilleux (hémorragie de Kline)","Syncytial break with perivillous erythroblasts (Kline's hemorrhage)","(hors fiche)"],"FOETO:PP.PLA-INF-034":["Réaction à corps étranger au vernix (décidua/myomètre)","Foreign-body giant cell reaction to vernix (decidua/myometrium)","(hors fiche)"],"FOETO:PP.PLA-NOR-160":["Régénération du syncytiotrophoblaste","Syncytiotrophoblast regeneration","(hors fiche)"],"FOETO:PP.SAN-NOR-000":["Sang circulant normal","normal circulating fetal blood","(hors fiche)"],"FOETO:PP.PLA-DYS-034":["Septation luminale vasculaire","Vascular luminal septation","(hors fiche)"],"FOETO:PP.PLA-VAS-034":["Squames amniotiques dans un thrombus vasculaire","Amniotic squames within vascular thrombus","(hors fiche)"],"FOETO:PP.PLA-INF-036":["Structures mycéliennes et spores fongiques (candida) dans le placenta","Fungal hyphae and spores (candida) in placenta","(hors fiche)"],"FOETO:PP.PAR-NOR-011":["Sénescence placentaire (trophoblastique)","Placental (trophoblastic) senescence","(hors fiche)"],"FOETO:PP.PLA-VAS-035":["Thrombose artérielle déciduale","Decidual arterial thrombosis","(hors fiche)"],"FOETO:PP.PLA-VAS-036":["Thrombose d'un vaisseau ombilical après cordocentèse","Umbilical vessel thrombosis after cordocentesis","(hors fiche)"],"FOETO:PP.PLA-VAS-037":["Thrombose de la veine ombilicale tributaire","Umbilical vein tributary thrombosis","(hors fiche)"],"FOETO:PP.AUP-VAS-006":["Thrombose des artères utéro-placentaires","uteroplacental artery thrombosis","(hors fiche)"],"FOETO:PP.PLA-VAS-038":["Thrombose des vaisseaux allanto-choriaux","Allantoic vessel thrombosis","(hors fiche)"],"FOETO:PP.PLA-VAS-040":["Thrombose des vaisseaux membranaires","Membranous vessel thrombosis","(hors fiche)"],"FOETO:PP.PLA-VAS-042":["Thrombose intervilleuse","Intervillous thrombosis","(hors fiche)"],"FOETO:PP.PLA-TUM-018":["Thrombose intratumorale d'un chorangiome","Intratumoral thrombosis of chorangioma","(hors fiche)"],"FOETO:PP.PAR-VAS-019":["Thrombose sous-choriale massive (môle de Breus)","Massive subchorionic thrombosis (Breus mole)","(hors fiche)"],"FOETO:PP.PLA-TUM-019":["Thrombose vasculaire chronique dans les chorangiomes","Chronic vascular thrombosis in chorangioma","(hors fiche)"],"FOETO:PP.PLA-VAS-043":["Thromboses sous-choriales disséminées","Disseminated subchorionic thromboses","(hors fiche)"],"FOETO:PP.PAR-VAS-021":["Thrombus intervilleux","Intervillous thrombus","(hors fiche)"],"FOETO:PP.PLA-VAS-048":["Thrombus intramembraneux","Intramembranous thrombus","(hors fiche)"],"FOETO:PP.PLA-VAS-052":["Thrombus sous-chorioniaque","Subchorionic thrombus","(hors fiche)"],"FOETO:PP.PLA-MAL-038":["Tissu ectopique dans le cordon ombilical","Ectopic tissue in umbilical cord","(hors fiche)"],"FOETO:PP.PLA-TUM-020":["Tissu surrénalien cortical ectopique placentaire","Placental ectopic adrenocortical tissue","(hors fiche)"],"FOETO:PP.PLA-MAL-040":["Tortuosité vasculaire choriale (placenta gémellaire)","Chorionic vascular tortuosity (twin placenta)","(hors fiche)"],"FOETO:PP.PLA-MET-024":["Vacuolisation de l'endothélium capillaire villositaire","Villous capillary endothelial vacuolation","(hors fiche)"],"FOETO:PP.PBA-MET-002":["Vacuolisation des cellules déciduales basales","vacuolization of basal decidual cells","(hors fiche)"],"FOETO:PP.PAR-MET-008":["Vacuolisation des décidues (cellules déciduales)","Decidual cell vacuolation","(hors fiche)"],"FOETO:PP.PLA-MET-026":["Vacuolisation des fibrocytes du cordon ombilical","Umbilical cord fibrocyte vacuolation","(hors fiche)"],"FOETO:PP.VFU-NOR-000":["Vaisseaux funiculaires normaux","normal umbilical cord vessels","(hors fiche)"],"FOETO:PP.PLA-NOR-187":["Variabilité de forme placentaire (index de forme)","Placental shape variability (shape index)","(hors fiche)"],"FOETO:PP.PLA-MAL-041":["Vasa aberrantia du cordon ombilical","Vasa aberrantia of umbilical cord","(hors fiche)"],"FOETO:PP.PLA-INF-037":["Vascularite choriale éosinophilique à cellules T","Eosinophilic T-cell chorionic vasculitis","(hors fiche)"],"FOETO:PP.COR-INF-007":["Vascularite ombilicale","Umbilical vasculitis","(hors fiche)"],"FOETO:PP.PLA-INF-039":["Vasculite chorionique éosinophilique/à cellules T","Eosinophilic/T-cell chorionic vasculitis","(hors fiche)"],"FOETO:PP.PAR-INF-004":["Villite aiguë","Acute villitis","(hors fiche)"],"FOETO:PP.PAR-INF-005":["Villite basale chronique","Basal chronic villitis","(hors fiche)"],"FOETO:PP.PAR-INF-006":["Villite chronique","Chronic villitis","(hors fiche)"],"FOETO:PP.PAR-INF-007":["Villite chronique d'étiologie inconnue (VCEI)","Chronic villitis of unknown etiology (CVUE)","(hors fiche)"],"FOETO:PP.PAR-INF-009":["Villite granulomateuse","Granulomatous villitis","(hors fiche)"],"FOETO:PP.PAR-INF-010":["Villite nécrosante","Necrotizing villitis","(hors fiche)"],"FOETO:PP.VIN-NOR-000":["Villosité intermédiaire normale","normal intermediate villus","(hors fiche)"],"FOETO:PP.PLA-DYS-044":["Villosités agrandies avec paucité vasculaire relative","Enlarged villi with relative vascular paucity","(hors fiche)"],"FOETO:PP.PBA-NOR-001":["Villosités d'ancrage dans la plaque basale","anchoring villi in the basal plate","(hors fiche)"],"FOETO:PP.PLA-NOR-209":["Villosités élargies à aspect en patte","Enlarged paw-shaped villi","(hors fiche)"],"FOETO:PP.PLA-NOR-210":["Vésicules extracellulaires trophoblastiques (exosomes / microvésicules)","Trophoblastic extracellular vesicles (exosomes/microvesicles)","(hors fiche)"],"FOETO:PP.PLA-NOR-211":["Zone d'altération morphologique des membranes (zone cervicale)","Zone of altered morphology of fetal membranes (cervical zone)","(hors fiche)"],"FOETO:PP.PLA-CLA-018":["Zones nécrotiques à la base des septa placentaires","Necrotic zones at the base of placental septa","(hors fiche)"],"FOETO:PP.PLA-MET-029":["Épaississement de l'épithélium amniotique (diabète maternel)","Amniotic epithelial thickening (maternal diabetes)","(hors fiche)"],"FOETO:PP.PLA-NOR-213":["Épaississement de la membrane basale trophoblastique et vasculaire","Thickening of trophoblastic and vascular basement membranes","(hors fiche)"],"FOETO:PP.PLA-NOR-214":["Épaississement du syncytiotrophoblaste","Syncytiotrophoblast thickening","(hors fiche)"],"FOETO:PP.PLA-INF-043":["Érythroblastes à inclusion intranucléaire Parvovirus B19 (placentaire)","Parvovirus B19 intranuclear inclusions in placental erythroblasts","(hors fiche)"],"FOETO:PP.PAR-VAS-015":["MVM — Infarctus","MVM — villous infarct"],"FOETO:PP.PLA-NOR-020":["Augmentation des nœuds syncytiaux dans les villosités avasculaires","Increased syncytial knotting in avascular villi"],"FOETO:PP.PLA-CLA-003":["Dégénérescence syncytiale","Syncytial degeneration"],"FOETO:PP.PAR-VAS-012":["Infarctus villositaire","Villous infarct"],"FOETO:PP.PLA-VAS-022":["Infarctus villositaire ancien","Remote placental infarct"],"FOETO:PP.PLA-VAS-023":["Infarctus villositaire ancien (villosités fantomatiques)","Old placental villous infarction (ghost villi)"],"FOETO:PP.PLA-VAS-024":["Infarctus villositaire placentaire","Placental villous infarct"],"FOETO:PP.PLA-VAS-025":["Infarctus villositaire récent","Recent placental villous infarction"],"FOETO:PP.PLA-VAS-056":["Villosités fantômes (ghosts villositaires)","Villous ghosts"],"FOETO:PP.PLA-VAS-003":["Congestion villositaire par obstruction vasculaire fœtale récente","Villous congestion due to recent fetal vascular occlusion"],"FOETO:PP.PLA-VAS-013":["Hématome décidual basal (hématome rétroplacentaire)","Basal plate hematoma (retroplacental hematoma)"],"FOETO:PP.PAR-VAS-009":["Hématome rétroplacentaire","Retroplacental hematoma"],"FOETO:PP.PBA-VAS-003":["Hématome rétroplacentaire basal","basal retroplacental hematoma"],"FOETO:PP.PLA-VAS-017":["Hémorragie rétroplacentaire","Retroplacental hemorrhage"],"FOETO:PP.PLA-DYS-016":["Hypoplasie villositaire distale","Distal villous hypoplasia"],"FOETO:PP.PAR-MAL-001":["Hypoplasie villositaire distale (déficience des villosités terminales)","Distal villous hypoplasia"],"FOETO:PP.PAR-VAS-014":["MVM — Hypoplasie villositaire distale","MVM — distal villous hypoplasia"],"FOETO:PP.PLA-NOR-125":["Nœuds syncytiaux (changement de Tenney-Parker)","Syncytial knots (Tenney-Parker change)"],"FOETO:PP.PLA-NOR-126":["Nœuds syncytiaux (changements de Tenney-Parker)","Syncytial knots (Tenney-Parker changes)"],"FOETO:PP.PAR-NOR-009":["Nœuds syncytiaux (vrais)","True syncytial knots"],"FOETO:PP.PAR-CLA-001":["Agglutination villositaire","Villous agglutination"],"FOETO:PP.PLA-CLA-001":["Agglutination villositaire par fibrinoïde périvillositaire","Villous agglutination by perivillous fibrinoid"],"FOETO:PP.PAR-VAS-001":["Artériopathie déciduale","Decidual arteriopathy"],"FOETO:PP.AUP-VAS-003":["Athérose aiguë des artères spiralées","acute atherosis of spiral arteries"],"FOETO:PP.PAR-MET-003":["Athérose aiguë déciduale","Acute decidual atherosis"],"FOETO:PP.PLA-MET-003":["Athérose des vaisseaux déciduaux","Decidual vessel atherosis"],"FOETO:PP.PLA-NOR-019":["Augmentation des cellules trophoblastiques géantes du site d'implantation","Increased implantation site trophoblastic giant cells"],"FOETO:PP.PLA-DYS-006":["Défaut de remodelage des artères spiralées","Deficient spiral artery remodeling"],"FOETO:PP.AUP-VAS-002":["Défaut de transformation physiologique des artères utéro-placentaires","absence of physiologic transformation of uteroplacental arteries"],"FOETO:PP.PLA-DYS-007":["Défaut de transformation physiologique des artères utéroplacentaires","Failure of physiologic conversion of implantation site vessels"],"FOETO:PP.PBA-MET-003":["Excès de trophoblaste extravilleux","excessive extravillous trophoblast"],"FOETO:PP.PAR-NOR-007":["Excès de trophoblaste multinucléé dans la basale","Excess of multinucleated trophoblast in the basal plate"],"FOETO:PP.PLA-DYS-011":["Hypertrophie murale des artérioles décidales","Decidual arteriolar mural hypertrophy"],"FOETO:PP.PLA-NOR-085":["Hypertrophie pariétale des vaisseaux déciduals membranaires","Mural hypertrophy of membranous decidual vessels"],"FOETO:PP.PLA-DYS-018":["Implantation superficielle du placenta","Superficial placental implantation"],"FOETO:PP.PAR-VAS-013":["MVM — Artériopathie déciduale","MVM — decidual vasculopathy"],"FOETO:PP.PAR-VAS-017":["Nécrose fibrinoïde de la paroi artérielle déciduale","Decidual arterial fibrinoid necrosis"],"FOETO:PP.AUP-VAS-005":["Nécrose fibrinoïde pariétale des artères spiralées","mural fibrinoid necrosis of spiral arteries"],"FOETO:PP.PAR-DYS-003":["Dysplasie mésenchymateuse placentaire","Placental mesenchymal dysplasia"],"FOETO:PP.PLA-DYS-013":["Hypertrophie placentaire","Placental hypertrophy"],"FOETO:PP.PLA-DYS-029":["Placentomégalie","Placentomegaly"],"FOETO:PP.PLA-MET-021":["Placentomégalie avec aspect pâle","Enlarged pale placenta"],"FOETO:PP.PLA-DYS-002":["Citerne villeuse","Villous cistern"],"FOETO:PP.PLA-DYS-017":["Hémorragie fœto-maternelle à érythroblastes dans l'espace intervilleux","Fetomaternal hemorrhage with erythroblasts in intervillous space"],"FOETO:PP.PLA-DYS-019":["Infiltrat stromal Alcian blue positif","Alcian blue-positive stromal infiltrate"],"FOETO:PP.PLA-DYS-024":["Manchon mésenchymateux péri-vasculaire","Perivascular mesenchymal cuff"],"FOETO:PP.PLA-DYS-031":["Pseudo-inclusion trophoblastique","Trophoblastic pseudoinclusion"],"FOETO:PP.PLA-DYS-035":["Stroma villositaire hyalinisé","Hyalinized villous stroma"],"FOETO:PP.PLA-DYS-037":["Stroma villositaire myxomateux","Myxomatous villous stroma"],"FOETO:PP.PLA-DYS-041":["Vaisseau-tronc villositaire à paroi épaisse","Thick-walled stem villous vessel"],"FOETO:PP.PLA-DYS-042":["Villosité choriale élargie et œdémateuse","Enlarged edematous chorionic villus"],"FOETO:PP.PLA-DYS-027":["Perte d'expression de l'actine musculaire lisse dans le stroma villositaire","Loss of smooth muscle actin expression in villous stroma"],"FOETO:PP.PLA-DYS-028":["Perte d'expression de p57kip2 dans le stroma villositaire","Loss of p57kip2 expression in villous stroma"],"FOETO:PP.PLA-DYS-032":["Rétention trophoblastique de l'expression de p57kip2","Trophoblastic retention of p57kip2 expression"],"FOETO:PP.PLA-DYS-010":["Hyperplasie trophoblastique","Trophoblastic hyperplasia"],"FOETO:PP.PLA-TUM-022":["Môle hydatiforme complète","Complete hydatidiform mole"],"FOETO:PP.PLA-TUM-023":["Môle hydatiforme partielle","Partial hydatidiform mole"],"FOETO:PP.PLA-DYS-038":["Thrombohématome sous-chorial","Subchorionic thrombohematoma"],"FOETO:PP.PLA-DYS-043":["Villosité hydropique diffuse sans vascularisation","Diffuse hydropic villus without vascularization"],"FOETO:PP.PLA-RET-002":["Augmentation des érythroblastes intravasculaires","Increased intravascular erythroblasts"],"FOETO:PP.PLA-NOR-218":["Érythroblastes dans les vaisseaux fœtaux villositaires","Nucleated red blood cells in fetal villous vessels"],"FOETO:PP.PAR-TUM-002":["Érythroblastes fœtaux en excès dans la circulation placentaire","Increased nucleated red blood cells in fetal placental circulation"],"FOETO:PP.PAR-RET-007":["Œdème villositaire","Villous edema"],"FOETO:PP.PLA-INF-035":["Stroma villositaire œdémateux avec augmentation des cellules de Hofbauer","Edematous villous stroma with increased Hofbauer cells"],"FOETO:PP.PLA-NOR-146":["Précurseurs hématopoïétiques non érythroïdes circulants","Circulating non-erythroid hematopoietic precursors"],"FOETO:PP.PAR-RET-006":["Érythroblastose placentaire (érythropoïèse extra-hépatique villositaire)","Placental erythroblastosis (villous extramedullary erythropoiesis)"],"FOETO:PP.PLA-NOR-220":["Érythropoïèse extramédullaire stromale","Stromal extramedullary hematopoiesis"],"FOETO:PP.PLA-MET-012":["Histiocytes de surcharge dans les tissus placentaires","Storage histiocytes in placental tissues"],"FOETO:PP.PLA-MET-030":["Placenta des mucopolysaccharidoses et de la sialidose (surcharge lysosomale étiquetée)","Placental changes in mucopolysaccharidoses and sialidosis (labelled lysosomal storage)"],"FOETO:PP.PLA-MET-022":["Produits de stockage anormaux dans le trophoblaste et les macrophages stromaux","Abnormal storage products in trophoblast and stromal macrophages"],"FOETO:PP.PAR-MET-007":["Vacuolisation des cellules de Hofbauer","Hofbauer cell vacuolation"],"FOETO:PP.PLA-NOR-184":["Vacuolisation des macrophages stromaux villositaires","Vacuolation of villous stromal macrophages"],"FOETO:PP.PAR-MET-009":["Vacuolisation du cytotrophoblaste villositaire","Villous cytotrophoblast vacuolation"],"FOETO:PP.PLA-MET-028":["Vacuolisation du stroma villositaire","Villous stromal vacuolation"],"FOETO:PP.PAR-MET-010":["Vacuolisation du syncytiotrophoblaste","Syncytiotrophoblast vacuolation"],"FOETO:PP.PAR-MET-002":["Accumulation lysosomale de glycogène dans le placenta","Lysosomal glycogen accumulation in placenta"],"FOETO:PP.PLA-MET-014":["Inclusions lysosomales membraneuses dans le placenta","Lysosomal membranous inclusions in placenta"],"FOETO:PP.PLA-MET-023":["Vacuoles claires liées à une membrane dans les cellules placentaires (MEB)","Membrane-bound clear vacuoles in placental cells (EM)"],"FOETO:PP.PLA-MET-027":["Vacuolisation du cytotrophoblaste extravilleux","Extravillous cytotrophoblast vacuolation"],"FOETO:PP.PLA-MET-001":["Accumulation de cholestérol et lipides dans le syncytiotrophoblaste","Cholesterol and lipid accumulation in syncytiotrophoblast"],"FOETO:PP.PAR-MET-004":["Calcifications","placental calcifications"],"FOETO:PP.PLA-MET-005":["Calcifications intraplacentaires","Intraplacental calcifications"],"FOETO:PP.PLA-MET-006":["Calcifications placentaires dans les lésions fibrinoïdes","Placental calcifications within fibrinoid lesions"],"FOETO:PP.PLA-MET-015":["Infiltrat de cellules de Gaucher dans le stroma villositaire","Gaucher cell infiltration of villous stroma"],"FOETO:PP.PLA-MET-025":["Vacuolisation de l'épithélium amniotique","Amniotic epithelial vacuolation"],"FOETO:PP.PLA-MET-011":["Granules PAS-positifs intracytoplasmiques dans les vacuoles","Intracytoplasmic PAS-positive granules within vacuoles"],"FOETO:PP.PLA-VAS-001":["Atrophie et fibrose villositaires par obstruction vasculaire fœtale","Villous atrophy and fibrosis secondary to fetal vascular occlusion"],"FOETO:PP.PLA-DYS-008":["Extravasation érythrocytaire stromale villositaire","Villous stromal erythrocyte extravasation"],"FOETO:PP.PLA-DYS-023":["Malperfusion vasculaire fœtale placentaire","Fetal vascular malperfusion"],"FOETO:PP.PLA-VAS-007":["Ectasie vasculaire des troncs villositaires","Stem villous vascular ectasia (FTV early stage)"],"FOETO:PP.PLA-VAS-010":["Grands foyers de villosités avasculaires","Large foci of avascular villi"],"FOETO:PP.PLA-VAS-027":["Malperfusion vasculaire fœtale globale","Global fetal vascular malperfusion"],"FOETO:PP.PAR-VAS-016":["Malperfusion vasculaire fœtale segmentaire","Segmental fetal vascular malperfusion"],"FOETO:PP.PLA-MAL-035":["Thrombose d'artère ombilicale","Umbilical artery thrombosis"],"FOETO:PP.PLA-MAL-036":["Thrombose de veine ombilicale","Umbilical vein thrombosis"],"FOETO:PP.PLA-VAS-039":["Thrombose des vaisseaux fœtaux","Fetal vascular thrombosis"],"FOETO:PP.PLA-VAS-041":["Thrombose des vaisseaux ombilicaux","Umbilical vessel thrombosis"],"FOETO:PP.PLA-MAL-037":["Thrombose des veines de surface placentaire","Placental surface vein thrombosis"],"FOETO:PP.PLA-VAS-045":["Thrombus dans les vaisseaux placentaires fœtaux","Thrombus in fetal placental vessels"],"FOETO:PP.PAR-VAS-020":["Thrombus de la plaque choriale","Chorionic plate vessel thrombus"],"FOETO:PP.PLA-VAS-046":["Thrombus des vaisseaux des villosités-troncs","Stem villous vessel thrombus"],"FOETO:PP.PLA-VAS-057":["Thrombus non occlusif des vaisseaux fœtaux placentaires","Non-occlusive thrombus of fetal placental vessels"],"FOETO:PP.PLA-DYS-039":["Thrombus vasculaire placentaire fœtal","Fetal placental vascular thrombus"],"FOETO:PP.PLA-NOR-053":["Coussinets myxoïdes intimaux des vaisseaux de la plaque choriale","Myxoid intimal cushions of chorionic plate vessels"],"FOETO:PP.PLA-VAS-004":["Dépôt de fibrine intramural dans les grands vaisseaux placentaires","Intramural fibrin deposition in large placental vessels"],"FOETO:PP.PAR-VAS-004":["Endovasculite hémorragique","Hemorrhagic endovasculopathy (FTV intermediate stage)"],"FOETO:PP.VAC-VAS-002":["Endovasculite hémorragique allanto-choriale","hemorrhagic endovasculitis of the chorioallantoic vessels"],"FOETO:PP.PLA-DYS-009":["Fibrine intramural vasculaire","Intramural vascular fibrin"],"FOETO:PP.PLA-DYS-020":["Karyorrhexie stromale villositaire","Villous stromal karyorrhexis"],"FOETO:PP.PLA-CLA-006":["Karyorrhexie stromale-vasculaire des villosités","Villous stromal-vascular karyorrhexis"],"FOETO:PP.PLA-VAS-028":["Oblitération des vaisseaux des villosités-troncs","Stem villous vessel obliteration"],"FOETO:PP.PLA-DYS-033":["Sclérose fibromusculaire des vaisseaux tronculaires","Fibromuscular sclerosis of stem villous vessels"],"FOETO:PP.PAR-VAS-025":["Vasculopathie thrombotique fœtale","Fetal thrombotic vasculopathy"],"FOETO:PP.PAR-VAS-026":["Villosités avasculaires","Avascular villi"],"FOETO:PP.PLA-CLA-017":["Villosités avasculaires avec dégénérescence (karyorrhexie, calcifications, ferrugination)","Avascular villi with degenerative changes (karyorrhexis, microcalcifications, ferrugination)"],"FOETO:PP.PLA-MET-004":["Calcification dystrophique des vaisseaux fœtaux placentaires","Dystrophic calcification of fetal placental vessels"],"FOETO:PP.PLA-DYS-001":["Calcification vasculaire placentaire","Placental vascular calcification"],"FOETO:PP.PLA-MAL-006":["Calcification vasculaire placentaire (veines choriales)","Placental vascular calcification (chorionic veins)"],"FOETO:PP.PLA-VAS-044":["Thrombus calcifié dans les vaisseaux fœtaux placentaires","Calcified thrombus in fetal placental vessels"],"FOETO:PP.PLA-VAS-047":["Thrombus en organisation dans les vaisseaux fœtaux placentaires","Organising thrombus in fetal placental vessels"],"FOETO:PP.PLA-VAS-049":["Thrombus organisé dans les vaisseaux fœtaux placentaires","Organised thrombus in fetal placental vessels"],"FOETO:PP.PLA-VAS-050":["Thrombus organisé dans un vaisseau chorioniaque","Organizing thrombus in chorionic vessel"],"FOETO:PP.PLA-VAS-051":["Thrombus récent dans les vaisseaux fœtaux placentaires","Recent thrombus in fetal placental vessels"],"FOETO:PP.PLA-DYS-004":["Dilatation vasculaire fœtale villositaire","Villous fetal vascular distension"],"FOETO:PP.PLA-VAS-008":["Ectasie vasculaire fœtale placentaire","Placental fetal vascular ectasia"],"FOETO:PP.VAC-VAS-003":["FVM — Ectasie vasculaire choriale","FVM — chorionic vascular ectasia"],"FOETO:PP.PLA-DYS-040":["Vaisseau de la plaque choriale à paroi épaisse et ectasique","Thick-walled ectatic chorionic plate vessel"],"FOETO:PP.PLA-INF-004":["Chorioamnionite","Chorioamnionitis"],"FOETO:PP.PLA-INF-005":["Chorioamnionite aiguë","Acute chorioamnionitis"],"FOETO:PP.PLA-INF-007":["Chorioamniotite aiguë","Acute chorioamnionitis"],"FOETO:PP.PCH-INF-002":["Chorioamniotite aiguë de la plaque choriale","acute chorioamnionitis involving the chorionic plate"],"FOETO:PP.PCH-INF-001":["Chorionite subchoriale aiguë","acute subchorionitis"],"FOETO:PP.PLA-INF-019":["Infiltrat neutrophilique intervillositaire et intravillositaire (microabcès)","Neutrophilic intervillous and intravillous infiltrate (microabscesses)"],"FOETO:PP.PCH-INF-003":["Microabcès sous-chorial (critère de grade 2 du MIR)","Subchorionic microabscess (MIR grade 2 criterion)"],"FOETO:PP.PAR-INF-016":["RIF1 — Vasculite choriale"],"FOETO:PP.PLA-INF-040":["Vasculite des vaisseaux chorioniques et ombilicaux","Chorionic and umbilical vessel vasculitis"],"FOETO:PP.PLA-INF-042":["Villosite chronique","Chronic villitis"],"FOETO:PP.PLA-INF-020":["Infiltrat plasmocytaire villositaire","Villous plasma cell infiltrate"],"FOETO:PP.PAR-INF-008":["Villite chronique lympho-plasmocytaire","Chronic lymphoplasmacytic villitis"],"FOETO:PP.PLA-INF-041":["Villite d'étiologie inconnue","Villitis of unknown etiology"],"FOETO:PP.PLA-VAS-053":["Vasculopathie fœtale oblitérante","Obliterative fetal vasculopathy"],"FOETO:PP.PLA-VAS-054":["Vasculopathie oblitérante fœtale (VCEI)","Obliterative fetal vasculopathy in chronic villitis"],"FOETO:PP.PLA-VAS-005":["Dépôt de fibrine périvillositaire massive (infarctus du plancher maternel)","Massive perivillous fibrin deposition (maternal floor infarction)"],"FOETO:PP.PAR-CLA-002":["Dépôt massif de fibrinoïde périvillositaire","Massive perivillous fibrinoid deposition"],"FOETO:PP.PLA-VAS-006":["Dépôt périvillositaire de fibrinoïde","Perivillous fibrinoid deposition"],"FOETO:PP.PAR-VAS-003":["Dépôts fibrinoïdes périvillositaires massifs (NIDF / maternal floor infarction)","Massive perivillous fibrin deposition (MPVFD / maternal floor infarction)"],"FOETO:PP.PLA-VAS-019":["Infarctus du plancher maternel","Maternal floor infarction"],"FOETO:PP.PLA-VAS-021":["Infarctus maternel du plancher placentaire","Maternal floor infarction"],"FOETO:PP.PLA-DYS-005":["Distribution non périphérique des capillaires villositaires","Non-peripheral distribution of villous capillaries"],"FOETO:PP.PLA-CLA-016":["Paucité des membranes vasculo-syncytiales","Paucity of vasculosyncytial membranes"],"FOETO:PP.PAR-VAS-002":["Chorangiose","Chorangiosis"],"FOETO:PP.PAR-VAS-008":["Hypercapillarisation des villosités terminales (chorangiose)","Hypercapillarization of terminal villi (chorangiosis)"],"FOETO:PP.MEM-CLA-001":["Amnios nodosum","Amnion nodosum"],"FOETO:PP.PLA-MAL-001":["Amnios nodosum (membrane de séparation gémellaire)","Amnion nodosum (twin dividing membrane)"],"FOETO:PP.PLA-NOR-063":["Dégénérescence ballonnisante de l'épithélium amniotique","Ballooning degeneration of amniotic epithelium"],"FOETO:PP.PLA-INF-008":["Dégénérescence de l'épithélium amniotique par le méconium","Meconium-induced amniotic epithelial degeneration"],"FOETO:PP.PLA-INF-010":["Dépôt de méconium dans le chorion","Meconium deposition in chorion"],"FOETO:PP.MEM-CLA-002":["Macrophages chargés de méconium (délai 24-48h)","Meconium deposition in amnion"],"FOETO:PP.PLA-CLA-009":["Modifications dégénératives de l'amnion","Amniotic epithelial degeneration"],"FOETO:PP.PLA-MAL-016":["Hyperenroulement du cordon ombilical","Umbilical cord hypercoiling"],"FOETO:PP.PLA-MAL-017":["Hypo-enroulement du cordon ombilical","Umbilical cord hypocoiling"],"FOETO:PP.PLA-MAL-011":["Cordon ombilical court","Short umbilical cord"],"FOETO:PP.PLA-MAL-022":["Insertion marginale du cordon ombilical (battledore)","Marginal cord insertion (battledore placenta)"],"FOETO:PP.PLA-MAL-023":["Insertion vélamenteuse du cordon (grossesse multiple)","Velamentous cord insertion (multiple gestation)"],"FOETO:PP.COR-MAL-001":["Insertion vélamenteuse du cordon ombilical","Velamentous cord insertion"],"FOETO:PP.PLA-MAL-042":["Vasa praevia","Vasa previa"],"FOETO:PP.PLA-MAL-043":["Vasa praevia (grossesse gémellaire)","Vasa praevia (twin gestation)"],"FOETO:PP.COR-MAL-002":["Artère ombilicale unique","Single umbilical artery"],"FOETO:PP.PLA-MAL-005":["Artère ombilicale unique (grossesse gémellaire)","Single umbilical artery (twin gestation)"],"FOETO:PP.COR-MAL-003":["Cordon ombilical grêle (diamètre réduit)","Thin umbilical cord (reduced cord diameter)"],"FOETO:PP.PLA-DYS-003":["Cordon ombilical épaissi avec excès de gelée de Wharton","Thickened umbilical cord with excess Wharton jelly"],"FOETO:PP.PLA-MAL-014":["Déficit en gelée de Wharton","Wharton's jelly deficiency"],"FOETO:PP.PLA-CLA-004":["Fibrose stromale des villosités souches","Stem villous stromal fibrosis"],"FOETO:PP.PLA-VAS-012":["Hématome du cordon ombilical","Umbilical cord hematoma"],"FOETO:PP.PLA-MAL-039":["Torsion / coarctation du cordon ombilical","Umbilical cord torsion / coarctation"],"FOETO:PP.PLA-NOR-224":["Œdème de la gelée de Wharton","Wharton's jelly edema"],"FOETO:PP.COR-VAS-001":["MAVM (meconium associated vascular myonecrosis)","meconium-associated vascular myonecrosis (MAVM)"],"FOETO:PP.PLA-INF-028":["Myonécrose vasculaire ombilicale induite par le méconium","Meconium-associated umbilical vascular myonecrosis"],"FOETO:PP.PLA-MAL-029":["Nécrose de la paroi artérielle ombilicale","Umbilical artery wall necrosis"],"FOETO:PP.PLA-INF-031":["Nécrose musculaire vasculaire méconique (cordon/surface placentaire)","Meconium-induced vascular smooth muscle necrosis (cord/placental surface)"],"FOETO:PP.PLA-CLA-013":["Nécrose musculaire vasculaire ombilicale","Umbilical vascular muscle necrosis"],"FOETO:PP.PAR-DYS-001":["Chorangiomatose placentaire","Placental chorangiomatosis"],"FOETO:PP.PLA-TUM-010":["Chorangiose placentaire","Placental chorangiosis"],"FOETO:PP.PLA-VAS-009":["Fibrine intervilleuse augmentée","Increased intervillous fibrin"],"FOETO:PP.PLA-TUM-003":["Cellules anormales dans l'espace intervillositaire","Abnormal cells in the intervillous space"],"FOETO:PP.PLA-RET-011":["Nécrose de l'épithélium amniotique (jumeau décédé)","Amniotic epithelial necrosis (co-twin death)"]}};
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+
+var DB_NAME = "foeto-" + MODULE, DB_VER = 1, db = null;
+
+/* Organe pair : le côté fait partie de la donnée, pas du commentaire. Un rein
+   lu sans son côté n'est pas rattachable à l'imagerie ni à l'autre rein. */
+var COTES = [{ k:"droit", l:"Droit — 1/2" }, { k:"gauche", l:"Gauche — 1/2" },
+             { k:"deux", l:"Les deux — 2/2" }];
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function normDossier(v){ return v.toUpperCase().replace(/\s+/g, ""); }
+function dossierOk(v){ return v.trim().length > 0; } // ponytail: plus de format imposé, seul le uppercase (normDossier) reste
+function num(id){ var e = $(id); if (!e) return null; var v = parseFloat(e.value); return isFinite(v) ? v : null; }
+function par(liste, k){ return liste.filter(function(x){ return x.k === k; })[0] || null; }
+function champs(){ return MESURE ? MESURE.champs : []; }
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", E = null;
+function neuf(){
+  var e = { cote:null, prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
+            negatifs:{}, techniques:{}, foeto:{}, mesure:{ def:null, opt:null, v:{} }, libre:"" };
+  champs().forEach(function(c){ e.mesure.v[c.id] = null; });
+  return e;
+}
+
+/* Le stade attendu au terme saisi. Bornes reconstruites depuis la prose des
+   sources : ce sont des repères, pas des seuils. */
+function stadeAttendu(sa){
+  if (sa == null || !isFinite(sa)) return null;
+  for (var i = 0; i < STADES.length; i++) if (sa < STADES[i].max) return STADES[i];
+  return STADES[STADES.length - 1];
+}
+function bornesTxt(s){
+  var i = STADES.indexOf(s), min = i ? STADES[i-1].max : 0;
+  return s.max === 99 ? "≳ " + min + " SA" : min + "–" + s.max + " SA";
+}
+
+/* ── Construction du DOM — une seule fois, le clic ne fait que repeindre ──── */
+function chip(act, k, l, sous){
+  return '<button type="button" class="chip" data-act="' + act + '" data-k="' + esc(k) + '">' +
+         (sous ? '<span class="k">' + esc(sous) + '</span>' : '') + esc(l) + '</button>';
+}
+function batir(){
+  if (PAIR){
+    $("coteBloc").hidden = false;
+    $("cote").innerHTML = COTES.map(function(c){ return chip("cote", c.k, c.l); }).join("");
+  }
+  $("prelevement").innerHTML = PRELEV.map(function(p){ return chip("prelev", p.k, p.l); }).join("");
+
+  $("retention").innerHTML = RETENTION.map(function(r){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(r.l) +
+      '<span class="meta ' + r.q + '">' + esc(r.b) + " · " + esc(r.d) +
+      " · prédicteur " + r.q + '</span></div>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="present">Présent</button>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="absent">Absent</button>' +
+      '</div></div>';
+  }).join("");
+  $("kcl").innerHTML = chip("kcl", "kcl", "Fœticide par KCl", "geste à déclarer avant toute datation");
+
+  $("stTitre").textContent = STADE_TITRE;
+  $("stades").innerHTML = STADES.map(function(s){ return chip("stade", s.k, s.l); }).join("");
+
+  if (MESURE){
+    var h = '<div class="sousTitre">' + esc(MESURE.titre) + '</div>';
+    h += '<div class="chips" id="mesDefs">' +
+         MESURE.defs.map(function(d){ return chip("mdef", d.k, d.l, MESURE.defLabel); }).join("") + '</div>';
+    if (MESURE.opts && MESURE.opts.length)
+      h += '<div class="chips" id="mesOpts" style="margin-top:6px">' +
+           MESURE.opts.map(function(o){ return chip("mopt", o.k, o.l, MESURE.optLabel); }).join("") + '</div>';
+    h += '<div class="row" style="margin-top:9px">' + MESURE.champs.map(function(c){
+      return '<div class="field"><label for="m_' + c.id + '">' + esc(c.label) + '</label>' +
+             '<input type="number" id="m_' + c.id + '" min="' + c.min + '" max="' + c.max +
+             '" step="' + c.step + '" inputmode="decimal" placeholder="—"></div>';
+    }).join("") + '</div>';
+    $("mesure").innerHTML = h;
+    $("vMesure").hidden = false;
+    $("vMesure").querySelector("b").textContent = MESURE.titre;
+  }
+
+  $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
+
+  /* Un signe peut porter un groupe g (placenta : cordon, membranes, parenchyme sous
+     cordon, marge, systémique) : un sous-titre s'ouvre quand le groupe change. */
+  var gPrec = null;
+  $("signes").innerHTML = SIGNES.map(function(x){
+    var h = "";
+    if (x.g && x.g !== gPrec){ h = '<div class="sousTitre">' + esc(x.g) + '</div>'; gPrec = x.g; }
+    return h + '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+      (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
+      '</div>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="normal">Normal</button>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="anormal">Anormal</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("foeto").innerHTML = FOETO.sections.map(function(s){
+    return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
+           s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
+  }).join("") || '<p class="note">Aucun terme FOETO rattaché à cette fiche.</p>';
+  if (FOETO.sections.length){
+    $("foetoPlus").hidden = false; $("foetoRech").hidden = false;
+    $("foetoPlus").textContent = "▸ tous les termes attestés (" + nbFoeto() + ")";
+  }
+
+  $("negatifs").innerHTML = NEGATIFS.map(function(n){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(n.l) +
+      '<span class="meta">' + esc(n.p) + '</span></div>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="absent">Vérifié</button>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="present">EN DÉFAUT</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("techNote").textContent = TECH_NOTE;
+  $("techniques").innerHTML = TECHNIQUES.map(function(t){ return chip("tech", t.k, t.l, t.q); }).join("");
+}
+
+function nbFoeto(){ return FOETO.sections.reduce(function(a, s){ return a + s.termes.length; }, 0); }
+function foetoLabel(id){
+  var l = null;
+  FOETO.sections.forEach(function(s){ s.termes.forEach(function(t){ if (t.id === id) l = t.l; }); });
+  return l || (FOETO.formes[id] || [id])[0];
+}
+/* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
+function foetoAjouter(id){
+  if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
+    var box = $("foeto").querySelector(".chips");
+    if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
+    box.insertAdjacentHTML("beforeend", chip("foeto", id, foetoLabel(id)));
+  }
+  E.foeto[id] = true;
+  peindre(); enregistrer();
+}
+function rechercherFoeto(q){
+  var sg = $("sgFoeto");
+  q = q.trim().toLowerCase();
+  if (q.length < 3){ sg.classList.remove("on"); return; }
+  var hits = [];
+  Object.keys(FOETO.formes).some(function(id){
+    var f = FOETO.formes[id].filter(function(x){ return x.toLowerCase().indexOf(q) >= 0; })[0];
+    if (f) hits.push({ id:id, l:foetoLabel(id), f:f, hf:FOETO.formes[id].indexOf("(hors fiche)") >= 0 });
+    return hits.length >= 10;
+  });
+  sg.innerHTML = hits.length ? hits.map(function(x){
+    return '<div data-pick="' + esc(x.id) + '">' + esc(x.l) +
+           (x.f !== x.l ? ' <small>— ' + esc(x.f) + '</small>' : '') + (x.hf ? ' <small>(hors fiche)</small>' : '') + '</div>';
+  }).join("") : '<div><small>aucun terme</small></div>';
+  sg.classList.add("on");
+}
+
+/* ── Associations ─────────────────────────────────────────────────────────────
+   Un diagnostic ne se coche pas : il se lit dans l'association des signes. Les
+   faisceaux incomplets sont affichés aussi — 2 signes sur 4 se dit, et dire
+   combien manquent est le seul moyen de distinguer « non trouvé » de « non
+   regardé ». */
+function seuil(d){ return d.min || d.signes.length; }
+function associations(){
+  return DIAGS.map(function(d){
+    var pris  = d.signes.filter(function(k){ return E.signes[k] === "anormal"; });
+    var muets = d.signes.filter(function(k){ return !E.signes[k]; });
+    /* Un signe pivot ne se remplace pas par le nombre : sans lui, le compte peut
+       être atteint sans que l'association tienne. */
+    var pivot = !d.cle || E.signes[d.cle] === "anormal";
+    return { d:d, pris:pris, muets:muets, pivot:pivot,
+             tenu: pivot && pris.length >= seuil(d) };
+  }).filter(function(a){ return a.pris.length; })
+    .sort(function(a, b){ return (b.tenu - a.tenu) || (b.pris.length - a.pris.length); });
+}
+function nomSigne(k){ var s = par(SIGNES, k); return s ? s.l : k; }
+
+/* ── Verdicts communs ─────────────────────────────────────────────────────── */
+function verdictPrelevement(){
+  var n = Object.keys(E.prelev).length, res = [], grave = false;
+  PRELEV.forEach(function(p){
+    if (p.manque && !E.prelev[p.k]){ res.push(p.manque); if (p.grave) grave = true; }
+  });
+  if (PAIR && !E.cote) res.push("côté non déclaré — organe pair");
+  return { n:n, res:res,
+    cls: res.length ? (grave ? "bad" : "warn") : (n === PRELEV.length ? "ok" : ""),
+    txt: n === 0 ? "—"
+       : (n + "/" + PRELEV.length + " item(s) confirmé(s)" +
+          (PAIR && E.cote ? ", " + par(COTES, E.cote).l.toLowerCase().split(" —")[0] : "") + ".") +
+         (res.length ? " Réserves : " + res.join(" ; ") + "." : " Prélèvement complet.") };
+}
+function verdictRetention(){
+  if (E.kcl) return { cls:"bad", borne:null, txt:KCL_TXT };
+  var pres = RETENTION.filter(function(r){ return E.retention[r.k] === "present"; });
+  if (!pres.length) return { cls:"", borne:null,
+    txt: Object.keys(E.retention).length ? "Aucun critère de rétention positif." : "—" };
+  var notes = [];
+  pres.forEach(function(r){ if (r.note) notes.push(r.note); });
+  var bons = pres.filter(function(r){ return r.q !== "mauvais"; });
+  if (!bons.length) return { cls:"warn", borne:null,
+    txt:"Seuls des prédicteurs MAUVAIS sont positifs — aucune borne recevable. " + notes.join(" ; ") + "." };
+  var top = bons.reduce(function(a, b){ return b.h > a.h ? b : a; });
+  if (top.alerte) notes.push(top.alerte);
+  return { cls:"ok", borne:top,
+    txt:"Rétention " + top.b + " — critère : " + top.l.toLowerCase() + " (" + top.d + ")." +
+        (notes.length ? " Réserves : " + notes.join(" ; ") + "." : "") };
+}
+function verdictMaturation(){
+  var sa = num("sa"), att = stadeAttendu(sa), obs = E.stade ? par(STADES, E.stade) : null;
+  if (!obs) return { cls:"", att:att, txt: att
+    ? "Stade attendu à " + sa + " SA : " + att.l.toLowerCase() + ". Confirmer ou choisir."
+    : "Saisir le terme pour afficher le stade attendu." };
+  if (!att) return { cls:"warn", att:null,
+    txt:"Stade " + obs.l.toLowerCase() + " — sans terme, aucune discordance n'est calculable." };
+  var io = STADES.indexOf(obs), ia = STADES.indexOf(att), t, cls;
+  if (io === ia){ cls = "ok"; t = "Maturation conforme au terme : " + obs.l.toLowerCase() + " à " + sa + " SA."; }
+  else if (io < ia){ cls = "warn";
+    t = "Retard de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (RETARD_NOTE ? " " + RETARD_NOTE : ""); }
+  else { cls = "warn";
+    t = "Avance de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (AVANCE_NOTE ? " " + AVANCE_NOTE : ""); }
+  if (obs.note) t += " (" + obs.note + ")";
+  return { cls:cls, att:att, txt:t };
+}
+
+/* ── Peinture ─────────────────────────────────────────────────────────────── */
+function classe(act, v){
+  if (act === "neg") return v === "present" ? "no" : "on";
+  if (act === "les") return v === "anormal" ? "no" : "on";
+  return "on";
+}
+function poser(id, v){
+  var e = $(id), t = e.querySelector("b").textContent;
+  e.className = "verdict" + (v.cls ? " " + v.cls : "");
+  e.innerHTML = "<b>" + esc(t) + "</b>" + esc(v.txt);
+}
+function tally(id, n, sur){ $(id).textContent = n ? n + "/" + sur : "—"; }
+
+function peindreDiags(){
+  var A = associations();
+  if (!A.length){
+    $("diags").innerHTML = '<p class="note" style="margin:0">Aucun signe anormal coché : rien à associer.</p>';
+    return;
+  }
+  $("diags").innerHTML = A.map(function(a){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(a.d.l) +
+      '<span class="meta">' + a.pris.length + "/" + a.d.signes.length + " signe(s), seuil " + seuil(a.d) +
+      (a.muets.length ? " · " + a.muets.length + " non regardé(s)" : "") + '</span></div>' +
+      '<span class="chip ' + (a.tenu ? "on" : "") + '" style="cursor:default">' +
+      (a.tenu ? "association tenue" : "faisceau incomplet") + '</span></div>' +
+      '<div class="unfold">' +
+      '<div class="note" style="margin:0">' +
+      (a.pivot ? "" : "Signe pivot non coché : " + esc(nomSigne(a.d.cle)) + ".<br>") +
+      esc(a.pris.map(nomSigne).join(" · ")) +
+      (a.muets.length ? "<br>Non regardés : " + esc(a.muets.map(nomSigne).join(" · ")) + "." : "") +
+      '</div>' +
+      '<div class="stop"><b>Ce qu\'il ne faut pas conclure</b>' + esc(a.d.stop) + '</div></div></div>';
+  }).join("");
+}
+
+function peindre(){
+  if (PAIR) document.querySelectorAll("#cote .chip").forEach(function(b){
+    b.className = "chip" + (E.cote === b.dataset.k ? " on" : "");
+  });
+  document.querySelectorAll("#prelevement .chip").forEach(function(b){
+    b.className = "chip" + (E.prelev[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#retention .chip").forEach(function(b){
+    b.className = "chip" + (E.retention[b.dataset.k] === b.dataset.v ? " on" : "");
+  });
+  $("kcl").firstChild.className = "chip" + (E.kcl ? " no" : "");
+  document.querySelectorAll("#stades .chip").forEach(function(b){
+    var att = stadeAttendu(num("sa"));
+    b.className = "chip" + (E.stade === b.dataset.k ? " on"
+                          : (att && att.k === b.dataset.k ? " sugg" : ""));
+  });
+  if (MESURE){
+    document.querySelectorAll("#mesDefs .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.def === b.dataset.k ? " on" : "");
+    });
+    if ($("mesOpts")) document.querySelectorAll("#mesOpts .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.opt === b.dataset.k ? " on" : "");
+    });
+  }
+  document.querySelectorAll("#variantes .chip").forEach(function(b){
+    b.className = "chip" + (E.variantes[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#signes .chip").forEach(function(b){
+    b.className = "chip" + (E.signes[b.dataset.k] === b.dataset.v
+                            ? " " + classe("les", b.dataset.v) : "");
+  });
+  peindreDiags();
+  document.querySelectorAll('[data-act="foeto"]').forEach(function(b){
+    b.className = "chip" + (E.foeto[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#negatifs .chip").forEach(function(b){
+    b.className = "chip" + (E.negatifs[b.dataset.k] === b.dataset.v
+                            ? " " + classe("neg", b.dataset.v) : "");
+  });
+  var sug = suggerer();
+  document.querySelectorAll("#techniques .chip").forEach(function(b){
+    b.className = "chip" + (E.techniques[b.dataset.k] ? " on" : (sug[b.dataset.k] ? " sugg" : ""));
+  });
+
+  tally("tPrelevement", Object.keys(E.prelev).length, PRELEV.length);
+  tally("tRetention",   Object.keys(E.retention).length, RETENTION.length);
+  tally("tMaturation",  (E.stade ? 1 : 0) + (MESURE && E.mesure.def ? 1 : 0), MESURE ? 2 : 1);
+  tally("tVariantes",   Object.keys(E.variantes).length, VARIANTES.length);
+  tally("tSignes",     Object.keys(E.signes).length, SIGNES.length);
+  tally("tFoeto",       Object.keys(E.foeto).length, nbFoeto());
+  tally("tNegatifs",    Object.keys(E.negatifs).length, NEGATIFS.length);
+  tally("tTechniques",  Object.keys(E.techniques).length, TECHNIQUES.length);
+
+  poser("vPrelevement", verdictPrelevement());
+  poser("vRetention",   verdictRetention());
+  poser("vMaturation",  verdictMaturation());
+  if (MESURE) poser("vMesure", verdictMesure());
+
+  var cr = composer();
+  $("cr").textContent = cr;
+  $("tCR").textContent = cr.split("\n").length + " lignes";
+}
+
+/* ── Compte rendu — la sortie du module, écrite par les clics ─────────────── */
+function composer(){
+  var sa = num("sa"), L = [];
+  L.push(TITRE_CR + " — grille de lecture");
+  L.push((dossier || "dossier —") + " · " + (sa != null ? sa + " SA" : "terme —") +
+         " · " + ($("operateur").value.trim() || "lecteur —") +
+         (PAIR ? " · " + (E.cote ? par(COTES, E.cote).l : "côté non déclaré") : ""));
+  L.push("");
+
+  L.push("PRÉLÈVEMENT");
+  L.push("  " + verdictPrelevement().txt);
+
+  L.push("");
+  L.push("RÉTENTION");
+  L.push("  " + verdictRetention().txt);
+
+  L.push("");
+  L.push("MATURATION");
+  L.push("  " + verdictMaturation().txt);
+  if (MESURE) L.push("  " + verdictMesure().txt);
+
+  var vus = VARIANTES.filter(function(v){ return E.variantes[v.k]; });
+  if (vus.length){
+    L.push("");
+    L.push("VARIANTES NORMALES VUES ET ÉCARTÉES");
+    L.push("  " + vus.map(function(v){ return v.l.toLowerCase(); }).join(" · "));
+  }
+
+  var anormales = SIGNES.filter(function(x){ return E.signes[x.k] === "anormal"; });
+  var normales  = SIGNES.filter(function(x){ return E.signes[x.k] === "normal"; });
+  L.push("");
+  L.push("SIGNES");
+  if (!anormales.length && !normales.length) L.push("  aucun axe exploré.");
+  anormales.forEach(function(x){ L.push("  " + (x.g ? x.g + " · " : "") + x.l + " — ANORMAL"); });
+  if (normales.length)
+    L.push("  Normaux : " + normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  var muets = SIGNES.filter(function(x){ return !E.signes[x.k]; });
+  if (muets.length)
+    L.push("  Non explorés : " + muets.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+
+  var fo = Object.keys(E.foeto);
+  if (fo.length){
+    L.push("");
+    L.push("TERMES FOETO");
+    fo.forEach(function(id){ L.push("  " + foetoLabel(id) + " [" + id + "]"); });
+  }
+
+  var A = associations();
+  L.push("");
+  L.push("ASSOCIATIONS LUES");
+  if (!A.length) L.push("  aucune : les signes cochés ne dessinent aucune association.");
+  A.forEach(function(a){
+    L.push("  " + a.d.l + " — " + (a.tenu ? "association tenue" : "faisceau incomplet") +
+           " (" + a.pris.length + "/" + a.d.signes.length + ", seuil " + seuil(a.d) + ")");
+    L.push("      · " + a.pris.map(nomSigne).join(" · "));
+    if (!a.pivot) L.push("      · signe pivot non coché : " + nomSigne(a.d.cle));
+    if (a.muets.length) L.push("      · non regardés : " + a.muets.map(nomSigne).join(" · "));
+    L.push("      · ne pas conclure : " + a.d.stop);
+  });
+
+  L.push("");
+  L.push("NÉGATIFS OBLIGATOIRES");
+  NEGATIFS.forEach(function(n){
+    var v = E.negatifs[n.k];
+    L.push("  " + (v === "absent" ? "· " + n.l
+                 : v === "present" ? "! " + n.ko
+                 : "? " + n.l + " — non vérifié"));
+  });
+
+  var t = TECHNIQUES.filter(function(x){ return E.techniques[x.k]; });
+  if (t.length){
+    L.push("");
+    L.push("TECHNIQUES DEMANDÉES");
+    t.forEach(function(x){ L.push("  · " + x.l + " — " + x.q); });
+  }
+
+  if (E.libre.trim()){
+    L.push("");
+    L.push("REMARQUE");
+    E.libre.trim().split("\n").forEach(function(x){ L.push("  " + x); });
+  }
+
+  L.push("");
+  L.push("— La micro décrit ; la conclusion nomme. Grille v" + VERSION + " issue de " + SOURCE + ".");
+  return L.join("\n");
+}
+
+/* ── Clics ────────────────────────────────────────────────────────────────── */
+document.addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest("button[data-act]") : null;
+  if (!b || b.closest("section.off")) return;
+  var k = b.dataset.k, v = b.dataset.v, a = b.dataset.act;
+  if (a === "cote"){ E.cote = E.cote === k ? null : k; }
+  else if (a === "prelev"){ if (E.prelev[k]) delete E.prelev[k]; else E.prelev[k] = true; }
+  else if (a === "ret"){ if (E.retention[k] === v) delete E.retention[k]; else E.retention[k] = v; }
+  else if (a === "kcl"){ E.kcl = !E.kcl; }
+  else if (a === "stade"){ E.stade = E.stade === k ? null : k; }
+  else if (a === "mdef"){ E.mesure.def = E.mesure.def === k ? null : k; }
+  else if (a === "mopt"){ E.mesure.opt = E.mesure.opt === k ? null : k; }
+  else if (a === "var"){ if (E.variantes[k]) delete E.variantes[k]; else E.variantes[k] = true; }
+  else if (a === "les"){ if (E.signes[k] === v) delete E.signes[k]; else E.signes[k] = v; }
+  else if (a === "neg"){ if (E.negatifs[k] === v) delete E.negatifs[k]; else E.negatifs[k] = v; }
+  else if (a === "tech"){ if (E.techniques[k]) delete E.techniques[k]; else E.techniques[k] = true; }
+  else if (a === "foeto"){ if (E.foeto[k]) delete E.foeto[k]; else E.foeto[k] = true; }
+  else return;
+  peindre(); enregistrer();
+});
+document.addEventListener("click", function(ev){
+  var t = ev.target.closest ? ev.target.closest("[data-pick]") : null;
+  if (t){ foetoAjouter(t.dataset.pick); $("rqFoeto").value = ""; $("sgFoeto").classList.remove("on"); }
+});
+$("foetoPlus").onclick = function(){
+  var box = $("foetoTous");
+  if (!box.children.length) box.innerHTML = FOETO.sections.map(function(s){
+    return s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("");
+  }).join("");
+  box.hidden = !box.hidden; peindre();
+};
+$("rqFoeto").addEventListener("input", function(){ rechercherFoeto(this.value); });
+$("btnNegAll").onclick = function(){
+  NEGATIFS.forEach(function(n){ if (!E.negatifs[n.k]) E.negatifs[n.k] = "absent"; });
+  peindre(); enregistrer();
+};
+$("btnCopie").onclick = function(){
+  var t = composer();
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(t).then(function(){ flash("Compte rendu copié."); },
+                                          function(){ flash("Copie refusée par le navigateur."); });
+  else flash("Presse-papiers indisponible en file://.");
+};
+document.addEventListener("input", function(e){
+  var id = e.target.id;
+  if (id.indexOf("m_") === 0) E.mesure.v[id.slice(2)] = num(id);
+  else if (id === "libre") E.libre = e.target.value;
+  else if (id === "sa") majSa();
+  else return;
+  peindre(); enregistrer();
+});
+function majSa(){
+  var sa = num("sa"), att = stadeAttendu(sa), h = $("saHint");
+  h.className = "hint" + (att ? " good" : "");
+  h.textContent = att ? "Stade attendu : " + att.l.toLowerCase() + " (" + bornesTxt(att) + ")."
+                      : "SA = semaines de gestation + 2. Commande le stade attendu.";
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────────
+   localStorage est erratique en file:// et cloisonné par fichier sur certains
+   navigateurs : la saisie va en IndexedDB, y compris les champs texte.       */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction("saisies", mode), out = fn(t.objectStore("saisies"));
+    /* Tester la présence de `result`, pas sa valeur : un get() qui ne trouve rien
+       a bien un `result` (undefined) — comparé à undefined, la requête elle-même
+       était rendue, et un dossier jamais saisi s'annonçait comme restitué. */
+    t.oncomplete = function(){ res(out && "result" in out ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("readonly",  function(s){ return s.get(d); }); }
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  ["secPrelevement","secRetention","secMaturation","secVariantes","secSignes","secFoeto",
+   "secNegatifs","secTechniques","secCR","secSortie"].forEach(function(id){
+    $(id).classList.toggle("off", !ouvert);
+  });
+}
+
+/* ── Collecte / restitution ───────────────────────────────────────────────── */
+function collecter(){
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    organe: ORGANE,
+    source: SOURCE,
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    terme_sa: num("sa"),
+    grille: JSON.parse(JSON.stringify(E)),
+    compte_rendu: composer()
+  };
+}
+function appliquer(o){
+  var g = o.grille || {};
+  E = neuf();
+  ["prelev","retention","variantes","signes","negatifs","techniques","foeto"].forEach(function(c){
+    if (g[c]) E[c] = g[c];
+  });
+  Object.keys(E.foeto).forEach(function(id){
+    if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')) foetoAjouter(id);
+  });
+  E.kcl = !!g.kcl; E.stade = g.stade || null; E.cote = g.cote || null;
+  if (g.mesure){
+    E.mesure.def = g.mesure.def || null;
+    E.mesure.opt = g.mesure.opt || null;
+    champs().forEach(function(c){
+      E.mesure.v[c.id] = (g.mesure.v && g.mesure.v[c.id] != null) ? g.mesure.v[c.id] : null;
+    });
+  }
+  E.libre = g.libre || "";
+  $("sa").value = o.terme_sa != null ? o.terme_sa : "";
+  champs().forEach(function(c){ $("m_" + c.id).value = E.mesure.v[c.id] != null ? E.mesure.v[c.id] : ""; });
+  $("libre").value = E.libre;
+  majSa(); peindre();
+}
+function vider(){
+  E = neuf();
+  ["sa","libre"].forEach(function(id){ $(id).value = ""; });
+  champs().forEach(function(c){ $("m_" + c.id).value = ""; });
+  majSa(); peindre();
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, ok1 = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = ok1 && op, h = $("dossierHint");
+  h.className = "hint" + (v && !ok1 ? " bad" : ok1 ? " good" : "");
+  h.textContent = !v ? "Libre, mis en majuscules. Conditionne l'enregistrement."
+                : ok1 ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                      : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la grille.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json."
+    : ok1 ? "Saisir le lecteur pour activer l'export."
+          : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){
+    dossier = v;
+    vider();
+    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    if (rec){ appliquer(rec); flash("Grille du " + dossier + " restituée."); }
+  } else if (!ok && dossier){
+    dossier = ""; vider();
+  }
+  peindre();
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+$("btnExport").onclick = function(){
+  if (!dossierOk(dossier)) return;
+  var out = collecter();
+  telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+              dossier + "_" + MODULE + ".json");
+  var n = NEGATIFS.filter(function(x){ return E.negatifs[x.k]; }).length;
+  flash("Grille exportée." + (n < NEGATIFS.length ? " ⚠ " + (NEGATIFS.length - n) + " négatif(s) non vérifié(s)." : ""));
+};
+function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.grille) throw new Error("aucune clé « grille »");
+  if (o.dossier) $("dossier").value = normDossier(o.dossier);
+  if (o.operateur) $("operateur").value = o.operateur;
+  return majDossier().then(function(){
+    if (!dossier) throw new Error("numéro de dossier absent ou lecteur manquant");
+    appliquer(o); enregistrer();
+    return true;
+  });
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    Promise.resolve().then(function(){ return relire(JSON.parse(String(fr.result))); })
+      .then(function(){ flash("Grille relue."); })
+      .catch(function(e){ flash("Relecture impossible : " + e.message); });
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la grille du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    await tx("readwrite", function(s){ return s.delete(dossier); });
+    vider(); flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les grilles de TOUS les dossiers sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("readwrite", function(s){ return s.clear(); });
+  vider(); flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Axes de la grille", PRELEV.length + " prélèvement · " + RETENTION.length + " rétention · " +
+                             STADES.length + " stades · " + SIGNES.length + " signes · " +
+                             DIAGS.length + " associations · " +
+                             NEGATIFS.length + " négatifs · " + TECHNIQUES.length + " techniques");
+  ligne("Source", SOURCE + " — la fiche est la source, ce module en est la sortie");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+(async function(){
+  $("ver").textContent = "v" + VERSION;
+  E = neuf();
+  batir(); majSa(); peindre();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — aucune saisie ne sera conservée. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir le fichier avec ?selftest=1 ───────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+  function clic(act, k, v){
+    var s = '[data-act="' + act + '"][data-k="' + k + '"]' + (v ? '[data-v="' + v + '"]' : "");
+    var b = document.querySelector(s);
+    if (!b){ ko.push("bouton introuvable : " + s); return null; }
+    b.click(); return b;
+  }
+  function crTient(t){ return $("cr").textContent.indexOf(t) >= 0; }
+  var pause = function(){ return new Promise(function(r){ setTimeout(r, 30); }); };
+
+  /* Intégrité des tableaux — pure, sans DOM */
+  ["PRELEV","RETENTION","STADES","VARIANTES","SIGNES","DIAGS","NEGATIFS","TECHNIQUES"].forEach(function(nom){
+    var t = { PRELEV:PRELEV, RETENTION:RETENTION, STADES:STADES, VARIANTES:VARIANTES,
+              SIGNES:SIGNES, DIAGS:DIAGS, NEGATIFS:NEGATIFS, TECHNIQUES:TECHNIQUES }[nom];
+    chk("clés uniques dans " + nom, new Set(t.map(function(x){ return x.k; })).size === t.length);
+  });
+  chk("stades ordonnés",      STADES.every(function(s, i){ return !i || s.max > STADES[i-1].max; }));
+  chk("dernier stade ouvert", STADES[STADES.length-1].max === 99);
+  chk("sans terme, pas de stade", stadeAttendu(null) === null);
+  chk("chaque association a son « ne pas conclure »",
+      DIAGS.every(function(d){ return d.stop && d.signes.length >= 2; }));
+  chk("chaque association ne cite que des signes déclarés",
+      DIAGS.every(function(d){ return d.signes.every(function(k){ return !!par(SIGNES, k); }); }));
+  chk("le signe pivot fait partie de l'association",
+      DIAGS.every(function(d){ return !d.cle || d.signes.indexOf(d.cle) >= 0; }));
+  chk("seuil d'association atteignable",
+      DIAGS.every(function(d){ return seuil(d) >= 1 && seuil(d) <= d.signes.length; }));
+  chk("chaque négatif a son défaut", NEGATIFS.every(function(n){ return n.ko && n.p; }));
+  chk("une borne de rétention au moins est bonne",
+      RETENTION.some(function(r){ return r.q === "bon"; }));
+
+  /* Verrou */
+  chk("verrouillé au départ",  $("secSignes").classList.contains("off"));
+  clic("prelev", PRELEV[0].k);
+  chk("clic ignoré sous verrou", !E.prelev[PRELEV[0].k]);
+  set("dossier", "26p0123");
+  chk("lecteur manquant",      $("secSignes").classList.contains("off"));
+  set("operateur", "RM");
+  await pause();
+  chk("déverrouillé",         !$("secSignes").classList.contains("off"));
+  chk("dossier normalisé",     $("dossier").value === "26P0123");
+  chk("export activé",        !$("btnExport").disabled);
+
+  /* Chips */
+  clic("prelev", PRELEV[0].k);
+  chk("chip prélèvement posée", E.prelev[PRELEV[0].k] === true &&
+      document.querySelector('[data-act="prelev"][data-k="' + PRELEV[0].k + '"]').className.indexOf("on") >= 0);
+  clic("prelev", PRELEV[0].k);
+  chk("chip retirée au 2e clic", !E.prelev[PRELEV[0].k]);
+
+  /* Rétention — le fœticide prime sur toute borne */
+  var bon = RETENTION.filter(function(r){ return r.q === "bon"; })[0];
+  clic("ret", bon.k, "present");
+  chk("borne posée",           $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("kcl", "kcl");
+  chk("KCl invalide la datation", $("vRetention").className.indexOf("bad") >= 0);
+  clic("kcl", "kcl");
+  chk("KCl levé, borne revenue", $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("ret", bon.k, "present");
+
+  /* Côté — organe pair */
+  if (PAIR){
+    chk("bloc côté visible",   !$("coteBloc").hidden);
+    chk("côté manquant en réserve",
+        verdictPrelevement().res.indexOf("côté non déclaré — organe pair") >= 0);
+    clic("cote", "droit");
+    chk("côté posé",            E.cote === "droit" && crTient("Droit — 1/2"));
+    clic("cote", "droit");
+    chk("2e clic retire le côté", E.cote === null);
+    clic("cote", "deux");
+  } else {
+    chk("pas de bloc côté sur organe impair", $("coteBloc").hidden);
+  }
+
+  /* Signes et associations */
+  var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
+  chk("rien à associer au départ", $("diags").textContent.indexOf("Aucun signe anormal") >= 0);
+  clic("les", l0.k, "anormal");
+  chk("signe posé anormal",    E.signes[l0.k] === "anormal");
+  chk("association esquissée",  $("diags").textContent.indexOf(d0.l) >= 0);
+  clic("les", l0.k, "anormal");
+  chk("2e clic remet à non exploré", !E.signes[l0.k]);
+  clic("les", l0.k, "normal");
+  chk("normal ne nourrit pas l'association", associations().length === 0);
+  clic("les", l0.k, "normal");
+
+  /* L'association complète se tient, et elle seule */
+  d0.signes.forEach(function(k){ clic("les", k, "anormal"); });
+  var a0 = associations().filter(function(a){ return a.d.k === d0.k; })[0];
+  chk("association tenue",     a0 && a0.tenu);
+  chk("CR : association écrite", crTient(d0.l + " — association tenue"));
+  chk("CR : ne pas conclure",  crTient("ne pas conclure : " + d0.stop));
+  d0.signes.slice(1).forEach(function(k){ clic("les", k, "anormal"); });
+  chk("retirer les signes défait l'association",
+      (associations().filter(function(a){ return a.d.k === d0.k; })[0] || {}).pris.length === 1);
+
+  /* Négatifs */
+  $("btnNegAll").click();
+  chk("tous les négatifs posés", Object.keys(E.negatifs).length === NEGATIFS.length);
+  clic("neg", NEGATIFS[0].k, "present");
+  chk("négatif retourné en rouge", E.negatifs[NEGATIFS[0].k] === "present" &&
+      document.querySelector('[data-act="neg"][data-k="' + NEGATIFS[0].k + '"][data-v="present"]').className.indexOf("no") >= 0);
+  chk("CR : défaut écrit",     crTient("! " + NEGATIFS[0].ko));
+  clic("neg", NEGATIFS[0].k, "absent");
+
+  /* Compte rendu */
+  clic("tech", TECHNIQUES[0].k);
+  set("libre", "Bloc non parvenu.");
+  chk("CR : en-tête dossier",  crTient("26P0123") && crTient("RM"));
+  chk("CR : signe anormal",    crTient(l0.l + " — ANORMAL"));
+  chk("CR : non explorés dits", crTient("Non explorés :"));
+  chk("CR : technique demandée", crTient(TECHNIQUES[0].l));
+  chk("CR : remarque libre",   crTient("Bloc non parvenu."));
+  chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
+
+  /* Contrôles propres à l'organe */
+  await testsOrgane(chk, clic, set, crTient, pause);
+
+  /* Termes FOETO — seulement si la fiche en rattache */
+  if (FOETO.sections.length){
+    var f0 = FOETO.sections[0].termes[0].id;
+    chk("FOETO : sections rendues", $("foeto").querySelectorAll(".sousTitre").length === FOETO.sections.length);
+    clic("foeto", f0);
+    chk("FOETO : terme coché",      E.foeto[f0] === true && $("tFoeto").textContent.indexOf("1/") === 0);
+    chk("FOETO : CR le porte",      crTient("[" + f0 + "]"));
+    chk("FOETO : exporté",          collecter().grille.foeto[f0] === true);
+    set("rqFoeto", foetoLabel(f0).slice(0, 4));
+    chk("FOETO : recherche",        $("sgFoeto").querySelectorAll("[data-pick]").length >= 1);
+    $("sgFoeto").querySelector("[data-pick]").click();
+    chk("FOETO : recherche vidée",  $("rqFoeto").value === "" && !$("sgFoeto").classList.contains("on"));
+    chk("FOETO : id lisible",       /^FOETO:/.test(f0));
+    clic("foeto", f0);
+    Object.keys(E.foeto).forEach(function(id){ delete E.foeto[id]; }); peindre();
+  }
+
+  /* Enveloppe, persistance, relecture — l'organe a pu reposer ses propres signes */
+  if (E.signes[l0.k] !== "anormal"){
+    if (E.signes[l0.k]) clic("les", l0.k, E.signes[l0.k]);
+    clic("les", l0.k, "anormal");
+  }
+  var snap = collecter();
+  chk("enveloppe conforme",    snap.schema_version === SCHEMA && snap.module === MODULE &&
+                               snap.module_version === VERSION && snap.dossier === "26P0123" &&
+                               snap.organe === ORGANE && !!snap.exported_at);
+  chk("version en entête",     $("ver").textContent === "v" + VERSION);
+  chk("CR dans le JSON",       snap.compte_rendu.indexOf(TITRE_CR + " — grille de lecture") === 0);
+
+  await putSaisie(snap);
+  vider();
+  chk("vider efface la grille", Object.keys(E.signes).length === 0);
+  var relu = await getSaisie("26P0123");
+  appliquer(relu);
+  chk("IndexedDB restitue",    E.signes[l0.k] === "anormal" &&
+                               $("sa").value === String(snap.terme_sa));
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+  chk("banc remis à zéro",     Object.keys(E.signes).length === 0 && $("secSignes").classList.contains("off"));
+  await relire(snap);
+  chk("relecture d'un JSON",   E.signes[l0.k] === "anormal" && dossier === "26P0123");
+  var refus = false;
+  try { await relire({module:"autopsie", grille:{}}); } catch(e){ refus = /module/.test(e.message); }
+  chk("JSON d'un autre module refusé", refus);
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>

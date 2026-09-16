@@ -1,0 +1,31 @@
+{
+ "schema_version": "0.1.0",
+ "module": "biometrie_clinique",
+ "module_version": "1.0.0",
+ "dossier": "26P0123",
+ "operateur": "R. Mathevet",
+ "exported_at": "2026-09-08T11:54:44.150Z",
+ "terme": {
+  "sa": 28,
+  "jours": 3
+ },
+ "sexe": "M",
+ "mesures": {
+  "masse": 1,
+  "pied": 1,
+  "bip": 1,
+  "fo": 1,
+  "dici": 1,
+  "dice": 1,
+  "fpg": 1,
+  "fpd": 1,
+  "dim": 1,
+  "sternum": 1,
+  "main": 1,
+  "vt": 1,
+  "vc": 1,
+  "pc": 1,
+  "pt": 1,
+  "pa": 1
+ }
+}

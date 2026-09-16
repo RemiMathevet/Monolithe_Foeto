@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Biométrie clinique</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF; --grey18:#7A7E7C;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --amber:#8A6A18;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section[hidden]{display:none}
+section.off{opacity:.42}
+section.off input,section.off select{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 180px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],input[type=number],select{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,select:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+input[type=number]{font-family:var(--mono);letter-spacing:.03em}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+/* ── Clichés ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px}
+.slot{border:1px solid var(--rule);border-radius:2px;overflow:hidden;background:var(--card);
+      cursor:pointer;text-align:left}
+.slot:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.slot .plate{background:var(--grey18);aspect-ratio:4/3;display:flex;align-items:center;
+             justify-content:center;position:relative}
+.slot .plate img{width:100%;height:100%;object-fit:contain;display:block}
+.slot .ph{font-size:26px;opacity:.55;color:#fff}
+.slot .cap{padding:7px 8px;font-size:13px;line-height:1.25}
+.slot .stat{font-family:var(--mono);font-size:10px;color:var(--ink-soft);
+            display:flex;justify-content:space-between;align-items:center;gap:6px;
+            padding:0 8px 7px}
+.slot .stat button{appearance:none;background:none;border:0;color:var(--alert);
+  font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.07em;
+  cursor:pointer;padding:4px;min-height:30px}
+.slot.done{border-color:var(--drape)}
+.slot.done .cap{font-weight:600}
+.tick{position:absolute;right:0;top:0;background:var(--drape);color:#fff;
+      font-family:var(--mono);font-size:10px;padding:2px 5px}
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+
+.mesures{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}
+.mes{min-width:0}
+.mes .box{position:relative}
+.mes .u{position:absolute;right:9px;top:50%;transform:translateY(-50%);
+        font-family:var(--mono);font-size:11px;color:var(--ink-soft);pointer-events:none}
+.mes input{padding-right:34px}
+.zs{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;min-height:1px}
+.z{font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:2px 5px;
+   border:1px solid var(--rule);border-radius:2px;color:var(--ink-soft);background:var(--paper)}
+.z.out{border-color:var(--amber);color:var(--amber);font-weight:600}
+.z.far{border-color:var(--alert);color:var(--alert);font-weight:600}
+.fix{font-size:12px;line-height:1.35;color:var(--alert);background:#F7EAE7;
+     border-left:2px solid var(--alert);padding:6px 8px;margin-top:6px}
+.fix b{font-family:var(--mono);font-size:11px;letter-spacing:.04em}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:#F7EAE7}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · examen clinique</p>
+  <h1>Biométrie clinique <span class="ver" id="ver"></span></h1>
+  <p class="sub">Document autonome. Les mesures restent sur cet appareil ; rien n'est transmis. L'export produit un fichier JSON nommé d'après le numéro de dossier.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Libre, mis en majuscules. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Opérateur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la saisie.</div>
+    </div>
+  </div>
+  <div class="sousTitre">Étiquette patient</div>
+  <div class="grid" id="ph_etiquette"></div>
+  <div class="hint" id="etiquetteHint">Photographier l'étiquette : elle certifie le numéro saisi.</div>
+</section>
+
+<!-- 02 — Terme -->
+<section id="secTerme" class="off">
+  <h2><span class="n">02</span>Terme<span class="tally" id="tTerme">—</span></h2>
+  <div class="row">
+    <div class="field">
+      <label for="terme_sa">Semaines d'aménorrhée</label>
+      <input type="number" id="terme_sa" min="10" max="45" step="1" inputmode="numeric" placeholder="—">
+    </div>
+    <div class="field">
+      <label for="terme_j">Jours révolus</label>
+      <input type="number" id="terme_j" min="0" max="6" step="1" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="field">
+      <label for="sexe">Sexe</label>
+      <select id="sexe">
+        <option value="">—</option><option value="M">Masculin</option>
+        <option value="F">Féminin</option><option value="I">Indéterminé</option>
+      </select>
+    </div>
+  </div>
+  <p class="hint" id="termeHint">Sans terme, aucun écart-type n'est calculable.</p>
+</section>
+
+<!-- 03+ — Instruments -->
+<div id="instruments"></div>
+
+<!-- Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n" id="nSortie"></span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Vider le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- Diagnostic -->
+<section>
+  <h2><span class="n" id="nDiag"></span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="jsonPick" accept="application/json,.json">
+<input type="file" id="pick" accept="image/*" capture="environment">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante, aucun fetch : doit fonctionner par double-clic hors réseau.
+
+   Les tables de référence sont recopiées de Foeto/pwa/foet/references.js —
+   en file:// un .json ne peut pas être chargé, la donnée doit être en clair
+   dans le document.
+
+   Stockage en IndexedDB, y compris pour les champs texte : localStorage est
+   erratique en file:// et cloisonné par fichier sur certains navigateurs.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var MODULE = "biometrie_clinique";
+var SCHEMA = "0.1.0";
+var VERSION = "1.2.1";   /* version du document ; à incrémenter à chaque diffusion */
+var DB_NAME = "foeto-biometrie-clinique", DB_VER = 2, db = null;
+
+/* ── Guihard-Costa 2002 — biométries, bi-hebdomadaire (masse g, reste mm) ─── */
+var GC = {
+  "13-14":{masse:{m:55.8,sd:14.4},VT:{m:131.8,sd:15.4},VC:{m:89.6,sd:11.7},PC:{m:89.2,sd:11.8},pied:{m:14,sd:2.9}},
+  "15-16":{masse:{m:108.6,sd:24.7},VT:{m:170.4,sd:16.2},VC:{m:116.2,sd:12.2},PC:{m:116.7,sd:12.2},pied:{m:19,sd:3}},
+  "17-18":{masse:{m:176.1,sd:39},VT:{m:207.4,sd:17},VC:{m:141.7,sd:12.7},PC:{m:142.8,sd:12.6},pied:{m:25,sd:3.2}},
+  "19-20":{masse:{m:267.7,sd:57.1},VT:{m:242.9,sd:17.8},VC:{m:166.2,sd:13.1},PC:{m:167.5,sd:12.9},pied:{m:30,sd:3.3}},
+  "21-22":{masse:{m:392.7,sd:79.2},VT:{m:276.8,sd:18.6},VC:{m:189.8,sd:13.6},PC:{m:190.9,sd:13.3},pied:{m:36,sd:3.5}},
+  "23-24":{masse:{m:559.6,sd:105.1},VT:{m:309.2,sd:19.4},VC:{m:212.3,sd:14.1},PC:{m:212.8,sd:13.7},pied:{m:42,sd:3.6}},
+  "25-26":{masse:{m:773.9,sd:134.9},VT:{m:340,sd:20.2},VC:{m:233.8,sd:14.6},PC:{m:233.4,sd:14},pied:{m:48,sd:3.8}},
+  "27-28":{masse:{m:1038.2,sd:168.6},VT:{m:369.3,sd:21},VC:{m:254.4,sd:15.1},PC:{m:252.7,sd:14.4},pied:{m:53,sd:3.9}},
+  "29-30":{masse:{m:1350.4,sd:206.1},VT:{m:397,sd:21.8},VC:{m:273.9,sd:15.5},PC:{m:270.5,sd:14.8},pied:{m:58,sd:4.1}},
+  "31-32":{masse:{m:1702.5,sd:247.6},VT:{m:423.2,sd:22.6},VC:{m:292.4,sd:16},PC:{m:287,sd:15.1},pied:{m:63,sd:4.2}},
+  "33-34":{masse:{m:2080.2,sd:292.9},VT:{m:447.8,sd:23.4},VC:{m:309.9,sd:16.5},PC:{m:302.1,sd:15.5},pied:{m:67,sd:4.4}},
+  "35-36":{masse:{m:2460.8,sd:342.1},VT:{m:470.9,sd:24.2},VC:{m:326.5,sd:17},PC:{m:315.8,sd:15.9},pied:{m:71,sd:4.6}},
+  "37-38":{masse:{m:2813.1,sd:395.3},VT:{m:492.5,sd:24.9},VC:{m:342,sd:17.5},PC:{m:328.1,sd:16.2},pied:{m:74,sd:4.7}},
+  "39-40":{masse:{m:3095.1,sd:452.2},VT:{m:512.5,sd:25.7},VC:{m:356.5,sd:17.9},PC:{m:339.1,sd:16.6},pied:{m:76,sd:4.9}},
+  "41-42":{masse:{m:3254.9,sd:513.1},VT:{m:530.9,sd:26.5},VC:{m:370,sd:18.4},PC:{m:348.6,sd:17},pied:{m:77,sd:5.1}}
+};
+
+/* ── Maroun — SA entières 12-43 (B masse g, F pied mm, C/H/D en cm) ───────── */
+var MA = [
+  {s:12,B:{m:29.6,sd:14.9},F:{m:9,sd:3},C:{m:7.4,sd:1.1},H:{m:9.8,sd:1.7},D:{m:7.1,sd:1.1}},
+  {s:13,B:{m:37.4,sd:14.9},F:{m:12,sd:3},C:{m:8.7,sd:1.2},H:{m:11.8,sd:1.8},D:{m:8.5,sd:1.2}},
+  {s:14,B:{m:53,sd:14.9},F:{m:15,sd:3},C:{m:9.9,sd:1.2},H:{m:13.7,sd:1.8},D:{m:9.8,sd:1.2}},
+  {s:15,B:{m:76.5,sd:18.5},F:{m:18,sd:3},C:{m:11.1,sd:1.2},H:{m:15.6,sd:1.8},D:{m:11.1,sd:1.2}},
+  {s:16,B:{m:108,sd:41},F:{m:21,sd:3},C:{m:12.4,sd:1.3},H:{m:17.5,sd:1.8},D:{m:12.4,sd:1.3}},
+  {s:17,B:{m:147,sd:53},F:{m:24,sd:3},C:{m:13.5,sd:1.3},H:{m:19.3,sd:1.9},D:{m:13.6,sd:1.3}},
+  {s:18,B:{m:194,sd:65},F:{m:27,sd:3},C:{m:14.7,sd:1.3},H:{m:21.1,sd:1.9},D:{m:14.8,sd:1.3}},
+  {s:19,B:{m:249,sd:78},F:{m:30,sd:3},C:{m:15.9,sd:1.3},H:{m:22.9,sd:1.9},D:{m:16,sd:1.3}},
+  {s:20,B:{m:312,sd:92},F:{m:33,sd:3},C:{m:17,sd:1.4},H:{m:24.6,sd:1.9},D:{m:17.2,sd:1.4}},
+  {s:21,B:{m:382,sd:107},F:{m:36,sd:3},C:{m:18.2,sd:1.4},H:{m:26.3,sd:2},D:{m:18.3,sd:1.4}},
+  {s:22,B:{m:461,sd:122},F:{m:39,sd:3},C:{m:19.3,sd:1.4},H:{m:28,sd:2},D:{m:19.4,sd:1.4}},
+  {s:23,B:{m:547,sd:122},F:{m:41,sd:4},C:{m:20.4,sd:1.5},H:{m:29.6,sd:2},D:{m:20.5,sd:1.4}},
+  {s:24,B:{m:641,sd:137},F:{m:44,sd:4},C:{m:21.5,sd:1.5},H:{m:31.2,sd:2},D:{m:21.6,sd:1.5}},
+  {s:25,B:{m:743,sd:154},F:{m:47,sd:4},C:{m:22.6,sd:1.5},H:{m:32.8,sd:2.1},D:{m:22.6,sd:1.5}},
+  {s:26,B:{m:853,sd:171},F:{m:50,sd:4},C:{m:23.6,sd:1.5},H:{m:34.3,sd:2.1},D:{m:23.6,sd:1.5}},
+  {s:27,B:{m:971,sd:188},F:{m:52,sd:4},C:{m:24.7,sd:1.6},H:{m:35.8,sd:2.1},D:{m:24.5,sd:1.5}},
+  {s:28,B:{m:1096,sd:206},F:{m:55,sd:4},C:{m:25.7,sd:1.6},H:{m:37.3,sd:2.2},D:{m:25.5,sd:1.6}},
+  {s:29,B:{m:1230,sd:225},F:{m:57,sd:4},C:{m:26.7,sd:1.6},H:{m:38.7,sd:2.2},D:{m:26.4,sd:1.6}},
+  {s:30,B:{m:1371,sd:244},F:{m:60,sd:4},C:{m:27.7,sd:1.6},H:{m:40.1,sd:2.2},D:{m:27.2,sd:1.6}},
+  {s:31,B:{m:1520,sd:264},F:{m:62,sd:4},C:{m:28.7,sd:1.7},H:{m:41.4,sd:2.2},D:{m:28.1,sd:1.7}},
+  {s:32,B:{m:1677,sd:285},F:{m:64,sd:4},C:{m:29.7,sd:1.7},H:{m:42.8,sd:2.3},D:{m:28.9,sd:1.7}},
+  {s:33,B:{m:1842,sd:306},F:{m:67,sd:4},C:{m:30.6,sd:1.7},H:{m:44,sd:2.3},D:{m:29.7,sd:1.7}},
+  {s:34,B:{m:2015,sd:328},F:{m:69,sd:4},C:{m:31.6,sd:1.8},H:{m:45.3,sd:2.3},D:{m:30.5,sd:1.7}},
+  {s:35,B:{m:2195,sd:350},F:{m:71,sd:5},C:{m:32.5,sd:1.8},H:{m:46.5,sd:2.3},D:{m:31.2,sd:1.8}},
+  {s:36,B:{m:2383,sd:373},F:{m:73,sd:5},C:{m:33.4,sd:1.8},H:{m:47.7,sd:2.4},D:{m:31.9,sd:1.8}},
+  {s:37,B:{m:2580,sd:397},F:{m:76,sd:5},C:{m:34.3,sd:1.8},H:{m:48.9,sd:2.4},D:{m:32.6,sd:1.8}},
+  {s:38,B:{m:2784,sd:421},F:{m:78,sd:5},C:{m:35.2,sd:1.9},H:{m:50,sd:2.4},D:{m:33.2,sd:1.8}},
+  {s:39,B:{m:2996,sd:446},F:{m:80,sd:5},C:{m:36.1,sd:1.9},H:{m:51.1,sd:2.4},D:{m:33.8,sd:1.9}},
+  {s:40,B:{m:3215,sd:471},F:{m:82,sd:5},C:{m:37,sd:1.9},H:{m:52.1,sd:2.5},D:{m:34.4,sd:1.9}},
+  {s:41,B:{m:3443,sd:497},F:{m:84,sd:5},C:{m:37.8,sd:1.9},H:{m:53.1,sd:2.5},D:{m:35,sd:1.9}},
+  {s:42,B:{m:3678,sd:524},F:{m:86,sd:5},C:{m:38.6,sd:2},H:{m:54.1,sd:2.5},D:{m:35.5,sd:2}},
+  {s:43,B:{m:3922,sd:551},F:{m:88,sd:5},C:{m:39.4,sd:2},H:{m:55,sd:2.5},D:{m:36,sd:2}}
+];
+
+/* ── Muller-Brochut 2018 — 12-20 SA (cm sauf Fetus en g) ──────────────────── */
+var MB = {
+  12:{CRL:{m:6.82,sd:.73},CFL:{m:8.85,sd:1},HC:{m:7.03,sd:.69},TC:{m:5.97,sd:.68},AC:{m:5.32,sd:.76},Foot:{m:.9,sd:.12},Hand:{m:.84,sd:.14},BPD:{m:2,sd:1},FOD:{m:2.72,sd:.32},Fetus:{m:17.86,sd:4.8}},
+  13:{CRL:{m:7.99,sd:.78},CFL:{m:11.11,sd:1.02},HC:{m:7.99,sd:.82},TC:{m:6.72,sd:.57},AC:{m:5.51,sd:.72},Foot:{m:1.15,sd:.11},Hand:{m:1,sd:.11},BPD:{m:2.24,sd:.19},FOD:{m:2.85,sd:.23},Fetus:{m:28.11,sd:6.41}},
+  14:{CRL:{m:9.51,sd:.82},CFL:{m:13.2,sd:1.19},HC:{m:9.2,sd:.89},TC:{m:7.81,sd:.62},AC:{m:6.56,sd:.8},Foot:{m:1.42,sd:.19},Hand:{m:1.27,sd:.16},BPD:{m:2.55,sd:.19},FOD:{m:3.31,sd:.17},Fetus:{m:45.88,sd:10.58}},
+  15:{CRL:{m:10.67,sd:.83},CFL:{m:15.34,sd:1.2},HC:{m:10.78,sd:1.21},TC:{m:9.08,sd:.79},AC:{m:7.83,sd:1.36},Foot:{m:1.72,sd:.19},Hand:{m:1.52,sd:.19},BPD:{m:3.04,sd:.25},FOD:{m:3.71,sd:.24},Fetus:{m:69.41,sd:13.07}},
+  16:{CRL:{m:11.53,sd:1.03},CFL:{m:16.77,sd:1.21},HC:{m:12.01,sd:.72},TC:{m:10.29,sd:.66},AC:{m:8.42,sd:.99},Foot:{m:2.03,sd:.12},Hand:{m:1.75,sd:.21},BPD:{m:3.42,sd:.2},FOD:{m:4.19,sd:.22},Fetus:{m:98.6,sd:11.6}},
+  17:{CRL:{m:12.73,sd:.55},CFL:{m:18.55,sd:.9},HC:{m:13.27,sd:.79},TC:{m:11.11,sd:.79},AC:{m:8.56,sd:1.05},Foot:{m:2.34,sd:.14},Hand:{m:1.97,sd:.16},BPD:{m:3.63,sd:.23},FOD:{m:4.33,sd:.28},Fetus:{m:125.21,sd:17.84}},
+  18:{CRL:{m:13.89,sd:.66},CFL:{m:20.49,sd:.65},HC:{m:14.58,sd:.97},TC:{m:11.9,sd:.88},AC:{m:9.45,sd:.76},Foot:{m:2.62,sd:.21},Hand:{m:2.32,sd:.2},BPD:{m:3.89,sd:.36},FOD:{m:4.93,sd:.22},Fetus:{m:172.04,sd:25.16}},
+  19:{CRL:{m:15.18,sd:.71},CFL:{m:22.88,sd:1.58},HC:{m:15.82,sd:1.35},TC:{m:12.64,sd:.47},AC:{m:10.34,sd:1.3},Foot:{m:2.95,sd:.18},Hand:{m:2.42,sd:.08},BPD:{m:4.3,sd:.28},FOD:{m:5.44,sd:.32},Fetus:{m:228.47,sd:43.37}},
+  20:{CRL:{m:16.67,sd:.46},CFL:{m:25.48,sd:1.23},HC:{m:16.88,sd:.68},TC:{m:14.23,sd:.13},AC:{m:11.97,sd:1.12},Foot:{m:3.31,sd:.18},Hand:{m:2.72,sd:.15},BPD:{m:4.38,sd:.04},FOD:{m:5.93,sd:.04},Fetus:{m:306.5,sd:26.71}}
+};
+
+/* ── Trame de mesures, groupée par instrument ─────────────────────────────────
+   gc/ma/mb  = clé dans la table correspondante.
+   mad/mbd   = diviseur d'unité (saisie en mm, référence en cm).            */
+var TRAME = [
+  { id:"balance", titre:"Balance — fœtus", unite:"g", pas:"1", mesures:[
+    { k:"masse", l:"Masse fœtale", gc:"masse", ma:"B", mb:"Fetus" }
+  ]},
+  { id:"coulisse", titre:"Pied à coulisse", unite:"mm", pas:"0.1", mesures:[
+    { k:"pied",    l:"Longueur pied",        gc:"pied", ma:"F", mb:"Foot", mbd:10 },
+    { k:"bip",     l:"BIP",                  mb:"BPD", mbd:10 },
+    { k:"fo",      l:"FO (fronto-occipital)",mb:"FOD", mbd:10 },
+    { k:"dici",    l:"DICI" },
+    { k:"dice",    l:"DICE" },
+    { k:"fpg",     l:"FPG (fente palpébrale G)" },
+    { k:"fpd",     l:"FPD (fente palpébrale D)" },
+    { k:"dim",     l:"DIM (intermamelonnaire)" },
+    { k:"sternum", l:"Hauteur sternum" },
+    { k:"main",    l:"Hauteur main",         mb:"Hand", mbd:10 }
+  ]},
+  { id:"ruban", titre:"Mètre ruban", unite:"mm", pas:"1", mesures:[
+    { k:"vt", l:"VT (vertex-talon)",    gc:"VT", ma:"H", mad:10, mb:"CFL", mbd:10 },
+    { k:"vc", l:"VC (vertex-coccyx)",   gc:"VC", ma:"C", mad:10, mb:"CRL", mbd:10 },
+    { k:"pc", l:"PC (périmètre crânien)",gc:"PC", ma:"D", mad:10, mb:"HC", mbd:10 },
+    { k:"pt", l:"PT (périmètre thoracique)", mb:"TC", mbd:10 },
+    { k:"pa", l:"PA (périmètre abdominal)",  mb:"AC", mbd:10 }
+  ]}
+];
+var TOUTES = TRAME.reduce(function(a,g){ return a.concat(g.mesures); }, []);
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function normDossier(v){ return v.toUpperCase().replace(/^(\d{2})P/, "$1P").replace(/\s+/g,""); }
+function dossierOk(v){ return v.trim().length > 0; } // ponytail: plus de format imposé, seul le uppercase (normDossier) reste
+function num(id){ var e = $(id); if (!e) return NaN; var v = parseFloat(e.value); return isFinite(v) ? v : NaN; }
+function fmt(n){
+  if (n == null || isNaN(n)) return "—";
+  if (n < 1024) return n + " o";
+  if (n < 1048576) return (n/1024).toFixed(0) + " Ko";
+  if (n < 1073741824) return (n/1048576).toFixed(1) + " Mo";
+  return (n/1073741824).toFixed(2) + " Go";
+}
+
+/* ── Références et écarts-types ───────────────────────────────────────────── */
+function gcKey(sa){
+  if (!(sa >= 13 && sa <= 42)) return null;
+  for (var k in GC){ var p = k.split("-"); if (sa >= +p[0] && sa <= +p[1]) return k; }
+  return null;
+}
+function maRow(sa){ for (var i=0;i<MA.length;i++) if (MA[i].s === sa) return MA[i]; return null; }
+function mbRow(sa){ return (sa >= 12 && sa <= 20) ? MB[sa] : null; }
+function zscore(v, m, sd){
+  if (!isFinite(v) || m == null || sd == null || !sd) return null;
+  return (v - m) / sd;
+}
+/* Tous les écarts-types disponibles pour une mesure, à une valeur donnée. */
+function ecarts(mes, v, sa){
+  var out = [], gk = gcKey(sa), ma = maRow(sa), mb = mbRow(sa), z;
+  if (mes.gc && gk && GC[gk][mes.gc]){
+    z = zscore(v, GC[gk][mes.gc].m, GC[gk][mes.gc].sd);
+    if (z !== null) out.push({ src:"GC", z:z });
+  }
+  if (mes.ma && ma && ma[mes.ma]){
+    z = zscore(v / (mes.mad || 1), ma[mes.ma].m, ma[mes.ma].sd);
+    if (z !== null) out.push({ src:"MA", z:z });
+  }
+  if (mes.mb && mb && mb[mes.mb]){
+    z = zscore(v / (mes.mbd || 1), mb[mes.mb].m, mb[mes.mb].sd);
+    if (z !== null) out.push({ src:"MB", z:z });
+  }
+  return out;
+}
+function pire(list){
+  return list.reduce(function(a,e){ return Math.max(a, Math.abs(e.z)); }, 0);
+}
+
+/* ── Suspicion d'erreur d'unité ───────────────────────────────────────────────
+   Au-delà de SEUIL_UNITE écarts-types, l'hypothèse « faute de frappe sur
+   l'unité » devient plus probable que l'hypothèse biologique. On teste les
+   facteurs 10 et 1000 dans les deux sens : si l'un ramène la valeur sous
+   2 DS sur TOUTES les références disponibles, on propose la correction.
+   ponytail: seuil provisoire, à réviser après quelques dossiers réels. */
+var SEUIL_UNITE = 4;
+var FACTEURS = [
+  { f:1000,  g:"kilogrammes saisis pour des grammes ?",   mm:"mètres saisis pour des millimètres ?" },
+  { f:10,    g:"décalage d'un facteur 10 — virgule ?",    mm:"centimètres saisis pour des millimètres ?" },
+  { f:0.1,   g:"décalage d'un facteur 10 — virgule ?",    mm:"millimètres saisis pour des centimètres ?" },
+  { f:0.001, g:"milligrammes saisis pour des grammes ?",  mm:"micromètres saisis pour des millimètres ?" }
+];
+function suspicionUnite(mes, v, sa, unite){
+  var base = ecarts(mes, v, sa);
+  if (!base.length || pire(base) < SEUIL_UNITE) return null;
+  for (var i = 0; i < FACTEURS.length; i++){
+    var cand = ecarts(mes, v * FACTEURS[i].f, sa);
+    if (cand.length && pire(cand) <= 2){
+      return {
+        valeur: v * FACTEURS[i].f,
+        facteur: FACTEURS[i].f,
+        cause: unite === "g" ? FACTEURS[i].g : FACTEURS[i].mm
+      };
+    }
+  }
+  return null;
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────── */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+      if (!d.objectStoreNames.contains("shots")){
+        d.createObjectStore("shots", {keyPath:"id"}).createIndex("dossier", "dossier");
+      }
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(store, mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction(store, mode), out = fn(t.objectStore(store));
+    /* Tester la présence de `result`, pas sa valeur : un get() qui ne trouve rien
+       a bien un `result` (undefined) — comparé à undefined, la requête elle-même
+       était rendue, et un dossier jamais saisi s'annonçait comme restitué. */
+    t.oncomplete = function(){ res(out && "result" in out ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("saisies", "readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("saisies", "readonly", function(s){ return s.get(d); }); }
+function putShot(r){ return tx("shots", "readwrite", function(s){ return s.put(r); }); }
+function delShot(i){ return tx("shots", "readwrite", function(s){ return s.delete(i); }); }
+function shotsOf(d){
+  return tx("shots", "readonly", function(s){ return s.index("dossier").getAll(IDBKeyRange.only(d)); });
+}
+function sid(k){ return dossier + "|" + k; }
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", shots = {}, urls = {}, slotCible = null;
+
+/* ── Étiquette patient ────────────────────────────────────────────────────────
+   Pièce source qui certifie le numéro saisi. Une double saisie n'attraperait
+   que la faute de frappe ; le risque réel est la faute de lecture, et qu'un
+   même cas se coupe en deux dans la base parce qu'un module porte un autre
+   numéro. Chaque module de salle photographie donc sa propre étiquette : le
+   contrôle vaut par JSON, pas par examen. Le cliché est nominatif — il n'a
+   rien à faire dans un jeu anonymisé. Manquant, on signale, on ne bloque pas.
+
+   Seul cliché de ce module : la machinerie reste au minimum, mais l'entrée de
+   out.photos[] a la même forme que dans les autres modules de salle, pour que
+   l'ingestion n'ait qu'un seul contrat à connaître.                          */
+var K_ETIQUETTE = "etiquette", L_ETIQUETTE = "Étiquette patient";
+
+function decode(b){
+  try { return createImageBitmap(b, {imageOrientation:"from-image"}); }
+  catch(e){ return createImageBitmap(b); }
+}
+function toBlob(bmp, w, h, q){
+  var c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  c.getContext("2d").drawImage(bmp, 0, 0, w, h);
+  return new Promise(function(res){ c.toBlob(res, "image/jpeg", q); });
+}
+/* Le cliché est conservé tel que le capteur l'a produit : aucun
+   réencodage, aucune réduction. La vignette ne sert qu'à l'affichage. */
+async function vignette(blob){
+  var bmp = await decode(blob);
+  var w = bmp.width, h = bmp.height, tk = Math.min(1, 400 / Math.max(w, h));
+  var vig = await toBlob(bmp, Math.round(w*tk), Math.round(h*tk), 0.7);
+  if (bmp.close) bmp.close();
+  return { thumb: vig, w: w, h: h };
+}
+function slotHTML(k, l){
+  var r = shots[k];
+  var img = r && urls[k]
+    ? '<img src="' + urls[k] + '" alt="' + esc(l) + '"><span class="tick">✓</span>'
+    : '<span class="ph">📷</span>';
+  var stat = r
+    ? '<div class="stat"><span>' + r.w + '×' + r.h + ' · ' + fmt(r.bytes) + '</span>' +
+      '<button type="button" data-del="' + esc(k) + '">Retirer</button></div>'
+    : '<div class="stat"><span>à réaliser</span></div>';
+  return '<div class="slot' + (r ? " done" : "") + '" data-k="' + esc(k) + '" tabindex="0" role="button">' +
+           '<div class="plate">' + img + '</div>' +
+           '<div class="cap">' + esc(l) + '</div>' + stat +
+         '</div>';
+}
+function rendreEtiquette(){
+  var pris = !!shots[K_ETIQUETTE];
+  $("ph_" + K_ETIQUETTE).innerHTML = slotHTML(K_ETIQUETTE, L_ETIQUETTE);
+  var h = $("etiquetteHint");
+  h.className = "hint" + (pris ? " good" : " warn");
+  h.textContent = pris
+    ? "Étiquette au dossier — le numéro saisi est vérifiable à l'ingestion."
+    : "Photographier l'étiquette : elle certifie le numéro saisi.";
+}
+async function ajouterPhoto(k, file){
+  var v = await vignette(file);
+  var rec = {
+    id: sid(k), dossier: dossier, module: MODULE, key: k, label: L_ETIQUETTE,
+    etage: null, item: null, libre: false,
+    name: file.name || (k + ".jpg"), type: file.type || "image/jpeg",
+    bytes: file.size, w: v.w, h: v.h, ow: v.w, oh: v.h,
+    addedAt: new Date().toISOString(), blob: file, thumb: v.thumb
+  };
+  await putShot(rec);
+  shots[k] = rec;
+  if (urls[k]) URL.revokeObjectURL(urls[k]);
+  urls[k] = URL.createObjectURL(v.thumb);
+  rendreEtiquette();
+  return rec;
+}
+async function retirer(k){
+  await delShot(sid(k)).catch(function(){});
+  if (urls[k]){ URL.revokeObjectURL(urls[k]); delete urls[k]; }
+  delete shots[k];
+  rendreEtiquette();
+  flash("Cliché retiré.");
+}
+async function relierCliches(){
+  var list = await shotsOf(dossier).catch(function(){ return []; });
+  list.forEach(function(r){
+    shots[r.key] = r;
+    if (urls[r.key]) URL.revokeObjectURL(urls[r.key]);
+    urls[r.key] = URL.createObjectURL(r.thumb || r.blob);
+  });
+  rendreEtiquette();
+  return list.length;
+}
+function ouvrirSlot(k){
+  if (!dossier){ flash("Saisir d'abord dossier et opérateur."); $("dossier").focus(); return; }
+  slotCible = k;
+  $("pick").click();
+}
+document.addEventListener("click", function(ev){
+  var del = ev.target.closest("[data-del]");
+  if (del){ ev.stopPropagation(); retirer(del.dataset.del); return; }
+  var slot = ev.target.closest(".slot");
+  if (slot) ouvrirSlot(slot.dataset.k);
+});
+document.addEventListener("keydown", function(ev){
+  if (ev.key !== "Enter" && ev.key !== " ") return;
+  var s = ev.target.classList && ev.target.classList.contains("slot") ? ev.target : null;
+  if (s){ ev.preventDefault(); ouvrirSlot(s.dataset.k); }
+});
+$("pick").addEventListener("change", async function(){
+  var f = this.files[0]; this.value = "";
+  if (!f || !slotCible) return;
+  var k = slotCible; slotCible = null;
+  try {
+    flash("Traitement…");
+    var rec = await ajouterPhoto(k, f);
+    flash(rec.label + " enregistrée.");
+  } catch(err){
+    flash("Échec : " + err.message + " — cliché non conservé.");
+  }
+});
+
+/* ── Rendu de la trame ────────────────────────────────────────────────────── */
+function mesureHTML(g, m){
+  return '<div class="mes">' +
+           '<label for="v_' + m.k + '">' + esc(m.l) + '</label>' +
+           '<div class="box">' +
+             '<input type="number" id="v_' + m.k + '" step="' + g.pas + '" min="0" ' +
+                    'inputmode="decimal" placeholder="—" data-k="' + m.k + '">' +
+             '<span class="u">' + g.unite + '</span>' +
+           '</div>' +
+           '<div class="zs" id="z_' + m.k + '"></div>' +
+           '<div id="fix_' + m.k + '"></div>' +
+         '</div>';
+}
+(function batir(){
+  var h = "", n = 3;
+  TRAME.forEach(function(g){
+    h += '<section id="sec_' + g.id + '" class="off">' +
+           '<h2><span class="n">' + ("0" + n).slice(-2) + '</span>' + esc(g.titre) +
+           '<span class="tally" id="t_' + g.id + '">0/' + g.mesures.length + '</span></h2>' +
+           '<div class="mesures">' +
+             g.mesures.map(function(m){ return mesureHTML(g, m); }).join("") +
+           '</div>' +
+         '</section>';
+    n++;
+  });
+  $("instruments").innerHTML = h;
+  $("nSortie").textContent = ("0" + n).slice(-2); n++;
+  $("nDiag").textContent   = ("0" + n).slice(-2);
+})();
+
+/* ── Recalcul ─────────────────────────────────────────────────────────────── */
+function recalculer(){
+  var sa = num("terme_sa");
+  TRAME.forEach(function(g){
+    var faites = 0;
+    g.mesures.forEach(function(m){
+      var v = num("v_" + m.k);
+      if (isFinite(v)) faites++;
+      var zEl = $("z_" + m.k), fEl = $("fix_" + m.k);
+      if (!isFinite(v)){ zEl.innerHTML = ""; fEl.innerHTML = ""; return; }
+      var list = ecarts(m, v, sa);
+      zEl.innerHTML = list.map(function(e){
+        var a = Math.abs(e.z);
+        var cls = a > SEUIL_UNITE ? "z far" : a > 2 ? "z out" : "z";
+        return '<span class="' + cls + '">' + e.src + ' ' + (e.z >= 0 ? "+" : "") + e.z.toFixed(2) + '</span>';
+      }).join("");
+      var s = suspicionUnite(m, v, sa, g.unite);
+      fEl.innerHTML = s
+        ? '<div class="fix"><b>' + s.valeur + ' ' + g.unite + ' ?</b> — ' + esc(s.cause) +
+          ' La valeur saisie s\'écarte de plus de ' + SEUIL_UNITE +
+          ' DS ; corrigée d\'un facteur ' + s.facteur + ' elle rentre dans la norme.</div>'
+        : "";
+    });
+    $("t_" + g.id).textContent = faites + "/" + g.mesures.length;
+  });
+  var j = num("terme_j");
+  $("tTerme").textContent = isFinite(sa) ? sa + " SA" + (isFinite(j) && j ? " + " + j + " j" : "") : "—";
+  $("termeHint").textContent = !isFinite(sa)
+    ? "Sans terme, aucun écart-type n'est calculable."
+    : gcKey(sa) || maRow(sa) || mbRow(sa)
+      ? "Références disponibles à " + sa + " SA."
+      : "Aucune référence publiée à " + sa + " SA — les mesures restent enregistrées.";
+}
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  document.querySelectorAll("section.off, section:not(.off)").forEach(function(s){
+    if (s.id === "secTerme" || s.id === "secSortie" || /^sec_/.test(s.id))
+      s.classList.toggle("off", !ouvert);
+  });
+}
+
+/* ── Collecte / restitution ───────────────────────────────────────────────── */
+function collecter(){
+  var mesures = {};
+  TOUTES.forEach(function(m){ var v = num("v_" + m.k); mesures[m.k] = isFinite(v) ? v : null; });
+  var sa = num("terme_sa"), j = num("terme_j");
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    terme: { sa: isFinite(sa) ? sa : null, jours: isFinite(j) ? j : 0 },
+    sexe: $("sexe").value || null,
+    mesures: mesures
+  };
+}
+function appliquer(o){
+  if (o.terme){
+    $("terme_sa").value = o.terme.sa != null ? o.terme.sa : "";
+    $("terme_j").value  = o.terme.jours ? o.terme.jours : "";
+  }
+  $("sexe").value = o.sexe || "";
+  TOUTES.forEach(function(m){
+    var v = o.mesures ? o.mesures[m.k] : null;
+    $("v_" + m.k).value = (v == null ? "" : v);
+  });
+  recalculer();
+}
+function vider(){
+  $("terme_sa").value = ""; $("terme_j").value = ""; $("sexe").value = "";
+  TOUTES.forEach(function(m){ $("v_" + m.k).value = ""; });
+  Object.keys(urls).forEach(function(k){ URL.revokeObjectURL(urls[k]); });
+  urls = {}; shots = {};
+  rendreEtiquette();
+  recalculer();
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, num = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = num && op;
+  var h = $("dossierHint");
+  h.className = "hint" + (v && !num ? " bad" : num ? " good" : "");
+  h.textContent = !v ? "Libre, mis en majuscules. Conditionne l'enregistrement."
+                : num ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                      : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la saisie.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json."
+    : num ? "Saisir l'opérateur pour activer l'export."
+          : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){
+    dossier = v;
+    vider();
+    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    if (rec){ appliquer(rec); flash("Saisie du " + dossier + " restituée."); }
+    await relierCliches();
+  } else if (!ok && dossier){
+    dossier = ""; vider();
+  }
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function toB64(b){
+  return new Promise(function(res, rej){
+    var fr = new FileReader();
+    fr.onload  = function(){ var s = String(fr.result); res(s.slice(s.indexOf(",")+1)); };
+    fr.onerror = function(){ rej(fr.error); };
+    fr.readAsDataURL(b);
+  });
+}
+function fromB64(b64, type){
+  var bin = atob(b64), a = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+  return new Blob([a], {type: type || "image/jpeg"});
+}
+async function paquet(){
+  var out = collecter();
+  out.photos = [];
+  var r = shots[K_ETIQUETTE];
+  if (r) out.photos.push({
+    key: r.key, label: r.label, etage: r.etage, item: r.item, libre: !!r.libre,
+    name: r.name, type: r.type, bytes: r.bytes, w: r.w, h: r.h, ow: r.ow, oh: r.oh,
+    addedAt: r.addedAt, data_base64: await toB64(r.blob)
+  });
+  return out;
+}
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+$("btnExport").onclick = async function(){
+  if (!dossierOk(dossier)) return;
+  this.disabled = true;
+  try {
+    var out = await paquet();
+    telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+                dossier + "_" + MODULE + ".json");
+    var n = TOUTES.filter(function(m){ return out.mesures[m.k] != null; }).length;
+    flash(n + " mesure(s) exportée(s)." +
+          (shots[K_ETIQUETTE] ? "" : " ⚠ sans étiquette patient."));
+  } catch(e){
+    flash("Export impossible : " + e.message);
+  }
+  this.disabled = false;
+};
+async function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.mesures) throw new Error("aucune clé « mesures »");
+  if (o.dossier){ $("dossier").value = normDossier(o.dossier); }
+  if (o.operateur) $("operateur").value = o.operateur;
+  await majDossier();
+  if (!dossier) throw new Error("numéro de dossier absent ou opérateur manquant");
+
+  var photos = o.photos || [];
+  for (var i = 0; i < photos.length; i++){
+    var p = photos[i];
+    var blob = fromB64(p.data_base64, p.type);
+    var v = await vignette(blob);
+    await putShot({
+      id: sid(p.key), dossier: dossier, module: MODULE, key: p.key, label: p.label,
+      etage: null, item: null, libre: false, name: p.name, type: p.type,
+      bytes: blob.size, w: p.w, h: p.h, ow: p.ow, oh: p.oh, addedAt: p.addedAt,
+      blob: blob, thumb: v.thumb
+    });
+  }
+  appliquer(o);
+  await relierCliches();
+  enregistrer();
+  return photos.length;
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = async function(){
+    try {
+      var n = await relire(JSON.parse(String(fr.result)));
+      flash("Saisie relue" + (n ? " — " + n + " cliché(s)." : "."));
+    } catch(e){ flash("Relecture impossible : " + e.message); }
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la saisie du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    var list = await shotsOf(dossier).catch(function(){ return []; });
+    for (var i = 0; i < list.length; i++) await delShot(list[i].id);
+    await tx("saisies", "readwrite", function(s){ return s.delete(dossier); });
+    vider(); flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les saisies et TOUS les clichés de TOUS les dossiers sur cet " +
+               "appareil ?\nVérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("saisies", "readwrite", function(s){ return s.clear(); });
+  await tx("shots",   "readwrite", function(s){ return s.clear(); });
+  vider(); flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Mesures de la trame", TOUTES.length + " sur " + TRAME.length + " instruments");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Seuil erreur d'unité", SEUIL_UNITE + " DS");
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+document.addEventListener("input", function(e){
+  if (e.target.matches("#terme_sa,#terme_j,#sexe,[data-k]")){ recalculer(); enregistrer(); }
+});
+document.addEventListener("change", function(e){
+  if (e.target.id === "sexe"){ recalculer(); enregistrer(); }
+});
+
+(async function(){
+  $("ver").textContent = "v" + VERSION;
+  rendreEtiquette();
+  recalculer();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — aucune saisie ne sera conservée. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir biometrie_clinique.html?selftest=1 ────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+
+  chk("gcKey(13) = 13-14",        gcKey(13) === "13-14");
+  chk("gcKey(22) = 21-22",        gcKey(22) === "21-22");
+  chk("gcKey(12) hors table",     gcKey(12) === null);
+  chk("gcKey(43) hors table",     gcKey(43) === null);
+  chk("maRow(20).B.m = 312",      maRow(20).B.m === 312);
+  chk("mbRow(21) hors table",     mbRow(21) === null);
+  chk("z centré = 0",             zscore(100,100,10) === 0);
+  chk("z à +2 DS",                zscore(120,100,10) === 2);
+  chk("z avec sd nul",            zscore(120,100,0) === null);
+  chk("z sur NaN",                zscore(NaN,100,10) === null);
+  chk("normDossier 26p0123",      normDossier("26p0123") === "26P0123");
+  chk("normDossier idempotent",   normDossier("26P0123") === "26P0123");
+  chk("dossier vide refusé", !dossierOk("  "));
+  chk("clés uniques",             new Set(TOUTES.map(function(m){return m.k;})).size === TOUTES.length);
+
+  // Conversions d'unité vers les références
+  var vt = TOUTES.filter(function(m){ return m.k === "vt"; })[0];
+  chk("VT 246 mm -> MA en cm",    ecarts(vt, 246, 20).filter(function(e){return e.src==="MA";})[0].z === 0);
+  var masse = TOUTES.filter(function(m){ return m.k === "masse"; })[0];
+  chk("masse 312 g -> MA",        ecarts(masse, 312, 20).filter(function(e){return e.src==="MA";})[0].z === 0);
+  chk("masse 312 g -> GC",        Math.abs(ecarts(masse, 312, 20).filter(function(e){return e.src==="GC";})[0].z) < 3);
+  chk("mesure sans référence",    ecarts(TOUTES.filter(function(m){return m.k==="dici";})[0], 12, 20).length === 0);
+
+  // Suspicion d'erreur d'unité
+  var s1 = suspicionUnite(masse, 0.312, 20, "g");
+  chk("0,312 g -> kg saisis",     s1 && s1.facteur === 1000);
+  var s2 = suspicionUnite(vt, 24.6, 20, "mm");
+  chk("24,6 mm -> cm saisis",     s2 && s2.facteur === 10);
+  chk("valeur juste, pas d'alerte", suspicionUnite(masse, 312, 20, "g") === null);
+  chk("écart biologique conservé",  suspicionUnite(masse, 700, 20, "g") === null);
+  chk("sans terme, pas d'alerte",   suspicionUnite(masse, 0.312, NaN, "g") === null);
+
+  // Flux réel : verrou, saisie, persistance, relecture
+  chk("verrouillé au départ",     $("secTerme").classList.contains("off"));
+  set("dossier", "26p0123");
+  chk("opérateur manquant",       $("secTerme").classList.contains("off"));
+  set("operateur", "RM");
+  await new Promise(function(r){ setTimeout(r, 30); });
+  chk("déverrouillé",            !$("secTerme").classList.contains("off"));
+  chk("dossier normalisé",        $("dossier").value === "26P0123");
+  chk("export activé",           !$("btnExport").disabled);
+  set("terme_sa", "20"); set("v_vt", "246"); set("v_masse", "312");
+  chk("z affiché pour VT",        $("z_vt").textContent.indexOf("MA +0.00") >= 0);
+  chk("compteur ruban à 1",       $("t_ruban").textContent === "1/5");
+  set("v_masse", "0.312");
+  chk("alerte unité affichée",    $("fix_masse").textContent.indexOf("kilogrammes") >= 0);
+  set("v_masse", "312");
+  chk("alerte levée",             $("fix_masse").textContent === "");
+
+  var snap = collecter();
+  chk("collecte lit les mm",      snap.mesures.vt === 246);
+  chk("collecte garde les vides", snap.mesures.dici === null);
+  chk("version en entête",        $("ver").textContent === "v" + VERSION);
+  chk("version dans le JSON",     snap.module_version === VERSION);
+  chk("enveloppe conforme",       snap.schema_version === SCHEMA && snap.module === MODULE &&
+                                  snap.dossier === "26P0123" && !!snap.exported_at);
+
+  /* Étiquette patient — pièce source du numéro de dossier */
+  function image(w, h){
+    var c = document.createElement("canvas"); c.width = w; c.height = h;
+    var x = c.getContext("2d");
+    x.fillStyle = "#c33"; x.fillRect(0, 0, w, h);
+    x.fillStyle = "#3c3"; x.fillRect(0, 0, w/2, h/2);
+    return new Promise(function(r){ c.toBlob(r, "image/jpeg", 0.9); });
+  }
+  chk("étiquette absente signalée", !shots[K_ETIQUETTE] &&
+                                    $("etiquetteHint").className.indexOf("warn") >= 0);
+  var img = await image(800, 400);
+  var rec = await ajouterPhoto(K_ETIQUETTE, img);
+  chk("étiquette stockée",        !!shots[K_ETIQUETTE]);
+  chk("étiquette libellée",       rec.label === L_ETIQUETTE);
+  chk("original intact",          rec.blob === img && rec.bytes === img.size);
+  chk("pleine résolution gardée", rec.w === 800 && rec.h === 400 && rec.ow === 800);
+  chk("vignette produite",        rec.thumb.size > 0 && rec.thumb.size < rec.blob.size);
+  chk("slot marqué fait",         $("ph_etiquette").children[0].classList.contains("done"));
+  chk("bandeau étiquette vert",   $("etiquetteHint").className.indexOf("good") >= 0);
+  chk("clé rattachée au dossier", rec.id === "26P0123|" + K_ETIQUETTE);
+
+  var pack = await paquet();
+  chk("étiquette exportée",       pack.photos.length === 1 && pack.photos[0].key === K_ETIQUETTE);
+  chk("mesures toujours là",      pack.mesures.vt === 246);
+  chk("base64 non vide",          pack.photos[0].data_base64.length > 100);
+  chk("relecture base64",         fromB64(pack.photos[0].data_base64, "image/jpeg").size === img.size);
+
+  await putSaisie(snap);
+  vider();
+  chk("vider efface le champ",    $("v_vt").value === "");
+  chk("vider efface l'étiquette", !shots[K_ETIQUETTE]);
+  var relu = await getSaisie("26P0123");
+  appliquer(relu);
+  chk("IndexedDB restitue VT",    $("v_vt").value === "246");
+  chk("IndexedDB restitue l'étiquette", (await relierCliches()) === 1 && !!shots[K_ETIQUETTE]);
+
+  await retirer(K_ETIQUETTE);
+  chk("retrait du cliché",        !shots[K_ETIQUETTE] &&
+                                  $("etiquetteHint").className.indexOf("warn") >= 0);
+
+  /* Relecture d'un JSON sur un banc remis à zéro */
+  await tx("saisies", "readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+  chk("banc remis à zéro",        Object.keys(shots).length === 0);
+  chk("relecture : clichés",      (await relire(pack)) === 1 && !!shots[K_ETIQUETTE]);
+  chk("relecture : mesures",      $("v_vt").value === "246");
+  chk("relecture : étiquette liée", shots[K_ETIQUETTE].dossier === "26P0123");
+
+  var l = await shotsOf("26P0123");
+  for (var i = 0; i < l.length; i++) await delShot(l[i].id);
+  await tx("saisies", "readwrite", function(s){ return s.delete("26P0123"); });
+  chk("nettoyage du banc",        (await shotsOf("26P0123")).length === 0);
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>

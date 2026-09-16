@@ -1,0 +1,68 @@
+{# titre: Synthèse — une page #}
+{# version: 1.0.0 #}
+{#
+   De quoi parler d'un dossier en réunion : ce qui a été fait, ce qui manque,
+   ce qui sort de la norme. Rien de rédigé, tout en listes.
+#}
+{{ dossier }} — synthèse
+{{ '=' * (dossier | length + 12) }}
+
+{{ terme.texte }}{% if issue.sexe %} · sexe {{ issue.sexe | fr }}{% endif %}{% if issue.type_issue %} · {{ issue.type_issue }}{% endif %} · dossier {{ statut | replace('_', ' ') }}
+{% if issue.indication %}
+Indication : {{ issue.indication }}
+{% endif %}
+{% if remarques %}
+Remarque de suivi : {{ remarques }}
+{% endif %}
+
+MODULES
+{% for m, v in modules.items() %}
+  ✓ {{ '%-20s' | format(m) }} v{{ v.module_version }} · {{ v.provenance }} · {{ v.operateur | fr }} · repris le {{ v.ingere_at | dtc }}
+{% endfor %}
+{% for m in manquants %}
+  · {{ '%-20s' | format(m) }} attendu
+{% endfor %}
+
+CE QUI SORT DE LA NORME
+{% set alertes = autopsie.masses | selectattr('alerte') | list %}
+{% if not clinique.anormaux and not alertes and not coherence %}
+  Rien de signalé parmi ce qui a été saisi.
+{% endif %}
+{% for a in clinique.anormaux %}
+  · Examen externe — {{ a.label }} ({{ a.etage }}){% if a.anomalies %} : {{ a.anomalies | join(', ') }}{% endif %}
+
+{% endfor %}
+{% for m in alertes %}
+  · Masse — {{ m.label }} : {{ m.detail }}{% if m.z_gc is not none %}, GC {{ m.z_gc | zt }}{% endif %}{% if m.z_ma is not none %}, Maroun {{ m.z_ma | zt }}{% endif %}
+
+{% endfor %}
+{% for c in coherence %}
+  · Cohérence à la saisie — {{ c }}
+{% endfor %}
+{% if terme.discordant %}
+  · Termes discordants entre modules : {% for m, v in terme.vu_par.items() %}{{ m }} {{ v }} SA{% if not loop.last %}, {% endif %}{% endfor %}
+
+{% endif %}
+{% if z_cause_terme %}
+  · Les z sont calculés sur {{ terme.sa }} SA (administratif) et non sur {{ z_terme_module }} SA (module d'autopsie) : tous diffèrent de ceux vus en salle.
+{% else %}
+{% for d in z_divergences %}
+  · Écart de z sur {{ d.champ }} ({{ d.reference }}) : {{ d.serveur }} ici, {{ d.module }} au module
+{% endfor %}
+{% endif %}
+
+CHIFFRES
+  Examen externe : {{ clinique.faits }}/{{ clinique.total }} item(s) renseigné(s), {{ clinique.anormaux | length }} anormal(aux).
+{% if biometrie.mesures %}
+  Biométrie : {{ biometrie.mesures | length }} mesure(s).
+{% endif %}
+{% if autopsie.masses %}
+  Masses pesées : {{ autopsie.masses | length }}{% if not references.dispo %} (z du module, pas de tables installées){% endif %}.
+
+{% endif %}
+{% if cliches %}
+  Clichés : {{ cliches | length }}.
+{% endif %}
+
+--
+Produit le {{ genere_at | dtc }}. Brouillon, à relire.

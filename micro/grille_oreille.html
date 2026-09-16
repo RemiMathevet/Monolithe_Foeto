@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grille de lecture — oreille — rocher, caisse du tympan et conduit auditif externe</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --alert-soft:#F7EAE7;
+  --amber:#8A6A18; --amber-soft:#F6F0DE;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off button,section.off input,section.off select{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 170px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],input[type=number],textarea{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+input[type=number]{font-family:var(--mono);letter-spacing:.03em}
+textarea{resize:vertical;min-height:60px;font-size:15px}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+/* ── Boutons-clics : toute la saisie sémantique passe par là ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font-family:var(--sans);font-size:14px;line-height:1.25;
+  border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+  border-radius:2px;padding:8px 11px;cursor:pointer;min-height:38px;text-align:left}
+.chip:hover{background:var(--drape-soft)}
+.chip:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.chip.on{background:var(--drape);border-color:var(--drape);color:#fff;font-weight:600}
+.chip.no{background:var(--alert-soft);border-color:var(--alert);color:var(--alert);font-weight:600}
+.chip.sugg{border-color:var(--amber);border-style:dashed}
+.chip[data-act=foeto]::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;background:var(--drape);opacity:.55}
+.chip.on[data-act=foeto]::after{background:#fff}
+.plus{font-size:13px;color:var(--drape);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline dotted}
+.rech{position:relative;margin-top:8px}
+.rech input{font:inherit;font-size:14px;padding:6px 10px;border:1px solid #bbb;border-radius:8px;width:min(100%,24rem)}
+.sugg{position:absolute;z-index:5;background:#fff;border:1px solid #bbb;border-radius:8px;max-height:12rem;overflow:auto;width:min(100%,24rem);display:none}
+.sugg.on{display:block}
+.sugg div{padding:5px 10px;cursor:pointer;font-size:14px}
+.sugg div:hover{background:var(--drape-soft)}
+.sugg small{color:#777}
+.chip .k{font-family:var(--mono);font-size:10px;letter-spacing:.07em;opacity:.75;
+         display:block;text-transform:uppercase}
+
+.item{border-top:1px solid var(--rule);padding:10px 0}
+.item:first-child{border-top:0}
+.item .head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.item .lbl{flex:1 1 240px;min-width:0;font-size:15px}
+.item .meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-soft);
+            display:block;margin-top:2px}
+.item .meta.bon{color:var(--drape)} .item .meta.mauvais{color:var(--alert)}
+.item .meta.moyen{color:var(--amber)}
+.unfold{margin:9px 0 0 0;padding:9px 0 0;border-top:1px dashed var(--rule)}
+.unfold[hidden]{display:none}
+.stop{font-size:13px;line-height:1.35;color:var(--alert);background:var(--alert-soft);
+      border-left:2px solid var(--alert);padding:6px 9px;margin-top:8px}
+.stop b{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+
+.verdict{font-size:14px;line-height:1.4;border-left:3px solid var(--rule);
+         padding:7px 10px;margin-top:11px;background:var(--paper)}
+.verdict.ok{border-color:var(--drape);background:var(--drape-soft)}
+.verdict.warn{border-color:var(--amber);background:var(--amber-soft)}
+.verdict.bad{border-color:var(--alert);background:var(--alert-soft)}
+.verdict b{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+           display:block;color:var(--ink-soft)}
+
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+.sousTitre:first-child{margin-top:0}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:var(--alert-soft)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+pre.cr{font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;
+  padding:12px;margin:0 0 10px;max-height:44vh;overflow:auto}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · lecture microscopique</p>
+  <h1>Grille de lecture — oreille — rocher, caisse du tympan et conduit auditif externe <span class="ver" id="ver"></span></h1>
+  <p class="sub">Sortie de <code>fiche_oreille.md</code>. Tout se clique ; seuls le dossier, le terme et les comptes se tapent. Document autonome : rien n'est transmis.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Libre, mis en majuscules. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Lecteur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la grille.</div>
+    </div>
+    <div class="field">
+      <label for="sa">Terme (SA)</label>
+      <input type="number" id="sa" min="8" max="45" step="1" inputmode="numeric" placeholder="—">
+      <div class="hint" id="saHint">SA = semaines de gestation + 2. Commande le stade attendu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — Prélèvement -->
+<section id="secPrelevement" class="off">
+  <h2><span class="n">02</span>Prélèvement<span class="tally" id="tPrelevement">—</span></h2>
+  <div id="coteBloc" hidden>
+    <div class="sousTitre">Côté prélevé</div>
+    <div class="chips" id="cote" style="margin-bottom:11px"></div>
+  </div>
+  <div class="chips" id="prelevement"></div>
+  <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
+</section>
+
+<!-- 03 — Rétention -->
+<section id="secRetention" class="off">
+  <h2><span class="n">03</span>Rétention<span class="tally" id="tRetention">—</span></h2>
+  <div id="retention"></div>
+  <div class="chips" id="kcl" style="margin-top:11px"></div>
+  <div class="verdict" id="vRetention"><b>Borne inférieure</b>—</div>
+</section>
+
+<!-- 04 — Maturation -->
+<section id="secMaturation" class="off">
+  <h2><span class="n">04</span>Maturation<span class="tally" id="tMaturation">—</span></h2>
+  <div class="sousTitre" id="stTitre">Stade observé</div>
+  <div class="chips" id="stades"></div>
+  <div id="mesure"></div>
+  <div class="verdict" id="vMaturation"><b>Lecture</b>—</div>
+  <div class="verdict" id="vMesure" hidden><b>Mesure</b>—</div>
+</section>
+
+<!-- 05 — Variantes normales -->
+<section id="secVariantes" class="off">
+  <h2><span class="n">05</span>Variantes normales<span class="tally" id="tVariantes">—</span></h2>
+  <p class="note" style="margin-top:0">Cliquer ce qui est vu et écarté comme normal. Rien de coché ne veut pas dire absent : ça veut dire non regardé.</p>
+  <div class="chips" id="variantes" style="margin-top:10px"></div>
+</section>
+
+<!-- 06 — Signes -->
+<section id="secSignes" class="off">
+  <h2><span class="n">06</span>Signes<span class="tally" id="tSignes">—</span></h2>
+  <p class="note" style="margin-top:0">On coche des signes, pas des diagnostics. Les associations en dessous se déduisent de ce qui est coché : elles s'affichent, elles ne se choisissent pas.</p>
+  <div id="signes" style="margin-top:10px"></div>
+  <div class="sousTitre" style="margin-top:16px">Associations lues</div>
+  <div id="diags"></div>
+</section>
+
+<!-- 07 — Termes FOETO attestés par la fiche -->
+<section id="secFoeto" class="off">
+  <h2><span class="n">07</span>Termes FOETO<span class="tally" id="tFoeto">—</span></h2>
+  <p class="note" style="margin-top:0">Les termes du vocabulaire FOETO que la fiche de l'organe retient comme lésions, par sous-section. Un terme coché est présent ; rien de coché ne veut pas dire absent.</p>
+  <div id="foeto"></div>
+  <button type="button" class="plus" id="foetoPlus" hidden>▸ tous les termes attestés</button>
+  <div class="chips" id="foetoTous" hidden style="margin-top:6px"></div>
+  <div class="rech" id="foetoRech" hidden><input type="text" id="rqFoeto" placeholder="rechercher un terme (3 lettres)…" autocomplete="off"><div class="sugg" id="sgFoeto"></div></div>
+</section>
+
+<!-- 08 — Négatifs obligatoires -->
+<section id="secNegatifs" class="off">
+  <h2><span class="n">08</span>Négatifs obligatoires<span class="tally" id="tNegatifs">—</span></h2>
+  <div class="btns" style="margin-bottom:11px">
+    <button class="btn" id="btnNegAll">Tous vérifiés</button>
+  </div>
+  <div id="negatifs"></div>
+</section>
+
+<!-- 08 — Techniques -->
+<section id="secTechniques" class="off">
+  <h2><span class="n">09</span>Techniques<span class="tally" id="tTechniques">—</span></h2>
+  <p class="note" style="margin-top:0" id="techNote"></p>
+  <div class="chips" id="techniques" style="margin-top:10px"></div>
+</section>
+
+<!-- 09 — Compte rendu -->
+<section id="secCR" class="off">
+  <h2><span class="n">10</span>Compte rendu<span class="tally" id="tCR">—</span></h2>
+  <pre class="cr" id="cr">—</pre>
+  <div class="row">
+    <div class="field" style="flex:1 1 100%">
+      <label for="libre">Remarque libre</label>
+      <textarea id="libre" placeholder="Ce que la grille ne prévoit pas."></textarea>
+    </div>
+  </div>
+  <div class="btns" style="margin-top:10px">
+    <button class="btn" id="btnCopie">Copier le compte rendu</button>
+  </div>
+</section>
+
+<!-- 10 — Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n">11</span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Vider le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- 11 — Diagnostic -->
+<section>
+  <h2><span class="n">12</span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante, aucun fetch : doit fonctionner par double-clic hors réseau.
+
+   Ce module est la SORTIE de fiche_oreille.md, jamais l'inverse. Les bornes, les
+   spécificités et les « ce qu'il ne faut pas conclure » sont recopiés de la
+   fiche ; ils ne se corrigent pas ici mais dans la fiche.
+
+   La grille ne conclut pas : elle contraint la description et rend ses
+   réserves visibles. Un critère non cliqué n'est pas un négatif — c'est un
+   non-regardé, et le compte rendu le dit.
+
+   Fichier ENGENDRÉ par gen_grille.py depuis grilles/oreille.js.
+   Corriger le fragment, pas ce fichier.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  FRAGMENT D'ORGANE — grilles/oreille.js                            ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+/* Grille de lecture — oreille (rocher, caisse, conduit).
+   Fond : ~/Bureau/fiches_lecture/fiche_oreille.md (§1 à §9).
+   Forme : gen_grille.py, calquée sur grille_poumon.html.
+   Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées.
+   Particularité de cet organe : une seule source histologique. [keeling, ch. 34]
+   décline — « The examination of the middle and inner ear structures in detail
+   lies beyond the scope of the present chapter » — et [soffoet, ch. 3] n'ouvre
+   pas le rocher. Aucune description n'est contredite, aucune n'est confirmée. */
+
+var ORGANE  = "oreille";
+var TITRE   = "oreille — rocher, caisse du tympan et conduit auditif externe";
+var SOURCE  = "fiche_oreille.md";
+var MODULE  = "grille_oreille";
+var VERSION = "1.0.1";
+var PAIR    = true;
+
+var TITRE_CR    = "OREILLE";
+var STADE_TITRE = "Étape de maturation otologique atteinte";
+
+/* Le KCl ne change rien à une datation qui n'existe pas : on l'écrit quand même,
+   parce qu'un geste déclaré vaut mieux qu'un geste supposé. */
+var KCL_TXT = "Fœticide par KCl déclaré. Aucune borne de rétention n'était de toute façon recevable sur " +
+              "cet organe : l'oreille est absente des trois barèmes. Le geste se consigne, il ne retire " +
+              "rien — il n'y avait rien à retirer.";
+
+/* L'échelle contamine tout le §3 : elle est rappelée aux deux discordances. */
+var ECHELLE = "aucune borne de maturation otologique n'est fiable à mieux que ± 2 semaines : [ernst, ch. 31] " +
+              "emploie trois échelles d'âge dans le même chapitre et la fiche n'a pas pu établir laquelle " +
+              "vaut où — selon que « weeks gestation » y vaut post-menstruel ou post-fertilisation, la borne " +
+              "est N SA ou N + 2 SA";
+
+var RETARD_NOTE = "Avant de conclure à un retard : " + ECHELLE + ". Vérifier aussi que la décalcification " +
+                  "n'a pas effacé les fronts d'ossification, et que l'étage lu est bien celui que la borne décrit.";
+
+var AVANCE_NOTE = "Avant de conclure à une avance : " + ECHELLE + ". Et une maturité cochléaire n'est pas un " +
+                  "âge : la maturation part de la base du conduit cochléaire vers l'apex, « the time of " +
+                  "complete maturation will depend upon where along the spiral the section is obtained ».";
+
+var TECH_NOTE = "Les pointillés sont des propositions déduites des clics, jamais des prescriptions. Aucune " +
+                "coloration n'est prescrite par la source : le Gram, le Grocott et l'argentique sont des " +
+                "déductions de la fiche à partir des organismes nommés, et l'immunohistochimie anti-CMV sur " +
+                "l'oreille n'est ni recommandée ni déconseillée — elle n'est pas mentionnée. Tout ce " +
+                "paragraphe repose sur un témoin unique. Et : « All these histologic procedures are " +
+                "complicated by multiple artifacts. »";
+
+/* ── 01 · Prélèvement ─────────────────────────────────────────────────────────
+   Seul organe de la série dont le prélèvement décide du contenu de la lame plus
+   que la maladie. Les quatre incisions d'[ernst, ch. 31], dans l'ordre. */
+var PRELEV = [
+  { k:"incision1", l:"Incision 1 — lambeau de scalp, conduit auditif externe transsecté", grave:true,
+    manque:"c'est la seule incision qui décide si le conduit et la membrane tympanique seront sur la pièce" },
+  { k:"incision2", l:"Incision 2 — extrémité antéromédiale du rocher détachée de la selle et du clivus", grave:true,
+    manque:"« It should be made flush against the side of the sella and clivus » — la cochlée est l'élément " +
+           "le plus antéromédial : mal placée, cette incision l'ampute" },
+  { k:"incision3", l:"Incision 3 — plancher de la fosse crânienne moyenne, tegmen tympani inclus",
+    manque:"« It should include all of the tegmen tympani. » — sans le toit de la caisse, ni récessus " +
+           "épitympanique, ni tête du marteau, ni corps de l'enclume" },
+  { k:"incision4", l:"Incision 4 — bord inférieur de la paroi postérieure, orifice de l'aqueduc cochléaire inclus",
+    manque:"le conduit périotique est la voie par laquelle une hémorragie sous-arachnoïdienne gagne " +
+           "l'oreille interne : sans lui, l'hémorragie du labyrinthe n'a plus de mécanisme" },
+  { k:"pasDeRas", l:"Aucune coupe au ras de la face interne du temporal", grave:true,
+    manque:"la coupe à ras détruit ensemble l'anneau tympanique, la membrane tympanique et l'oreille " +
+           "moyenne — exactement les trois structures que la lame était censée montrer" },
+  { k:"instrument", l:"Bistouri ou scie Stryker pédiatrique — aucun burin",
+    manque:"« The use of chisels should be avoided. » ; les petits ciseaux à os « may cause crushing and " +
+           "fragmentation of the specimen », et « Adult Stryker saws are usually too large for use in " +
+           "fetuses and newborns. »" },
+  { k:"decalcification", l:"Décalcification surveillée et adaptée à la pièce",
+    manque:"« carefully monitored and tailored to each specimen » : ni décalcifiant, ni durée, ni contrôle " +
+           "de fin ne sont sourcés — et « Specimens from first-trimester and early second-trimester fetuses " +
+           "may need no decalcification »" },
+  { k:"planHorizontal", l:"Bisection horizontale par les méats acoustiques externe et interne", grave:true,
+    manque:"c'est le seul plan qui livre tous les compartiments en une coupe, et le seul qui coupe la " +
+           "cochlée longitudinalement — donc plusieurs tours de spire à la fois, ce qu'il faut pour situer " +
+           "le gradient de maturation" },
+  { k:"reperes", l:"Repères retrouvés avant de couper : méat acoustique interne, extrémité sectionnée du conduit",
+    manque:"la mauvaise orientation est l'un des trois défauts nommés par la source, avec l'écrasement et " +
+           "le prélèvement incomplet" },
+  { k:"cotes", l:"Les deux rochers prélevés et repérés séparément",
+    manque:"la microtie isolée est unilatérale à prédominance droite : une asymétrie ne se voit qu'en séparant" },
+  { k:"poumon", l:"Poumon et placenta du même fœtus lus en parallèle",
+    manque:"la caisse se lit comme un poumon miniature — même entrée, même clairance : une discordance " +
+           "entre les deux compartiments est une information, pas un détail" }
+];
+
+/* ── 02 · Rétention ───────────────────────────────────────────────────────────
+   Ce bloc ne date rien, et c'est son contenu. L'oreille est absente de la Table
+   15.6 [keeling, ch. 15], de la Table 37.1 [ernst, ch. 37] et des 23 critères de
+   [Genest I]. Absent ≠ résistant ≠ fragile : absent = non évalué. Les lignes
+   ci-dessous consignent une DESTRUCTION, mécanique ou autolytique, et le verdict
+   ne produit aucune heure — il n'y en a aucune à produire. */
+var INTERDIT = "l'organe est absent des trois barèmes de datation : ne pas écrire que l'oreille est bien " +
+               "conservée, ce qui plaiderait contre une rétention prolongée — ce serait une interpolation " +
+               "sans source";
+
+var RETENTION = [
+  { k:"coupeLisible", l:"Capsule otique retrouvée, coupe orientable", b:"non datable",
+    d:"l'oreille est absente des trois barèmes", h:1, q:"bon",
+    note:INTERDIT,
+    alerte:"une coupe lisible atteste que la lecture est possible, elle n'atteste d'aucun délai" },
+  { k:"cortiFragmente", l:"Organe de Corti fragmenté, en miettes ou absent", b:"non datable",
+    d:"mécanique OU autolytique, non départagé", h:0, q:"moyen",
+    note:"la source écrit dans le même chapitre « typically severely fragmented » en coupes de routine et " +
+         "« often autolyzed in routine sections even in otherwise well-preserved specimens » — les deux " +
+         "imputations coexistent et ne sont pas hiérarchisées : divergence non arbitrée. La conséquence " +
+         "pratique diffère pourtant : si c'est mécanique, un fœtus frais justifie une recoupe ; si c'est " +
+         "autolytique, la recoupe ne servira à rien" },
+  { k:"sacculeDetruit", l:"Saccule et utricule introuvables dans le vestibule", b:"non datable",
+    d:"détruits au prélèvement dans presque tous les cas", h:0, q:"mauvais",
+    note:"« usually destroyed in routine sections of even well-preserved specimens » et « destroyed during " +
+         "removal and sectioning of the specimen as almost always occurs » : ce n'est pas une agénésie " +
+         "vestibulaire, c'est le régime normal de la lame" },
+  { k:"tympanNu", l:"Membrane tympanique réduite à ses deux plans conjonctifs", b:"non datable",
+    d:"épiderme et endoderme tombés", h:0, q:"mauvais",
+    note:"« has fallen off » des deux surfaces, décrit à 15 semaines (unité source) sur une pièce normale — " +
+         "artefact, pas agénésie épithéliale" },
+  { k:"caisseDesquamee", l:"Revêtement de la caisse absent par plaques", b:"non datable",
+    d:"autolyse légère", h:0, q:"mauvais",
+    note:"« often falls off owing to mild autolysis » — ne pas lire une desquamation inflammatoire" },
+  { k:"reissnerEffondree", l:"Membrane de Reissner effondrée sur le plancher", b:"non datable",
+    d:"décrite sur un cas normal", h:0, q:"mauvais",
+    note:"« almost completely collapsed » sur une coupe donnée pour normale à 24 semaines (unité source)" },
+  { k:"blocDetruit", l:"Anneau tympanique, tympan et oreille moyenne absents en bloc", b:"non datable",
+    d:"signature de la coupe au ras interdite", h:0, q:"mauvais",
+    note:"avant de conclure à une malformation majeure, exclure le geste : c'est exactement ce que produit " +
+         "l'incision au ras de la face interne du temporal (§ prélèvement)" }
+];
+
+/* ── 03 · Maturation ──────────────────────────────────────────────────────────
+   Les quatre processus qui restent à la période fœtale : recanalisation du
+   bouchon méatique et maturation du tympan, résorption du mésenchyme de la
+   caisse, ossification des osselets et de la capsule otique, achèvement des
+   organes sensoriels. Tout le reste est en place et ne date plus rien.
+   Bornes lues dans la lecture BASSE de l'échelle indéterminée : elles valent
+   ± 2 semaines, la note de chaque stade le redit. */
+var STADES = [
+  { k:"bouchonPlein", l:"Bouchon méatique plein, tympan non jugeable, osselets non ossifiés", max:15,
+    note:"« The mature histology of the tympanic membrane cannot be appreciated until the meatal plug is " +
+         "removed at 13–18 weeks gestational age » : avant, il n'y a rien à juger" },
+  { k:"recanalisation", l:"Bouchon méatique en cours de recanalisation, tympan à deux plans conjonctifs bien développés", max:18,
+    note:"les deux couches conjonctives du tympan sont données bien développées à 15 semaines, unité source" },
+  { k:"ossifDebut", l:"Ossification des osselets commencée (enclume puis marteau), capsule otique à taille adulte", max:20,
+    note:"la capsule otique cartilagineuse atteint sa taille adulte à 16 semaines (unité source) ; son " +
+         "ossification ne commence qu'alors, par sites multiples" },
+  { k:"etrierOssifie", l:"Étrier ossifié, recanalisation méatique complète, tympan jugeable", max:26,
+    note:"la platine de l'étrier ne vient pas du 2e arc comme le reste de l'osselet mais de la capsule " +
+         "otique : un osselet peut être malformé sur sa partie arcale avec une platine normale" },
+  { k:"ossifComplete", l:"Ossification des osselets et de la capsule otique complète, fissure de Hyrtl fermée", max:34,
+    note:"« By 24 weeks, Hyrtl's fissure is closed » (unité source) — c'est la borne la plus lourde de " +
+         "conséquences du calendrier, elle change l'interprétation d'une hémorragie de la caisse" },
+  { k:"mesenchymeResorbe", l:"Mésenchyme de la caisse résorbé, lumière élargie, tympan secondaire trilamellaire", max:99,
+    note:"la résorption n'est complète qu'APRÈS la naissance, et c'est alors seulement que les osselets " +
+         "deviennent pleinement mobiles : au terme, du mésenchyme périossiculaire reste normal" }
+];
+
+/* ── 03 bis · Les deux axes catégoriels ───────────────────────────────────────
+   1) L'étage présent sur la coupe. L'oreille est trois organes empilés et une
+      lame n'en montre presque jamais les trois. Sans capsule otique retrouvée,
+      la coupe n'a pas de topographie : verdict bloquant.
+   2) La position de la coupe sur la spirale cochléaire. C'est le piège de
+      datation propre à l'organe : la maturation part de la base vers l'apex. */
+var ETAGES = [
+  { k:"externe",  l:"Externe seul — conduit auditif externe et membrane tympanique", e:"e" },
+  { k:"moyenne",  l:"Moyen seul — caisse, osselets, portion tympanique de la trompe", e:"m" },
+  { k:"interne",  l:"Interne seul — capsule otique, cochlée, vestibule, canaux", e:"i" },
+  { k:"externeMoyenne", l:"Externe et moyen", e:"em" },
+  { k:"moyenneInterne", l:"Moyen et interne", e:"mi" },
+  { k:"trois",    l:"Les trois étages — bisection horizontale par les deux méats", e:"emi" },
+  { k:"nonIdentifiable", l:"Étage NON identifiable — capsule otique non retrouvée", e:"" }
+];
+
+var SPIRALE = [
+  { k:"base",     l:"Tour basal du conduit cochléaire" },
+  { k:"moyen",    l:"Tour moyen" },
+  { k:"apex",     l:"Tour apical" },
+  { k:"plusieurs", l:"Plusieurs tours sur la même coupe" },
+  { k:"nonSituable", l:"Position sur la spirale non situable" }
+];
+
+var MESURE = {
+  titre:"Étage présent sur la coupe, position sur la spirale, comptes",
+  defLabel:"étage présent — sans capsule otique, pas de topographie",
+  optLabel:"position de la coupe — la maturation va de la base vers l'apex",
+  defs:ETAGES, opts:SPIRALE,
+  champs:[
+    { id:"debris",  label:"Débris amniotiques de la caisse — degré 0 à 4", min:0, max:4, step:1 },
+    { id:"tours",   label:"Tours de spire présents sur la coupe (2 ¾ au total)", min:0, max:3, step:0.25 },
+    { id:"macules", label:"Macules otolithiques identifiées (0 à 2)", min:0, max:2, step:1 }
+  ]
+};
+
+/* Le continuum du §5.1, mis en forme. Aucune source ne calibre le passage du
+   degré 1 au degré 2 : la source oppose « small » et « excessive », rien de plus. */
+var DEGRES = ["Absence de débris amniotique dans la caisse",
+              "Faible quantité de débris amniotiques — registre NORMAL",
+              "Débris amniotiques en excès — « an excessive amount of amniotic debris in the tympanic cavity " +
+              "should suggest significant intrauterine fetal distress »",
+              "Rétention avec réaction à corps étranger — « polypoid nodules attached to the ossicles or the " +
+              "wall of the tympanic cavity »",
+              "Débris inflammatoires aigus et/ou agents infectieux — « cocci, bacilli, fungi, and spirochetes »"];
+
+function verdictMesure(){
+  var et = E.mesure.def, sp = E.mesure.opt;
+  var deb = E.mesure.v.debris, tours = E.mesure.v.tours, mac = E.mesure.v.macules;
+  if (!et && !sp && deb == null && tours == null && mac == null)
+    return { cls:"", txt:"Ni étage, ni position sur la spirale, ni compte — la lame n'est pas encore située." };
+
+  var t = [], cls = "ok", res = [], ee = "";
+
+  if (!et || et === "nonIdentifiable"){
+    cls = "bad";
+    t.push((et ? "Étage déclaré NON identifiable" : "Étage NON déclaré") + " : la lecture est BLOQUÉE. " +
+           "Le repère est la capsule otique, « a thin rim of very dense, often basophilic, bone, which is " +
+           "distinct from the petrous bone in which it is embedded » — dedans c'est le labyrinthe, dehors " +
+           "c'est le rocher. Sans elle la coupe n'a pas de topographie : une macule se décrit sans être " +
+           "nommée (« Cross sections of the saccular and utricular otolithic maculae are identical. »), et " +
+           "aucune absence ne se conclut — sur cet organe une absence a deux causes, le geste de " +
+           "prélèvement et l'autolyse, avant d'en avoir une troisième.");
+  } else {
+    ee = par(ETAGES, et).e;
+    t.push("Étage lu : " + par(ETAGES, et).l.toLowerCase() + ".");
+    if (ee === "e")
+      t.push("C'est le seul territoire de l'organe dont l'histologie normale est entièrement décrite, " +
+             "lisible sans décalcification lourde et dont les négatifs sont vérifiables — le rocher " +
+             "complet est une autre décision.");
+    if (ee.indexOf("m") < 0)
+      res.push("l'étage moyen n'est pas sur la coupe : le continuum amniotique, l'otite invasive et la " +
+               "règle des glandes ne sont ni retenus ni écartés");
+    if (ee.indexOf("i") < 0)
+      res.push("l'étage interne n'est pas sur la coupe : les trois cibles du CMV — strie vasculaire, " +
+               "macule sacculaire, macule utriculaire — ne sont pas examinées");
+  }
+
+  if (ee.indexOf("i") >= 0 || sp){
+    if (!sp || sp === "nonSituable"){
+      if (cls === "ok") cls = "warn";
+      res.push("position sur la spirale non établie — un organe de Corti immature ne date alors RIEN : " +
+               "« the time of complete maturation will depend upon where along the spiral the section is " +
+               "obtained », et une coupe apicale de 26 SA donne la même image qu'une coupe basale de 20 SA");
+    } else {
+      t.push("Position : " + par(SPIRALE, sp).l.toLowerCase() + ".");
+      if (sp === "apex")
+        t.push("La maturation part de la base : sur un tour apical, un organe de Corti incomplet est " +
+               "attendu, pas retardé.");
+      if (sp === "base")
+        t.push("Sur un tour basal, la maturation est la plus avancée de toute la spirale : c'est la coupe " +
+               "la moins indulgente pour un organe de Corti immature.");
+      if (sp === "plusieurs")
+        t.push("Plusieurs tours sur la même coupe : le gradient est visible, c'est la seule situation où " +
+               "l'organe de Corti se juge.");
+    }
+  }
+
+  if (deb != null){
+    deb = Math.max(0, Math.min(4, Math.round(deb)));
+    t.push("Débris amniotiques, degré " + deb + " : " + DEGRES[deb] + ".");
+    if (deb >= 2){
+      if (cls === "ok") cls = "warn";
+      t.push("Aucune source ne calibre le passage du degré 1 au degré 2 : cette échelle met en forme une " +
+             "opposition qualitative, elle n'est pas une gradation validée.");
+    }
+    if (deb >= 3)
+      res.push("des polynucléaires dans la LUMIÈRE restent du continuum amniotique — l'otite moyenne " +
+               "invasive se lit dans le mésenchyme, la muqueuse ou l'os : c'est un seuil de compartiment, " +
+               "pas de quantité");
+    if (ee && ee.indexOf("m") < 0)
+      res.push("débris comptés alors que l'étage moyen n'est pas déclaré présent sur la coupe");
+  } else if (ee.indexOf("m") >= 0){
+    res.push("degré des débris amniotiques non renseigné — écrire la présence sans la quantité est " +
+             "ininterprétable, seule la quantité porte l'information");
+  }
+
+  if (tours != null){
+    t.push("Tours de spire présents : " + tours + " sur 2 ¾.");
+    if (tours <= 1)
+      res.push("un seul tour ne situe pas le gradient — la bisection horizontale par les deux méats donne " +
+               "une coupe longitudinale de la cochlée, donc plusieurs tours à la fois");
+  }
+
+  if (mac != null){
+    t.push("Macules otolithiques identifiées : " + mac + " sur 2.");
+    if (mac > 0)
+      t.push("Ne pas les nommer sur l'histologie : « They cannot be differentiated microscopically. » Les " +
+             "deux seuls repères sont topographiques — le saccule est le plus près de la cochlée, et " +
+             "chaque macule regarde l'autre. Cela ne fait rien perdre : le CMV atteint « the sensory " +
+             "organs of the saccule and utricle », c'est-à-dire les deux.");
+    if (mac === 0 && ee.indexOf("i") >= 0)
+      t.push("Aucune macule retrouvée n'est pas une anomalie : les parois libres du labyrinthe sont ce qui " +
+             "part en premier au prélèvement.");
+  }
+
+  if (!E.prelev.planHorizontal)
+    res.push("plan de bisection horizontale non confirmé — l'étage lu peut n'être qu'un effet du plan de coupe");
+  if (!E.prelev.pasDeRas)
+    res.push("absence de coupe au ras non confirmée — un étage moyen manquant peut être un étage détruit");
+
+  if (res.length){
+    if (cls === "ok") cls = "warn";
+    t.push("Réserves : " + res.join(" ; ") + ".");
+  }
+  return { cls:cls, txt:t.join(" ") };
+}
+
+/* ── 05 · Variantes normales ──────────────────────────────────────────────────
+   Sur cet organe, la liste des variantes est aussi longue que celle des lésions :
+   c'est le paragraphe qui empêche de lire une normalité comme une maladie. */
+var VARIANTES = [
+  { k:"hem",        l:"Hématopoïèse extramédullaire dans le mésenchyme de la caisse" },
+  { k:"debrisPeu",  l:"Faible quantité de débris amniotiques dans la caisse" },
+  { k:"keratineCae", l:"Kératine libre dans le conduit auditif externe" },
+  { k:"cilieCoins", l:"Épithélium cilié pseudostratifié dans les coins et anfractuosités de la caisse" },
+  { k:"reticulum",  l:"Réticulum périlymphatique résiduel du vestibule ou des canaux semi-circulaires" },
+  { k:"maculeSansOtolithe", l:"Macule sans otolithe visible" },
+  { k:"cerumineusesImmatures", l:"Glandes cérumineuses immatures" },
+  { k:"sacFjord",   l:"Sac endolymphatique à paroi hérissée dans la dure-mère postérieure" },
+  { k:"tectoriale", l:"Membrane tectoriale conservée au-dessus d'un organe de Corti fragmenté" },
+  { k:"membraneInconnue", l:"Membrane fragmentée entre utricule et saccule, d'origine indéterminée" },
+  { k:"liquideCaisse", l:"Caisse remplie de liquide amniotique" }
+];
+
+/* ── 06 · Signes ──────────────────────────────────────────────────────────────
+   On coche ce qu'on voit, un signe à la fois. Aucun nom de maladie ici : les
+   noms se lisent en dessous, dans les associations. */
+var SIGNES = [
+  /* Caisse — le continuum amniotique et son seuil topographique */
+  { k:"debrisExces",   l:"Débris amniotiques en EXCÈS dans la caisse",
+    meta:"seule la quantité porte l'information" },
+  { k:"nodulesPolypoides", l:"Nodules polypoïdes sur les osselets ou la paroi de la caisse",
+    meta:"réaction à corps étranger — plus probable chez le nouveau-né que chez le fœtus" },
+  { k:"metaplasieGlandes", l:"Glandes séreuses ou muqueuses dans la muqueuse de la caisse",
+    meta:"seule règle binaire du chapitre" },
+  { k:"caliciformes",  l:"Cellules caliciformes nombreuses dans la muqueuse de la caisse" },
+  { k:"pnLumiere",     l:"Polynucléaires dans la LUMIÈRE de la caisse" },
+  { k:"pnMesenchyme",  l:"Polynucléaires dans le MÉSENCHYME, la muqueuse ou l'os sous-jacent",
+    meta:"seuil de l'otite moyenne invasive — topographique, pas quantitatif" },
+  { k:"germes",        l:"Agents infectieux dans la caisse (cocci, bacilles, champignons, spirochètes)" },
+  { k:"cilieBosses",   l:"Épithélium cylindrique cilié pseudostratifié sur une BOSSE de mésenchyme",
+    meta:"normal dans les creux, pas sur les reliefs" },
+
+  /* Infection transplacentaire */
+  { k:"inclusionsStrie", l:"Inclusions virales dans la strie vasculaire" },
+  { k:"inclusionsMacule", l:"Inclusions virales dans une macule otolithique" },
+  { k:"cmvAutre",      l:"Inclusions de type CMV sur un autre organe du même fœtus" },
+
+  /* Hémorragie */
+  { k:"hemoCaisse",    l:"Hémorragie de la caisse du tympan" },
+  { k:"hemoLabyrinthe", l:"Hémorragie du labyrinthe, espace périlymphatique" },
+  { k:"hemoFossePost", l:"Hémorragie sous-arachnoïdienne de la fosse postérieure documentée" },
+  { k:"hyrtlOuverte",  l:"Fissure de Hyrtl encore ouverte sur la coupe",
+    meta:"se ferme à 24 semaines, unité source" },
+  { k:"abruptio",      l:"Décollement placentaire aigu documenté" },
+
+  /* Malformations — externes et d'arc */
+  { k:"atresieCae",    l:"Atrésie ou sténose du conduit auditif externe" },
+  { k:"osseletsMalformes", l:"Osselets malformés, fusionnés ou absents" },
+  { k:"platineAnormale", l:"Platine de l'étrier anormale",
+    meta:"elle vient de la capsule otique, pas du 2e arc" },
+  { k:"caisseMalformee", l:"Caisse du tympan malformée ou non individualisée" },
+  { k:"microtie",      l:"Microtie ou anotie à l'examen externe" },
+  { k:"appendices",    l:"Appendices ou tubercule prétragiens" },
+  { k:"anomAssociees", l:"Anomalies associées : cardiovasculaires, fentes faciales, anophtalmie ou microphtalmie" },
+
+  /* Conduit auditif externe — la règle des annexes */
+  { k:"cerumineuseInterne", l:"Glande cérumineuse dans la moitié INTERNE du conduit" },
+  { k:"glandeSudorale", l:"Glande sudorale dans le conduit auditif externe",
+    meta:"absolu de la source : il n'y en a nulle part" },
+
+  /* Prolifération */
+  { k:"infiltratMonomorphe", l:"Infiltrat cellulaire monomorphe inattendu dans la caisse ou le rocher" },
+  { k:"mitoses",       l:"Mitoses nombreuses dans l'infiltrat" },
+  { k:"hemAbondante",  l:"Hématopoïèse extramédullaire au-delà de l'abondance attendue" },
+
+  /* Maturation et objets libres */
+  { k:"cortiImmature", l:"Organe de Corti immature : cellules ciliées indifférenciées, tunnel non ouvert" },
+  { k:"tympanImmature", l:"Membrane tympanique immature, plans conjonctifs peu développés" },
+  { k:"bouchonPersistant", l:"Bouchon méatique encore plein" },
+  { k:"reticulumRampes", l:"Réticulum périlymphatique persistant dans les RAMPES cochléaires",
+    meta:"les rampes en sont vides dès la 12e semaine post-fertilisation ; au-delà, la source ne dit rien" },
+  { k:"otolithesLibres", l:"Fragments de membrane otolithique libres dans la lumière du labyrinthe" }
+];
+
+/* ── 06 bis · Associations — affichées, jamais cochées ─────────────────────── */
+var DIAGS = [
+  { k:"continuum", l:"Continuum amniotique de la caisse", cle:"debrisExces", min:1,
+    signes:["debrisExces","nodulesPolypoides","metaplasieGlandes","caliciformes","pnLumiere","germes"],
+    stop:" — la présence de débris est NORMALE, seule la quantité informe : « The histologic continuum of " +
+         "normal aspiration of amniotic fluid, excessive aspiration of amniotic fluid, and amniotic fluid " +
+         "infection sequence is one of the most common findings in sections of the ear ». Aucune source ne " +
+         "calibre le passage du degré 1 au degré 2. Des polynucléaires dans la lumière ne font PAS une " +
+         "otite. Et lire la caisse contre le poumon : même entrée, même clairance — une caisse chargée sur " +
+         "un poumon propre est une discordance à écrire." },
+
+  { k:"otiteInvasive", l:"Otite moyenne invasive", cle:"pnMesenchyme", min:1,
+    signes:["pnMesenchyme","germes","metaplasieGlandes","caliciformes","cilieBosses"],
+    stop:" — le seuil est de COMPARTIMENT, pas de quantité : l'infiltrat doit être dans le mésenchyme " +
+         "embryonnaire, la muqueuse ou l'os sous-jacent. Avant de conclure, écarter l'hématopoïèse " +
+         "physiologique : « A normal amount of extramedullary hematopoiesis should not be mistaken for " +
+         "otitis media ». Un épithélium cilié pseudostratifié dans un coin de caisse est normal." },
+
+  { k:"cmv", l:"Infection transplacentaire de type CMV", min:2,
+    signes:["inclusionsStrie","inclusionsMacule","cmvAutre"],
+    stop:" — la cible est nommée et elle est triple : « Cytomegalovirus commonly involves the stria " +
+         "vascularis of the cochlear duct » et « the sensory organs of the saccule and utricle ». Écrire " +
+         "qu'il n'y a pas d'inclusion sans dire où revient à ne rien écrire. Aucune source ne prescrit " +
+         "d'immunohistochimie anti-CMV sur l'oreille : elle n'est pas mentionnée. Rubéole, herpès, " +
+         "toxoplasmose et Listeria atteignent aussi l'oreille, et [keeling, ch. 34] documente la surdité, " +
+         "pas l'image histologique." },
+
+  { k:"hemoMoyenne", l:"Hémorragie de l'oreille moyenne", cle:"hemoCaisse", min:2,
+    signes:["hemoCaisse","hemoFossePost","hyrtlOuverte","abruptio"],
+    stop:" — l'interprétation dépend du terme et d'elle seule : avant 24 semaines (unité source) la " +
+         "fissure de Hyrtl est ouverte et le sang peut venir de la fosse postérieure ; « By 24 weeks, " +
+         "Hyrtl's fissure is closed », et après 24 semaines la même image ne s'explique plus par cette " +
+         "voie et demande une autre cause. Les deux mécanismes proposés — lésion hypoxique-ischémique et " +
+         "passage direct depuis l'espace sous-arachnoïdien — ne sont pas arbitrés par la source." },
+
+  { k:"hemoInterne", l:"Hémorragie de l'oreille interne", cle:"hemoLabyrinthe", min:2,
+    signes:["hemoLabyrinthe","hemoFossePost","abruptio"],
+    stop:" — le conduit périotique reste ouvert TOUTE la vie fœtale et néonatale : cette hémorragie " +
+         "s'explique par la voie sous-arachnoïdienne à tout âge, contrairement à celle de la caisse. Ne " +
+         "pas conclure la même chose des deux : « Acute abruptio placenta with subependymal, " +
+         "intraventricular, and subarachnoid hemorrhage is especially likely to be associated with severe " +
+         "hemorrhage of the middle and inner ears »." },
+
+  { k:"malformation", l:"Malformation d'arc branchial ou de poche pharyngée", min:2,
+    signes:["atresieCae","osseletsMalformes","platineAnormale","caisseMalformee","microtie","appendices","anomAssociees"],
+    stop:" — la source histologique ne donne AUCUNE description microscopique de malformation, seulement " +
+         "l'avertissement technique : « special care in removing and sectioning the temporal bone may be " +
+         "required to demonstrate many of these malformations ». La malformation est perdue par le " +
+         "prélèvement avant d'être manquée par le microscope, et le seul procédé capable de la documenter " +
+         "— coupes sériées et reconstruction 3-D — est déclaré hors périmètre par la source elle-même. " +
+         "Ne pas décrire la platine avec le reste de l'étrier : elle n'a pas la même origine. La " +
+         "fréquence des fentes, de la macrostomie et des réductions de membre augmente avec la sévérité " +
+         "de la microtie. Divergence de calendrier non arbitrée sur le pavillon : « The auricle is " +
+         "completely formed by the middle of the tenth week » contre « fully formed by the fourth month »." },
+
+  { k:"annexes", l:"Annexes déplacées du conduit auditif externe", min:1,
+    signes:["cerumineuseInterne","glandeSudorale"],
+    stop:" — « Sweat glands are not present in any part of the external auditory canal » : une glande " +
+         "sudorale n'est une variante nulle part. Le passage d'un revêtement à l'autre est net — « the " +
+         "abrupt change from the ceruminous-bearing epidermis of the outer part of the canal to the " +
+         "nonceruminous-bearing epidermis of the inner part » — donc une cérumineuse dans la moitié " +
+         "interne est un déplacement, pas une variante. Une glande cérumineuse immature, elle, est " +
+         "normale : elles « do not become fully functional until puberty or adolescence »." },
+
+  { k:"proliferation", l:"Infiltrat cellulaire à typer", cle:"infiltratMonomorphe", min:2,
+    signes:["infiltratMonomorphe","mitoses","hemAbondante"],
+    stop:" — poser d'abord l'hématopoïèse extramédullaire, qui est physiologique dans le mésenchyme de la " +
+         "caisse. Ensuite seulement les quatre entités nommées : neuroblastome congénital, leucémie, " +
+         "tératome, histiocytose langerhansienne — citées comme extensions possibles, sans aucune " +
+         "description histologique locale." },
+
+  { k:"immaturite", l:"Immaturité otologique apparente", cle:"cortiImmature", min:2,
+    signes:["cortiImmature","tympanImmature","bouchonPersistant","reticulumRampes"],
+    stop:" — ne pas dater le fœtus là-dessus. La maturation cochléaire va de la base vers l'apex : " +
+         "« the time of complete maturation will depend upon where along the spiral the section is " +
+         "obtained », et elle peut n'être complète qu'à 25 semaines ou plus tard chez certains fœtus. Le " +
+         "tympan, lui, n'est jugeable qu'après retrait du bouchon méatique, et les deux sources divergent " +
+         "de douze à dix-sept semaines sur cette borne : « removed at 13–18 weeks gestational age » " +
+         "contre « The auricle develops around the external meatus, which begins to canalize, the first " +
+         "branchial cleft at week 30 » — divergence portée, non arbitrée. Un réticulum persistant dans " +
+         "les rampes sort de la description, mais aucune source ne dit ce que cela signifierait." },
+
+  { k:"objetsLibres", l:"Objets basophiles libres dans une lumière", cle:"otolithesLibres", min:1,
+    signes:["otolithesLibres","germes","pnLumiere"],
+    stop:" — c'est le piège que la source qualifie elle-même de facile : « the otolithic membranes may be " +
+         "fragmented and lie in the lumen », et on les prend pour des germes. Le compartiment tranche : le " +
+         "labyrinthe membraneux n'est pas en continuité avec la cavité amniotique, la caisse l'est. Un " +
+         "objet basophile libre dans le vestibule ne vient pas de la trompe d'Eustache. Et les otolithes " +
+         "varient dans la même coupe, là où une population microbienne est monomorphe." }
+];
+
+/* ── 07 · Négatifs obligatoires ───────────────────────────────────────────────
+   Le corpus compte 176 CR avec microscopie et ZÉRO description otologique
+   microscopique : ce ne sont pas des oublis à combler dans une pratique en
+   cours, ce sont les négatifs que les sources rendent obligatoires le jour où
+   l'organe est prélevé. Les intitulés sont ceux de la fiche, mot pour mot. */
+var NEGATIFS = [
+  { k:"hem", l:"« hématopoïèse extramédullaire d'abondance normale, sans inflammation »",
+    p:"le mésenchyme « contains variable amounts of extramedullary hematopoietic tissue »",
+    ko:"hématopoïèse NON qualifiée — sans ce négatif, un infiltrat physiologique se lit comme une otite" },
+  { k:"debris", l:"« quantité de débris amniotiques dans la caisse : faible / excessive »",
+    p:"la présence est normale, seule la quantité informe",
+    ko:"quantité NON écrite — un CR qui note la présence de débris sans la quantifier est ininterprétable" },
+  { k:"glandes", l:"« absence de glandes séreuses ou muqueuses et absence de cellules caliciformes nombreuses dans la muqueuse de la caisse »",
+    p:"seule règle binaire du chapitre",
+    ko:"glandes ou cellules caliciformes nombreuses PRÉSENTES — réponse métaplasique probable à un excès " +
+       "de liquide amniotique ou à une infection" },
+  { k:"pn", l:"« mésenchyme de la caisse, muqueuse et os sous-jacent : sans infiltrat à polynucléaires »",
+    p:"seuil topographique de l'otite invasive",
+    ko:"infiltrat à polynucléaires dans le mésenchyme, la muqueuse ou l'os — otite moyenne invasive" },
+  { k:"cmv", l:"« strie vasculaire, macule sacculaire et macule utriculaire examinées, sans inclusion virale »",
+    p:"trois sites, pas un",
+    ko:"les trois sites du CMV NON examinés — écrire qu'il n'y a pas d'inclusion sans dire où revient à " +
+       "ne rien écrire" },
+  { k:"corti", l:"« état de conservation de l'organe de Corti »",
+    p:"sa destruction est la règle, pas l'exception",
+    ko:"état de conservation NON dit — un CR muet laisse croire que l'organe a été jugé ; dire qu'il est " +
+       "non analysable est une information" },
+  { k:"saccule", l:"« saccule et utricule : détruits par le prélèvement / conservés »",
+    p:"« usually destroyed in routine sections of even well-preserved specimens »",
+    ko:"saccule et utricule NON qualifiés — introuvables n'est pas agénésique" },
+  { k:"reticulum", l:"« réticulum périlymphatique partiellement résorbé »",
+    p:"normal de 20 semaines au terme, et « may never be completely resorbed »",
+    ko:"réticulum NON qualifié — un lecteur ultérieur le prendra pour un exsudat ou un retard de maturation" },
+  { k:"cerumineuses", l:"« pas de glande cérumineuse dans la moitié interne du conduit »",
+    p:"le passage d'un revêtement à l'autre est abrupt",
+    ko:"glande cérumineuse dans la moitié interne — déplacement, pas variante" },
+  { k:"sudorales", l:"« pas de glande sudorale »",
+    p:"« Sweat glands are not present in any part of the external auditory canal »",
+    ko:"glande sudorale dans le conduit — absolu de la source contredit : reprendre l'identification" },
+  { k:"hyrtl", l:"« fissure de Hyrtl : ouverte / fermée compte tenu du terme »",
+    p:"sans elle, l'hémorragie de la caisse n'est pas interprétable",
+    ko:"fissure de Hyrtl NON située par rapport au terme — l'hémorragie de la caisse reste sans mécanisme" },
+  { k:"capsule", l:"« capsule otique distincte du rocher, identifiée »",
+    p:"attestation que la coupe est orientable",
+    ko:"capsule otique NON retrouvée — la coupe n'a pas de topographie : une macule se décrit, elle ne se " +
+       "nomme pas" }
+];
+
+/* ── 08 · Techniques ─────────────────────────────────────────────────────────
+   Les colorations sont des DÉDUCTIONS de la fiche à partir des organismes
+   nommés ; la source n'en prescrit aucune. */
+var TECHNIQUES = [
+  { k:"gram",      l:"Gram tissulaire", q:"cocci et bacilles de la caisse — coloration déduite" },
+  { k:"grocott",   l:"Grocott", q:"champignons — coloration déduite" },
+  { k:"argentique", l:"Imprégnation argentique", q:"spirochètes — coloration déduite" },
+  { k:"ihcCmv",    l:"Immunohistochimie anti-CMV",
+    q:"aucune source ne la prescrit sur l'oreille — l'ouvrir, ce n'est pas la rappeler" },
+  { k:"decalcNulle", l:"Ne pas décalcifier",
+    q:"1er et début de 2e trimestre — décalcifier serait une agression sans nécessité" },
+  { k:"decalcSuivie", l:"Décalcification surveillée, adaptée à la pièce",
+    q:"aucun décalcifiant, aucune durée, aucun contrôle de fin ne sont sourcés" },
+  { k:"recoupe",   l:"Recoupe du bloc",
+    q:"utile si la destruction est mécanique, inutile si elle est autolytique — indépartageable" },
+  { k:"seriees",   l:"Coupes sériées sur pièce non fixée, scie de précision",
+    q:"seule voie que la source associe à l'immunohistochimie — et qu'elle déclare hors périmètre" },
+  { k:"recon3d",   l:"Reconstruction tridimensionnelle",
+    q:"seul procédé décrit pour documenter une malformation — filière de recherche" },
+  { k:"trompe",    l:"Excision élargie de la trompe d'Eustache",
+    q:"les quatre incisions n'en rapportent qu'une portion" },
+  { k:"genetique", l:"Prélèvement congelé pour génétique",
+    q:"contexte syndromique — plus de 400 syndromes comportent une surdité" }
+];
+
+/* ── Propositions de techniques — déduites des clics, jamais imposées ─────── */
+function suggerer(){
+  var s = {};
+  function anormal(k){ return E.signes[k] === "anormal"; }
+  function ret(k){ return E.retention[k] === "present"; }
+
+  if (anormal("germes") || anormal("pnLumiere") || anormal("pnMesenchyme") || anormal("otolithesLibres")){
+    s.gram = 1; s.grocott = 1; s.argentique = 1;
+  }
+  if (anormal("debrisExces") || anormal("nodulesPolypoides")) s.gram = 1;
+  if (anormal("inclusionsStrie") || anormal("inclusionsMacule") || anormal("cmvAutre")) s.ihcCmv = 1;
+  if (anormal("atresieCae") || anormal("osseletsMalformes") || anormal("platineAnormale") ||
+      anormal("caisseMalformee")){ s.seriees = 1; s.recon3d = 1; s.genetique = 1; }
+  if (anormal("microtie") || anormal("appendices") || anormal("anomAssociees")) s.genetique = 1;
+  if (anormal("infiltratMonomorphe") || anormal("mitoses")) s.seriees = 1;
+  if (anormal("cortiImmature") || anormal("tympanImmature") || anormal("bouchonPersistant")) s.recoupe = 1;
+
+  /* Une destruction mécanique se rejoue au couteau ; une autolyse, non. Comme
+     rien ne les sépare sur la lame, la recoupe se propose et ne s'impose pas. */
+  if (ret("cortiFragmente") || ret("sacculeDetruit") || ret("blocDetruit")) s.recoupe = 1;
+  if (ret("blocDetruit")) s.seriees = 1;
+
+  if (E.negatifs.cmv === "present") s.ihcCmv = 1;
+  if (E.negatifs.pn === "present" || E.negatifs.glandes === "present") s.gram = 1;
+  if (E.negatifs.capsule === "present") s.seriees = 1;
+
+  /* La décalcification est un réglage par pièce, et le terme en décide. */
+  var sa = num("sa");
+  if (sa != null && sa < 16) s.decalcNulle = 1;
+  if (sa != null && sa >= 16) s.decalcSuivie = 1;
+  if (E.mesure.def === "moyenne" || E.mesure.def === "externeMoyenne") s.trompe = 1;
+  return s;
+}
+
+/* ── Contrôles propres à l'oreille ────────────────────────────────────────── */
+async function testsOrgane(chk, clic, set, crTient, pause){
+  /* Le banc commun laisse des signes posés : on part d'un état voulu. */
+  function pose(k, v){ if (E.signes[k] !== v) clic("les", k, v); }
+  function ote(k){ if (E.signes[k]) clic("les", k, E.signes[k]); }
+  function propre(){ SIGNES.forEach(function(x){ ote(x.k); }); }
+  function tenue(k){ return associations().some(function(a){ return a.d.k === k && a.tenu; }); }
+  propre();
+
+  /* La rétention ne produit aucune heure — parce qu'il n'y en a aucune */
+  chk("aucune borne horaire", RETENTION.every(function(r){ return r.b === "non datable"; }));
+  chk("aucun délai déguisé dans les critères",
+      !/heure|jour|semaine/.test(JSON.stringify(RETENTION.map(function(r){ return r.b + " " + r.d; }))));
+  clic("ret", "coupeLisible", "present");
+  chk("verdict de rétention non datant", crTient("Rétention non datable") &&
+      crTient("absente des trois barèmes"));
+  chk("le négatif interdit est rappelé",
+      crTient("ne pas écrire que l'oreille est bien conservée"));
+  clic("ret", "cortiFragmente", "present");
+  chk("Corti : les deux imputations sont portées",
+      crTient("typically severely fragmented") && crTient("often autolyzed in routine sections"));
+  chk("Corti fragmenté propose la recoupe", suggerer().recoupe === 1);
+  clic("ret", "cortiFragmente", "present");
+  clic("ret", "coupeLisible", "present");
+
+  /* Étage — le verdict bloquant de cet organe */
+  set("sa", "26");
+  set("m_tours", "2");
+  chk("étage non déclaré : lecture bloquée", $("vMesure").className.indexOf("bad") >= 0 &&
+      crTient("Étage NON déclaré") && crTient("la lecture est BLOQUÉE"));
+  clic("mdef", "nonIdentifiable");
+  chk("étage non identifiable : bloquant aussi", $("vMesure").className.indexOf("bad") >= 0 &&
+      crTient("Étage déclaré NON identifiable"));
+  set("m_macules", "1");
+  chk("sans capsule otique, la macule ne se nomme pas",
+      crTient("une macule se décrit sans être nommée") &&
+      crTient("They cannot be differentiated microscopically"));
+  set("m_macules", "");
+  chk("une absence a deux causes avant d'en avoir une troisième",
+      crTient("le geste de prélèvement et l'autolyse, avant d'en avoir une troisième"));
+  clic("mdef", "trois");
+  chk("étage posé : blocage levé", $("vMesure").className.indexOf("bad") < 0);
+  chk("les trois étages n'exonèrent pas de la spirale",
+      crTient("where along the spiral the section is obtained"));
+  clic("mopt", "apex");
+  chk("coupe apicale : l'immaturité est attendue, pas retardée",
+      crTient("un organe de Corti incomplet est attendu, pas retardé"));
+  clic("mopt", "apex");
+  clic("mopt", "plusieurs");
+  chk("plusieurs tours : le gradient est visible", crTient("le gradient est visible"));
+
+  /* Le degré des débris — une mise en forme, pas une gradation validée */
+  set("m_debris", "1");
+  chk("degré 1 = registre normal", crTient("registre NORMAL"));
+  set("m_debris", "2");
+  chk("degré 2 non calibré", crTient("an excessive amount of amniotic debris") &&
+      crTient("Aucune source ne calibre le passage du degré 1 au degré 2"));
+  set("m_debris", "4");
+  chk("degré 4 : la lumière n'est pas l'otite",
+      crTient("c'est un seuil de compartiment, pas de quantité"));
+  set("m_debris", "");
+  clic("mdef", "trois");
+  clic("mdef", "interne");
+  chk("étage interne : le continuum n'est ni retenu ni écarté",
+      crTient("ni retenus ni écartés"));
+  clic("mdef", "interne");
+
+  /* Aucune biométrie : le gabarit valeur/borne est inapplicable à cet organe */
+  chk("aucun champ biométrique",
+      MESURE.champs.every(function(c){ return !/µm|mm|épaisseur|hauteur|diamètre/.test(c.label); }));
+  chk("deux axes catégoriels, pas trois", MESURE.defs.length > 0 && MESURE.opts.length > 0);
+
+  /* L'asymétrie de Hyrtl : la même image ne dit pas la même chose aux deux termes */
+  pose("hemoCaisse", "anormal"); pose("hemoFossePost", "anormal");
+  chk("hémorragie moyenne lue", tenue("hemoMoyenne"));
+  chk("Hyrtl : avant et après 24 semaines",
+      crTient("avant 24 semaines (unité source) la fissure de Hyrtl est ouverte") &&
+      crTient("Hyrtl's fissure is closed"));
+  ote("hemoCaisse");
+  pose("hemoLabyrinthe", "anormal");
+  chk("hémorragie interne lue", tenue("hemoInterne"));
+  chk("la voie périotique reste ouverte à tout âge",
+      crTient("reste ouvert TOUTE la vie fœtale et néonatale"));
+  propre();
+
+  /* Le piège majeur : otolithes libres pris pour des germes */
+  pose("otolithesLibres", "anormal");
+  chk("objets libres lus", tenue("objetsLibres"));
+  chk("le compartiment tranche",
+      crTient("le labyrinthe membraneux n'est pas en continuité avec la cavité amniotique"));
+  chk("des objets libres proposent Gram, Grocott et argentique",
+      suggerer().gram === 1 && suggerer().grocott === 1 && suggerer().argentique === 1);
+  propre();
+
+  /* Le seuil de l'otite est topographique */
+  pose("pnLumiere", "anormal");
+  chk("polynucléaires dans la lumière : pas d'otite", !tenue("otiteInvasive"));
+  pose("pnMesenchyme", "anormal");
+  chk("polynucléaires dans le mésenchyme : otite invasive", tenue("otiteInvasive"));
+  chk("l'hématopoïèse normale est écartée d'abord",
+      crTient("should not be mistaken for otitis media"));
+  propre();
+
+  /* Le CMV a trois cibles nommées, et aucune IHC prescrite */
+  pose("inclusionsStrie", "anormal"); pose("inclusionsMacule", "anormal");
+  chk("CMV lu sur deux cibles", tenue("cmv"));
+  chk("les trois cibles sont nommées",
+      crTient("stria vascularis of the cochlear duct") &&
+      crTient("the sensory organs of the saccule and utricle"));
+  chk("aucune IHC anti-CMV prescrite",
+      par(TECHNIQUES, "ihcCmv").q.indexOf("aucune source ne la prescrit") >= 0);
+  chk("le CMV propose quand même l'IHC, en l'ouvrant", suggerer().ihcCmv === 1);
+  propre();
+
+  /* Les absolus et les divergences, portées telles quelles */
+  pose("glandeSudorale", "anormal");
+  chk("la glande sudorale n'est une variante nulle part", tenue("annexes") &&
+      crTient("Sweat glands are not present in any part of the external auditory canal"));
+  propre();
+  chk("canalisation : 13–18 semaines contre semaine 30",
+      par(DIAGS, "immaturite").stop.indexOf("13–18 weeks gestational age") >= 0 &&
+      par(DIAGS, "immaturite").stop.indexOf("branchial cleft at week 30") >= 0);
+  chk("pavillon : 10e semaine contre 4e mois",
+      par(DIAGS, "malformation").stop.indexOf("middle of the tenth week") >= 0 &&
+      par(DIAGS, "malformation").stop.indexOf("fully formed by the fourth month") >= 0);
+  chk("malformation : la source déclare la solution hors périmètre",
+      par(DIAGS, "malformation").stop.indexOf("hors périmètre") >= 0);
+  chk("l'échelle d'âge contamine les deux discordances",
+      RETARD_NOTE.indexOf("± 2 semaines") >= 0 && AVANCE_NOTE.indexOf("± 2 semaines") >= 0);
+  chk("un seul témoin histologique", TECH_NOTE.indexOf("témoin unique") >= 0);
+
+  /* Le nom se déduit des signes — il ne se coche pas */
+  chk("aucun bouton ne porte un diagnostic",
+      DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
+
+  /* La décalcification suit le terme, elle n'est pas un protocole */
+  set("sa", "14");
+  chk("avant 16 SA : ne pas décalcifier", suggerer().decalcNulle === 1 && !suggerer().decalcSuivie);
+  set("sa", "26");
+  chk("pièce ossifiée : décalcification surveillée", suggerer().decalcSuivie === 1);
+}
+
+/* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
+var FOETO = {"sections":[],"formes":{}};
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+
+var DB_NAME = "foeto-" + MODULE, DB_VER = 1, db = null;
+
+/* Organe pair : le côté fait partie de la donnée, pas du commentaire. Un rein
+   lu sans son côté n'est pas rattachable à l'imagerie ni à l'autre rein. */
+var COTES = [{ k:"droit", l:"Droit — 1/2" }, { k:"gauche", l:"Gauche — 1/2" },
+             { k:"deux", l:"Les deux — 2/2" }];
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function normDossier(v){ return v.toUpperCase().replace(/\s+/g, ""); }
+function dossierOk(v){ return v.trim().length > 0; } // ponytail: plus de format imposé, seul le uppercase (normDossier) reste
+function num(id){ var e = $(id); if (!e) return null; var v = parseFloat(e.value); return isFinite(v) ? v : null; }
+function par(liste, k){ return liste.filter(function(x){ return x.k === k; })[0] || null; }
+function champs(){ return MESURE ? MESURE.champs : []; }
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", E = null;
+function neuf(){
+  var e = { cote:null, prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
+            negatifs:{}, techniques:{}, foeto:{}, mesure:{ def:null, opt:null, v:{} }, libre:"" };
+  champs().forEach(function(c){ e.mesure.v[c.id] = null; });
+  return e;
+}
+
+/* Le stade attendu au terme saisi. Bornes reconstruites depuis la prose des
+   sources : ce sont des repères, pas des seuils. */
+function stadeAttendu(sa){
+  if (sa == null || !isFinite(sa)) return null;
+  for (var i = 0; i < STADES.length; i++) if (sa < STADES[i].max) return STADES[i];
+  return STADES[STADES.length - 1];
+}
+function bornesTxt(s){
+  var i = STADES.indexOf(s), min = i ? STADES[i-1].max : 0;
+  return s.max === 99 ? "≳ " + min + " SA" : min + "–" + s.max + " SA";
+}
+
+/* ── Construction du DOM — une seule fois, le clic ne fait que repeindre ──── */
+function chip(act, k, l, sous){
+  return '<button type="button" class="chip" data-act="' + act + '" data-k="' + esc(k) + '">' +
+         (sous ? '<span class="k">' + esc(sous) + '</span>' : '') + esc(l) + '</button>';
+}
+function batir(){
+  if (PAIR){
+    $("coteBloc").hidden = false;
+    $("cote").innerHTML = COTES.map(function(c){ return chip("cote", c.k, c.l); }).join("");
+  }
+  $("prelevement").innerHTML = PRELEV.map(function(p){ return chip("prelev", p.k, p.l); }).join("");
+
+  $("retention").innerHTML = RETENTION.map(function(r){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(r.l) +
+      '<span class="meta ' + r.q + '">' + esc(r.b) + " · " + esc(r.d) +
+      " · prédicteur " + r.q + '</span></div>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="present">Présent</button>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="absent">Absent</button>' +
+      '</div></div>';
+  }).join("");
+  $("kcl").innerHTML = chip("kcl", "kcl", "Fœticide par KCl", "geste à déclarer avant toute datation");
+
+  $("stTitre").textContent = STADE_TITRE;
+  $("stades").innerHTML = STADES.map(function(s){ return chip("stade", s.k, s.l); }).join("");
+
+  if (MESURE){
+    var h = '<div class="sousTitre">' + esc(MESURE.titre) + '</div>';
+    h += '<div class="chips" id="mesDefs">' +
+         MESURE.defs.map(function(d){ return chip("mdef", d.k, d.l, MESURE.defLabel); }).join("") + '</div>';
+    if (MESURE.opts && MESURE.opts.length)
+      h += '<div class="chips" id="mesOpts" style="margin-top:6px">' +
+           MESURE.opts.map(function(o){ return chip("mopt", o.k, o.l, MESURE.optLabel); }).join("") + '</div>';
+    h += '<div class="row" style="margin-top:9px">' + MESURE.champs.map(function(c){
+      return '<div class="field"><label for="m_' + c.id + '">' + esc(c.label) + '</label>' +
+             '<input type="number" id="m_' + c.id + '" min="' + c.min + '" max="' + c.max +
+             '" step="' + c.step + '" inputmode="decimal" placeholder="—"></div>';
+    }).join("") + '</div>';
+    $("mesure").innerHTML = h;
+    $("vMesure").hidden = false;
+    $("vMesure").querySelector("b").textContent = MESURE.titre;
+  }
+
+  $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
+
+  /* Un signe peut porter un groupe g (placenta : cordon, membranes, parenchyme sous
+     cordon, marge, systémique) : un sous-titre s'ouvre quand le groupe change. */
+  var gPrec = null;
+  $("signes").innerHTML = SIGNES.map(function(x){
+    var h = "";
+    if (x.g && x.g !== gPrec){ h = '<div class="sousTitre">' + esc(x.g) + '</div>'; gPrec = x.g; }
+    return h + '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+      (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
+      '</div>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="normal">Normal</button>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="anormal">Anormal</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("foeto").innerHTML = FOETO.sections.map(function(s){
+    return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
+           s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
+  }).join("") || '<p class="note">Aucun terme FOETO rattaché à cette fiche.</p>';
+  if (FOETO.sections.length){
+    $("foetoPlus").hidden = false; $("foetoRech").hidden = false;
+    $("foetoPlus").textContent = "▸ tous les termes attestés (" + nbFoeto() + ")";
+  }
+
+  $("negatifs").innerHTML = NEGATIFS.map(function(n){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(n.l) +
+      '<span class="meta">' + esc(n.p) + '</span></div>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="absent">Vérifié</button>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="present">EN DÉFAUT</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("techNote").textContent = TECH_NOTE;
+  $("techniques").innerHTML = TECHNIQUES.map(function(t){ return chip("tech", t.k, t.l, t.q); }).join("");
+}
+
+function nbFoeto(){ return FOETO.sections.reduce(function(a, s){ return a + s.termes.length; }, 0); }
+function foetoLabel(id){
+  var l = null;
+  FOETO.sections.forEach(function(s){ s.termes.forEach(function(t){ if (t.id === id) l = t.l; }); });
+  return l || (FOETO.formes[id] || [id])[0];
+}
+/* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
+function foetoAjouter(id){
+  if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
+    var box = $("foeto").querySelector(".chips");
+    if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
+    box.insertAdjacentHTML("beforeend", chip("foeto", id, foetoLabel(id)));
+  }
+  E.foeto[id] = true;
+  peindre(); enregistrer();
+}
+function rechercherFoeto(q){
+  var sg = $("sgFoeto");
+  q = q.trim().toLowerCase();
+  if (q.length < 3){ sg.classList.remove("on"); return; }
+  var hits = [];
+  Object.keys(FOETO.formes).some(function(id){
+    var f = FOETO.formes[id].filter(function(x){ return x.toLowerCase().indexOf(q) >= 0; })[0];
+    if (f) hits.push({ id:id, l:foetoLabel(id), f:f, hf:FOETO.formes[id].indexOf("(hors fiche)") >= 0 });
+    return hits.length >= 10;
+  });
+  sg.innerHTML = hits.length ? hits.map(function(x){
+    return '<div data-pick="' + esc(x.id) + '">' + esc(x.l) +
+           (x.f !== x.l ? ' <small>— ' + esc(x.f) + '</small>' : '') + (x.hf ? ' <small>(hors fiche)</small>' : '') + '</div>';
+  }).join("") : '<div><small>aucun terme</small></div>';
+  sg.classList.add("on");
+}
+
+/* ── Associations ─────────────────────────────────────────────────────────────
+   Un diagnostic ne se coche pas : il se lit dans l'association des signes. Les
+   faisceaux incomplets sont affichés aussi — 2 signes sur 4 se dit, et dire
+   combien manquent est le seul moyen de distinguer « non trouvé » de « non
+   regardé ». */
+function seuil(d){ return d.min || d.signes.length; }
+function associations(){
+  return DIAGS.map(function(d){
+    var pris  = d.signes.filter(function(k){ return E.signes[k] === "anormal"; });
+    var muets = d.signes.filter(function(k){ return !E.signes[k]; });
+    /* Un signe pivot ne se remplace pas par le nombre : sans lui, le compte peut
+       être atteint sans que l'association tienne. */
+    var pivot = !d.cle || E.signes[d.cle] === "anormal";
+    return { d:d, pris:pris, muets:muets, pivot:pivot,
+             tenu: pivot && pris.length >= seuil(d) };
+  }).filter(function(a){ return a.pris.length; })
+    .sort(function(a, b){ return (b.tenu - a.tenu) || (b.pris.length - a.pris.length); });
+}
+function nomSigne(k){ var s = par(SIGNES, k); return s ? s.l : k; }
+
+/* ── Verdicts communs ─────────────────────────────────────────────────────── */
+function verdictPrelevement(){
+  var n = Object.keys(E.prelev).length, res = [], grave = false;
+  PRELEV.forEach(function(p){
+    if (p.manque && !E.prelev[p.k]){ res.push(p.manque); if (p.grave) grave = true; }
+  });
+  if (PAIR && !E.cote) res.push("côté non déclaré — organe pair");
+  return { n:n, res:res,
+    cls: res.length ? (grave ? "bad" : "warn") : (n === PRELEV.length ? "ok" : ""),
+    txt: n === 0 ? "—"
+       : (n + "/" + PRELEV.length + " item(s) confirmé(s)" +
+          (PAIR && E.cote ? ", " + par(COTES, E.cote).l.toLowerCase().split(" —")[0] : "") + ".") +
+         (res.length ? " Réserves : " + res.join(" ; ") + "." : " Prélèvement complet.") };
+}
+function verdictRetention(){
+  if (E.kcl) return { cls:"bad", borne:null, txt:KCL_TXT };
+  var pres = RETENTION.filter(function(r){ return E.retention[r.k] === "present"; });
+  if (!pres.length) return { cls:"", borne:null,
+    txt: Object.keys(E.retention).length ? "Aucun critère de rétention positif." : "—" };
+  var notes = [];
+  pres.forEach(function(r){ if (r.note) notes.push(r.note); });
+  var bons = pres.filter(function(r){ return r.q !== "mauvais"; });
+  if (!bons.length) return { cls:"warn", borne:null,
+    txt:"Seuls des prédicteurs MAUVAIS sont positifs — aucune borne recevable. " + notes.join(" ; ") + "." };
+  var top = bons.reduce(function(a, b){ return b.h > a.h ? b : a; });
+  if (top.alerte) notes.push(top.alerte);
+  return { cls:"ok", borne:top,
+    txt:"Rétention " + top.b + " — critère : " + top.l.toLowerCase() + " (" + top.d + ")." +
+        (notes.length ? " Réserves : " + notes.join(" ; ") + "." : "") };
+}
+function verdictMaturation(){
+  var sa = num("sa"), att = stadeAttendu(sa), obs = E.stade ? par(STADES, E.stade) : null;
+  if (!obs) return { cls:"", att:att, txt: att
+    ? "Stade attendu à " + sa + " SA : " + att.l.toLowerCase() + ". Confirmer ou choisir."
+    : "Saisir le terme pour afficher le stade attendu." };
+  if (!att) return { cls:"warn", att:null,
+    txt:"Stade " + obs.l.toLowerCase() + " — sans terme, aucune discordance n'est calculable." };
+  var io = STADES.indexOf(obs), ia = STADES.indexOf(att), t, cls;
+  if (io === ia){ cls = "ok"; t = "Maturation conforme au terme : " + obs.l.toLowerCase() + " à " + sa + " SA."; }
+  else if (io < ia){ cls = "warn";
+    t = "Retard de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (RETARD_NOTE ? " " + RETARD_NOTE : ""); }
+  else { cls = "warn";
+    t = "Avance de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (AVANCE_NOTE ? " " + AVANCE_NOTE : ""); }
+  if (obs.note) t += " (" + obs.note + ")";
+  return { cls:cls, att:att, txt:t };
+}
+
+/* ── Peinture ─────────────────────────────────────────────────────────────── */
+function classe(act, v){
+  if (act === "neg") return v === "present" ? "no" : "on";
+  if (act === "les") return v === "anormal" ? "no" : "on";
+  return "on";
+}
+function poser(id, v){
+  var e = $(id), t = e.querySelector("b").textContent;
+  e.className = "verdict" + (v.cls ? " " + v.cls : "");
+  e.innerHTML = "<b>" + esc(t) + "</b>" + esc(v.txt);
+}
+function tally(id, n, sur){ $(id).textContent = n ? n + "/" + sur : "—"; }
+
+function peindreDiags(){
+  var A = associations();
+  if (!A.length){
+    $("diags").innerHTML = '<p class="note" style="margin:0">Aucun signe anormal coché : rien à associer.</p>';
+    return;
+  }
+  $("diags").innerHTML = A.map(function(a){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(a.d.l) +
+      '<span class="meta">' + a.pris.length + "/" + a.d.signes.length + " signe(s), seuil " + seuil(a.d) +
+      (a.muets.length ? " · " + a.muets.length + " non regardé(s)" : "") + '</span></div>' +
+      '<span class="chip ' + (a.tenu ? "on" : "") + '" style="cursor:default">' +
+      (a.tenu ? "association tenue" : "faisceau incomplet") + '</span></div>' +
+      '<div class="unfold">' +
+      '<div class="note" style="margin:0">' +
+      (a.pivot ? "" : "Signe pivot non coché : " + esc(nomSigne(a.d.cle)) + ".<br>") +
+      esc(a.pris.map(nomSigne).join(" · ")) +
+      (a.muets.length ? "<br>Non regardés : " + esc(a.muets.map(nomSigne).join(" · ")) + "." : "") +
+      '</div>' +
+      '<div class="stop"><b>Ce qu\'il ne faut pas conclure</b>' + esc(a.d.stop) + '</div></div></div>';
+  }).join("");
+}
+
+function peindre(){
+  if (PAIR) document.querySelectorAll("#cote .chip").forEach(function(b){
+    b.className = "chip" + (E.cote === b.dataset.k ? " on" : "");
+  });
+  document.querySelectorAll("#prelevement .chip").forEach(function(b){
+    b.className = "chip" + (E.prelev[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#retention .chip").forEach(function(b){
+    b.className = "chip" + (E.retention[b.dataset.k] === b.dataset.v ? " on" : "");
+  });
+  $("kcl").firstChild.className = "chip" + (E.kcl ? " no" : "");
+  document.querySelectorAll("#stades .chip").forEach(function(b){
+    var att = stadeAttendu(num("sa"));
+    b.className = "chip" + (E.stade === b.dataset.k ? " on"
+                          : (att && att.k === b.dataset.k ? " sugg" : ""));
+  });
+  if (MESURE){
+    document.querySelectorAll("#mesDefs .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.def === b.dataset.k ? " on" : "");
+    });
+    if ($("mesOpts")) document.querySelectorAll("#mesOpts .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.opt === b.dataset.k ? " on" : "");
+    });
+  }
+  document.querySelectorAll("#variantes .chip").forEach(function(b){
+    b.className = "chip" + (E.variantes[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#signes .chip").forEach(function(b){
+    b.className = "chip" + (E.signes[b.dataset.k] === b.dataset.v
+                            ? " " + classe("les", b.dataset.v) : "");
+  });
+  peindreDiags();
+  document.querySelectorAll('[data-act="foeto"]').forEach(function(b){
+    b.className = "chip" + (E.foeto[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#negatifs .chip").forEach(function(b){
+    b.className = "chip" + (E.negatifs[b.dataset.k] === b.dataset.v
+                            ? " " + classe("neg", b.dataset.v) : "");
+  });
+  var sug = suggerer();
+  document.querySelectorAll("#techniques .chip").forEach(function(b){
+    b.className = "chip" + (E.techniques[b.dataset.k] ? " on" : (sug[b.dataset.k] ? " sugg" : ""));
+  });
+
+  tally("tPrelevement", Object.keys(E.prelev).length, PRELEV.length);
+  tally("tRetention",   Object.keys(E.retention).length, RETENTION.length);
+  tally("tMaturation",  (E.stade ? 1 : 0) + (MESURE && E.mesure.def ? 1 : 0), MESURE ? 2 : 1);
+  tally("tVariantes",   Object.keys(E.variantes).length, VARIANTES.length);
+  tally("tSignes",     Object.keys(E.signes).length, SIGNES.length);
+  tally("tFoeto",       Object.keys(E.foeto).length, nbFoeto());
+  tally("tNegatifs",    Object.keys(E.negatifs).length, NEGATIFS.length);
+  tally("tTechniques",  Object.keys(E.techniques).length, TECHNIQUES.length);
+
+  poser("vPrelevement", verdictPrelevement());
+  poser("vRetention",   verdictRetention());
+  poser("vMaturation",  verdictMaturation());
+  if (MESURE) poser("vMesure", verdictMesure());
+
+  var cr = composer();
+  $("cr").textContent = cr;
+  $("tCR").textContent = cr.split("\n").length + " lignes";
+}
+
+/* ── Compte rendu — la sortie du module, écrite par les clics ─────────────── */
+function composer(){
+  var sa = num("sa"), L = [];
+  L.push(TITRE_CR + " — grille de lecture");
+  L.push((dossier || "dossier —") + " · " + (sa != null ? sa + " SA" : "terme —") +
+         " · " + ($("operateur").value.trim() || "lecteur —") +
+         (PAIR ? " · " + (E.cote ? par(COTES, E.cote).l : "côté non déclaré") : ""));
+  L.push("");
+
+  L.push("PRÉLÈVEMENT");
+  L.push("  " + verdictPrelevement().txt);
+
+  L.push("");
+  L.push("RÉTENTION");
+  L.push("  " + verdictRetention().txt);
+
+  L.push("");
+  L.push("MATURATION");
+  L.push("  " + verdictMaturation().txt);
+  if (MESURE) L.push("  " + verdictMesure().txt);
+
+  var vus = VARIANTES.filter(function(v){ return E.variantes[v.k]; });
+  if (vus.length){
+    L.push("");
+    L.push("VARIANTES NORMALES VUES ET ÉCARTÉES");
+    L.push("  " + vus.map(function(v){ return v.l.toLowerCase(); }).join(" · "));
+  }
+
+  var anormales = SIGNES.filter(function(x){ return E.signes[x.k] === "anormal"; });
+  var normales  = SIGNES.filter(function(x){ return E.signes[x.k] === "normal"; });
+  L.push("");
+  L.push("SIGNES");
+  if (!anormales.length && !normales.length) L.push("  aucun axe exploré.");
+  anormales.forEach(function(x){ L.push("  " + (x.g ? x.g + " · " : "") + x.l + " — ANORMAL"); });
+  if (normales.length)
+    L.push("  Normaux : " + normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  var muets = SIGNES.filter(function(x){ return !E.signes[x.k]; });
+  if (muets.length)
+    L.push("  Non explorés : " + muets.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+
+  var fo = Object.keys(E.foeto);
+  if (fo.length){
+    L.push("");
+    L.push("TERMES FOETO");
+    fo.forEach(function(id){ L.push("  " + foetoLabel(id) + " [" + id + "]"); });
+  }
+
+  var A = associations();
+  L.push("");
+  L.push("ASSOCIATIONS LUES");
+  if (!A.length) L.push("  aucune : les signes cochés ne dessinent aucune association.");
+  A.forEach(function(a){
+    L.push("  " + a.d.l + " — " + (a.tenu ? "association tenue" : "faisceau incomplet") +
+           " (" + a.pris.length + "/" + a.d.signes.length + ", seuil " + seuil(a.d) + ")");
+    L.push("      · " + a.pris.map(nomSigne).join(" · "));
+    if (!a.pivot) L.push("      · signe pivot non coché : " + nomSigne(a.d.cle));
+    if (a.muets.length) L.push("      · non regardés : " + a.muets.map(nomSigne).join(" · "));
+    L.push("      · ne pas conclure : " + a.d.stop);
+  });
+
+  L.push("");
+  L.push("NÉGATIFS OBLIGATOIRES");
+  NEGATIFS.forEach(function(n){
+    var v = E.negatifs[n.k];
+    L.push("  " + (v === "absent" ? "· " + n.l
+                 : v === "present" ? "! " + n.ko
+                 : "? " + n.l + " — non vérifié"));
+  });
+
+  var t = TECHNIQUES.filter(function(x){ return E.techniques[x.k]; });
+  if (t.length){
+    L.push("");
+    L.push("TECHNIQUES DEMANDÉES");
+    t.forEach(function(x){ L.push("  · " + x.l + " — " + x.q); });
+  }
+
+  if (E.libre.trim()){
+    L.push("");
+    L.push("REMARQUE");
+    E.libre.trim().split("\n").forEach(function(x){ L.push("  " + x); });
+  }
+
+  L.push("");
+  L.push("— La micro décrit ; la conclusion nomme. Grille v" + VERSION + " issue de " + SOURCE + ".");
+  return L.join("\n");
+}
+
+/* ── Clics ────────────────────────────────────────────────────────────────── */
+document.addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest("button[data-act]") : null;
+  if (!b || b.closest("section.off")) return;
+  var k = b.dataset.k, v = b.dataset.v, a = b.dataset.act;
+  if (a === "cote"){ E.cote = E.cote === k ? null : k; }
+  else if (a === "prelev"){ if (E.prelev[k]) delete E.prelev[k]; else E.prelev[k] = true; }
+  else if (a === "ret"){ if (E.retention[k] === v) delete E.retention[k]; else E.retention[k] = v; }
+  else if (a === "kcl"){ E.kcl = !E.kcl; }
+  else if (a === "stade"){ E.stade = E.stade === k ? null : k; }
+  else if (a === "mdef"){ E.mesure.def = E.mesure.def === k ? null : k; }
+  else if (a === "mopt"){ E.mesure.opt = E.mesure.opt === k ? null : k; }
+  else if (a === "var"){ if (E.variantes[k]) delete E.variantes[k]; else E.variantes[k] = true; }
+  else if (a === "les"){ if (E.signes[k] === v) delete E.signes[k]; else E.signes[k] = v; }
+  else if (a === "neg"){ if (E.negatifs[k] === v) delete E.negatifs[k]; else E.negatifs[k] = v; }
+  else if (a === "tech"){ if (E.techniques[k]) delete E.techniques[k]; else E.techniques[k] = true; }
+  else if (a === "foeto"){ if (E.foeto[k]) delete E.foeto[k]; else E.foeto[k] = true; }
+  else return;
+  peindre(); enregistrer();
+});
+document.addEventListener("click", function(ev){
+  var t = ev.target.closest ? ev.target.closest("[data-pick]") : null;
+  if (t){ foetoAjouter(t.dataset.pick); $("rqFoeto").value = ""; $("sgFoeto").classList.remove("on"); }
+});
+$("foetoPlus").onclick = function(){
+  var box = $("foetoTous");
+  if (!box.children.length) box.innerHTML = FOETO.sections.map(function(s){
+    return s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("");
+  }).join("");
+  box.hidden = !box.hidden; peindre();
+};
+$("rqFoeto").addEventListener("input", function(){ rechercherFoeto(this.value); });
+$("btnNegAll").onclick = function(){
+  NEGATIFS.forEach(function(n){ if (!E.negatifs[n.k]) E.negatifs[n.k] = "absent"; });
+  peindre(); enregistrer();
+};
+$("btnCopie").onclick = function(){
+  var t = composer();
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(t).then(function(){ flash("Compte rendu copié."); },
+                                          function(){ flash("Copie refusée par le navigateur."); });
+  else flash("Presse-papiers indisponible en file://.");
+};
+document.addEventListener("input", function(e){
+  var id = e.target.id;
+  if (id.indexOf("m_") === 0) E.mesure.v[id.slice(2)] = num(id);
+  else if (id === "libre") E.libre = e.target.value;
+  else if (id === "sa") majSa();
+  else return;
+  peindre(); enregistrer();
+});
+function majSa(){
+  var sa = num("sa"), att = stadeAttendu(sa), h = $("saHint");
+  h.className = "hint" + (att ? " good" : "");
+  h.textContent = att ? "Stade attendu : " + att.l.toLowerCase() + " (" + bornesTxt(att) + ")."
+                      : "SA = semaines de gestation + 2. Commande le stade attendu.";
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────────
+   localStorage est erratique en file:// et cloisonné par fichier sur certains
+   navigateurs : la saisie va en IndexedDB, y compris les champs texte.       */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction("saisies", mode), out = fn(t.objectStore("saisies"));
+    /* Tester la présence de `result`, pas sa valeur : un get() qui ne trouve rien
+       a bien un `result` (undefined) — comparé à undefined, la requête elle-même
+       était rendue, et un dossier jamais saisi s'annonçait comme restitué. */
+    t.oncomplete = function(){ res(out && "result" in out ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("readonly",  function(s){ return s.get(d); }); }
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  ["secPrelevement","secRetention","secMaturation","secVariantes","secSignes","secFoeto",
+   "secNegatifs","secTechniques","secCR","secSortie"].forEach(function(id){
+    $(id).classList.toggle("off", !ouvert);
+  });
+}
+
+/* ── Collecte / restitution ───────────────────────────────────────────────── */
+function collecter(){
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    organe: ORGANE,
+    source: SOURCE,
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    terme_sa: num("sa"),
+    grille: JSON.parse(JSON.stringify(E)),
+    compte_rendu: composer()
+  };
+}
+function appliquer(o){
+  var g = o.grille || {};
+  E = neuf();
+  ["prelev","retention","variantes","signes","negatifs","techniques","foeto"].forEach(function(c){
+    if (g[c]) E[c] = g[c];
+  });
+  Object.keys(E.foeto).forEach(function(id){
+    if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')) foetoAjouter(id);
+  });
+  E.kcl = !!g.kcl; E.stade = g.stade || null; E.cote = g.cote || null;
+  if (g.mesure){
+    E.mesure.def = g.mesure.def || null;
+    E.mesure.opt = g.mesure.opt || null;
+    champs().forEach(function(c){
+      E.mesure.v[c.id] = (g.mesure.v && g.mesure.v[c.id] != null) ? g.mesure.v[c.id] : null;
+    });
+  }
+  E.libre = g.libre || "";
+  $("sa").value = o.terme_sa != null ? o.terme_sa : "";
+  champs().forEach(function(c){ $("m_" + c.id).value = E.mesure.v[c.id] != null ? E.mesure.v[c.id] : ""; });
+  $("libre").value = E.libre;
+  majSa(); peindre();
+}
+function vider(){
+  E = neuf();
+  ["sa","libre"].forEach(function(id){ $(id).value = ""; });
+  champs().forEach(function(c){ $("m_" + c.id).value = ""; });
+  majSa(); peindre();
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, ok1 = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = ok1 && op, h = $("dossierHint");
+  h.className = "hint" + (v && !ok1 ? " bad" : ok1 ? " good" : "");
+  h.textContent = !v ? "Libre, mis en majuscules. Conditionne l'enregistrement."
+                : ok1 ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                      : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la grille.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json."
+    : ok1 ? "Saisir le lecteur pour activer l'export."
+          : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){
+    dossier = v;
+    vider();
+    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    if (rec){ appliquer(rec); flash("Grille du " + dossier + " restituée."); }
+  } else if (!ok && dossier){
+    dossier = ""; vider();
+  }
+  peindre();
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+$("btnExport").onclick = function(){
+  if (!dossierOk(dossier)) return;
+  var out = collecter();
+  telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+              dossier + "_" + MODULE + ".json");
+  var n = NEGATIFS.filter(function(x){ return E.negatifs[x.k]; }).length;
+  flash("Grille exportée." + (n < NEGATIFS.length ? " ⚠ " + (NEGATIFS.length - n) + " négatif(s) non vérifié(s)." : ""));
+};
+function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.grille) throw new Error("aucune clé « grille »");
+  if (o.dossier) $("dossier").value = normDossier(o.dossier);
+  if (o.operateur) $("operateur").value = o.operateur;
+  return majDossier().then(function(){
+    if (!dossier) throw new Error("numéro de dossier absent ou lecteur manquant");
+    appliquer(o); enregistrer();
+    return true;
+  });
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    Promise.resolve().then(function(){ return relire(JSON.parse(String(fr.result))); })
+      .then(function(){ flash("Grille relue."); })
+      .catch(function(e){ flash("Relecture impossible : " + e.message); });
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la grille du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    await tx("readwrite", function(s){ return s.delete(dossier); });
+    vider(); flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les grilles de TOUS les dossiers sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("readwrite", function(s){ return s.clear(); });
+  vider(); flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Axes de la grille", PRELEV.length + " prélèvement · " + RETENTION.length + " rétention · " +
+                             STADES.length + " stades · " + SIGNES.length + " signes · " +
+                             DIAGS.length + " associations · " +
+                             NEGATIFS.length + " négatifs · " + TECHNIQUES.length + " techniques");
+  ligne("Source", SOURCE + " — la fiche est la source, ce module en est la sortie");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+(async function(){
+  $("ver").textContent = "v" + VERSION;
+  E = neuf();
+  batir(); majSa(); peindre();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — aucune saisie ne sera conservée. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir le fichier avec ?selftest=1 ───────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+  function clic(act, k, v){
+    var s = '[data-act="' + act + '"][data-k="' + k + '"]' + (v ? '[data-v="' + v + '"]' : "");
+    var b = document.querySelector(s);
+    if (!b){ ko.push("bouton introuvable : " + s); return null; }
+    b.click(); return b;
+  }
+  function crTient(t){ return $("cr").textContent.indexOf(t) >= 0; }
+  var pause = function(){ return new Promise(function(r){ setTimeout(r, 30); }); };
+
+  /* Intégrité des tableaux — pure, sans DOM */
+  ["PRELEV","RETENTION","STADES","VARIANTES","SIGNES","DIAGS","NEGATIFS","TECHNIQUES"].forEach(function(nom){
+    var t = { PRELEV:PRELEV, RETENTION:RETENTION, STADES:STADES, VARIANTES:VARIANTES,
+              SIGNES:SIGNES, DIAGS:DIAGS, NEGATIFS:NEGATIFS, TECHNIQUES:TECHNIQUES }[nom];
+    chk("clés uniques dans " + nom, new Set(t.map(function(x){ return x.k; })).size === t.length);
+  });
+  chk("stades ordonnés",      STADES.every(function(s, i){ return !i || s.max > STADES[i-1].max; }));
+  chk("dernier stade ouvert", STADES[STADES.length-1].max === 99);
+  chk("sans terme, pas de stade", stadeAttendu(null) === null);
+  chk("chaque association a son « ne pas conclure »",
+      DIAGS.every(function(d){ return d.stop && d.signes.length >= 2; }));
+  chk("chaque association ne cite que des signes déclarés",
+      DIAGS.every(function(d){ return d.signes.every(function(k){ return !!par(SIGNES, k); }); }));
+  chk("le signe pivot fait partie de l'association",
+      DIAGS.every(function(d){ return !d.cle || d.signes.indexOf(d.cle) >= 0; }));
+  chk("seuil d'association atteignable",
+      DIAGS.every(function(d){ return seuil(d) >= 1 && seuil(d) <= d.signes.length; }));
+  chk("chaque négatif a son défaut", NEGATIFS.every(function(n){ return n.ko && n.p; }));
+  chk("une borne de rétention au moins est bonne",
+      RETENTION.some(function(r){ return r.q === "bon"; }));
+
+  /* Verrou */
+  chk("verrouillé au départ",  $("secSignes").classList.contains("off"));
+  clic("prelev", PRELEV[0].k);
+  chk("clic ignoré sous verrou", !E.prelev[PRELEV[0].k]);
+  set("dossier", "26p0123");
+  chk("lecteur manquant",      $("secSignes").classList.contains("off"));
+  set("operateur", "RM");
+  await pause();
+  chk("déverrouillé",         !$("secSignes").classList.contains("off"));
+  chk("dossier normalisé",     $("dossier").value === "26P0123");
+  chk("export activé",        !$("btnExport").disabled);
+
+  /* Chips */
+  clic("prelev", PRELEV[0].k);
+  chk("chip prélèvement posée", E.prelev[PRELEV[0].k] === true &&
+      document.querySelector('[data-act="prelev"][data-k="' + PRELEV[0].k + '"]').className.indexOf("on") >= 0);
+  clic("prelev", PRELEV[0].k);
+  chk("chip retirée au 2e clic", !E.prelev[PRELEV[0].k]);
+
+  /* Rétention — le fœticide prime sur toute borne */
+  var bon = RETENTION.filter(function(r){ return r.q === "bon"; })[0];
+  clic("ret", bon.k, "present");
+  chk("borne posée",           $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("kcl", "kcl");
+  chk("KCl invalide la datation", $("vRetention").className.indexOf("bad") >= 0);
+  clic("kcl", "kcl");
+  chk("KCl levé, borne revenue", $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("ret", bon.k, "present");
+
+  /* Côté — organe pair */
+  if (PAIR){
+    chk("bloc côté visible",   !$("coteBloc").hidden);
+    chk("côté manquant en réserve",
+        verdictPrelevement().res.indexOf("côté non déclaré — organe pair") >= 0);
+    clic("cote", "droit");
+    chk("côté posé",            E.cote === "droit" && crTient("Droit — 1/2"));
+    clic("cote", "droit");
+    chk("2e clic retire le côté", E.cote === null);
+    clic("cote", "deux");
+  } else {
+    chk("pas de bloc côté sur organe impair", $("coteBloc").hidden);
+  }
+
+  /* Signes et associations */
+  var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
+  chk("rien à associer au départ", $("diags").textContent.indexOf("Aucun signe anormal") >= 0);
+  clic("les", l0.k, "anormal");
+  chk("signe posé anormal",    E.signes[l0.k] === "anormal");
+  chk("association esquissée",  $("diags").textContent.indexOf(d0.l) >= 0);
+  clic("les", l0.k, "anormal");
+  chk("2e clic remet à non exploré", !E.signes[l0.k]);
+  clic("les", l0.k, "normal");
+  chk("normal ne nourrit pas l'association", associations().length === 0);
+  clic("les", l0.k, "normal");
+
+  /* L'association complète se tient, et elle seule */
+  d0.signes.forEach(function(k){ clic("les", k, "anormal"); });
+  var a0 = associations().filter(function(a){ return a.d.k === d0.k; })[0];
+  chk("association tenue",     a0 && a0.tenu);
+  chk("CR : association écrite", crTient(d0.l + " — association tenue"));
+  chk("CR : ne pas conclure",  crTient("ne pas conclure : " + d0.stop));
+  d0.signes.slice(1).forEach(function(k){ clic("les", k, "anormal"); });
+  chk("retirer les signes défait l'association",
+      (associations().filter(function(a){ return a.d.k === d0.k; })[0] || {}).pris.length === 1);
+
+  /* Négatifs */
+  $("btnNegAll").click();
+  chk("tous les négatifs posés", Object.keys(E.negatifs).length === NEGATIFS.length);
+  clic("neg", NEGATIFS[0].k, "present");
+  chk("négatif retourné en rouge", E.negatifs[NEGATIFS[0].k] === "present" &&
+      document.querySelector('[data-act="neg"][data-k="' + NEGATIFS[0].k + '"][data-v="present"]').className.indexOf("no") >= 0);
+  chk("CR : défaut écrit",     crTient("! " + NEGATIFS[0].ko));
+  clic("neg", NEGATIFS[0].k, "absent");
+
+  /* Compte rendu */
+  clic("tech", TECHNIQUES[0].k);
+  set("libre", "Bloc non parvenu.");
+  chk("CR : en-tête dossier",  crTient("26P0123") && crTient("RM"));
+  chk("CR : signe anormal",    crTient(l0.l + " — ANORMAL"));
+  chk("CR : non explorés dits", crTient("Non explorés :"));
+  chk("CR : technique demandée", crTient(TECHNIQUES[0].l));
+  chk("CR : remarque libre",   crTient("Bloc non parvenu."));
+  chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
+
+  /* Contrôles propres à l'organe */
+  await testsOrgane(chk, clic, set, crTient, pause);
+
+  /* Termes FOETO — seulement si la fiche en rattache */
+  if (FOETO.sections.length){
+    var f0 = FOETO.sections[0].termes[0].id;
+    chk("FOETO : sections rendues", $("foeto").querySelectorAll(".sousTitre").length === FOETO.sections.length);
+    clic("foeto", f0);
+    chk("FOETO : terme coché",      E.foeto[f0] === true && $("tFoeto").textContent.indexOf("1/") === 0);
+    chk("FOETO : CR le porte",      crTient("[" + f0 + "]"));
+    chk("FOETO : exporté",          collecter().grille.foeto[f0] === true);
+    set("rqFoeto", foetoLabel(f0).slice(0, 4));
+    chk("FOETO : recherche",        $("sgFoeto").querySelectorAll("[data-pick]").length >= 1);
+    $("sgFoeto").querySelector("[data-pick]").click();
+    chk("FOETO : recherche vidée",  $("rqFoeto").value === "" && !$("sgFoeto").classList.contains("on"));
+    chk("FOETO : id lisible",       /^FOETO:/.test(f0));
+    clic("foeto", f0);
+    Object.keys(E.foeto).forEach(function(id){ delete E.foeto[id]; }); peindre();
+  }
+
+  /* Enveloppe, persistance, relecture — l'organe a pu reposer ses propres signes */
+  if (E.signes[l0.k] !== "anormal"){
+    if (E.signes[l0.k]) clic("les", l0.k, E.signes[l0.k]);
+    clic("les", l0.k, "anormal");
+  }
+  var snap = collecter();
+  chk("enveloppe conforme",    snap.schema_version === SCHEMA && snap.module === MODULE &&
+                               snap.module_version === VERSION && snap.dossier === "26P0123" &&
+                               snap.organe === ORGANE && !!snap.exported_at);
+  chk("version en entête",     $("ver").textContent === "v" + VERSION);
+  chk("CR dans le JSON",       snap.compte_rendu.indexOf(TITRE_CR + " — grille de lecture") === 0);
+
+  await putSaisie(snap);
+  vider();
+  chk("vider efface la grille", Object.keys(E.signes).length === 0);
+  var relu = await getSaisie("26P0123");
+  appliquer(relu);
+  chk("IndexedDB restitue",    E.signes[l0.k] === "anormal" &&
+                               $("sa").value === String(snap.terme_sa));
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+  chk("banc remis à zéro",     Object.keys(E.signes).length === 0 && $("secSignes").classList.contains("off"));
+  await relire(snap);
+  chk("relecture d'un JSON",   E.signes[l0.k] === "anormal" && dossier === "26P0123");
+  var refus = false;
+  try { await relire({module:"autopsie", grille:{}}); } catch(e){ refus = /module/.test(e.message); }
+  chk("JSON d'un autre module refusé", refus);
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>

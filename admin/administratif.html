@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Administratif et anamnèse</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF; --grey18:#7A7E7C;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --amber:#8A6A18;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off input,section.off select,section.off textarea,section.off button{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 180px;min-width:0}
+.field.wide{flex:1 1 100%}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],input[type=number],select,textarea{
+  width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+textarea{min-height:78px;resize:vertical;line-height:1.4}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+input[type=number],input.dat{font-family:var(--mono);letter-spacing:.03em}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+.chks{display:flex;flex-wrap:wrap;gap:6px}
+.chk{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;
+     letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);
+     border:1px solid var(--rule);border-radius:2px;padding:8px 10px;
+     background:var(--paper);cursor:pointer;min-height:40px}
+.chk input{width:18px;height:18px;margin:0;accent-color:var(--drape)}
+.chk:has(input:checked){border-color:var(--drape);color:var(--drape);background:var(--drape-soft)}
+
+.gross{border:1px solid var(--rule);border-left:2px solid var(--drape);
+       border-radius:2px;padding:11px;margin-bottom:10px;background:var(--paper)}
+.foet{border:1px solid var(--rule);border-left:2px solid var(--grey18);
+      border-radius:2px;padding:10px;margin:8px 0 0;background:var(--card)}
+.top{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}
+.rang{font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--drape);font-weight:600}
+.foet .rang{color:var(--grey18)}
+.evt{border:1px solid var(--rule);border-left:2px solid var(--amber);
+     border-radius:2px;padding:10px;margin-bottom:8px;background:var(--card)}
+.evt .rang{color:var(--amber)}
+.sa{font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+    color:var(--drape);font-weight:600}
+.sa.bad{color:var(--alert)}
+.del{margin-left:auto;appearance:none;background:none;border:1px solid var(--rule);
+     color:var(--alert);font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+     border-radius:2px;padding:5px 9px;cursor:pointer;min-height:32px}
+.del:hover{background:#F7EAE7;border-color:var(--alert)}
+.addf{appearance:none;background:none;border:1px dashed var(--rule);color:var(--ink-soft);
+      font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+      border-radius:2px;padding:8px 11px;cursor:pointer;min-height:38px;margin-top:9px}
+.addf:hover{border-color:var(--drape);color:var(--drape)}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:#F7EAE7}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · dossier</p>
+  <h1>Administratif et anamnèse <span class="ver" id="ver"></span></h1>
+  <p class="sub">Document autonome. La saisie reste sur cet appareil ; rien n'est transmis.
+  Elle porte des données nominatives : vider le stockage une fois l'export récupéré.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Libre, mis en majuscules. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Opérateur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la saisie.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02+ — Trame -->
+<div id="trame"></div>
+
+<!-- Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n" id="nSortie"></span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Vider le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- Diagnostic -->
+<section>
+  <h2><span class="n" id="nDiag"></span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante, aucun fetch : doit fonctionner par double-clic hors réseau.
+
+   Cible d'ingestion : minihub/bamara_schema.sql, calé sur le SDM-MR v2.17.
+   Les libellés à l'écran restent ceux du fœtopathologiste ; la traduction
+   vers BaMaRa est faite ICI, à la saisie, pour tout ce qu'une traduction en
+   aval ne pourrait plus reconstituer — précision des dates, rang du fœtus
+   dans la grossesse, issue éclatée en birth/termination_type/stp_type.
+   Le reste des noms de champs reste local et se renomme à l'ingestion.
+
+   Stockage en IndexedDB, y compris pour les champs texte : localStorage est
+   erratique en file:// et cloisonné par fichier sur certains navigateurs.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var MODULE = "administratif";
+var SCHEMA = "0.3.0";
+var VERSION = "2.1.1";   /* version du document ; à incrémenter à chaque diffusion */
+var DB_NAME = "foeto-administratif", DB_VER = 1, db = null;
+
+/* ── Dates partielles ─────────────────────────────────────────────────────────
+   BaMaRa éclate toute date en year/month/day + un date_mask qui dit jusqu'où
+   elle est connue. Une date d'IVG d'il y a douze ans se souvient de l'année,
+   rarement du jour : un <input type="date"> exige tout ou rien et jette le
+   reste. On saisit donc en texte, à trois précisions.
+
+   ponytail: on écrit `precision` (annee|mois|jour) et mask=0 pour une date
+   complète — la seule valeur de mask attestée dans minihub. Les codes de mask
+   partiel ne sont documentés nulle part dans le dépôt : les inventer ferait
+   passer une convention fausse pour une donnée. L'ingestion mappera
+   precision -> mask une fois la table BaMaRa confirmée.                      */
+function joursDansMois(m, a){ return new Date(a, m, 0).getDate(); }
+function parseDate(s){
+  s = String(s == null ? "" : s).trim();
+  if (!s) return null;
+  var p = s.split(/[\/\-.\s]+/).filter(Boolean);
+  if (p.length > 3 || !p.every(function(x){ return /^\d+$/.test(x); })) return "err";
+  p = p.map(Number);
+  var a, m = null, j = null;
+  if (p.length === 1) a = p[0];
+  else if (p.length === 2){ m = p[0]; a = p[1]; }
+  else if (p[0] > 31){ a = p[0]; m = p[1]; j = p[2]; }   /* collé en ISO */
+  else { j = p[0]; m = p[1]; a = p[2]; }
+  if (!(a >= 1900 && a <= 2100)) return "err";
+  if (m !== null && !(m >= 1 && m <= 12)) return "err";
+  if (j !== null && !(j >= 1 && j <= joursDansMois(m, a))) return "err";
+  return {
+    annee: a, mois: m, jour: j,
+    precision: j !== null ? "jour" : m !== null ? "mois" : "annee",
+    mask: j !== null ? 0 : null
+  };
+}
+function fmtDate(o){
+  if (!o || o === "err" || o.annee == null) return "";
+  var d2 = function(n){ return ("0" + n).slice(-2); };
+  return o.jour != null ? d2(o.jour) + "/" + d2(o.mois) + "/" + o.annee
+       : o.mois != null ? d2(o.mois) + "/" + o.annee
+       : String(o.annee);
+}
+
+/* ── Semaines d'aménorrhée ────────────────────────────────────────────────────
+   Les SA se comptent depuis les dernières règles ; la DDG est la conception,
+   deux semaines plus tard. Toute la convention tient dans SA_OFFSET_J : si le
+   service date sa DDG aux DDR, mettre 0 ici et rien d'autre ne bouge.
+   Une date partielle ne donne pas de SA — le jour ne s'invente pas.          */
+var SA_OFFSET_J = 14;
+function jourUTC(o){
+  return (o && o !== "err" && o.precision === "jour")
+       ? Date.UTC(o.annee, o.mois - 1, o.jour) : null;
+}
+function calcSA(ddg, d){
+  var a = jourUTC(ddg), b = jourUTC(d);
+  if (a === null || b === null) return null;
+  var t = Math.round((b - a) / 86400000) + SA_OFFSET_J;
+  return { total_j: t, sa: Math.floor(t / 7), j: ((t % 7) + 7) % 7 };
+}
+function saHorsBornes(s){ return !!s && (s.total_j < 0 || s.sa > 45); }
+function fmtSA(s){
+  return !s ? "" : s.total_j < 0 ? "antérieur à la DDG" : s.sa + " SA + " + s.j + " j";
+}
+
+/* ── Vocabulaires ─────────────────────────────────────────────────────────────
+   ISSUES est la liste du fœtopathologiste, ordre du terme croissant.
+   BAM_ISSUE la traduit vers bam_pregnancy_end. IVG, FCS, GEU et AUTRE n'ont
+   PAS de code BaMaRa — ce n'est pas un registre d'événements obstétricaux —
+   et restent purement locales : à null, jamais forcées dans un code voisin. */
+var ISSUES = [
+  ["IVG",               "IVG"],
+  ["FCS",               "FCS"],
+  ["IMG",               "IMG"],
+  ["MFIU",              "MFIU"],
+  ["GEU",               "GEU"],
+  ["ISG",               "ISG — interruption sélective"],
+  ["MPN",               "Mort per-natale"],
+  ["MNN",               "Mort néonatale"],
+  ["NAISSANCE_VIVANTE", "Naissance vivante"],
+  ["AUTRE",             "Autre"]
+];
+var BAM_ISSUE = {
+  IMG:               { birth:false, termination_type:"IMG", stp_type:null },
+  ISG:               { birth:false, termination_type:"ISG", stp_type:null },
+  MFIU:              { birth:false, termination_type:null,  stp_type:"INUTERO" },
+  MPN:               { birth:false, termination_type:null,  stp_type:"PERPARTUM" },
+  MNN:               { birth:true,  termination_type:null,  stp_type:null },
+  NAISSANCE_VIVANTE: { birth:true,  termination_type:null,  stp_type:null }
+};
+var SEXES = [["M","Masculin"],["F","Féminin"],["UNK","Indéterminé"]];
+var OUINON = [["true","Oui"],["false","Non"],["UNK","Inconnu"]];
+var VOIES = [
+  ["VB",         "Voie basse"],
+  ["VB_INSTR",   "Voie basse instrumentale"],
+  ["CESARIENNE", "Césarienne"],
+  ["ASPIRATION", "Aspiration / curetage"],
+  ["INCONNUE",   "Inconnue"]
+];
+var ECHO = [["NORMALE","Normale"],["ANOMALIE","Anomalie"],["NON_FAITE","Non faite"]];
+var TYPES_EVT = [
+  ["ECHOGRAPHIE",  "Échographie"],
+  ["CONSULTATION", "Consultation"],
+  ["EVENEMENT",    "Événement"]
+];
+
+/* ── Trame de saisie ──────────────────────────────────────────────────────────
+   t : text | num | dat | sel | txt | chks.  w : champ pleine largeur.        */
+var TRAME = [
+  { id:"identite", titre:"Identité", champs:[
+    { k:"nom_mere",       l:"Nom utilisé — mère",    t:"text" },
+    { k:"nom_naiss",      l:"Nom de naissance — mère", t:"text" },
+    { k:"prenom_mere",    l:"Prénom de la mère",     t:"text" },
+    { k:"ddn_mere",       l:"Naissance de la mère",  t:"dat" },
+    { k:"prenom_foetus",  l:"Prénom du fœtus",       t:"text" },
+    { k:"ipp",            l:"IPP mère",              t:"text", mono:true },
+    { k:"ipp_fetus",      l:"IPP fœtus",             t:"text", mono:true },
+    { k:"ins",            l:"INS",                   t:"text", mono:true, hint:"13 chiffres" },
+    { k:"id_ext",         l:"Identifiant externe",   t:"text", mono:true },
+    { k:"opposition",     l:"Opposition au registre", t:"sel", o:[["false","Non"],["true","Oui"]],
+      hint:"SDM item 1. Bloque l'envoi si « Oui »." }
+  ]},
+
+  { id:"circuit", titre:"Circuit du prélèvement", champs:[
+    { k:"date_deces",     l:"Date du décès",         t:"dat" },
+    { k:"date_reception", l:"Date de réception",      t:"dat" },
+    { k:"date_examen",    l:"Date de l'examen",       t:"dat" },
+    { k:"medecin",        l:"Médecin demandeur",     t:"text" },
+    { k:"medecin_rpps",   l:"RPPS",                  t:"text", mono:true, hint:"11 chiffres" },
+    { k:"service",        l:"Service",               t:"text" },
+    { k:"ville_maternite",l:"Ville de la maternité", t:"text" }
+  ]},
+
+  { id:"issue", titre:"Grossesse actuelle — issue", champs:[
+    { k:"type_issue",     l:"Type d'issue",          t:"sel", o:ISSUES },
+    { k:"terme_sa",       l:"Terme (SA)",            t:"num", min:4, max:45 },
+    { k:"terme_j",        l:"Jours révolus",         t:"num", min:0, max:6,
+      hint:"Local — BaMaRa ne prend que les SA entières." },
+    { k:"sexe",           l:"Sexe",                  t:"sel", o:SEXES },
+    { k:"voie",           l:"Voie d'accouchement",   t:"sel", o:VOIES },
+    { k:"multiple",       l:"Grossesse multiple",    t:"sel", o:[["false","Non"],["true","Oui"]] },
+    { k:"indication",     l:"Indication de l'examen",t:"txt", w:true }
+  ]},
+
+  { id:"atcd_mat", titre:"Antécédents maternels", champs:[
+    { k:"profession_mere",l:"Profession",            t:"text" },
+    { k:"groupe_sanguin", l:"Groupe sanguin",        t:"sel", o:[["A","A"],["B","B"],["AB","AB"],["O","O"]] },
+    { k:"rhesus",         l:"Rhésus",                t:"sel", o:[["POS","Positif"],["NEG","Négatif"]] },
+    { k:"consanguinite",  l:"Consanguinité",         t:"sel", o:OUINON,
+      hint:"Trois états : « Non » et « Inconnu » ne se valent pas." },
+    { k:"fdr",            l:"Facteurs de risque",    t:"chks", w:true, o:[
+        ["hta","HTA"],["diabete","Diabète"],["tabac","Tabac"],["alcool","Alcool"]
+    ]},
+    { k:"atcd_medicaux",  l:"Antécédents médicaux",  t:"txt", w:true },
+    { k:"traitements",    l:"Traitements en cours",  t:"txt", w:true }
+  ]},
+
+  { id:"atcd_obs", titre:"Grossesses précédentes", rep:true, champs:[
+    { k:"gestite",        l:"Gestité",               t:"num", min:1, max:25,
+      hint:"Grossesses au total, celle-ci comprise." },
+    { k:"parite",         l:"Parité",                t:"num", min:0, max:25,
+      hint:"Accouchements ≥ 22 SA." }
+  ]},
+
+  { id:"grossesse", titre:"Grossesse en cours", chrono:true, champs:[
+    { k:"mode_conception",l:"Mode de conception",    t:"sel",
+      o:[["SPONTANEE","Spontanée"],["AMP","AMP"]] },
+    { k:"amp_type",       l:"Technique d'AMP",       t:"sel", o:[
+        ["FIV","FIV"],["ICSI","FIV-ICSI"],["IIU","IIU"],
+        ["DON_OVO","Don d'ovocyte"],["DON_SPERME","Don de sperme"],
+        ["STIM","Stimulation simple"]
+    ]},
+    { k:"ddg",            l:"Début de grossesse",    t:"dat",
+      hint:"Sans DDG, pas d'identité fœtale possible dans BaMaRa." },
+    { k:"lieu_suivi",     l:"Lieu du suivi",         t:"text" },
+    { k:"risque_t21",     l:"Risque combiné T21",    t:"text", mono:true, hint:"1/n" },
+    { k:"bhcg",           l:"β-hCG (MoM)",           t:"num", step:"0.01", min:0 },
+    { k:"pappa",          l:"PAPP-A (MoM)",          t:"num", step:"0.01", min:0 },
+    { k:"lcc",            l:"LCC au T1 (mm)",        t:"num", step:"0.1", min:0 },
+    { k:"cn",             l:"Clarté nucale (mm)",    t:"num", step:"0.1", min:0 },
+    { k:"histoire_clinique", l:"Histoire de la maladie", t:"txt", w:true },
+    { k:"contexte_clinique", l:"Contexte clinique",  t:"txt", w:true }
+  ]},
+
+  { id:"prenatal", titre:"Examens prénataux", champs:[
+    { k:"echo_t1",         l:"Échographie T1",        t:"sel", o:ECHO },
+    { k:"echo_t1_details", l:"Détail T1",             t:"txt", w:true },
+    { k:"echo_t2",         l:"Échographie T2",        t:"sel", o:ECHO },
+    { k:"echo_t2_details", l:"Détail T2",             t:"txt", w:true },
+    { k:"echo_t3",         l:"Échographie T3",        t:"sel", o:ECHO },
+    { k:"echo_t3_details", l:"Détail T3",             t:"txt", w:true },
+    { k:"autres_examens",  l:"Autres examens (caryotype, ACPA, sérologies…)", t:"txt", w:true }
+  ]}
+];
+var TOUS = TRAME.reduce(function(a,g){ return a.concat(g.champs); }, []);
+
+/* Grossesse précédente = bam_pregnancy_history … */
+var PCHAMPS = [
+  { k:"date_debut", l:"Début de grossesse", t:"dat" },
+  { k:"date_fin",   l:"Fin de grossesse",   t:"dat" },
+  { k:"amp",        l:"AMP",                t:"sel", o:OUINON },
+  { k:"voie",       l:"Voie d'accouchement", t:"sel", o:VOIES, local:true }
+];
+/* … qui porte N fœtus = bam_fetus. Une gémellaire tient dans une grossesse. */
+var FCHAMPS = [
+  { k:"prenom",     l:"Prénom",       t:"text" },
+  { k:"sexe",       l:"Sexe",         t:"sel", o:SEXES },
+  { k:"issue",      l:"Issue",        t:"sel", o:ISSUES },
+  { k:"terme",      l:"Terme (SA)",   t:"num", min:4, max:45 },
+  { k:"date_deces", l:"Date du décès", t:"dat" },
+  { k:"foetopath",  l:"Fœtopathologie faite", t:"sel", o:OUINON },
+  { k:"percentile", l:"Percentile",   t:"num", min:0, max:100, local:true },
+  { k:"remarques",  l:"Remarques",    t:"txt", w:true, local:true }
+];
+/* Chronologie de la grossesse en cours. Les SA sont dérivées de la DDG, jamais
+   saisies : une seule date à corriger si la DDG est reprise. Purement locale —
+   BaMaRa n'a pas de table d'événements de suivi.                             */
+var CCHAMPS = [
+  { k:"date",  l:"Date",         t:"dat" },
+  { k:"type",  l:"Nature",       t:"sel", o:TYPES_EVT },
+  { k:"texte", l:"Compte rendu", t:"txt", w:true }
+];
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function normDossier(v){ return v.toUpperCase().replace(/^(\d{2})P/, "$1P").replace(/\s+/g,""); }
+function dossierOk(v){ return v.trim().length > 0; } // ponytail: plus de format imposé, seul le uppercase (normDossier) reste
+function val(id){ var e = $(id); return e ? e.value.trim() : ""; }
+function nb(id){ var v = parseFloat(val(id)); return isFinite(v) ? v : null; }
+/* Une valeur de champ, typée selon la trame. "err" remonte tel quel. */
+function lire(c, id){
+  var v = val(id);
+  if (v === "") return null;
+  if (c.t === "num") return nb(id);
+  if (c.t === "dat") return parseDate(v);
+  return v;
+}
+
+/* ── Contrôles ────────────────────────────────────────────────────────────────
+   Seules règles métier du module. La gestité compte la grossesse actuelle,
+   donc le nombre de grossesses précédentes attendu est gestite - 1.         */
+function coherence(gestite, parite, nLignes){
+  var msg = [];
+  if (gestite != null && parite != null && parite > gestite)
+    msg.push("parité (" + parite + ") supérieure à la gestité (" + gestite + ")");
+  if (gestite != null){
+    var attendu = gestite - 1;
+    if (nLignes !== attendu)
+      msg.push("gestité " + gestite + " → " + attendu + " grossesse(s) précédente(s) attendue(s), "
+               + nLignes + " saisie(s)");
+  }
+  return msg;
+}
+/* Toute date mal formée, où qu'elle soit, remonte dans l'export. */
+function datesInvalides(racine){
+  var out = [];
+  (function creuser(o, chemin){
+    if (o === "err"){ out.push(chemin); return; }
+    if (o && typeof o === "object")
+      Object.keys(o).forEach(function(k){
+        creuser(o[k], chemin ? chemin + "." + k : k);
+      });
+  })(racine, "");
+  return out;
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────── */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction("saisies", mode), out = fn(t.objectStore("saisies"));
+    /* Tester la présence de `result`, pas sa valeur : un get() qui ne trouve rien
+       a bien un `result` (undefined) — comparé à undefined, la requête elle-même
+       était rendue, et un dossier jamais saisi s'annonçait comme restitué. */
+    t.oncomplete = function(){ res(out && "result" in out ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("readonly", function(s){ return s.get(d); }); }
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "";
+
+/* ── Rendu d'un champ ─────────────────────────────────────────────────────── */
+function champHTML(c, pre){
+  var id = pre + c.k, h = "";
+  if (c.t === "chks"){
+    h = '<div class="chks">' + c.o.map(function(p){
+      return '<label class="chk"><input type="checkbox" id="' + id + "_" + p[0] + '">'
+           + esc(p[1]) + '</label>';
+    }).join("") + '</div>';
+  } else if (c.t === "sel"){
+    h = '<select id="' + id + '"><option value="">—</option>' + c.o.map(function(p){
+      return '<option value="' + esc(p[0]) + '">' + esc(p[1]) + '</option>';
+    }).join("") + '</select>';
+  } else if (c.t === "txt"){
+    h = '<textarea id="' + id + '" placeholder="—"></textarea>';
+  } else if (c.t === "num"){
+    h = '<input type="number" id="' + id + '" inputmode="decimal" placeholder="—"'
+      + (c.min != null ? ' min="' + c.min + '"' : "")
+      + (c.max != null ? ' max="' + c.max + '"' : "")
+      + ' step="' + (c.step || "1") + '">';
+  } else if (c.t === "dat"){
+    h = '<input type="text" id="' + id + '" class="dat" data-dat="1" inputmode="numeric"'
+      + ' autocomplete="off" spellcheck="false" placeholder="AAAA · MM/AAAA · JJ/MM/AAAA">'
+      + '<div class="hint" id="d_' + id + '">Année seule acceptée.</div>';
+  } else {
+    h = '<input type="text" id="' + id + '" autocomplete="off"'
+      + (c.mono ? ' class="mono" spellcheck="false"' : "") + ' placeholder="—">';
+  }
+  return '<div class="field' + (c.w ? " wide" : "") + '">'
+       + '<label for="' + id + '">' + esc(c.l) + '</label>' + h
+       + (c.hint ? '<div class="hint">' + esc(c.hint) + '</div>' : "")
+       + '</div>';
+}
+(function batir(){
+  var h = "", n = 2;
+  TRAME.forEach(function(g){
+    h += '<section id="sec_' + g.id + '" class="off">'
+       +   '<h2><span class="n">' + ("0" + n).slice(-2) + '</span>' + esc(g.titre)
+       +     '<span class="tally" id="t_' + g.id + '">—</span></h2>'
+       +   '<div class="row">'
+       +     g.champs.map(function(c){ return champHTML(c, "f_"); }).join("")
+       +   '</div>';
+    if (g.id === "issue")
+      h += '<div class="hint" id="issueHint" style="margin-top:10px"></div>';
+    if (g.rep){
+      h += '<div class="hint" id="obsHint" style="margin:10px 0 8px"></div>'
+         + '<div id="grossesses"></div>'
+         + '<div class="btns"><button class="btn" id="btnAdd">Ajouter une grossesse</button></div>';
+    }
+    if (g.chrono){
+      h += '<div class="hint" id="chronoHint" style="margin:10px 0 8px"></div>'
+         + '<div id="chrono"></div>'
+         + '<div class="btns"><button class="btn" id="btnAddEvt">Ajouter une ligne</button></div>';
+    }
+    h += '</section>';
+    n++;
+  });
+  $("trame").innerHTML = h;
+  $("nSortie").textContent = ("0" + n).slice(-2); n++;
+  $("nDiag").textContent   = ("0" + n).slice(-2);
+})();
+
+/* ── Grossesses précédentes, deux niveaux ─────────────────────────────────── */
+var seq = 0;   /* identifiants de bloc, jamais réutilisés */
+function ajouterFoetus(carte, donnees){
+  var uid = "x" + (++seq);
+  var d = document.createElement("div");
+  d.className = "foet"; d.dataset.uid = uid;
+  d.innerHTML = '<div class="top"><span class="rang"></span>'
+              +   '<button class="del" type="button">Retirer</button></div>'
+              + '<div class="row">'
+              +   FCHAMPS.map(function(c){ return champHTML(c, uid + "_"); }).join("")
+              + '</div>';
+  d.querySelector(".del").onclick = function(){ d.remove(); rangs(); majObs(); enregistrer(); };
+  carte.querySelector(".foetus").appendChild(d);
+  if (donnees) remplir(FCHAMPS, uid, donnees);
+  return uid;
+}
+function ajouterGrossesse(donnees){
+  var uid = "p" + (++seq);
+  var d = document.createElement("div");
+  d.className = "gross"; d.dataset.uid = uid;
+  d.innerHTML = '<div class="top"><span class="rang"></span>'
+              +   '<button class="del" type="button">Retirer</button></div>'
+              + '<div class="row">'
+              +   PCHAMPS.map(function(c){ return champHTML(c, uid + "_"); }).join("")
+              + '</div>'
+              + '<div class="foetus"></div>'
+              + '<button class="addf" type="button">Ajouter un fœtus</button>';
+  d.querySelector(".del").onclick = function(){ d.remove(); rangs(); majObs(); enregistrer(); };
+  d.querySelector(".addf").onclick = function(){
+    ajouterFoetus(d); rangs(); majObs(); enregistrer();
+  };
+  $("grossesses").appendChild(d);
+  if (donnees){
+    remplir(PCHAMPS, uid, donnees);
+    (donnees.foetus || []).forEach(function(f){ ajouterFoetus(d, f); });
+  }
+  /* nb_fetus est NOT NULL DEFAULT 1 côté BaMaRa : jamais de grossesse vide. */
+  if (!d.querySelector(".foetus").children.length) ajouterFoetus(d);
+  rangs(); majObs();
+  return uid;
+}
+function remplir(champs, uid, donnees){
+  champs.forEach(function(c){
+    var e = $(uid + "_" + c.k);
+    if (!e) return;
+    var v = donnees[c.k];
+    e.value = v == null ? "" : (c.t === "dat" ? fmtDate(v) : v);
+    if (c.t === "dat") majDat(e);
+  });
+}
+function rangs(){
+  var l = $("grossesses").children;
+  for (var i = 0; i < l.length; i++){
+    l[i].querySelector(".rang").textContent = "G" + (i + 1);
+    var f = l[i].querySelector(".foetus").children;
+    for (var k = 0; k < f.length; k++)
+      f[k].querySelector(".rang").textContent =
+        "G" + (i + 1) + " · fœtus " + (k + 1) + "/" + f.length;
+  }
+}
+function collecteBloc(champs, uid){
+  var o = {};
+  champs.forEach(function(c){ o[c.k] = lire(c, uid + "_" + c.k); });
+  return o;
+}
+function lignesObs(){
+  return Array.prototype.map.call($("grossesses").children, function(d){
+    var o = collecteBloc(PCHAMPS, d.dataset.uid);
+    o.foetus = Array.prototype.map.call(d.querySelector(".foetus").children, function(f, i){
+      var g = collecteBloc(FCHAMPS, f.dataset.uid);
+      g.multiple_preg_order = i + 1;
+      g.bamara = BAM_ISSUE[g.issue] || null;
+      return g;
+    });
+    o.nb_fetus = o.foetus.length;            /* dérivé, jamais saisi */
+    o.is_multiple_pregnancy = o.nb_fetus > 1;
+    return o;
+  });
+}
+function majObs(){
+  var n = $("grossesses").children.length;
+  var f = lignesObs().reduce(function(a, g){ return a + g.nb_fetus; }, 0);
+  $("t_atcd_obs").textContent = n + " grossesse(s) · " + f + " fœtus";
+  var msg = coherence(nb("f_gestite"), nb("f_parite"), n);
+  var h = $("obsHint");
+  h.className = "hint" + (msg.length ? " warn" : n ? " good" : "");
+  h.textContent = msg.length ? "⚠ " + msg.join(" · ")
+                : n ? "Gestité et grossesses saisies concordent."
+                    : "Renseigner la gestité pour contrôler le compte.";
+}
+
+/* ── Chronologie de la grossesse en cours ─────────────────────────────────────
+   ponytail: pas de tri automatique. Réordonner le DOM pendant qu'on tape une
+   date déplacerait le champ sous le curseur ; l'export porte la date parsée,
+   le traitement trie. Ajouter le tri si les lignes arrivent vraiment mêlées. */
+function ajouterEvt(donnees){
+  var uid = "e" + (++seq);
+  var d = document.createElement("div");
+  d.className = "evt"; d.dataset.uid = uid;
+  d.innerHTML = '<div class="top"><span class="rang"></span>'
+              +   '<span class="sa" id="' + uid + '_sa"></span>'
+              +   '<button class="del" type="button">Retirer</button></div>'
+              + '<div class="row">'
+              +   CCHAMPS.map(function(c){ return champHTML(c, uid + "_"); }).join("")
+              + '</div>';
+  d.querySelector(".del").onclick = function(){ d.remove(); majChrono(); enregistrer(); };
+  $("chrono").appendChild(d);
+  if (donnees) remplir(CCHAMPS, uid, donnees);
+  majChrono();
+  return uid;
+}
+function lignesChrono(){
+  var ddg = parseDate(val("f_ddg"));
+  return Array.prototype.map.call($("chrono").children, function(d){
+    var o = collecteBloc(CCHAMPS, d.dataset.uid);
+    o.sa = calcSA(ddg, o.date);            /* dérivée, jamais saisie */
+    return o;
+  });
+}
+function majChrono(){
+  var ddg = parseDate(val("f_ddg")), l = $("chrono").children, hors = 0;
+  for (var i = 0; i < l.length; i++){
+    var uid = l[i].dataset.uid;
+    l[i].querySelector(".rang").textContent = "#" + (i + 1);
+    var s = calcSA(ddg, parseDate(val(uid + "_date"))), b = $(uid + "_sa");
+    if (saHorsBornes(s)) hors++;
+    b.className = "sa" + (saHorsBornes(s) ? " bad" : "");
+    b.textContent = fmtSA(s);
+  }
+  var date = jourUTC(ddg) !== null, h = $("chronoHint");
+  h.className = "hint" + (hors ? " warn" : date && l.length ? " good" : "");
+  h.textContent =
+      !l.length ? "Échographies, consultations et événements, dans l'ordre où ils sont retrouvés."
+    : !date     ? l.length + " ligne(s) — DDG au jour près pour dater en SA."
+    : hors      ? "⚠ " + hors + " ligne(s) hors grossesse (avant la DDG ou au-delà de 45 SA)."
+                : l.length + " ligne(s) datées depuis la DDG.";
+}
+
+/* ── Retour de la traduction BaMaRa à l'écran ─────────────────────────────── */
+function majIssue(){
+  var k = val("f_type_issue"), b = BAM_ISSUE[k], h = $("issueHint");
+  if (!k){ h.className = "hint"; h.textContent = "Issue non renseignée."; return; }
+  if (!b){
+    h.className = "hint warn";
+    h.textContent = "⚠ " + k + " n'a pas de code BaMaRa — conservée en local, non exportée.";
+    return;
+  }
+  h.className = "hint good";
+  h.textContent = "BaMaRa : birth=" + b.birth
+                + (b.termination_type ? " · termination_type=" + b.termination_type : "")
+                + (b.stp_type ? " · stp_type=" + b.stp_type : "")
+                + (b.birth ? " · date de décès requise si décès" : "");
+}
+function majDat(e){
+  var h = $("d_" + e.id);
+  if (!h) return;
+  var o = parseDate(e.value);
+  if (o === null){ h.className = "hint"; h.textContent = "Année seule acceptée."; }
+  else if (o === "err"){ h.className = "hint bad"; h.textContent = "Date illisible."; }
+  else { h.className = "hint good"; h.textContent = fmtDate(o) + " — précision " + o.precision; }
+}
+
+/* ── Compteurs de remplissage ─────────────────────────────────────────────── */
+function recompter(){
+  TRAME.forEach(function(g){
+    if (g.rep) return;
+    var faits = g.champs.filter(function(c){
+      if (c.t === "chks") return c.o.some(function(p){ return $("f_" + c.k + "_" + p[0]).checked; });
+      return val("f_" + c.k) !== "";
+    }).length;
+    $("t_" + g.id).textContent = faits + "/" + g.champs.length;
+  });
+  majIssue();
+  majObs();
+  majChrono();
+}
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  TRAME.forEach(function(g){ $("sec_" + g.id).classList.toggle("off", !ouvert); });
+  $("secSortie").classList.toggle("off", !ouvert);
+}
+
+/* ── Collecte / restitution ───────────────────────────────────────────────── */
+function collecter(){
+  var out = {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    dossier: dossier,
+    operateur: val("operateur") || null,
+    exported_at: new Date().toISOString()
+  };
+  TRAME.forEach(function(g){
+    var bloc = {};
+    g.champs.forEach(function(c){
+      if (c.t === "chks"){
+        var f = {};
+        c.o.forEach(function(p){ f[p[0]] = $("f_" + c.k + "_" + p[0]).checked; });
+        bloc[c.k] = f;
+      } else bloc[c.k] = lire(c, "f_" + c.k);
+    });
+    if (g.rep) bloc.grossesses = lignesObs();
+    if (g.chrono) bloc.chronologie = lignesChrono();
+    out[g.id] = bloc;
+  });
+  out.issue.bamara = BAM_ISSUE[out.issue.type_issue] || null;
+  out.coherence = coherence(nb("f_gestite"), nb("f_parite"),
+                            $("grossesses").children.length)
+                  .concat(datesInvalides(out).map(function(c){ return "date illisible : " + c; }))
+                  .concat(out.grossesse.chronologie
+                          .filter(function(l){ return saHorsBornes(l.sa); })
+                          .map(function(l){
+                            return "chronologie hors grossesse : " + fmtDate(l.date);
+                          }));
+  return out;
+}
+function appliquer(o){
+  TRAME.forEach(function(g){
+    var bloc = o[g.id] || {};
+    g.champs.forEach(function(c){
+      if (c.t === "chks"){
+        var f = bloc[c.k] || {};
+        c.o.forEach(function(p){ $("f_" + c.k + "_" + p[0]).checked = !!f[p[0]]; });
+      } else {
+        var e = $("f_" + c.k), v = bloc[c.k];
+        e.value = v == null ? "" : (c.t === "dat" ? fmtDate(v) : v);
+        if (c.t === "dat") majDat(e);
+      }
+    });
+    if (g.rep){
+      $("grossesses").innerHTML = "";
+      (bloc.grossesses || []).forEach(function(x){ ajouterGrossesse(x); });
+    }
+    if (g.chrono){
+      $("chrono").innerHTML = "";
+      (bloc.chronologie || []).forEach(function(x){ ajouterEvt(x); });
+    }
+  });
+  recompter();
+}
+function vider(){
+  TOUS.forEach(function(c){
+    if (c.t === "chks") c.o.forEach(function(p){ $("f_" + c.k + "_" + p[0]).checked = false; });
+    else {
+      var e = $("f_" + c.k);
+      e.value = "";
+      if (c.t === "dat") majDat(e);
+    }
+  });
+  $("grossesses").innerHTML = "";
+  $("chrono").innerHTML = "";
+  recompter();
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, num = dossierOk(v), op = val("operateur") !== "";
+  var ok = num && op;
+  var h = $("dossierHint");
+  h.className = "hint" + (v && !num ? " bad" : num ? " good" : "");
+  h.textContent = !v ? "Libre, mis en majuscules. Conditionne l'enregistrement."
+                : num ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                      : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la saisie.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json."
+    : num ? "Saisir l'opérateur pour activer l'export."
+          : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){
+    dossier = v;
+    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    if (rec){ appliquer(rec); flash("Saisie du " + dossier + " restituée."); }
+    else vider();
+  } else if (!ok && dossier){
+    dossier = ""; vider();
+  }
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+$("btnExport").onclick = function(){
+  if (!dossierOk(dossier)) return;
+  var out = collecter();
+  telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+              dossier + "_" + MODULE + ".json");
+  var f = out.atcd_obs.grossesses.reduce(function(a, g){ return a + g.nb_fetus; }, 0);
+  flash(out.atcd_obs.grossesses.length + " grossesse(s), " + f + " fœtus, "
+        + out.grossesse.chronologie.length + " ligne(s) de suivi exporté(s)."
+        + (out.coherence.length ? " " + out.coherence.length + " point(s) à vérifier." : ""));
+};
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = async function(){
+    try {
+      var o = JSON.parse(String(fr.result));
+      if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+      if (!o.identite) throw new Error("aucune clé « identite »");
+      if (o.dossier) $("dossier").value = normDossier(o.dossier);
+      if (o.operateur) $("operateur").value = o.operateur;
+      await majDossier();
+      if (!dossier) throw new Error("numéro de dossier absent ou opérateur manquant");
+      appliquer(o);
+      enregistrer();
+      flash("Saisie relue.");
+    } catch(e){ flash("Relecture impossible : " + e.message); }
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la saisie du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    await tx("readwrite", function(s){ return s.delete(dossier); });
+    vider(); flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les saisies de TOUS les dossiers sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("readwrite", function(s){ return s.clear(); });
+  vider(); flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Champs de la trame", TOUS.length + " sur " + TRAME.length + " blocs");
+  ligne("Cible d'ingestion", "bamara_schema.sql — SDM-MR v2.17");
+  ligne("Issues traduites", Object.keys(BAM_ISSUE).length + "/" + ISSUES.length
+        + " — IVG, FCS, GEU et Autre restent locales", "warn");
+  ligne("Dates", "partielles acceptées ; mask=0 si complète, sinon precision seule", "warn");
+  ligne("Datation en SA", "DDG + " + SA_OFFSET_J + " j, dérivée, au jour près seulement", "warn");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+document.addEventListener("input", function(e){
+  if (!e.target.closest("#trame")) return;
+  if (e.target.dataset.dat) majDat(e.target);
+  recompter(); enregistrer();
+});
+document.addEventListener("change", function(e){
+  if (e.target.closest("#trame")){ recompter(); enregistrer(); }
+});
+$("btnAdd").onclick = function(){ ajouterGrossesse(); enregistrer(); };
+$("btnAddEvt").onclick = function(){ ajouterEvt(); enregistrer(); };
+
+(async function(){
+  $("ver").textContent = "v" + VERSION;
+  recompter();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — aucune saisie ne sera conservée. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir administratif.html?selftest=1 ─────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+
+  /* Dates partielles */
+  var d;
+  d = parseDate("2014");
+  chk("année seule",             d.annee === 2014 && d.mois === null && d.jour === null);
+  chk("précision année",         d.precision === "annee" && d.mask === null);
+  d = parseDate("03/2014");
+  chk("mois/année",              d.annee === 2014 && d.mois === 3 && d.jour === null);
+  chk("précision mois",          d.precision === "mois" && d.mask === null);
+  d = parseDate("15/03/2014");
+  chk("jour/mois/année",         d.annee === 2014 && d.mois === 3 && d.jour === 15);
+  chk("mask 0 si complète",      d.precision === "jour" && d.mask === 0);
+  d = parseDate("2014-03-15");
+  chk("ISO reconnu",             d.annee === 2014 && d.mois === 3 && d.jour === 15);
+  chk("vide -> null",            parseDate("") === null && parseDate("  ") === null);
+  chk("31 février refusé",       parseDate("31/02/2014") === "err");
+  chk("29/02/2016 accepté",      parseDate("29/02/2016").jour === 29);
+  chk("mois 13 refusé",          parseDate("13/13/2014") === "err");
+  chk("année 1800 refusée",      parseDate("1800") === "err");
+  chk("texte refusé",            parseDate("hier") === "err");
+  chk("aller-retour jour",       fmtDate(parseDate("05/07/2014")) === "05/07/2014");
+  chk("aller-retour mois",       fmtDate(parseDate("7/2014")) === "07/2014");
+  chk("aller-retour année",      fmtDate(parseDate("2014")) === "2014");
+
+  /* Datation en SA */
+  var J = function(s){ return parseDate(s); };
+  chk("DDG même jour = 2 SA",    calcSA(J("01/01/2025"), J("01/01/2025")).sa === 2);
+  chk("reste à 0 j",             calcSA(J("01/01/2025"), J("01/01/2025")).j === 0);
+  chk("+ 7 j = 3 SA",            calcSA(J("01/01/2025"), J("08/01/2025")).sa === 3);
+  chk("22 SA à 140 j",           calcSA(J("01/01/2025"), J("21/05/2025")).sa === 22);
+  chk("jours révolus",           calcSA(J("01/01/2025"), J("10/01/2025")).j === 2);
+  chk("bascule d'année",         calcSA(J("01/12/2024"), J("01/02/2025")).sa === 10);
+  chk("heure d'été neutre",      calcSA(J("01/03/2025"), J("01/04/2025")).total_j === 45);
+  chk("DDG partielle -> pas de SA", calcSA(J("03/2025"), J("01/06/2025")) === null);
+  chk("date partielle -> pas de SA", calcSA(J("01/01/2025"), J("2025")) === null);
+  chk("sans DDG -> pas de SA",   calcSA(null, J("01/06/2025")) === null);
+  chk("date illisible -> pas de SA", calcSA(J("01/01/2025"), "err") === null);
+  chk("antérieur à la DDG",      saHorsBornes(calcSA(J("01/06/2025"), J("01/01/2025"))));
+  chk("au-delà de 45 SA",        saHorsBornes(calcSA(J("01/01/2024"), J("01/01/2025"))));
+  chk("24 SA dans les bornes",   !saHorsBornes(calcSA(J("01/01/2025"), J("04/06/2025"))));
+  chk("libellé SA",              fmtSA(calcSA(J("01/01/2025"), J("10/01/2025"))) === "3 SA + 2 j");
+  chk("libellé antérieur",       /antérieur/.test(fmtSA(calcSA(J("01/06/2025"), J("01/01/2025")))));
+
+  /* Traduction BaMaRa de l'issue */
+  chk("IMG -> termination IMG",  BAM_ISSUE.IMG.termination_type === "IMG" && BAM_ISSUE.IMG.birth === false);
+  chk("MFIU -> INUTERO",         BAM_ISSUE.MFIU.stp_type === "INUTERO");
+  chk("MPN -> PERPARTUM",        BAM_ISSUE.MPN.stp_type === "PERPARTUM");
+  chk("MNN -> birth true",       BAM_ISSUE.MNN.birth === true);
+  chk("naissance -> birth true", BAM_ISSUE.NAISSANCE_VIVANTE.birth === true);
+  chk("IVG sans code BaMaRa",    !BAM_ISSUE.IVG);
+  chk("FCS sans code BaMaRa",    !BAM_ISSUE.FCS);
+  chk("GEU sans code BaMaRa",    !BAM_ISSUE.GEU);
+  chk("IVG et FCS avant naissance",
+      ISSUES.map(function(p){return p[0];}).indexOf("IVG") <
+      ISSUES.map(function(p){return p[0];}).indexOf("NAISSANCE_VIVANTE"));
+  chk("sexe en UNK, pas I",      SEXES.some(function(p){ return p[0] === "UNK"; }) &&
+                                 !SEXES.some(function(p){ return p[0] === "I"; }));
+  chk("consanguinité 3 états",   OUINON.length === 3);
+  chk("terme borné à 4 SA",      TOUS.filter(function(c){return c.k==="terme_sa";})[0].min === 4);
+  chk("clés de trame uniques",   new Set(TOUS.map(function(c){return c.k;})).size === TOUS.length);
+
+  /* Cohérence */
+  chk("cohérence G3 / 2 lignes", coherence(3, 1, 2).length === 0);
+  chk("compte manquant signalé", coherence(3, 1, 1).length === 1);
+  chk("parité > gestité",        coherence(1, 3, 0).some(function(m){ return /parité/.test(m); }));
+  chk("primigeste sans ligne",   coherence(1, 0, 0).length === 0);
+  chk("sans gestité, silencieux", coherence(null, null, 2).length === 0);
+  chk("date illisible détectée", datesInvalides({a:{b:"err"}})[0] === "a.b");
+
+  /* Flux réel */
+  chk("verrouillé au départ",    $("sec_identite").classList.contains("off"));
+  set("dossier", "26p0123"); set("operateur", "RM");
+  await new Promise(function(r){ setTimeout(r, 30); });
+  chk("déverrouillé",           !$("sec_identite").classList.contains("off"));
+  chk("export activé",          !$("btnExport").disabled);
+
+  set("f_nom_mere", "TEST");
+  set("f_terme_sa", "24");
+  set("f_ddg", "03/2025");
+  $("f_fdr_tabac").checked = true;
+  $("f_consanguinite").value = "UNK";
+  $("f_type_issue").value = "MFIU"; majIssue();
+  chk("hint traduit MFIU",       $("issueHint").textContent.indexOf("INUTERO") >= 0);
+  $("f_type_issue").value = "IVG"; majIssue();
+  chk("hint avertit sur IVG",    $("issueHint").textContent.indexOf("pas de code") >= 0);
+  $("f_type_issue").value = "IMG"; majIssue();
+
+  set("f_gestite", "3"); set("f_parite", "1");
+  var p1 = ajouterGrossesse();
+  chk("un fœtus auto-créé",      $("grossesses").children[0].querySelector(".foetus").children.length === 1);
+  var p2 = ajouterGrossesse({ date_debut:{annee:2014,mois:5,jour:null,precision:"mois",mask:null},
+                              foetus:[{issue:"IVG"},{issue:"FCS"}] });
+  chk("2 grossesses",            $("grossesses").children.length === 2);
+  chk("gémellaire à 2 fœtus",    $("grossesses").children[1].querySelector(".foetus").children.length === 2);
+  chk("date partielle restituée", $(p2 + "_date_debut").value === "05/2014");
+  chk("rangs imbriqués",         $("grossesses").children[1].querySelector(".foetus")
+                                   .children[1].querySelector(".rang").textContent === "G2 · fœtus 2/2");
+  chk("cohérence satisfaite",    $("obsHint").textContent.indexOf("concordent") >= 0);
+  set("f_gestite", "4");
+  chk("écart signalé",           $("obsHint").textContent.indexOf("⚠") === 0);
+  set("f_gestite", "3");
+
+  var e1 = ajouterEvt();
+  set(e1 + "_date", "12/05/2025");
+  $(e1 + "_type").value = "ECHOGRAPHIE";
+  set(e1 + "_texte", "Échographie T2 — ventriculomégalie 12 mm");
+  chk("1 ligne de chronologie",  $("chrono").children.length === 1);
+  chk("SA vide si DDG au mois",  $(e1 + "_sa").textContent === "");
+  chk("DDG imprécise signalée",  /jour près/.test($("chronoHint").textContent));
+  chk("DDG partielle collectée", collecter().grossesse.ddg.precision === "mois");
+  set("f_ddg", "06/01/2025");
+  chk("SA affichées",            $(e1 + "_sa").textContent === "20 SA + 0 j");
+  chk("rang de ligne",           $("chrono").children[0].querySelector(".rang").textContent === "#1");
+  var e2 = ajouterEvt();
+  set(e2 + "_date", "01/01/2024");
+  chk("hors grossesse en rouge", $(e2 + "_sa").classList.contains("bad"));
+  chk("hors grossesse signalé",  /hors grossesse/.test($("chronoHint").textContent));
+  chk("hors grossesse exporté",  collecter().coherence.some(function(m){
+                                   return /chronologie hors grossesse/.test(m); }));
+  $("chrono").children[1].querySelector(".del").click();
+  chk("ligne retirée",           $("chrono").children.length === 1);
+  chk("chronologie de nouveau saine", /datées depuis la DDG/.test($("chronoHint").textContent));
+
+  var snap = collecter();
+  chk("identité collectée",      snap.identite.nom_mere === "TEST");
+  chk("nombre collecté",         snap.issue.terme_sa === 24);
+  chk("vides à null",            snap.identite.ipp === null);
+  chk("DDG collectée",           snap.grossesse.ddg.precision === "jour" && snap.grossesse.ddg.jour === 6);
+  chk("SA dérivée dans l'export", snap.grossesse.chronologie[0].sa.sa === 20);
+  chk("nature collectée",        snap.grossesse.chronologie[0].type === "ECHOGRAPHIE");
+  chk("texte collecté",          /ventriculom/.test(snap.grossesse.chronologie[0].texte));
+  chk("case cochée collectée",   snap.atcd_mat.fdr.tabac === true && snap.atcd_mat.fdr.hta === false);
+  chk("consanguinité UNK",       snap.atcd_mat.consanguinite === "UNK");
+  chk("issue traduite",          snap.issue.bamara.termination_type === "IMG");
+  chk("nb_fetus dérivé",         snap.atcd_obs.grossesses[1].nb_fetus === 2);
+  chk("gémellaire signalée",     snap.atcd_obs.grossesses[1].is_multiple_pregnancy === true);
+  chk("singleton non signalé",   snap.atcd_obs.grossesses[0].is_multiple_pregnancy === false);
+  chk("ordre des fœtus",         snap.atcd_obs.grossesses[1].foetus[1].multiple_preg_order === 2);
+  chk("IVG locale sur le fœtus", snap.atcd_obs.grossesses[1].foetus[0].issue === "IVG" &&
+                                 snap.atcd_obs.grossesses[1].foetus[0].bamara === null);
+  chk("aucune date illisible",   snap.coherence.length === 0);
+  chk("enveloppe conforme",      snap.schema_version === SCHEMA && snap.module === MODULE &&
+                                 snap.dossier === "26P0123" && !!snap.exported_at);
+
+  set("f_ddn_mere", "32/13/2014");
+  chk("date fausse dans l'export", collecter().coherence.some(function(m){ return /illisible/.test(m); }));
+  set("f_ddn_mere", "");
+
+  await putSaisie(collecter());
+  vider();
+  chk("vider efface le champ",   $("f_nom_mere").value === "");
+  chk("vider efface les lignes", $("grossesses").children.length === 0);
+  chk("vider efface la chrono",  $("chrono").children.length === 0);
+  var relu = await getSaisie("26P0123");
+  appliquer(relu);
+  chk("nom restitué",            $("f_nom_mere").value === "TEST");
+  chk("2 grossesses restituées", $("grossesses").children.length === 2);
+  chk("gémellaire restituée",    $("grossesses").children[1].querySelector(".foetus").children.length === 2);
+  chk("DDG restituée",           $("f_ddg").value === "06/01/2025");
+  chk("chronologie restituée",   $("chrono").children.length === 1);
+  chk("SA recalculées au retour",
+      $($("chrono").children[0].dataset.uid + "_sa").textContent === "20 SA + 0 j");
+  chk("uid non réutilisé",       $("grossesses").children[0].dataset.uid !== p1 &&
+                                 $("grossesses").children[0].dataset.uid !== p2);
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>

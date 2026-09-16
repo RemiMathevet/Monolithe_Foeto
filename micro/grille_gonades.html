@@ -1,0 +1,2338 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grille de lecture — gonades et tractus génitaux internes</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --alert-soft:#F7EAE7;
+  --amber:#8A6A18; --amber-soft:#F6F0DE;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off button,section.off input,section.off select{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 170px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],input[type=number],textarea{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+input[type=number]{font-family:var(--mono);letter-spacing:.03em}
+textarea{resize:vertical;min-height:60px;font-size:15px}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+/* ── Boutons-clics : toute la saisie sémantique passe par là ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font-family:var(--sans);font-size:14px;line-height:1.25;
+  border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+  border-radius:2px;padding:8px 11px;cursor:pointer;min-height:38px;text-align:left}
+.chip:hover{background:var(--drape-soft)}
+.chip:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.chip.on{background:var(--drape);border-color:var(--drape);color:#fff;font-weight:600}
+.chip.no{background:var(--alert-soft);border-color:var(--alert);color:var(--alert);font-weight:600}
+.chip.sugg{border-color:var(--amber);border-style:dashed}
+.chip[data-act=foeto]::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;background:var(--drape);opacity:.55}
+.chip.on[data-act=foeto]::after{background:#fff}
+.plus{font-size:13px;color:var(--drape);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline dotted}
+.rech{position:relative;margin-top:8px}
+.rech input{font:inherit;font-size:14px;padding:6px 10px;border:1px solid #bbb;border-radius:8px;width:min(100%,24rem)}
+.sugg{position:absolute;z-index:5;background:#fff;border:1px solid #bbb;border-radius:8px;max-height:12rem;overflow:auto;width:min(100%,24rem);display:none}
+.sugg.on{display:block}
+.sugg div{padding:5px 10px;cursor:pointer;font-size:14px}
+.sugg div:hover{background:var(--drape-soft)}
+.sugg small{color:#777}
+.chip .k{font-family:var(--mono);font-size:10px;letter-spacing:.07em;opacity:.75;
+         display:block;text-transform:uppercase}
+
+.item{border-top:1px solid var(--rule);padding:10px 0}
+.item:first-child{border-top:0}
+.item .head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.item .lbl{flex:1 1 240px;min-width:0;font-size:15px}
+.item .meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-soft);
+            display:block;margin-top:2px}
+.item .meta.bon{color:var(--drape)} .item .meta.mauvais{color:var(--alert)}
+.item .meta.moyen{color:var(--amber)}
+.unfold{margin:9px 0 0 0;padding:9px 0 0;border-top:1px dashed var(--rule)}
+.unfold[hidden]{display:none}
+.stop{font-size:13px;line-height:1.35;color:var(--alert);background:var(--alert-soft);
+      border-left:2px solid var(--alert);padding:6px 9px;margin-top:8px}
+.stop b{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+
+.verdict{font-size:14px;line-height:1.4;border-left:3px solid var(--rule);
+         padding:7px 10px;margin-top:11px;background:var(--paper)}
+.verdict.ok{border-color:var(--drape);background:var(--drape-soft)}
+.verdict.warn{border-color:var(--amber);background:var(--amber-soft)}
+.verdict.bad{border-color:var(--alert);background:var(--alert-soft)}
+.verdict b{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+           display:block;color:var(--ink-soft)}
+
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+.sousTitre:first-child{margin-top:0}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:var(--alert-soft)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+pre.cr{font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;
+  padding:12px;margin:0 0 10px;max-height:44vh;overflow:auto}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · lecture microscopique</p>
+  <h1>Grille de lecture — gonades et tractus génitaux internes <span class="ver" id="ver"></span></h1>
+  <p class="sub">Sortie de <code>fiche_gonades.md</code>. Tout se clique ; seuls le dossier, le terme et les comptes se tapent. Document autonome : rien n'est transmis.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section>
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Libre, mis en majuscules. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Lecteur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la grille.</div>
+    </div>
+    <div class="field">
+      <label for="sa">Terme (SA)</label>
+      <input type="number" id="sa" min="8" max="45" step="1" inputmode="numeric" placeholder="—">
+      <div class="hint" id="saHint">SA = semaines de gestation + 2. Commande le stade attendu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — Prélèvement -->
+<section id="secPrelevement" class="off">
+  <h2><span class="n">02</span>Prélèvement<span class="tally" id="tPrelevement">—</span></h2>
+  <div id="coteBloc" hidden>
+    <div class="sousTitre">Côté prélevé</div>
+    <div class="chips" id="cote" style="margin-bottom:11px"></div>
+  </div>
+  <div class="chips" id="prelevement"></div>
+  <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
+</section>
+
+<!-- 03 — Rétention -->
+<section id="secRetention" class="off">
+  <h2><span class="n">03</span>Rétention<span class="tally" id="tRetention">—</span></h2>
+  <div id="retention"></div>
+  <div class="chips" id="kcl" style="margin-top:11px"></div>
+  <div class="verdict" id="vRetention"><b>Borne inférieure</b>—</div>
+</section>
+
+<!-- 04 — Maturation -->
+<section id="secMaturation" class="off">
+  <h2><span class="n">04</span>Maturation<span class="tally" id="tMaturation">—</span></h2>
+  <div class="sousTitre" id="stTitre">Stade observé</div>
+  <div class="chips" id="stades"></div>
+  <div id="mesure"></div>
+  <div class="verdict" id="vMaturation"><b>Lecture</b>—</div>
+  <div class="verdict" id="vMesure" hidden><b>Mesure</b>—</div>
+</section>
+
+<!-- 05 — Variantes normales -->
+<section id="secVariantes" class="off">
+  <h2><span class="n">05</span>Variantes normales<span class="tally" id="tVariantes">—</span></h2>
+  <p class="note" style="margin-top:0">Cliquer ce qui est vu et écarté comme normal. Rien de coché ne veut pas dire absent : ça veut dire non regardé.</p>
+  <div class="chips" id="variantes" style="margin-top:10px"></div>
+</section>
+
+<!-- 06 — Signes -->
+<section id="secSignes" class="off">
+  <h2><span class="n">06</span>Signes<span class="tally" id="tSignes">—</span></h2>
+  <p class="note" style="margin-top:0">On coche des signes, pas des diagnostics. Les associations en dessous se déduisent de ce qui est coché : elles s'affichent, elles ne se choisissent pas.</p>
+  <div id="signes" style="margin-top:10px"></div>
+  <div class="sousTitre" style="margin-top:16px">Associations lues</div>
+  <div id="diags"></div>
+</section>
+
+<!-- 07 — Termes FOETO attestés par la fiche -->
+<section id="secFoeto" class="off">
+  <h2><span class="n">07</span>Termes FOETO<span class="tally" id="tFoeto">—</span></h2>
+  <p class="note" style="margin-top:0">Les termes du vocabulaire FOETO que la fiche de l'organe retient comme lésions, par sous-section. Un terme coché est présent ; rien de coché ne veut pas dire absent.</p>
+  <div id="foeto"></div>
+  <button type="button" class="plus" id="foetoPlus" hidden>▸ tous les termes attestés</button>
+  <div class="chips" id="foetoTous" hidden style="margin-top:6px"></div>
+  <div class="rech" id="foetoRech" hidden><input type="text" id="rqFoeto" placeholder="rechercher un terme (3 lettres)…" autocomplete="off"><div class="sugg" id="sgFoeto"></div></div>
+</section>
+
+<!-- 08 — Négatifs obligatoires -->
+<section id="secNegatifs" class="off">
+  <h2><span class="n">08</span>Négatifs obligatoires<span class="tally" id="tNegatifs">—</span></h2>
+  <div class="btns" style="margin-bottom:11px">
+    <button class="btn" id="btnNegAll">Tous vérifiés</button>
+  </div>
+  <div id="negatifs"></div>
+</section>
+
+<!-- 08 — Techniques -->
+<section id="secTechniques" class="off">
+  <h2><span class="n">09</span>Techniques<span class="tally" id="tTechniques">—</span></h2>
+  <p class="note" style="margin-top:0" id="techNote"></p>
+  <div class="chips" id="techniques" style="margin-top:10px"></div>
+</section>
+
+<!-- 09 — Compte rendu -->
+<section id="secCR" class="off">
+  <h2><span class="n">10</span>Compte rendu<span class="tally" id="tCR">—</span></h2>
+  <pre class="cr" id="cr">—</pre>
+  <div class="row">
+    <div class="field" style="flex:1 1 100%">
+      <label for="libre">Remarque libre</label>
+      <textarea id="libre" placeholder="Ce que la grille ne prévoit pas."></textarea>
+    </div>
+  </div>
+  <div class="btns" style="margin-top:10px">
+    <button class="btn" id="btnCopie">Copier le compte rendu</button>
+  </div>
+</section>
+
+<!-- 10 — Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n">11</span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Vider le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- 11 — Diagnostic -->
+<section>
+  <h2><span class="n">12</span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante, aucun fetch : doit fonctionner par double-clic hors réseau.
+
+   Ce module est la SORTIE de fiche_gonades.md, jamais l'inverse. Les bornes, les
+   spécificités et les « ce qu'il ne faut pas conclure » sont recopiés de la
+   fiche ; ils ne se corrigent pas ici mais dans la fiche.
+
+   La grille ne conclut pas : elle contraint la description et rend ses
+   réserves visibles. Un critère non cliqué n'est pas un négatif — c'est un
+   non-regardé, et le compte rendu le dit.
+
+   Fichier ENGENDRÉ par gen_grille.py depuis grilles/gonades.js.
+   Corriger le fragment, pas ce fichier.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  FRAGMENT D'ORGANE — grilles/gonades.js                            ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+/* Grille de lecture — gonades et tractus génitaux internes.
+   Fond : ~/Bureau/fiches_lecture/fiche_gonades.md (§1 à §7 ; §9 porté, jamais arbitré).
+   Forme : gen_grille.py, calquée sur grille_poumon.html.
+   Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées.
+
+   Ce que la coquille NE SAIT PAS FAIRE, et qui est écrit ici plutôt que masqué :
+   la fiche réclame DEUX listes de stades conditionnées par le sexe gonadique
+   (§ 3.1 testicule, 6 rangs ; § 3.2 ovaire, 8 rangs), « jamais fusionnées ».
+   La coquille n'offre qu'un seul tableau STADES. Les rangs ci-dessous sont donc
+   des FENÊTRES EN SA — le seul axe que les deux échelles partagent réellement,
+   puisque chaque rang est daté en SA par sa source — et chaque fenêtre porte
+   SÉPARÉMENT sa colonne testiculaire et sa colonne ovarienne. Aucune
+   correspondance rang à rang n'est affirmée : les livres n'en donnent pas, et
+   en fabriquer une serait inventer une symétrie. Le sexe gonadique se déclare
+   au § 04 et il BLOQUE : sans lui, aucun stade n'est lisible. */
+
+var ORGANE  = "gonades";
+var TITRE   = "gonades et tractus génitaux internes";
+var SOURCE  = "fiche_gonades.md";
+var MODULE  = "grille_gonades";
+var VERSION = "1.0.1";
+
+/* Organe pair, et de façon plus contraignante que tout autre : deux dysgénésies
+   se DÉFINISSENT par l'asymétrie gonadique — la dysgénésie gonadique mixte et
+   l'ovotestis unilatéral. Deux gonades dans un même bloc restent visibles, mais
+   « on ne sait plus lequel est lequel ». */
+var PAIR = true;
+
+var TITRE_CR    = "GONADES";
+var STADE_TITRE = "Fenêtres en SA — colonne testiculaire et colonne ovarienne, jamais fusionnées";
+
+var KCL_TXT = "Fœticide par KCl déclaré. Aucune source ouverte ne décrit d'effet gonadique du geste — " +
+              "et la gonade n'a de toute façon aucune borne à perdre : elle est absente des dix rangs " +
+              "de la Table 15.6 [keeling, ch. 15] comme des 18 chunks d'[ernst, ch. 37]. Aucune borne " +
+              "n'est à lire ici, avec ou sans KCl.";
+
+/* Le service ne date jamais la gonade : sur 200 CR, aucun terme histologique
+   gonadique estimé, alors que la formule existe pour le poumon, le rein et le
+   cerveau. Choix ou omission : la fiche ne tranche pas (§ 9.3). */
+var RETARD_NOTE = "Avant d'écrire un retard : vérifier le SEXE gonadique déclaré (les deux échelles ne se " +
+                  "comparent pas entre elles), le plan de coupe et l'état de conservation. Sur l'ovaire, un " +
+                  "retard apparent est d'abord une autolyse ou une coupe tangentielle du cortex superficiel. " +
+                  "Et sur 200 CR le service n'écrit AUCUN terme histologique gonadique estimé : refus " +
+                  "délibéré ou omission, la fiche ne tranche pas (§ 9.3).";
+
+var AVANCE_NOTE = "Une avance apparente sur le testicule est d'abord une densité leydigienne lue à " +
+                  "contre-terme : le pic est physiologique à 16–21 SA ⟨conv⟩ et l'involution attendue vers " +
+                  "23 SA. Sur les tractus génitaux internes, ni avance ni retard ne se lisent : " +
+                  "« the time of the appearance of smooth muscle differentiation may vary », et un " +
+                  "épididyme de 34 weeks « less well developed » qu'un de 22 weeks est publié en figure " +
+                  "[ernst, ch. 11]. Le tractus ne date pas.";
+
+var TECH_NOTE = "Les pointillés sont des propositions déduites des clics, jamais des prescriptions. Deux " +
+                "lignes de cette liste sont des CONTRE-INDICATIONS — la GCNIS avant 6 mois de vie et le " +
+                "sous-typage germinal : elles ne sont jamais proposées, elles sont écrites pour être " +
+                "refusées. Rien de coché ne veut pas dire absent : ça veut dire non regardé.";
+
+/* ── 01 · Prélèvement ─────────────────────────────────────────────────────── */
+var PRELEV = [
+  { k:"gonadeRetrouvee", l:"Gonade retrouvée et effectivement mise en bloc", grave:true,
+    manque:"117 CR sur 200 portent la gonade dans une liste de prélèvement, 17 la décrivent " +
+           "[corpus CR] — la non-description est l'issue majoritaire, et « gonade non retrouvée » " +
+           "s'écrit, ne se laisse pas vide" },
+  { k:"deuxBlocs", l:"Gonade droite et gonade gauche sur DEUX blocs séparés", grave:true,
+    manque:"la dysgénésie gonadique mixte et l'ovotestis unilatéral se DÉFINISSENT par l'asymétrie ; " +
+           "dans un bloc unique l'asymétrie reste visible mais « on ne sait plus lequel est lequel », " +
+           "et le tractus homolatéral n'est plus rattachable" },
+  { k:"albuginee", l:"Testicule : albuginée ET épithélium de surface sur la coupe", grave:true,
+    manque:"sans eux on ne peut pas dire que les cordons sont « isolés de l'épithélium cœlomique », " +
+           "qui est le critère formel de différenciation testiculaire [soffoet, ch. 8]" },
+  { k:"cortexMedullaire", l:"Ovaire : toute l'épaisseur du cortex jusqu'à la médullaire", grave:true,
+    manque:"les follicules primordiaux apparaissent dans le cortex profond près de la médullaire AVANT " +
+           "le cortex superficiel — une coupe tangentielle est vide de follicules chez un ovaire NORMAL " +
+           "[ernst, ch. 15]" },
+  { k:"niveaux", l:"Plusieurs niveaux de coupe sur chaque gonade",
+    manque:"le foyer dysgénétique du corpus était CENTRAL avec « une différentiation corticale normale, " +
+           "on note un centre dysgénétique (pour les 2) » ; et la partie ovarienne d'un ovotestis peut " +
+           "être polaire" },
+  { k:"reteEpididyme", l:"Repères : rete testis au hile, tête de l'épididyme au pôle supérieur",
+    manque:"ils prouvent qu'on n'est pas dans un fragment de médiastin isolé [ernst, ch. 10] [ernst, ch. 11]" },
+  { k:"blocPelvien", l:"Bloc pelvien : gonade et tractus non séparés avant fixation",
+    manque:"c'est le seul moyen de documenter la « genitourinary ductal anatomy » exigée à toutes les " +
+           "autopsies [keeling, ch. 25] — et une protection contre la perte de la gonade à la dissection " +
+           "[soffoet, ch. 8]" },
+  { k:"congele", l:"Tissu congelé pour extraction d'ADN",
+    manque:"« and tissue stored for DNA extraction and examination (with appropriate informed consent) » " +
+           "[keeling, ch. 25]" },
+  { k:"caryotype", l:"Statut chromosomique demandé ou disponible",
+    manque:"les quatre volets sont exigés ENSEMBLE : « external genital morphology, genitourinary ductal " +
+           "anatomy, gonadal histology, and chromosomal status should all be thoroughly documented at all " +
+           "fetal/neonatal postmortem examinations » [keeling, ch. 25]" },
+  { k:"macroSexe", l:"Sexe phénotypique de la macroscopie consigné, pour confrontation",
+    manque:"le sexe gonadique se CONFRONTE au sexe phénotypique et au caryotype ; il ne s'en dérive " +
+           "jamais. Sur 200 CR, le DSD est diagnostiqué 3 fois et 3 fois sur les organes génitaux " +
+           "EXTERNES, jamais sur la gonade [corpus CR]" },
+  { k:"autresOrganes", l:"État de conservation des AUTRES organes du même fœtus noté",
+    manque:"sur l'ovaire, le critère lésionnel et son artefact sont la même image : on tranche sur le " +
+           "foie et le rein du même fœtus, jamais sur la gonade seule [ernst, ch. 15]" }
+];
+
+/* ── 02 · Rétention ───────────────────────────────────────────────────────────
+   Inversion assumée : la gonade n'a NI RANG NI HEURE. Deux recherches
+   exhaustives et indépendantes le montrent — 0/65 chunks de [keeling, ch. 15],
+   0/18 chunks d'[ernst, ch. 37]. La seule ligne recevable de ce tableau est
+   donc un REPORT : la borne vient des autres organes du fœtus, elle n'est
+   jamais mesurée sur la gonade. Interpoler serait une fabrication. */
+var PLAFOND = "plafond général : aucun organe fœtal ne donne de bonne estimation du délai entre 2 et " +
+              "4 semaines [ernst, ch. 37]";
+
+var HORS_TABLE = "la gonade n'a ni rang ni heure : absente des dix rangs de la Table 15.6 " +
+                 "[keeling, ch. 15] et des 18 chunks d'[ernst, ch. 37]. Écrire « lyse gonadique " +
+                 "compatible avec 48 h » serait une fabrication";
+
+var RETENTION = [
+  { k:"reportAutres", l:"Délai retenu sur les AUTRES organes du fœtus (foie, rein), reporté ici",
+    b:"reportée des autres organes", d:"report, jamais mesuré sur la gonade", h:1, q:"bon",
+    note:HORS_TABLE, alerte:PLAFOND },
+  { k:"basoTesticule", l:"Perte de basophilie nucléaire des testicules cotée dans la séquence du service",
+    b:"rang non publié", d:"usage du service, hors livre", h:0, q:"moyen",
+    note:"divergence pratique / livre, écrite et NON tranchée (§ 9.4) : un CR cote « le pancréas, les " +
+         "testicules, la thyroïde, le cœur » dans la séquence de perte de basophilie, alors qu'aucune " +
+         "source ouverte ne cote la gonade. Rang connu de Rémi et non publié, ou usage non fondé ?" },
+  { k:"folliculesEffaces", l:"Follicules primordiaux non identifiables sur un ovaire ≥ 20 SA",
+    b:"—", d:"ambigu : dysgénésie OU autolyse", h:0, q:"mauvais",
+    note:"c'est le piège majeur de l'organe, et la source met le critère et son artefact dans la même " +
+         "phrase : « autolysis frequently impairs the evaluation of folliculogenesis and ovarian " +
+         "dysgenesis in autopsy specimens, and caution should be used when tissues are not well " +
+         "preserved » [ernst, ch. 15]" },
+  { k:"ovaireNonAnalysable", l:"Ovaire non analysable — comptage folliculaire tombé",
+    b:"—", d:"le premier axe qui tombe, § 2.2", h:0, q:"mauvais",
+    note:"sur l'ovaire ce qui porte la maturation est LA CELLULE — le follicule est un ovocyte plus sa " +
+         "couronne — donc la maturation tombe en même temps que le diagnostic, et ce qui survit (stroma, " +
+         "épithélium de surface) ne date rien. Sur un ovaire macéré : ni stade ni dysgénésie, « non " +
+         "analysable »" },
+  { k:"germSertoli", l:"Cellules germinales et de Sertoli indistinctes",
+    b:"—", d:"normal en autopsie, pas un signe", h:0, q:"mauvais",
+    note:"« Even in this well-preserved specimen, the germ cells are difficult to differentiate from " +
+         "Sertoli cells » [ernst, ch. 10] — l'indistinction ne signe ni la rétention ni une hypoplasie " +
+         "germinale" },
+  { k:"sousTypageTombe", l:"Sous-types germinaux non distinguables",
+    b:"—", d:"jamais praticable, quel que soit le délai", h:0, q:"mauvais",
+    note:"« Identification of subtypes of germ cells is impossible in most autopsy specimens » ; la " +
+         "distinction exige « very fresh tissue obtained within an hour of death » [ernst, ch. 10]. Ce " +
+         "n'est donc pas un seuil de macération mais un délai d'autopsie qu'aucun fœtus ne satisfait" },
+  { k:"stereocils", l:"Desquamation des stéréocils du déférent, perte de la barre terminale éosinophile",
+    b:"—", d:"artéfact post-mortem pur", h:0, q:"mauvais",
+    note:"« not easily seen in sections from autopsy material, as preservation is typically suboptimal » " +
+         "[ernst, ch. 12] — à ne pas lire comme une anomalie épithéliale" },
+  { k:"oedemeScrotal", l:"Œdème et extravasation érythrocytaire scrotaux",
+    b:"—", d:"artéfact obstétrical, pas une rétention", h:0, q:"mauvais",
+    note:"« fréquent chez les mort-nés délivrés par voie vaginale » — c'est un traumatisme de la " +
+         "délivrance, pas une hémorragie, et ce n'est pas non plus un délai" },
+  { k:"nonExaminee", l:"Gonade prélevée mais non examinée — problème technique",
+    b:"—", d:"recevabilité, pas rétention", h:0, q:"mauvais",
+    note:"deux CR l'enregistrent : « L'ovaire et le thymus n'ont pas pu être examinés » pour un " +
+         "« problème technique » [corpus CR]. La gonade est petite et mobile : sa perte à la dissection " +
+         "est un geste, à écrire comme tel" }
+];
+
+/* ── 03 · Maturation — fenêtres en SA, deux colonnes ──────────────────────────
+   SA = semaines de gestation + 2. Toute valeur convertie est marquée ⟨conv⟩.
+   ⚠️ ernst ch. 10 emploie TROIS échelles dans le même chapitre et date le même
+   événement testiculaire à deux dates différentes : une valeur ⟨conv⟩ peut être
+   fausse de 2 SA (§ 9.2). Les bornes sont des repères, pas des seuils. */
+var STADES = [
+  { k:"differenciation", max:14,
+    l:"≈ 10 SA · testicule : albuginée constituée, cordons pleins · ovaire : oogonies, avant la méiose",
+    note:"testicule, rang 1 : « By the end of the eighth postfertilization week, the germ, Sertoli, and " +
+         "Leydig cell lines are present, and the production of Müllerian-inhibiting substance and " +
+         "testosterone is established » [ernst, ch. 10] ; le critère formel repris en français par " +
+         "[soffoet, ch. 8] est l'isolement des cordons de l'épithélium cœlomique par l'albuginée. " +
+         "Côté ovaire, aucun rang n'est daté avant l'entrée en méiose" },
+  { k:"meioseEtDeuxiemeEtape", max:16,
+    l:"14–15 SA · ovaire : entrée en méiose, ovocytes au dictyotène · testicule : deuxième étape",
+    note:"ovaire, rang 1 : « starting at 12–13 weeks gestation, some oogonia in the inner cortex enter " +
+         "meiosis and become oocytes » [ernst, ch. 15]. Testicule, rang 2 : DIVERGENCE INTERNE à une " +
+         "seule source, non tranchée — « The second step in testicular differentiation begins at 14 " +
+         "weeks postmenstrual age » (= 14 SA) contre « By 14 weeks gestation, fetal Leydig cells " +
+         "constitute half the volume of the testis » (= 16 SA ⟨conv⟩), deux SA d'écart pour le même " +
+         "événement (§ 9.2)" },
+  { k:"picLeydigien", max:20,
+    l:"16–21 SA · testicule : pic leydigien, nappes éosinophiles · ovaire : syncytium puis transition",
+    note:"testicule, rang 3 : abondance « greatest between 14 and 19 weeks gestation » = 16–21 SA ⟨conv⟩ " +
+         "[ernst, ch. 10]. Ovaire, rang 2 : syncytium oogonial, dont les cellules de prégranulosa sont " +
+         "« quasi indistinguables des oogonies sur coupes HE sauf dans les spécimens bien conservés » — " +
+         "bornes 14–20 SA sourcées par la BASE seule, aucun chunk ouvert ne les porte (§ 9.7). Ovaire, " +
+         "rang 3 : phrase TRONQUÉE à l'extraction, « Between 14 and 18 weeks gestation, individual " +
+         "oocytes lose the — » : le critère de ce rang est perdu (§ 9.6)" },
+  { k:"folliculesPrimordiaux", max:22,
+    l:"20 SA · ovaire : follicules primordiaux à la profondeur du cortex — LE repère opposable",
+    note:"« Primordial follicles should be observed in the normal ovary by 18 weeks gestation » " +
+         "[ernst, ch. 15] = 20 SA ⟨conv⟩, avec convergence indépendante EN SA : « les follicules " +
+         "primordiaux n'apparaissent pas à la profondeur du cortex vers 20 SA » [soffoet, ch. 23]. " +
+         "⚠️ La base porte les DEUX valeurs pour la MÊME phrase — 20 SA converti et 18 SA non converti — " +
+         "et c'est le libellé non converti qui a été promu en nom de terme, « Absence de follicule " +
+         "primordial à 18 SA ou plus » (§ 9.18). Côté testicule, le pic leydigien court encore" },
+  { k:"picGerminalEffondrement", max:26,
+    l:"22–23 SA · ovaire : pic germinal · testicule : effondrement leydigien, tubes tassés dos à dos",
+    note:"ovaire, rang 5 : « 6–7 million at 20 weeks gestation, when the largest number of germ cells can " +
+         "be observed, and then declines through week 28 » [ernst, ch. 15] = 22 SA ⟨conv⟩. Testicule, " +
+         "rang 4, bascule brutale de l'aspect d'ensemble : « This testis is dramatically different from " +
+         "the 17-week testis », « The fetal Leydig cells have almost completely disappeared, and the " +
+         "tubules are extensively coiled and packed back-to-back » [ernst, ch. 10] ≈ 23 SA ⟨conv⟩" },
+  { k:"vasculosaEtCroissance", max:36,
+    l:"22–32 SA · testicule : tunica vasculosa, septa, rete qui se canalise · ovaire : folliculogenèse",
+    note:"testicule, rang 5 : « The tunica vasculosa gradually develops between 20 and 30 weeks " +
+         "gestation » [ernst, ch. 10] ; rang 6 : « Les lumières apparaissent progressivement à partir de " +
+         "24 semaines » = 26 SA ⟨conv⟩. Ovaire, rang 6 : follicule primaire (granulosa cubique) puis " +
+         "secondaire préantral, 50–400 µm et trois à cinq couches de granulosa — mais AUCUN intervalle " +
+         "SA n'est donné par la source : on sait reconnaître un follicule secondaire, on ne sait pas à " +
+         "quel terme il est attendu (§ 9.8)" },
+  { k:"procheTerme", max:99,
+    l:"≳ 36 SA · ovaire : follicules de De Graaf visibles · testicule : interstitium pauvre en Leydig",
+    note:"ovaire, rang 7 : « In the near-term fetus, multiple grossly visible Graafian follicles may be " +
+         "present », avec atrésie active et corpus fibrosum ; rang 8, à la naissance, 0,5–1 million de " +
+         "cellules germinales [ernst, ch. 15]. Testicule : interstitium pauvre en cellules de Leydig au " +
+         "troisième trimestre — l'inverse du deuxième — et « La canalisation devient complète vers 40–41 " +
+         "semaines de gestation » = 42–43 SA ⟨conv⟩" }
+];
+
+/* ── 04 · Sexe gonadique, conservation, et les trois chiffres ──────────────────
+   Le sexe gonadique est le premier champ de l'organe et il BLOQUE : la même
+   lame se lit avec deux échelles différentes selon qu'elle est testiculaire ou
+   ovarienne. Il ne se dérive JAMAIS du sexe déclaré. */
+var SEXES = [
+  { k:"testicule",      l:"Testiculaire" },
+  { k:"ovaire",         l:"Ovarien" },
+  { k:"ovotesticulaire",l:"Ovotesticulaire — les deux compartiments dans la même gonade" },
+  { k:"indeterminable", l:"Indéterminable SUR LA PIÈCE — limite de prélèvement, pas un diagnostic" },
+  { k:"nonRetrouvee",   l:"Gonade non retrouvée ou non prélevée" }
+];
+
+/* La conservation ne se juge pas sur la gonade : elle se juge sur les autres
+   organes du même fœtus (§ 8). C'est le seul organe de la série où le marqueur
+   de rétention EST le critère lésionnel. */
+var CONSERV = [
+  { k:"conserve",    l:"Autres organes du fœtus bien conservés" },
+  { k:"lyseModeree", l:"Autres organes en lyse débutante" },
+  { k:"lyseSevere",  l:"Autres organes lysés — foie, rein" }
+];
+
+var MESURE = {
+  titre:"Sexe gonadique, état de conservation, et les trois chiffres de l'organe",
+  defLabel:"sexe gonadique — à nommer AVANT tout stade",
+  optLabel:"conservation, jugée sur les AUTRES organes",
+  defs:SEXES, opts:CONSERV,
+  champs:[{ id:"germ",    label:"Cellules germinales par section transversale de tube", min:0, max:60, step:1 },
+          { id:"kyste",   label:"Grand axe du plus grand kyste ovarien (cm)", min:0, max:20, step:0.1 },
+          { id:"diamTub", label:"Diamètre tubulaire médian (µm)", min:0, max:300, step:1 }]
+};
+
+function verdictMesure(){
+  var sx = E.mesure.def, cs = E.mesure.opt, sa = num("sa");
+  var ng = E.mesure.v.germ, nk = E.mesure.v.kyste, nd = E.mesure.v.diamTub;
+  if (!sx && !cs && ng == null && nk == null && nd == null && !E.stade)
+    return { cls:"", txt:"Ni sexe gonadique, ni conservation, ni chiffre — la gonade n'est pas encore lue." };
+
+  var t = [], cls = "ok", res = [];
+
+  if (!sx){
+    cls = "bad";
+    t.push("Sexe gonadique NON déclaré : le stade est ININTERPRÉTABLE. Il y a deux échelles et pas une, " +
+           "et elles ne sont pas symétriques — le testicule se date par son interstitium, l'ovaire par sa " +
+           "lignée germinale. Aucune source n'établit de correspondance rang à rang entre les deux. Le " +
+           "sexe gonadique se lit sur la lame ; il ne se dérive jamais du sexe déclaré.");
+  } else if (sx === "nonRetrouvee"){
+    cls = "bad";
+    t.push("Gonade non retrouvée ou non prélevée — rien de ce qui suit n'est lisible, et c'est l'issue " +
+           "la plus fréquente : 117 CR sur 200 portent la gonade dans une liste de prélèvement, 17 la " +
+           "décrivent [corpus CR]. L'écrire fait la différence entre une omission et une normalité.");
+  } else if (sx === "indeterminable"){
+    cls = "bad";
+    t.push("Sexe gonadique indéterminable SUR LA PIÈCE : c'est une limite de prélèvement, PAS un " +
+           "diagnostic. Dans le corpus, « Fœtus de sexe indéterminable […] présentant une macération " +
+           "moyenne » et « Foetus fragmentaire de sexe indéterminable » désignent 7 fois sur 7 une pièce " +
+           "trop jeune, fragmentée ou macérée, jamais un phénotype ambigu. Ne pas le confondre avec " +
+           "« Sexe ambigu / DSD » : un formulaire qui fusionne les deux sens fabrique des DSD à partir " +
+           "de fœtus trop jeunes.");
+  } else {
+    t.push("Sexe gonadique : " + par(SEXES, sx).l.toLowerCase().split(" —")[0] + ".");
+    if (sx === "ovotesticulaire")
+      t.push("Un compartiment de chaque sexe dans la même gonade se décrit compartiment par " +
+             "compartiment ; le stade se lit alors dans les deux colonnes, jamais dans une seule.");
+  }
+
+  /* Conservation : sur cet organe, elle commande tout le reste. */
+  if (!cs){
+    res.push("état de conservation non jugé — et il ne se juge PAS sur la gonade : il se juge sur les " +
+             "autres organes du même fœtus");
+  } else if (cs === "lyseSevere"){
+    if (sx === "ovaire" || sx === "ovotesticulaire"){
+      cls = "bad";
+      t.push("Ovaire sur un fœtus dont les autres organes sont lysés : on n'écrit NI STADE NI DYSGÉNÉSIE, " +
+             "on écrit non analysable. « autolysis frequently impairs the evaluation of folliculogenesis " +
+             "and ovarian dysgenesis in autopsy specimens, and caution should be used when tissues are " +
+             "not well preserved » [ernst, ch. 15] — le critère et son artefact sont dans la même phrase.");
+    } else if (sx === "testicule"){
+      if (cls === "ok") cls = "warn";
+      t.push("Testicule macéré : le stade grossier — capsule, tubes, interstitium — reste écrivable ; le " +
+             "sous-typage germinal, jamais. Sur le compte germinal la fiche se contredit et ne tranche " +
+             "pas : le § 2.2 le donne comme la seule mesure gonadique robuste à la rétention, le § 2.3 le " +
+             "place au deuxième rang de ce qui tombe. Porter les deux lectures.");
+    }
+  }
+
+  /* Compte germinal — critère testiculaire, plancher sourcé. */
+  if (ng != null){
+    t.push("Compte germinal = " + ng + " par section transversale de tube ; plancher sourcé : « Each " +
+           "cross section of a seminiferous tubule usually contains six or more germ cells of various " +
+           "types » [ernst, ch. 10].");
+    if (sx === "ovaire")
+      res.push("le compte germinal par section de tube est un critère TESTICULAIRE : il n'a pas de sens " +
+               "sur un ovaire déclaré");
+    if (ng < 6){ cls = "bad";
+      t.push("Compte SOUS le plancher de 6 — compter n'est pas typer : le sous-typage germinal exige " +
+             "« very fresh tissue obtained within an hour of death » et n'est praticable sur aucun fœtus " +
+             "d'autopsie. Et une indistinction germinale / sertolienne est NORMALE, même sur tissu bien " +
+             "conservé : elle ne fait pas une pauvreté germinale."); }
+    else t.push("Compte au-dessus du plancher.");
+  }
+
+  /* Kyste ovarien — un seuil binaire, et il est très haut. */
+  if (nk != null){
+    t.push("Kyste ovarien, grand axe = " + nk + " cm.");
+    if (nk < 3)
+      t.push("SOUS le seuil du livre : « Follicles that exceed 3 cm are designated as follicular cysts » " +
+             "[ernst, ch. 15]. En dessous, il n'y a rien à conclure — ce sont des follicules atrétiques " +
+             "kystiques, qui « remain as atretic cystic follicles for an indefinite period ». Le corpus " +
+             "décrit « un kyste de l'ovaire de 4 mm de grand axe (découverte fortuite bénigne) » et " +
+             "« des structures kystiques (une de chaque côté, env 3 mm de diamètre) » : deux ordres de " +
+             "grandeur sous le critère du livre.");
+    else { if (cls === "ok") cls = "warn";
+      t.push("AU-DESSUS du seuil de 3 cm : « Follicles that exceed 3 cm are designated as follicular " +
+             "cysts » [ernst, ch. 15]. Le différentiel reste ouvert entre kyste folliculaire et kyste du " +
+             "rete ovarii, et il se tranche en IHC, pas à la règle."); }
+  }
+
+  /* Un chiffre sans son normal ne vaut rien. */
+  if (nd != null){
+    if (cls === "ok") cls = "warn";
+    t.push("Diamètre tubulaire médian = " + nd + " µm — et il n'existe AUCUNE NORME PAR TERME pour ce " +
+           "chiffre : la seule valeur publiée est donnée sans le terme auquel elle s'applique, « The " +
+           "median tubular diameter increases to 59 μm » [ernst, ch. 10]. Un chiffre sans son normal ne " +
+           "vaut rien : la mesure se consigne, elle ne s'interprète pas, et ce qui serait la mesure de " +
+           "maturation testiculaire la plus objective reste NON UTILISABLE en l'état (§ 9.5).");
+  }
+
+  /* Le repère opposable de l'ovaire est binaire, et il a une borne d'entrée. */
+  if ((sx === "ovaire" || sx === "ovotesticulaire") && sa != null){
+    if (sa >= 20)
+      t.push("À " + sa + " SA, le repère opposable est en vigueur et il est BINAIRE : présence ou absence " +
+             "de follicules primordiaux à la profondeur du cortex. Il ne se grade pas — un ovaire pauvre " +
+             "en follicules se décrit et se compte, il ne se cote pas.");
+    else
+      t.push("À " + sa + " SA, l'absence de follicule primordial n'est PAS un signe : le repère n'est " +
+             "opposable qu'à partir de 20 SA ⟨conv⟩.");
+  }
+
+  /* La densité leydigienne bascule avec le terme — le seul critère du § 5 qui l'exige. */
+  if ((sx === "testicule" || sx === "ovotesticulaire") && sa != null &&
+      E.signes.leydigAbondants === "anormal"){
+    if (sa <= 21) t.push("Cellules de Leydig très abondantes à " + sa + " SA : c'est le PIC " +
+                         "PHYSIOLOGIQUE de 16–21 SA ⟨conv⟩, pas une lésion.");
+    else if (sa >= 23){ if (cls === "ok") cls = "warn";
+      t.push("Cellules de Leydig très abondantes à " + sa + " SA : l'involution est attendue depuis " +
+             "≈ 23 SA ⟨conv⟩ — c'est une DISCORDANCE, pas une variante."); }
+    else t.push("Cellules de Leydig très abondantes à " + sa + " SA : zone de bascule entre le pic et " +
+                "l'effondrement, que les sources ne tranchent pas à la semaine.");
+  }
+
+  /* Cohérence entre le sexe déclaré et les signes cochés. */
+  if (sx === "testicule" && (E.signes.pasDeFolliculeProfond === "anormal" ||
+                             E.signes.fibroseStromale === "anormal"))
+    res.push("des signes OVARIENS sont cochés sur un sexe gonadique testiculaire — ou c'est un ovotestis, " +
+             "ou le sexe déclaré est à reprendre");
+  if (sx === "ovaire" && E.signes.leydigAbondants === "anormal")
+    res.push("cellules de Leydig très abondantes sur un OVAIRE déclaré : ce sont d'abord des cellules " +
+             "hilaires, « morphologically identical to Leydig cells », normales et parfois en amas dans " +
+             "le cortex interne — un amas éosinophile au hile n'est pas un compartiment testiculaire");
+
+  if (!E.prelev.deuxBlocs)
+    res.push("deux blocs séparés non confirmés — sans latéralité, dysgénésie mixte et ovotestis " +
+             "unilatéral deviennent innommables");
+  if ((sx === "ovaire" || sx === "ovotesticulaire") && !E.prelev.cortexMedullaire)
+    res.push("cortex jusqu'à la médullaire non confirmé — une coupe tangentielle du cortex superficiel " +
+             "est vide de follicules chez un ovaire NORMAL");
+  if ((sx === "testicule" || sx === "ovotesticulaire") && !E.prelev.albuginee)
+    res.push("albuginée et épithélium de surface non confirmés — le critère formel de différenciation " +
+             "testiculaire tombe avec eux");
+  if (!E.prelev.caryotype)
+    res.push("statut chromosomique non tracé — l'aneuploïdie n'est pas histologique");
+
+  if (res.length){ if (cls === "ok") cls = "warn"; t.push("Réserves : " + res.join(" ; ") + "."); }
+  return { cls:cls, txt:t.join(" ") };
+}
+/* ── 05 · Variantes normales ──────────────────────────────────────────────────
+   Sur cet organe c'est la partie la plus rentable de la fiche : six pièges dont
+   trois sont explicitement désignés comme tels par la source. */
+var VARIANTES = [
+  { k:"blastemeAlbuginee", l:"Restes de blastème testiculaire dans l'albuginée — « should not be mistaken for testicular dysgenesis »" },
+  { k:"gonadoblastomeLike", l:"Nodules gonadoblastome-like ou SCTAT dans des follicules atrétiques — jusqu'à 35 % des fœtus normaux, à NE JAMAIS énoncer en négatif" },
+  { k:"plapOct4",        l:"Cellules PLAP+, OCT-4+, CD117+ avant 6 mois de vie" },
+  { k:"hematoTerme",     l:"Nids d'hématopoïèse extramédullaire testiculaire au terme" },
+  { k:"marchand",        l:"Résidus corticaux surrénaliens de Marchand au contact du cordon" },
+  { k:"nidsGerminaux",   l:"Nids de cellules germinales dans l'épithélium de surface testiculaire" },
+  { k:"cellulesHilaires", l:"Cellules hilaires ovariennes, éosinophiles polygonales, « morphologically identical to Leydig cells »" },
+  { k:"atresie",         l:"Atrésie folliculaire active, pyknose ovocytaire, corpus fibrosum" },
+  { k:"stromaFusiforme", l:"Stroma ovarien fusiforme peu développé" },
+  { k:"albugineeOvaire", l:"Tunica albuginea ovarienne peu ou pas individualisée" },
+  { k:"germSertoliVar",  l:"Cellules germinales et de Sertoli difficiles à distinguer" },
+  { k:"appendices",      l:"Appendice pédiculé au pôle supérieur — appendix testis et epididymis non départageables sur la lame" },
+  { k:"hyperplasieVaginale", l:"Hyperplasie de l'épithélium malpighien vaginal, imprégnation œstrogénique" }
+];
+
+/* ── 06 · Signes ──────────────────────────────────────────────────────────────
+   On coche des SIGNES, un à la fois. Aucun nom d'entité ici : les noms se lisent
+   en dessous, dans les associations. La micro décrit, la conclusion nomme — et
+   sur cet organe le corpus le respecte presque parfaitement. Rien de coché ne
+   veut pas dire absent : ça veut dire non regardé. */
+var SIGNES = [
+  /* Bandelette et dysgénésies */
+  { k:"gonadeFibreuse", l:"Gonade petite, mince et plate, tissu fibreux en faisceaux et tourbillons de cellules fusiformes",
+    meta:"« being composed entirely of fibrous tissue in poorly organized fascicles and whorls of spindle cells »" },
+  { k:"aucuneGerminale", l:"Aucune cellule germinale identifiable",
+    meta:"exactement ce que produit l'autolyse ovarienne — le différentiel qui compte est la macération" },
+  { k:"aucuneStructure", l:"Aucune structure différenciée identifiable — ni cordon ou tube, ni follicule" },
+  { k:"gonadeAtrophique", l:"Gonade atrophique" },
+  { k:"asymetrieGonadique", l:"Les deux gonades diffèrent l'une de l'autre",
+    meta:"c'est la définition même de la dysgénésie gonadique mixte — exige deux blocs étiquetés" },
+
+  /* Testicule dysgénétique */
+  { k:"distribGerminale", l:"Distribution germinale anormale dans les tubes" },
+  { k:"noyauxGerminauxElargis", l:"Noyaux des cellules germinales élargis" },
+  { k:"leydigAbondants", l:"Cellules de Leydig très abondantes",
+    meta:"le seul critère du § 5 qui bascule avec le terme : pic à 16–21 SA, involution après ≈ 23 SA" },
+  { k:"centreDysgenetique", l:"Foyer dysgénétique central, périphérie corticale normale",
+    meta:"lire toute la coupe et plusieurs niveaux" },
+  { k:"tubesNonIndividualises", l:"Tubes séminifères mal individualisés",
+    meta:"critère du service, non retrouvé dans les livres ouverts (§ 9.11)" },
+  { k:"albugineeAbsente", l:"Albuginée non identifiable, cordons au contact de l'épithélium de surface" },
+  { k:"moinsDe6Germinales", l:"Moins de 6 cellules germinales par section transversale de tube" },
+
+  /* Ovotestis */
+  { k:"compartimentTesticulaire", l:"Compartiment testiculaire : cordons ou tubes séminifères" },
+  { k:"compartimentOvarien", l:"Compartiment ovarien : cortex folliculaire dans la même gonade" },
+
+  /* Dysgénésie ovarienne et ses confondeurs */
+  { k:"pasDeFolliculeProfond", l:"Aucun follicule primordial à la profondeur du cortex, sur un ovaire ≥ 20 SA" },
+  { k:"fibroseStromale", l:"Fibrose stromale diffuse de l'ovaire" },
+  { k:"folliculesPrimairesReduits", l:"Follicules primaires réduits en nombre" },
+  { k:"autresOrganesLyses", l:"Les autres organes du même fœtus sont lysés",
+    meta:"c'est là que se tranche l'autolyse ovarienne, jamais sur la gonade seule" },
+  { k:"corticaleSeule", l:"Coupe tangentielle : cortex superficiel seul, médullaire absente" },
+
+  /* Kystes */
+  { k:"kysteOvarien", l:"Kyste ovarien" },
+  { k:"coquesCanalaires", l:"Structures canalaires régulières dans les coques du kyste (WT1)" },
+  { k:"inhibineNeg", l:"Inhibine α négative dans la coque du kyste" },
+
+  /* Fibrose albuginéenne et périorchite */
+  { k:"fibroseAlbuginee", l:"Fibrose de l'albuginée" },
+  { k:"bilateraleRadiaire", l:"Fibrose bilatérale avec extensions en travées radiaires" },
+  { k:"cellulesGeantes", l:"Macrophages et cellules géantes péri-testiculaires" },
+  { k:"perforationDigestive", l:"Perforation digestive anténatale retrouvée sur le tube digestif" },
+
+  /* Hématopoïèse */
+  { k:"nidsErythroides", l:"Nids érythroïdes le long des septa fibreux inter-tubulaires" },
+  { k:"erythroAbondante", l:"Érythropoïèse abondante — de nombreux érythroblastes" },
+  { k:"multilignee", l:"Lignée granulocytaire ou B associée (MPO+, PAX5+)",
+    meta:"une hématopoïèse multilignée n'est pas une érythropoïèse abondante : la lignée change la lecture" },
+
+  /* Tractus et confrontation */
+  { k:"derivesMulleriens", l:"Dérivés paramésonéphrotiques persistants du côté examiné (trompe, utérus)" },
+  { k:"derivesMesonephrotiques", l:"Dérivés mésonéphrotiques présents du côté examiné (épididyme, déférent)" },
+  { k:"discordanceSexe", l:"Sexe gonadique discordant du sexe phénotypique ou du caryotype",
+    meta:"se lit hors de la lame — la lame ne fournit qu'un des quatre volets" },
+
+  /* Signes orphelins — décrits, non sourcés */
+  { k:"calcifsIntraluminales", l:"Calcifications intraluminales de tubes séminifères",
+    meta:"« calcifications intraluminales concernant quelques tubules séminifères » — absentes de la base ET des livres" },
+  { k:"crenelage", l:"Ovaires crénelés",
+    meta:"une seule occurrence dans le corpus, aucune source ne dit si c'est normal, artéfactuel ou un signe" },
+  { k:"hemorragieGonadique", l:"Hémorragie gonadique",
+    meta:"aucun critère ne la sépare d'un saignement de dissection — même trou qu'à la surrénale et au thymus" }
+];
+
+/* ── 06 bis · Associations — affichées, jamais cochées ────────────────────────
+   Plusieurs partagent délibérément leurs signes : sur cet organe l'autolyse et
+   la dysgénésie donnent la MÊME image, et le module doit les afficher ensemble
+   plutôt que d'en choisir une. */
+var DIAGS = [
+  { k:"bandelette", l:"Gonade en bandelette (streak gonad)", cle:"gonadeFibreuse", min:3,
+    signes:["gonadeFibreuse","aucuneGerminale","aucuneStructure","gonadeAtrophique"],
+    stop:" — ne pas écrire « dysgénésie gonadique » dans la micro : décrire « tissu gonadique fibreux " +
+         "fasciculé sans cellule germinale ni structure différenciée identifiable ». La bandelette ne se " +
+         "grade pas, c'est « the most complete end of the spectrum » — une borne, pas un grade. Et le " +
+         "vocabulaire a bougé : le terme dysgénésie gonadique « was first introduced to describe the " +
+         "gonads in (postnatal) Turner syndrome », il désigne aujourd'hui le SPECTRE dont la bandelette " +
+         "est l'extrémité. Sur tissu mal conservé le diagnostic est INTERDIT : « no recognizable germ " +
+         "cells » est exactement ce que produit l'autolyse." },
+
+  { k:"autolyseOvarienne", l:"Ovaire sans follicule — autolyse avant dysgénésie", cle:"autresOrganesLyses", min:2,
+    signes:["autresOrganesLyses","pasDeFolliculeProfond","aucuneGerminale","gonadeFibreuse"],
+    stop:" — s'affiche EN MÊME TEMPS que la dysgénésie ovarienne, et c'est voulu : « autolysis " +
+         "frequently impairs the evaluation of folliculogenesis and ovarian dysgenesis in autopsy " +
+         "specimens, and caution should be used when tissues are not well preserved » [ernst, ch. 15]. " +
+         "Le critère et son artefact sont dans le même paragraphe. On tranche sur l'état de conservation " +
+         "des AUTRES organes du même fœtus, jamais sur la gonade seule ; si le foie et le rein sont " +
+         "lysés, ne rien conclure." },
+
+  { k:"dysgenesieOvarienne", l:"Dysgénésie ovarienne — absence de follicules primordiaux à 20 SA ou plus",
+    cle:"pasDeFolliculeProfond", min:2,
+    signes:["pasDeFolliculeProfond","fibroseStromale","folliculesPrimairesReduits","gonadeAtrophique"],
+    stop:" — « Turner » ne se lit pas sur une gonade. Le critère est BINAIRE et il a une borne d'entrée : " +
+         "avant 20 SA ⟨conv⟩ l'absence de follicule n'est pas un signe. Il ne se grade pas non plus : la " +
+         "base propose pourtant un continuum implicite, « Peut représenter un stade intermédiaire de " +
+         "dysgénésie ovarienne », qu'AUCUNE source ouverte ne définit (§ 9.13). Et le repère se cherche " +
+         "à la PROFONDEUR du cortex, jamais en superficie." },
+
+  { k:"coupeTangentielle", l:"Follicules absents par PLAN DE COUPE", cle:"corticaleSeule", min:2,
+    signes:["corticaleSeule","pasDeFolliculeProfond","fibroseStromale"],
+    stop:" — les follicules primordiaux apparaissent dans le cortex profond près de la médullaire AVANT " +
+         "le cortex superficiel [ernst, ch. 15] [soffoet, ch. 23] : une coupe tangentielle du cortex " +
+         "superficiel est vide de follicules chez un ovaire NORMAL. Exiger la médullaire sur la coupe " +
+         "avant de conclure quoi que ce soit." },
+
+  { k:"testiculeDysgenetique", l:"Testicule dysgénétique", cle:"distribGerminale", min:2,
+    signes:["distribGerminale","noyauxGerminauxElargis","leydigAbondants","centreDysgenetique",
+            "tubesNonIndividualises"],
+    stop:" — le verbatim de la seule figure d'histologie gonadique du chapitre porte TROIS items, à " +
+         "compter séparément : « The germ cells are abnormally distributed, their nuclei are enlarged, " +
+         "and the Leydig cells are very abundant » [keeling, ch. 25] — et AUCUNE valeur de bascule n'est " +
+         "donnée pour aucun des trois. La densité leydigienne bascule avec le TERME : très abondante à " +
+         "18 SA c'est le pic physiologique, après ≈ 23 SA c'est anormal. Ne pas nommer l'entité " +
+         "(69,XXY, 46,XY DSD) sur la lame : l'aneuploïdie n'est pas histologique. Et « Les tubules " +
+         "spermatiques ne sont pas bien individualisés » n'est dans aucun livre ouvert : critère " +
+         "d'expérience, non défini (§ 9.11)." },
+
+  { k:"ovotestis", l:"Ovotestis — DSD ovotesticulaire", cle:"compartimentOvarien", min:2,
+    signes:["compartimentOvarien","compartimentTesticulaire","asymetrieGonadique"],
+    stop:" — le piège est au hile : les cellules hilaires ovariennes sont « morphologically identical to " +
+         "Leydig cells » [ernst, ch. 15], et un amas de cellules éosinophiles polygonales au hile d'un " +
+         "ovaire n'est PAS un compartiment testiculaire. Tout échantillonner : la partie ovarienne peut " +
+         "être polaire et une coupe unique ne montrer qu'un compartiment. Vocabulaire : ne plus écrire " +
+         "« hermaphrodisme vrai », le terme est remplacé « as ovotesticular DSD » [keeling, ch. 25] — " +
+         "mais [soffoet, ch. 8], plus ancien, emploie encore l'ancien vocabulaire : divergence de " +
+         "nomenclature écrite, non arbitrée (§ 9.12)." },
+
+  { k:"dysgenesieMixte", l:"Dysgénésie gonadique mixte — deux gonades différentes", cle:"asymetrieGonadique",
+    min:2, signes:["asymetrieGonadique","gonadeFibreuse","distribGerminale","derivesMulleriens"],
+    stop:" — cette association ne tient QUE si les deux gonades sont sur deux blocs séparés et " +
+         "étiquetés : dans un bloc unique l'asymétrie reste visible mais « on ne sait plus lequel est " +
+         "lequel », et le tractus homolatéral n'est plus rattachable. Le service latéralise déjà quand " +
+         "il voit — « agénésie testiculaire gauche », « on note un centre dysgénétique (pour les 2) » — " +
+         "mais il ne date jamais côté par côté." },
+
+  { k:"kyste", l:"Kyste ovarien — folliculaire, du rete ovarii, ou rien du tout", cle:"kysteOvarien", min:1,
+    signes:["kysteOvarien","coquesCanalaires","inhibineNeg"],
+    stop:" — le seuil du livre est très haut : « Follicles that exceed 3 cm are designated as follicular " +
+         "cysts » [ernst, ch. 15]. En dessous, rien à conclure. Le corpus décrit « un kyste de l'ovaire " +
+         "de 4 mm de grand axe (découverte fortuite bénigne) » : deux ordres de grandeur sous le critère. " +
+         "Modèle de rédaction à suivre, divergence assumée et écrite : « de probables kystes du rete " +
+         "ovarii » « ou kystes folliculaires (mais inhibine négative) »." },
+
+  { k:"periorchite", l:"Fibrose de l'albuginée · périorchite méconiale", cle:"fibroseAlbuginee", min:2,
+    signes:["fibroseAlbuginee","bilateraleRadiaire","cellulesGeantes","perforationDigestive"],
+    stop:" — sans cellules géantes ni pigment, la fibrose seule n'est PAS méconiale, et la périorchite " +
+         "méconiale exige d'aller chercher la perforation digestive sur le tube digestif. Il n'existe " +
+         "AUCUNE épaisseur albuginéenne normale par terme : le corpus écrit « importante fibrose de " +
+         "l'albuginée, bilatérale, avec quelques extensions en travées radiaires » et conclut « fibrose " +
+         "péritesticulaire (de l'albuginée) », sans mesure et sans norme (§ 9.14). Entité non retrouvée " +
+         "dans les livres ouverts : famille inflammatoire-réactionnelle, pas malformative." },
+
+  { k:"hematoAbondante", l:"Hématopoïèse extramédullaire testiculaire abondante", cle:"erythroAbondante", min:2,
+    signes:["nidsErythroides","erythroAbondante","multilignee"],
+    stop:" — la PRÉSENCE est normale au terme : « Nests of erythroid extramedullary hematopoiesis are " +
+         "present » à 39 weeks gestation [ernst, ch. 10]. Seule l'abondance est interprétable, et aucun " +
+         "seuil n'existe : la frontière est qualitative des deux côtés, « nombreux érythroblastes », " +
+         "« d'assez nombreux foyers » (§ 9.15). Ne pas écrire « hypoxie chronique » depuis la seule " +
+         "gonade — le service lui-même l'écrit au conditionnel, « physiologique à ce terme pour la " +
+         "localisation testiculaire ; l'abondance pourrait témoigner d'une hypoxie fœtale chronique ». " +
+         "Et « des lignées rouge et granulocytaire » change la lecture : « Une hématopoïèse multilignée " +
+         "testiculaire » n'est plus une érythropoïèse abondante." },
+
+  { k:"pauvreteGerminale", l:"Pauvreté germinale testiculaire", cle:"moinsDe6Germinales", min:1,
+    signes:["moinsDe6Germinales","distribGerminale","albugineeAbsente"],
+    stop:" — compter, jamais typer : le sous-typage gonocyte / cellule intermédiaire / spermatogonie " +
+         "exige « very fresh tissue obtained within an hour of death » [ernst, ch. 10] et n'est un axe " +
+         "praticable sur AUCUN fœtus d'autopsie. Et « Even in this well-preserved specimen, the germ " +
+         "cells are difficult to differentiate from Sertoli cells » : une indistinction germinale n'est " +
+         "pas une pauvreté germinale." },
+
+  { k:"dsd", l:"Discordance du sexe gonadique — ce que la lame ne conclut pas", cle:"discordanceSexe", min:2,
+    signes:["discordanceSexe","derivesMulleriens","compartimentTesticulaire","asymetrieGonadique"],
+    stop:" — la lame ne fournit qu'un des quatre volets exigés ensemble : « external genital morphology, " +
+         "genitourinary ductal anatomy, gonadal histology, and chromosomal status should all be " +
+         "thoroughly documented at all fetal/neonatal postmortem examinations » [keeling, ch. 25]. " +
+         "L'aneuploïdie n'est pas histologique : c'est le caryotype qui tranche. Ne jamais confondre " +
+         "« Sexe ambigu / DSD » avec un sexe indéterminable sur la pièce — dans le corpus, ce second " +
+         "libellé désigne 7 fois sur 7 un fœtus de 11–17 SA fragmenté ou macéré, jamais un phénotype " +
+         "ambigu. Et le sous-diagnostic est mesuré, pas théorique : « gonadal histology may be omitted »." },
+
+  { k:"tractusNonDatant", l:"Dérivés du tractus — différenciation, jamais un terme", cle:"derivesMesonephrotiques",
+    min:2, signes:["derivesMesonephrotiques","derivesMulleriens","asymetrieGonadique"],
+    stop:" — les tractus génitaux internes ne datent pas : « the time of the appearance of smooth muscle " +
+         "differentiation may vary », et l'atlas publie un épididyme de 34 weeks « less well developed » " +
+         "qu'un de 22 weeks [ernst, ch. 11]. Leurs critères sont de DIFFÉRENCIATION — présent / absent, " +
+         "côté par côté — au service du DSD, pas du terme histologique. Sur 200 CR, aucun tractus " +
+         "génital interne n'a été décrit en histologie : 0 pour l'épididyme, la prostate, la vésicule " +
+         "séminale et le déférent, et la seule mention est « deux structures allongée, symétriques, " +
+         "rosées […] (canaux de Wolff ?) »." },
+
+  { k:"orphelins", l:"Signes orphelins — décrits, non sourcés", cle:"calcifsIntraluminales", min:1,
+    signes:["calcifsIntraluminales","crenelage","hemorragieGonadique"],
+    stop:" — aucun de ces trois n'a de source : les calcifications intraluminales sont absentes de la " +
+         "base ET des livres (§ 9.16), « Les ovaires sont crénelés et les trompes utérines tortueuses » " +
+         "n'a qu'une occurrence et personne ne dit si c'est normal, artéfactuel ou un signe (§ 9.17), et " +
+         "aucun critère ne sépare une hémorragie gonadique ante-mortem d'un saignement de dissection " +
+         "(§ 9.22). Les décrire, les localiser, ne rien en conclure." }
+];
+/* ── 07 · Négatifs obligatoires ───────────────────────────────────────────────
+   ⚠️ Liste construite depuis les livres, PAS relevée dans l'usage : sur les
+   200 CR, deux seulement énoncent un négatif gonadique, « absence d'anomalie
+   des gonades » et « absence d'érythropoïèse ». Elle est proposée, pas
+   validée. Un négatif manquant ici n'est pas un négatif faux : c'est un
+   négatif non regardé. */
+var NEGATIFS = [
+  { k:"conservation", l:"Qualité de conservation énoncée AVANT tout autre négatif",
+    p:"un négatif posé sur du tissu autolysé ne vaut rien [ernst, ch. 15]",
+    ko:"conservation NON énoncée — tous les négatifs qui suivent sont sans portée" },
+  { k:"sexeGonadique", l:"Sexe gonadique histologique énoncé et confronté à la macro et au caryotype",
+    p:"les quatre volets sont exigés ensemble : « external genital morphology, genitourinary ductal anatomy, gonadal histology, and chromosomal status »",
+    ko:"sexe gonadique NON énoncé ou non confronté — la lame ne fournit qu'un des quatre volets" },
+  { k:"lateralite", l:"Chaque gonade décrite séparément, y compris quand elles sont identiques",
+    p:"sans côté par côté, la dysgénésie mixte est innommable [keeling, ch. 25]",
+    ko:"gonades NON décrites séparément — une asymétrie ne serait pas nommable" },
+  { k:"ovotestisNeg", l:"Absence de compartiment de l'autre sexe dans la gonade",
+    p:"la partie ovarienne d'un ovotestis peut être polaire [keeling, ch. 25]",
+    ko:"compartiment de l'AUTRE sexe présent — écarter d'abord les cellules hilaires au hile" },
+  { k:"bandeletteNeg", l:"Absence de structure gonadique en bandelette",
+    p:"fibreuse, sans germinale ni structure différenciée [keeling, ch. 25]",
+    ko:"aspect en bandelette PRÉSENT — interdit de conclure sur tissu mal conservé" },
+  { k:"inflammation", l:"Absence d'inflammation péri-gonadique et de cellules géantes",
+    p:"périorchite méconiale, famille inflammatoire-réactionnelle",
+    ko:"inflammation péri-gonadique ou cellules géantes PRÉSENTES — chercher la perforation digestive" },
+  { k:"albugineeNeg", l:"Testicule : présence de l'albuginée isolant les cordons de l'épithélium de surface",
+    p:"le critère formel de différenciation [soffoet, ch. 8]",
+    ko:"albuginée NON identifiée — le critère formel de différenciation testiculaire tombe" },
+  { k:"sixGerminales", l:"Testicule : au moins 6 cellules germinales par section transversale de tube",
+    p:"« Each cross section of a seminiferous tubule usually contains six or more germ cells of various types »",
+    ko:"compte germinal SOUS 6 par section — compter, jamais typer" },
+  { k:"leydigTerme", l:"Testicule : densité des cellules de Leydig confrontée au terme",
+    p:"haute à 16–21 SA ⟨conv⟩, effondrée après ≈ 23 SA [ernst, ch. 10]",
+    ko:"densité leydigienne NON confrontée au terme — le même aspect est pic ou lésion selon la semaine" },
+  { k:"germinalesNormales", l:"Testicule : absence de distribution germinale aberrante et de noyaux élargis",
+    p:"deux des trois items du verbatim de dysgénésie [keeling, ch. 25]",
+    ko:"distribution germinale aberrante ou noyaux élargis PRÉSENTS" },
+  { k:"hematoTerme", l:"Testicule : caractère physiologique ou non de l'hématopoïèse, avec le terme",
+    p:"présente au terme sur testicule normal ; seule l'abondance s'interprète",
+    ko:"hématopoïèse NON rapportée au terme — sa présence seule n'est pas un signe" },
+  { k:"folliculesPrimordiaux", l:"Ovaire ≥ 20 SA ⟨conv⟩ : follicules primordiaux présents à la profondeur du cortex",
+    p:"le seul négatif ovarien réellement opposable [ernst, ch. 15] [soffoet, ch. 23]",
+    ko:"aucun follicule primordial en profondeur ≥ 20 SA — trancher d'abord sur la lyse des AUTRES organes" },
+  { k:"kysteMesure", l:"Ovaire : grand axe de tout kyste, en cm, avec le seuil de 3 cm rappelé",
+    p:"« Follicles that exceed 3 cm are designated as follicular cysts »",
+    ko:"kyste NON mesuré ou seuil non rappelé — un kyste de quelques mm n'est pas un kyste folliculaire" },
+  { k:"fibroseStromaleNeg", l:"Ovaire : absence de fibrose stromale diffuse",
+    p:"un des signes d'appui de la dysgénésie ovarienne [keeling, ch. 25]",
+    ko:"fibrose stromale diffuse PRÉSENTE" },
+  { k:"tractusCoteParCote", l:"Tractus, si prélevés : dérivés mésonéphrotiques et paramésonéphrotiques, côté par côté",
+    p:"critères de différenciation au service du DSD [keeling, ch. 25] [ernst, ch. 11–18]",
+    ko:"dérivés du tractus NON énoncés côté par côté — le rattachement homolatéral est perdu" },
+  { k:"gonadeExaminee", l:"Gonade effectivement examinée, et non seulement prélevée",
+    p:"117 CR sur 200 la listent, 17 la décrivent [corpus CR]",
+    ko:"gonade NON examinée — l'écrire fait la différence entre une omission et une normalité" }
+];
+/* ⚠️ Un négatif volontairement ABSENT de cette liste : « absence de structure
+   gonadoblastome-like ». Elles sont présentes dans jusqu'à 35 % des ovaires
+   normaux — ce négatif serait faux plus d'une fois sur trois. */
+
+/* ── 08 · Techniques ──────────────────────────────────────────────────────────
+   Une ligne par QUESTION. Les clones et dilutions sont ceux réellement écrits
+   dans les CR du service. Les deux dernières lignes sont des CONTRE-INDICATIONS :
+   deux panels d'apparence évidente sont réfutés par la source, et les écrire
+   comme des questions à ne pas poser vaut mieux que de les omettre. */
+var TECHNIQUES = [
+  { k:"cd71",     l:"CD71 — clone MRQ-48, Cell Marque, 1/200",
+    q:"y a-t-il une érythropoïèse extramédullaire, et de quelle abondance" },
+  { k:"mpoPax5",  l:"MPO polyclonal Dako 1/8000 · PAX5 clone SP34, Cell Marque, 1/25",
+    q:"l'hématopoïèse est-elle multilignée — négatifs attendus" },
+  { k:"inhibine", l:"Inhibine α — clone R1, Agilent, pur",
+    q:"ce kyste ovarien est-il folliculaire — « négative = écarte l'origine folliculaire »" },
+  { k:"wt1",      l:"WT1 — clone 6F H2, ZETA, 1/100",
+    q:"ou est-ce un kyste du rete ovarii — « structures canalaires régulières » dans les coques" },
+  { k:"ki67",     l:"Ki-67 / MIB — clone SP6, Cell Marque, 1/200",
+    q:"ces cellules kystiques prolifèrent-elles" },
+  { k:"sall4",    l:"SALL4 — clone EP299, MENARINI, 1/100",
+    q:"y a-t-il une population germinale tumorale — négatif attendu" },
+  { k:"synapto",  l:"Synaptophysine — clone 27G12, LEICA, 1/100",
+    q:"lésion des cordons sexuels ou neuroendocrine — négatif attendu" },
+  { k:"cd45",     l:"CD45 — clone 2B11+PD7/26, Bio SB, 1/150",
+    q:"y a-t-il un infiltrat lymphoïde — négatif attendu" },
+  { k:"cd68",     l:"CD68 — clone PGM1, Dako, 1/100",
+    q:"macrophages : abondants et à cellules géantes oriente vers le méconium" },
+  { k:"d240",     l:"D2-40 — clone D2-40, Dako, 1/200",
+    q:"lymphatiques péri-lésionnels" },
+  { k:"parvo",    l:"Parvovirus B19 — BIOSB, clone R92F6, 1/200",
+    q:"parvovirose devant une érythropoïèse abondante — réalisé sur testicule dans le corpus" },
+  { k:"cd10",     l:"CD10",
+    q:"où est le rete, où est l'épididyme — fort dans l'épididyme, faible et par plages dans le rete" },
+  { k:"caryotype",l:"Caryotype ou analyse moléculaire — pas une IHC",
+    q:"le sexe gonadique est-il cohérent avec le sexe chromosomique" },
+  { k:"adn",      l:"Mise en réserve de tissu congelé pour extraction d'ADN",
+    q:"« tissue stored for DNA extraction » — sans ADN fœtal, pas de conseil génétique" },
+  { k:"gcnisNon", l:"PLAP / OCT-4 / CD117 — CONTRE-INDIQUÉ sur un fœtus",
+    q:"GCNIS : la question ne se pose pas avant 6 mois de vie — ne pas prescrire" },
+  { k:"sousTypageNon", l:"Semi-fines épon 0,5–1 µm et microscopie électronique — CONTRE-INDIQUÉ",
+    q:"sous-typage germinal : hors de portée de l'autopsie — ne pas prescrire" }
+];
+
+/* ── Propositions de techniques — déduites des clics, jamais imposées ─────────
+   Aucune contre-indication n'est jamais proposée ici : elles figurent dans la
+   liste pour être lues, pas pour être cochées par le module. */
+function suggerer(){
+  var s = {};
+  function anormal(k){ return E.signes[k] === "anormal"; }
+
+  if (anormal("nidsErythroides") || anormal("erythroAbondante")) s.cd71 = 1;
+  if (anormal("erythroAbondante")){ s.mpoPax5 = 1; s.parvo = 1; }
+  if (anormal("multilignee")) s.mpoPax5 = 1;
+
+  if (anormal("kysteOvarien")){ s.inhibine = 1; s.wt1 = 1; s.ki67 = 1; }
+  if (anormal("inhibineNeg")) s.wt1 = 1;
+  if (anormal("coquesCanalaires")) s.wt1 = 1;
+  if (anormal("kysteOvarien") && (E.mesure.v.kyste != null && E.mesure.v.kyste >= 3)) s.sall4 = 1;
+
+  if (anormal("cellulesGeantes") || anormal("fibroseAlbuginee") || anormal("bilateraleRadiaire"))
+    s.cd68 = 1;
+  if (anormal("perforationDigestive")) s.cd68 = 1;
+
+  /* Le rete et l'épididyme se départagent au marqueur, pas à l'œil. */
+  if (anormal("derivesMesonephrotiques") || anormal("derivesMulleriens")) s.cd10 = 1;
+
+  /* Tout ce qui touche au sexe gonadique sort de la lame. */
+  if (anormal("discordanceSexe") || anormal("compartimentOvarien") ||
+      anormal("compartimentTesticulaire") || anormal("asymetrieGonadique") ||
+      anormal("gonadeFibreuse")){ s.caryotype = 1; s.adn = 1; }
+  if (E.mesure.def === "ovotesticulaire" || E.mesure.def === "indeterminable"){
+    s.caryotype = 1; s.adn = 1;
+  }
+  if (E.negatifs.sexeGonadique === "present") s.caryotype = 1;
+  if (E.negatifs.tractusCoteParCote === "present") s.cd10 = 1;
+  if (E.negatifs.hematoTerme === "present") s.cd71 = 1;
+  if (E.negatifs.kysteMesure === "present") s.inhibine = 1;
+
+  if (E.prelev.congele && SIGNES.some(function(x){ return E.signes[x.k] === "anormal"; }))
+    s.adn = 1;
+  return s;
+}
+
+/* ── Contrôles propres aux gonades ────────────────────────────────────────────
+   Le banc commun a déjà tourné : il laisse gonadeFibreuse en anormal et le
+   côté retiré. On part d'un état VOULU, jamais supposé. */
+async function testsOrgane(chk, clic, set, crTient, pause){
+
+  function pose(k, v){ if (E.signes[k] !== v) clic("les", k, v); }
+  function ote(k){ if (E.signes[k]) clic("les", k, E.signes[k]); }
+  function tenue(k){ return associations().some(function(a){ return a.d.k === k && a.tenu; }); }
+  function lue(k){ return associations().some(function(a){ return a.d.k === k; }); }
+  function propre(){ SIGNES.forEach(function(x){ ote(x.k); }); }
+  function sexe(k){ if (E.mesure.def !== k) clic("mdef", k); }
+  function cons(k){ if (E.mesure.opt !== k) clic("mopt", k); }
+
+  propre();
+
+  /* ── La latéralité : l'organe est pair, et le côté doit atteindre le CR ──── */
+  chk("organe déclaré pair", PAIR === true);
+  if (E.cote) clic("cote", E.cote);
+  chk("côté absent = réserve au prélèvement",
+      verdictPrelevement().res.indexOf("côté non déclaré — organe pair") >= 0);
+  clic("prelev", "deuxBlocs");
+  clic("cote", "droit");
+  chk("le côté prélevé atteint le compte rendu", crTient("Droit — 1/2"));
+  chk("le côté prélevé est repris au verdict prélèvement",
+      verdictPrelevement().txt.indexOf(", droit.") >= 0 && crTient(", droit."));
+  clic("cote", "deux");
+  chk("les deux gonades sur un seul relevé", E.cote === "deux" && crTient("Les deux — 2/2"));
+  clic("cote", "droit");
+
+  /* ── Prélèvement : quatre manques sont GRAVES, et ils disent pourquoi ────── */
+  chk("gonade non retrouvée est grave", par(PRELEV, "gonadeRetrouvee").grave === true);
+  chk("deux blocs séparés est grave",   par(PRELEV, "deuxBlocs").grave === true);
+  chk("albuginée est grave",            par(PRELEV, "albuginee").grave === true);
+  chk("cortex jusqu'à la médullaire est grave", par(PRELEV, "cortexMedullaire").grave === true);
+  chk("un bloc unique rend l'asymétrie non latéralisable",
+      par(PRELEV, "deuxBlocs").manque.indexOf("on ne sait plus lequel est lequel") >= 0);
+
+  /* ── Rétention : la gonade n'a NI RANG NI HEURE ──────────────────────────── */
+  chk("une seule borne recevable, et c'est un report",
+      RETENTION.filter(function(r){ return r.q !== "mauvais" && r.h > 0; }).length === 1 &&
+      par(RETENTION, "reportAutres").q === "bon");
+  chk("la borne recevable est un report des autres organes",
+      par(RETENTION, "reportAutres").d.indexOf("jamais mesuré sur la gonade") >= 0);
+  chk("absence de la gonade des tables de macération",
+      par(RETENTION, "reportAutres").note.indexOf("ni rang ni heure") >= 0);
+  chk("la cotation testiculaire du service est portée, non arbitrée",
+      par(RETENTION, "basoTesticule").q === "moyen" &&
+      par(RETENTION, "basoTesticule").note.indexOf("NON tranchée") >= 0);
+  chk("l'effacement folliculaire n'est pas une borne",
+      par(RETENTION, "folliculesEffaces").q === "mauvais");
+  chk("l'indistinction germinale n'est pas une borne",
+      par(RETENTION, "germSertoli").q === "mauvais");
+  chk("le sous-typage n'est pas un seuil de macération",
+      par(RETENTION, "sousTypageTombe").note.indexOf("délai d'autopsie") >= 0);
+
+  clic("ret", "folliculesEffaces", "present");
+  chk("seul un mauvais prédicteur : aucune borne recevable",
+      crTient("Seuls des prédicteurs MAUVAIS sont positifs"));
+  clic("ret", "reportAutres", "present");
+  chk("le report donne la borne", crTient("Rétention reportée des autres organes"));
+  chk("plafond 2–4 semaines rappelé", crTient("aucun organe fœtal ne donne de bonne estimation"));
+  clic("ret", "folliculesEffaces", "present");
+  clic("ret", "reportAutres", "present");
+
+  /* ── Maturation : deux échelles, et aucune correspondance rang à rang ───── */
+  chk("sept fenêtres en SA", STADES.length === 7);
+  chk("chaque fenêtre porte SÉPARÉMENT ses deux colonnes",
+      STADES.every(function(s){ var t = s.l + " " + s.note;
+        return /testicul/i.test(t) && /ovair/i.test(t); }));
+  chk("le repère opposable est à 20 SA", stadeAttendu(21).k === "folliculesPrimordiaux");
+  chk("à 19 SA on est encore dans le pic leydigien", stadeAttendu(19).k === "picLeydigien");
+  chk("à 40 SA, fenêtre ouverte", stadeAttendu(40).k === "procheTerme");
+  chk("sans terme, aucune fenêtre", stadeAttendu(null) === null);
+  chk("divergence interne d'ernst portée",
+      par(STADES, "meioseEtDeuxiemeEtape").note.indexOf("DIVERGENCE INTERNE") >= 0);
+  chk("rang ovarien tronqué à l'extraction, dit comme tel",
+      par(STADES, "picLeydigien").note.indexOf("TRONQUÉE") >= 0);
+  chk("bornes sourcées par la base seule, dites comme telles",
+      par(STADES, "picLeydigien").note.indexOf("BASE seule") >= 0);
+  chk("18 SA non converti promu en nom de terme, signalé",
+      par(STADES, "folliculesPrimordiaux").note.indexOf("non converti") >= 0);
+  chk("folliculogenèse reconnue mais non datée",
+      par(STADES, "vasculosaEtCroissance").note.indexOf("AUCUN intervalle") >= 0);
+
+  /* ── Le sexe gonadique BLOQUE tout le reste ──────────────────────────────── */
+  set("sa", "24");
+  chk("gonade non lue : ni sexe, ni conservation, ni chiffre",
+      crTient("la gonade n'est pas encore lue"));
+  clic("stade", "picGerminalEffondrement");
+  chk("sans sexe gonadique, le stade est ininterprétable",
+      $("vMesure").className.indexOf("bad") >= 0 && crTient("ININTERPRÉTABLE"));
+  chk("les deux échelles ne sont pas symétriques",
+      crTient("le testicule se date par son interstitium, l'ovaire par sa lignée germinale"));
+  chk("le sexe gonadique ne se dérive pas du sexe déclaré",
+      crTient("il ne se dérive jamais du sexe déclaré"));
+
+  sexe("nonRetrouvee");
+  chk("gonade non retrouvée : rien n'est lisible", $("vMesure").className.indexOf("bad") >= 0);
+  chk("le chiffre du sous-diagnostic est écrit", crTient("117 CR sur 200"));
+
+  sexe("indeterminable");
+  chk("indéterminable est une limite de pièce, pas un diagnostic",
+      $("vMesure").className.indexOf("bad") >= 0 && crTient("PAS un diagnostic"));
+  chk("le piège de vocabulaire est nommé", crTient("fabrique des DSD à partir de fœtus trop jeunes"));
+
+  sexe("ovotesticulaire");
+  chk("l'ovotestis se lit dans les deux colonnes", crTient("jamais dans une seule"));
+  chk("l'ovotestis appelle le caryotype et l'ADN",
+      suggerer().caryotype === 1 && suggerer().adn === 1);
+
+  /* ── Conservation : elle se juge sur les AUTRES organes ──────────────────── */
+  sexe("ovaire");
+  chk("conservation non jugée = réserve",
+      crTient("il ne se juge PAS sur la gonade"));
+  cons("lyseSevere");
+  chk("ovaire lysé : ni stade ni dysgénésie",
+      $("vMesure").className.indexOf("bad") >= 0 &&
+      crTient("on n'écrit NI STADE NI DYSGÉNÉSIE"));
+  chk("le critère et son artefact sont dans la même phrase",
+      crTient("caution should be used when tissues are not well preserved"));
+
+  sexe("testicule");
+  chk("testicule macéré : le stade grossier reste écrivable",
+      crTient("le sous-typage germinal, jamais"));
+  chk("la fiche se contredit sur le compte germinal, et on porte les deux",
+      crTient("Porter les deux lectures"));
+  cons("conserve");
+
+  /* ── Les trois chiffres, et leurs trois statuts épistémiques ─────────────── */
+  set("m_germ", "4");
+  chk("compte germinal sous le plancher sourcé",
+      crTient("Compte SOUS le plancher de 6") && crTient("six or more germ cells"));
+  chk("compter n'est pas typer", crTient("very fresh tissue obtained within an hour of death"));
+  chk("une indistinction germinale n'est pas une pauvreté",
+      crTient("elle ne fait pas une pauvreté germinale"));
+  set("m_germ", "9");
+  chk("compte au-dessus du plancher", crTient("Compte au-dessus du plancher"));
+
+  sexe("ovaire");
+  chk("le compte par tube n'a pas de sens sur un ovaire",
+      crTient("critère TESTICULAIRE"));
+  sexe("testicule");
+  set("m_germ", "");
+
+  set("m_kyste", "0.4");
+  chk("kyste de 4 mm : sous le seuil du livre", crTient("SOUS le seuil du livre"));
+  chk("le seuil de 3 cm est cité et sourcé",
+      crTient("Follicles that exceed 3 cm are designated as follicular cysts"));
+  chk("le corpus est deux ordres de grandeur sous le critère",
+      crTient("découverte fortuite bénigne"));
+  set("m_kyste", "4");
+  chk("kyste de 4 cm : au-dessus du seuil", crTient("AU-DESSUS du seuil de 3 cm"));
+  chk("le différentiel se tranche en IHC", crTient("pas à la règle"));
+  set("m_kyste", "");
+
+  set("m_diamTub", "59");
+  chk("un chiffre sans son normal ne vaut rien",
+      crTient("AUCUNE NORME PAR TERME") && crTient("The median tubular diameter increases to 59"));
+  chk("la mesure se consigne, elle ne s'interprète pas", crTient("NON UTILISABLE en l'état"));
+  set("m_diamTub", "");
+
+  /* ── Le repère ovarien a une borne d'entrée, et il est binaire ───────────── */
+  sexe("ovaire");
+  set("sa", "18");
+  chk("avant 20 SA, l'absence de follicule n'est pas un signe",
+      crTient("n'est PAS un signe"));
+  set("sa", "24");
+  chk("à partir de 20 SA le repère est opposable et binaire",
+      crTient("il est BINAIRE") && crTient("Il ne se grade pas"));
+
+  /* ── La densité leydigienne bascule avec le TERME ────────────────────────── */
+  sexe("testicule");
+  pose("leydigAbondants", "anormal");
+  set("sa", "18");
+  chk("Leydig abondants à 18 SA : pic physiologique",
+      crTient("PIC PHYSIOLOGIQUE de 16–21 SA"));
+  set("sa", "26");
+  chk("Leydig abondants à 26 SA : discordance",
+      crTient("c'est une DISCORDANCE, pas une variante"));
+  set("sa", "22");
+  chk("entre 21 et 23 SA, les sources ne tranchent pas",
+      crTient("que les sources ne tranchent pas à la semaine"));
+  ote("leydigAbondants");
+
+  /* ── Cohérence entre le sexe déclaré et les signes cochés ────────────────── */
+  sexe("ovaire");
+  pose("leydigAbondants", "anormal");
+  chk("Leydig sur un ovaire déclaré : d'abord des cellules hilaires",
+      crTient("morphologically identical to Leydig cells"));
+  ote("leydigAbondants");
+  sexe("testicule");
+  pose("fibroseStromale", "anormal");
+  chk("signes ovariens sur un testicule déclaré : réserve",
+      crTient("ou le sexe déclaré est à reprendre"));
+  ote("fibroseStromale");
+
+  /* ── Le piège majeur : l'autolyse et la dysgénésie s'affichent ENSEMBLE ──── */
+  propre();
+  set("sa", "24");
+  sexe("ovaire");
+  pose("pasDeFolliculeProfond", "anormal");
+  pose("fibroseStromale", "anormal");
+  chk("dysgénésie ovarienne lue", tenue("dysgenesieOvarienne"));
+  pose("autresOrganesLyses", "anormal");
+  chk("l'autolyse s'affiche EN MÊME TEMPS que la dysgénésie",
+      tenue("autolyseOvarienne") && tenue("dysgenesieOvarienne"));
+  chk("on tranche sur les autres organes, jamais sur la gonade seule",
+      crTient("jamais sur la gonade seule"));
+  chk("si le foie et le rein sont lysés, ne rien conclure",
+      par(DIAGS, "autolyseOvarienne").stop.indexOf("ne rien conclure") >= 0);
+  ote("autresOrganesLyses");
+
+  /* Et le troisième larron : le plan de coupe. */
+  pose("corticaleSeule", "anormal");
+  chk("le plan de coupe s'affiche aussi", tenue("coupeTangentielle"));
+  chk("un cortex superficiel est vide de follicules chez un ovaire normal",
+      par(DIAGS, "coupeTangentielle").stop.indexOf("ovaire NORMAL") >= 0);
+  chk("les trois lectures coexistent",
+      tenue("dysgenesieOvarienne") && tenue("coupeTangentielle"));
+  propre();
+
+  /* ── Le pivot commande : sans lui, l'association ne tient pas ────────────── */
+  pose("fibroseStromale", "anormal");
+  pose("folliculesPrimairesReduits", "anormal");
+  chk("sans le pivot, la dysgénésie ovarienne ne tient pas",
+      !tenue("dysgenesieOvarienne") &&
+      crTient("signe pivot non coché : Aucun follicule primordial"));
+  propre();
+
+  /* ── Bandelette : une borne, pas un grade ────────────────────────────────── */
+  pose("gonadeFibreuse", "anormal");
+  pose("aucuneGerminale", "anormal");
+  chk("deux signes ne suffisent pas au seuil de 3", !tenue("bandelette") && lue("bandelette"));
+  chk("le faisceau incomplet reste affiché avec ses non regardés",
+      crTient("faisceau incomplet") && crTient("non regardés"));
+  pose("aucuneStructure", "anormal");
+  chk("bandelette tenue à trois signes", tenue("bandelette"));
+  chk("la bandelette est une borne, pas un grade",
+      par(DIAGS, "bandelette").stop.indexOf("une borne, pas un grade") >= 0);
+  chk("interdit sur tissu mal conservé",
+      par(DIAGS, "bandelette").stop.indexOf("INTERDIT") >= 0);
+  chk("le vocabulaire a bougé, et c'est écrit",
+      par(DIAGS, "bandelette").stop.indexOf("Turner syndrome") >= 0);
+  chk("la bandelette appelle le caryotype", suggerer().caryotype === 1);
+  propre();
+
+  /* ── Testicule dysgénétique : trois items, aucune valeur de bascule ──────── */
+  pose("distribGerminale", "anormal");
+  pose("noyauxGerminauxElargis", "anormal");
+  chk("testicule dysgénétique lu", tenue("testiculeDysgenetique"));
+  chk("les trois items du verbatim sont comptés séparément",
+      par(DIAGS, "testiculeDysgenetique").signes.indexOf("leydigAbondants") >= 0 &&
+      par(DIAGS, "testiculeDysgenetique").stop.indexOf("AUCUNE valeur de bascule") >= 0);
+  chk("ne pas nommer l'entité sur la lame",
+      par(DIAGS, "testiculeDysgenetique").stop.indexOf("l'aneuploïdie n'est pas histologique") >= 0);
+  chk("le critère du service est signalé non défini",
+      par(SIGNES, "tubesNonIndividualises").meta.indexOf("non retrouvé dans les livres") >= 0);
+  propre();
+
+  /* ── Ovotestis : le piège est au hile ────────────────────────────────────── */
+  pose("compartimentOvarien", "anormal");
+  pose("compartimentTesticulaire", "anormal");
+  chk("ovotestis lu", tenue("ovotestis"));
+  chk("un amas au hile n'est pas un compartiment testiculaire",
+      par(DIAGS, "ovotestis").stop.indexOf("n'est PAS un compartiment testiculaire") >= 0);
+  chk("divergence de nomenclature écrite et non arbitrée",
+      par(DIAGS, "ovotestis").stop.indexOf("non arbitrée") >= 0);
+  chk("gonadoblastome-like jamais énoncé en négatif",
+      NEGATIFS.every(function(n){ return n.l.indexOf("gonadoblastome") < 0; }) &&
+      par(VARIANTES, "gonadoblastomeLike").l.indexOf("NE JAMAIS énoncer en négatif") >= 0);
+  propre();
+
+  /* ── Dysgénésie mixte : elle a besoin des deux blocs ─────────────────────── */
+  pose("asymetrieGonadique", "anormal");
+  pose("gonadeFibreuse", "anormal");
+  chk("dysgénésie mixte lue", tenue("dysgenesieMixte"));
+  chk("elle ne tient qu'avec deux blocs étiquetés",
+      par(DIAGS, "dysgenesieMixte").stop.indexOf("deux blocs séparés") >= 0);
+  chk("le service latéralise déjà, mais ne date jamais côté par côté",
+      par(DIAGS, "dysgenesieMixte").stop.indexOf("il ne date jamais côté par côté") >= 0);
+  propre();
+
+  /* ── Kyste : un seuil, et un modèle de rédaction ─────────────────────────── */
+  pose("kysteOvarien", "anormal");
+  chk("un kyste suffit à ouvrir l'association", tenue("kyste"));
+  chk("le kyste propose inhibine, WT1 et Ki-67",
+      suggerer().inhibine === 1 && suggerer().wt1 === 1 && suggerer().ki67 === 1);
+  chk("sous 3 cm, pas de SALL4 proposé", suggerer().sall4 !== 1);
+  set("m_kyste", "4");
+  chk("au-dessus du seuil, SALL4 est proposé", suggerer().sall4 === 1);
+  set("m_kyste", "");
+  chk("le modèle de rédaction porte la divergence",
+      par(DIAGS, "kyste").stop.indexOf("divergence assumée et écrite") >= 0);
+  propre();
+
+  /* ── Périorchite : la fibrose seule n'est pas méconiale ──────────────────── */
+  pose("fibroseAlbuginee", "anormal");
+  pose("bilateraleRadiaire", "anormal");
+  chk("fibrose albuginéenne lue", tenue("periorchite"));
+  chk("la fibrose seule n'est pas méconiale",
+      par(DIAGS, "periorchite").stop.indexOf("n'est PAS méconiale") >= 0);
+  chk("aucune épaisseur albuginéenne normale par terme",
+      par(DIAGS, "periorchite").stop.indexOf("AUCUNE épaisseur albuginéenne normale") >= 0);
+  chk("la fibrose propose le CD68", suggerer().cd68 === 1);
+  pose("cellulesGeantes", "anormal");
+  chk("cellules géantes : aller chercher la perforation digestive",
+      par(DIAGS, "periorchite").signes.indexOf("perforationDigestive") >= 0);
+  propre();
+
+  /* ── Hématopoïèse : la présence est normale, seule l'abondance se lit ───── */
+  pose("nidsErythroides", "anormal");
+  chk("des nids seuls ne tiennent pas l'association", !tenue("hematoAbondante"));
+  chk("les nids proposent quand même le CD71", suggerer().cd71 === 1);
+  pose("erythroAbondante", "anormal");
+  chk("abondance : association tenue", tenue("hematoAbondante"));
+  chk("l'abondance appelle MPO, PAX5 et le parvovirus",
+      suggerer().mpoPax5 === 1 && suggerer().parvo === 1);
+  chk("la présence au terme est normale",
+      par(DIAGS, "hematoAbondante").stop.indexOf("la PRÉSENCE est normale au terme") >= 0);
+  chk("aucun seuil d'abondance n'existe",
+      par(DIAGS, "hematoAbondante").stop.indexOf("aucun seuil n'existe") >= 0);
+  chk("ne pas écrire hypoxie chronique depuis la seule gonade",
+      par(DIAGS, "hematoAbondante").stop.indexOf("hypoxie chronique") >= 0);
+  chk("multilignée change la lecture",
+      par(SIGNES, "multilignee").meta.indexOf("la lignée change la lecture") >= 0);
+  propre();
+
+  /* ── DSD : la lame ne fournit qu'un des quatre volets ────────────────────── */
+  pose("discordanceSexe", "anormal");
+  pose("derivesMulleriens", "anormal");
+  chk("discordance lue", tenue("dsd"));
+  chk("les quatre volets sont cités ensemble",
+      par(DIAGS, "dsd").stop.indexOf("gonadal histology, and chromosomal status") >= 0);
+  chk("sexe ambigu et sexe indéterminable ne sont pas le même axe",
+      par(DIAGS, "dsd").stop.indexOf("7 fois sur 7") >= 0);
+  chk("le sous-diagnostic est mesuré, pas théorique",
+      par(DIAGS, "dsd").stop.indexOf("gonadal histology may be omitted") >= 0);
+  chk("la discordance appelle le caryotype, pas une IHC",
+      suggerer().caryotype === 1 &&
+      par(TECHNIQUES, "caryotype").l.indexOf("pas une IHC") >= 0);
+  propre();
+
+  /* ── Tractus : différenciation, jamais un terme ──────────────────────────── */
+  pose("derivesMesonephrotiques", "anormal");
+  pose("derivesMulleriens", "anormal");
+  chk("tractus lu", tenue("tractusNonDatant"));
+  chk("le tractus ne date pas",
+      par(DIAGS, "tractusNonDatant").stop.indexOf("may vary") >= 0);
+  chk("un épididyme de 34 weeks moins développé qu'un de 22 est publié",
+      par(DIAGS, "tractusNonDatant").stop.indexOf("less well developed") >= 0);
+  chk("0 tractus décrit en histologie sur 200 CR",
+      par(DIAGS, "tractusNonDatant").stop.indexOf("aucun tractus") >= 0);
+  chk("le tractus propose le CD10", suggerer().cd10 === 1);
+  propre();
+
+  /* ── Orphelins : décrits, localisés, rien conclu ─────────────────────────── */
+  pose("calcifsIntraluminales", "anormal");
+  chk("un orphelin suffit à s'afficher", tenue("orphelins"));
+  chk("les orphelins ne concluent rien",
+      par(DIAGS, "orphelins").stop.indexOf("ne rien en conclure") >= 0);
+  chk("aucune source pour les trois",
+      par(DIAGS, "orphelins").stop.indexOf("aucun de ces trois n'a de source") >= 0);
+  propre();
+
+  /* ── Négatifs et techniques : ce que la liste refuse de faire ────────────── */
+  chk("la conservation est le premier négatif", NEGATIFS[0].k === "conservation");
+  chk("un négatif sur tissu autolysé ne vaut rien",
+      NEGATIFS[0].p.indexOf("ne vaut rien") >= 0);
+  chk("deux techniques sont des contre-indications",
+      TECHNIQUES.filter(function(t){ return /CONTRE-INDIQU/.test(t.l); }).length === 2);
+  chk("aucune contre-indication n'est jamais suggérée",
+      suggerer().gcnisNon !== 1 && suggerer().sousTypageNon !== 1);
+  pose("noyauxGerminauxElargis", "anormal");
+  chk("même sur signe germinal, le panel GCNIS reste non proposé",
+      suggerer().gcnisNon !== 1);
+  propre();
+  clic("neg", "sexeGonadique", "present");
+  chk("sexe gonadique non énoncé : le défaut est écrit",
+      crTient("sexe gonadique NON énoncé"));
+  chk("et il appelle le caryotype", suggerer().caryotype === 1);
+  clic("neg", "sexeGonadique", "absent");
+
+  /* ── Rien de coché ne veut pas dire absent ───────────────────────────────── */
+  chk("la règle est écrite dans la grille",
+      TECH_NOTE.indexOf("Rien de coché ne veut pas dire absent") >= 0);
+  chk("aucun bouton ne porte un diagnostic",
+      DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
+  chk("les non explorés sont dits dans le CR", crTient("Non explorés :"));
+
+  /* On laisse le banc sur un terme réel : jamais set("sa", ""). */
+  set("sa", "24");
+  sexe("testicule");
+  cons("conserve");
+}
+
+/* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
+var FOETO = {"sections":[{"t":"5.1 Gonade en bandelette (streak gonad)","termes":[{"id":"FOETO:PF.GEN-MAL-022","l":"Gonade en bandelette (streak gonad)"}]},{"t":"5.2 Testicule dysgénétique","termes":[{"id":"FOETO:PF.GEN-MAL-012","l":"Distribution aberrante des cellules germinales — noyaux élargis"},{"id":"FOETO:PF.GEN-MAL-014","l":"Dysgénésie gonadique — testicule dysgénétique"}]},{"t":"5.3 Ovotestis","termes":[{"id":"FOETO:PF.GEN-MAL-031","l":"Ovotestis — compartiments testiculaire et ovarien distincts"}]},{"t":"5.4 Dysgénésie ovarienne — absence de follicules primordiaux à 20 SA ou plus","termes":[{"id":"FOETO:PF.GEN-MAL-015","l":"Dysgénésie ovarienne — ovaire avec fibrose et réduction folliculaire"}]},{"t":"5.6 Fibrose de l'albuginée · périorchite méconiale","termes":[{"id":"FOETO:PF.GEN-MAL-034","l":"Périorchite méconiale — inflammation avec macrophages et cellules géantes"}]}],"formes":{"FOETO:PF.GEN-MAL-001":["Absence de follicule primordial à 18 SA ou plus","Absent primordial follicles at 18 weeks gestation or later","(hors fiche)"],"FOETO:PF.GEN-MAL-002":["Absence des dérivés mésonéphriques (canal déférent absent)","Absence of mesonephric duct derivatives — absent vas deferens","(hors fiche)"],"FOETO:PF.GEN-MAL-003":["Absence des dérivés paramesonéphriques chez une femme 46,XX","Absent Müllerian duct derivatives in 46,XX female","(hors fiche)"],"FOETO:PF.GEN-MAL-004":["Agénésie de la vésicule séminale","Agenesis of seminal vesicle","(hors fiche)"],"FOETO:PF.GEN-MAL-005":["Ambiguïté sexuelle des organes génitaux externes — aspect histologique","Ambiguous external genitalia — histological features","(hors fiche)"],"FOETO:PF.GEN-NOR-012":["Appareil génital normal","Appareil génital normal","(hors fiche)"],"FOETO:PF.GEN-NOR-022":["Atrésie folliculaire avec pyknose ovocytaire","Follicular atresia with oocyte pyknosis","(hors fiche)"],"FOETO:PF.GEN-NOR-047":["Corpus fibrosum (cicatrice d'atrésie folliculaire antrale)","Corpus fibrosum (atretic antral follicle scar)","(hors fiche)"],"FOETO:PF.GEN-MAL-009":["Cryptorchidie — absence de testicule dans le scrotum","Cryptorchidism — absent testis from scrotum","(hors fiche)"],"FOETO:PF.GEN-MAL-010":["Cytomégalie des cellules de Leydig","Leydig cell cytomegaly","(hors fiche)"],"FOETO:PF.GEN-MAL-011":["Dilatation kystique de l'utricule prostatique","Cystic dilation of prostatic utricle","(hors fiche)"],"FOETO:PF.GEN-MAL-013":["Diverticule de la vésicule séminale","Diverticulum of seminal vesicle","(hors fiche)"],"FOETO:PF.GEN-MAL-016":["Dysplasie kystique du rete testis","Cystic dysplasia of the rete testis","(hors fiche)"],"FOETO:PF.GEN-MAL-017":["Développement prostatique insuffisant","Prostatic hypodevelopment","(hors fiche)"],"FOETO:PF.GEN-MAL-018":["Ectopie testiculaire transversale","Transverse testicular ectopia","(hors fiche)"],"FOETO:PF.GEN-MAL-019":["Follicules ovariens kystiques bénins — découverte fortuite périnatale","Benign ovarian follicular cysts — incidental perinatal finding","(hors fiche)"],"FOETO:PF.GEN-MAL-020":["Fusion incomplète des canaux paramesonéphriques — utérus didelphe / bicorne / cloisonné","Incomplete paramesonephric duct fusion — didelphys/bicornuate/septate uterus","(hors fiche)"],"FOETO:PF.GEN-MAL-021":["Fusion splénogonagique — tissu splénique hétérotopique","Splenogonadal fusion — heterotopic splenic tissue","(hors fiche)"],"FOETO:PF.GEN-MAL-023":["Gonadoblastome — gonade dysgénétique","Gonadoblastoma — dysgenetic gonad","(hors fiche)"],"FOETO:PF.GEN-MAL-024":["Hydrométrocolpos — distension de l'utérus et du vagin par des sécrétions","Hydrometrocolpos — distension of uterus and vagina by secretions","(hors fiche)"],"FOETO:PF.GEN-MAL-025":["Hyperplasie des cellules de Leydig — agrégats focaux avec accumulation lipidique","Leydig cell hyperplasia — focal aggregates with lipid accumulation","(hors fiche)"],"FOETO:PF.GEN-MAL-026":["Hypoplasie de la vésicule séminale","Hypoplasia of seminal vesicle","(hors fiche)"],"FOETO:PF.GEN-MAL-027":["Hypospadias — fusion incomplète des plis urétraux","Hypospadias — incomplete fusion of urethral folds","(hors fiche)"],"FOETO:PF.GEN-MAL-028":["Infarctus testiculaire néonatal","Neonatal testicular infarction","(hors fiche)"],"FOETO:PF.GEN-MAL-029":["Kyste de la vésicule séminale","Cyst of seminal vesicle","(hors fiche)"],"FOETO:PF.GEN-MAL-030":["Néoplasie germinale in situ (GCNIS) — gonade fœtale/néonatale","Germ cell neoplasia in situ (GCNIS) — fetal/neonatal gonad","(hors fiche)"],"FOETO:PF.GEN-MAL-032":["Persistance anormale des gonocytes (après 6 mois)","Abnormal persistence of gonocytes (beyond 6 months)","(hors fiche)"],"FOETO:PF.GEN-MAL-033":["Persistance des dérivés paramesonéphriques chez un individu XY","Persistent Müllerian duct derivatives in XY individual","(hors fiche)"],"FOETO:PF.GEN-MAL-035":["Reliquat testiculaire fibreux avec calcifications et hémosidérine","Fibrous testicular remnant with calcifications and hemosiderin","(hors fiche)"],"FOETO:PF.GEN-MAL-036":["Réduction du nombre d'ovocytes primaires","Reduced number of primary oocytes","(hors fiche)"],"FOETO:PF.GEN-MAL-037":["Septum utérin (cloison utérine résiduelle)","Uterine septum","(hors fiche)"],"FOETO:PF.GEN-MAL-038":["Stroma ovarien dans gonade XY","Ovarian-type stroma in XY gonad","(hors fiche)"],"FOETO:PF.GEN-MAL-039":["Tubules séminifères hypoplasiques","Hypoplastic seminiferous tubules","(hors fiche)"],"FOETO:PF.GEN-MAL-022":["Gonade en bandelette (streak gonad)","Streak gonad"],"FOETO:PF.GEN-MAL-012":["Distribution aberrante des cellules germinales — noyaux élargis","Aberrant germ cell distribution with enlarged nuclei"],"FOETO:PF.GEN-MAL-014":["Dysgénésie gonadique — testicule dysgénétique","Dysgenetic testis"],"FOETO:PF.GEN-MAL-031":["Ovotestis — compartiments testiculaire et ovarien distincts","Ovotestis — distinct testicular and ovarian compartments"],"FOETO:PF.GEN-MAL-015":["Dysgénésie ovarienne — ovaire avec fibrose et réduction folliculaire","Ovarian dysgenesis — fibrotic ovary with reduced follicles"],"FOETO:PF.GEN-MAL-034":["Périorchite méconiale — inflammation avec macrophages et cellules géantes","Meconium periorchitis — inflammation with macrophages and giant cells"]}};
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+
+var DB_NAME = "foeto-" + MODULE, DB_VER = 1, db = null;
+
+/* Organe pair : le côté fait partie de la donnée, pas du commentaire. Un rein
+   lu sans son côté n'est pas rattachable à l'imagerie ni à l'autre rein. */
+var COTES = [{ k:"droit", l:"Droit — 1/2" }, { k:"gauche", l:"Gauche — 1/2" },
+             { k:"deux", l:"Les deux — 2/2" }];
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function normDossier(v){ return v.toUpperCase().replace(/\s+/g, ""); }
+function dossierOk(v){ return v.trim().length > 0; } // ponytail: plus de format imposé, seul le uppercase (normDossier) reste
+function num(id){ var e = $(id); if (!e) return null; var v = parseFloat(e.value); return isFinite(v) ? v : null; }
+function par(liste, k){ return liste.filter(function(x){ return x.k === k; })[0] || null; }
+function champs(){ return MESURE ? MESURE.champs : []; }
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", E = null;
+function neuf(){
+  var e = { cote:null, prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
+            negatifs:{}, techniques:{}, foeto:{}, mesure:{ def:null, opt:null, v:{} }, libre:"" };
+  champs().forEach(function(c){ e.mesure.v[c.id] = null; });
+  return e;
+}
+
+/* Le stade attendu au terme saisi. Bornes reconstruites depuis la prose des
+   sources : ce sont des repères, pas des seuils. */
+function stadeAttendu(sa){
+  if (sa == null || !isFinite(sa)) return null;
+  for (var i = 0; i < STADES.length; i++) if (sa < STADES[i].max) return STADES[i];
+  return STADES[STADES.length - 1];
+}
+function bornesTxt(s){
+  var i = STADES.indexOf(s), min = i ? STADES[i-1].max : 0;
+  return s.max === 99 ? "≳ " + min + " SA" : min + "–" + s.max + " SA";
+}
+
+/* ── Construction du DOM — une seule fois, le clic ne fait que repeindre ──── */
+function chip(act, k, l, sous){
+  return '<button type="button" class="chip" data-act="' + act + '" data-k="' + esc(k) + '">' +
+         (sous ? '<span class="k">' + esc(sous) + '</span>' : '') + esc(l) + '</button>';
+}
+function batir(){
+  if (PAIR){
+    $("coteBloc").hidden = false;
+    $("cote").innerHTML = COTES.map(function(c){ return chip("cote", c.k, c.l); }).join("");
+  }
+  $("prelevement").innerHTML = PRELEV.map(function(p){ return chip("prelev", p.k, p.l); }).join("");
+
+  $("retention").innerHTML = RETENTION.map(function(r){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(r.l) +
+      '<span class="meta ' + r.q + '">' + esc(r.b) + " · " + esc(r.d) +
+      " · prédicteur " + r.q + '</span></div>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="present">Présent</button>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="absent">Absent</button>' +
+      '</div></div>';
+  }).join("");
+  $("kcl").innerHTML = chip("kcl", "kcl", "Fœticide par KCl", "geste à déclarer avant toute datation");
+
+  $("stTitre").textContent = STADE_TITRE;
+  $("stades").innerHTML = STADES.map(function(s){ return chip("stade", s.k, s.l); }).join("");
+
+  if (MESURE){
+    var h = '<div class="sousTitre">' + esc(MESURE.titre) + '</div>';
+    h += '<div class="chips" id="mesDefs">' +
+         MESURE.defs.map(function(d){ return chip("mdef", d.k, d.l, MESURE.defLabel); }).join("") + '</div>';
+    if (MESURE.opts && MESURE.opts.length)
+      h += '<div class="chips" id="mesOpts" style="margin-top:6px">' +
+           MESURE.opts.map(function(o){ return chip("mopt", o.k, o.l, MESURE.optLabel); }).join("") + '</div>';
+    h += '<div class="row" style="margin-top:9px">' + MESURE.champs.map(function(c){
+      return '<div class="field"><label for="m_' + c.id + '">' + esc(c.label) + '</label>' +
+             '<input type="number" id="m_' + c.id + '" min="' + c.min + '" max="' + c.max +
+             '" step="' + c.step + '" inputmode="decimal" placeholder="—"></div>';
+    }).join("") + '</div>';
+    $("mesure").innerHTML = h;
+    $("vMesure").hidden = false;
+    $("vMesure").querySelector("b").textContent = MESURE.titre;
+  }
+
+  $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
+
+  /* Un signe peut porter un groupe g (placenta : cordon, membranes, parenchyme sous
+     cordon, marge, systémique) : un sous-titre s'ouvre quand le groupe change. */
+  var gPrec = null;
+  $("signes").innerHTML = SIGNES.map(function(x){
+    var h = "";
+    if (x.g && x.g !== gPrec){ h = '<div class="sousTitre">' + esc(x.g) + '</div>'; gPrec = x.g; }
+    return h + '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+      (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
+      '</div>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="normal">Normal</button>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="anormal">Anormal</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("foeto").innerHTML = FOETO.sections.map(function(s){
+    return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
+           s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
+  }).join("") || '<p class="note">Aucun terme FOETO rattaché à cette fiche.</p>';
+  if (FOETO.sections.length){
+    $("foetoPlus").hidden = false; $("foetoRech").hidden = false;
+    $("foetoPlus").textContent = "▸ tous les termes attestés (" + nbFoeto() + ")";
+  }
+
+  $("negatifs").innerHTML = NEGATIFS.map(function(n){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(n.l) +
+      '<span class="meta">' + esc(n.p) + '</span></div>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="absent">Vérifié</button>' +
+      '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="present">EN DÉFAUT</button>' +
+      '</div></div>';
+  }).join("");
+
+  $("techNote").textContent = TECH_NOTE;
+  $("techniques").innerHTML = TECHNIQUES.map(function(t){ return chip("tech", t.k, t.l, t.q); }).join("");
+}
+
+function nbFoeto(){ return FOETO.sections.reduce(function(a, s){ return a + s.termes.length; }, 0); }
+function foetoLabel(id){
+  var l = null;
+  FOETO.sections.forEach(function(s){ s.termes.forEach(function(t){ if (t.id === id) l = t.l; }); });
+  return l || (FOETO.formes[id] || [id])[0];
+}
+/* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
+function foetoAjouter(id){
+  if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
+    var box = $("foeto").querySelector(".chips");
+    if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
+    box.insertAdjacentHTML("beforeend", chip("foeto", id, foetoLabel(id)));
+  }
+  E.foeto[id] = true;
+  peindre(); enregistrer();
+}
+function rechercherFoeto(q){
+  var sg = $("sgFoeto");
+  q = q.trim().toLowerCase();
+  if (q.length < 3){ sg.classList.remove("on"); return; }
+  var hits = [];
+  Object.keys(FOETO.formes).some(function(id){
+    var f = FOETO.formes[id].filter(function(x){ return x.toLowerCase().indexOf(q) >= 0; })[0];
+    if (f) hits.push({ id:id, l:foetoLabel(id), f:f, hf:FOETO.formes[id].indexOf("(hors fiche)") >= 0 });
+    return hits.length >= 10;
+  });
+  sg.innerHTML = hits.length ? hits.map(function(x){
+    return '<div data-pick="' + esc(x.id) + '">' + esc(x.l) +
+           (x.f !== x.l ? ' <small>— ' + esc(x.f) + '</small>' : '') + (x.hf ? ' <small>(hors fiche)</small>' : '') + '</div>';
+  }).join("") : '<div><small>aucun terme</small></div>';
+  sg.classList.add("on");
+}
+
+/* ── Associations ─────────────────────────────────────────────────────────────
+   Un diagnostic ne se coche pas : il se lit dans l'association des signes. Les
+   faisceaux incomplets sont affichés aussi — 2 signes sur 4 se dit, et dire
+   combien manquent est le seul moyen de distinguer « non trouvé » de « non
+   regardé ». */
+function seuil(d){ return d.min || d.signes.length; }
+function associations(){
+  return DIAGS.map(function(d){
+    var pris  = d.signes.filter(function(k){ return E.signes[k] === "anormal"; });
+    var muets = d.signes.filter(function(k){ return !E.signes[k]; });
+    /* Un signe pivot ne se remplace pas par le nombre : sans lui, le compte peut
+       être atteint sans que l'association tienne. */
+    var pivot = !d.cle || E.signes[d.cle] === "anormal";
+    return { d:d, pris:pris, muets:muets, pivot:pivot,
+             tenu: pivot && pris.length >= seuil(d) };
+  }).filter(function(a){ return a.pris.length; })
+    .sort(function(a, b){ return (b.tenu - a.tenu) || (b.pris.length - a.pris.length); });
+}
+function nomSigne(k){ var s = par(SIGNES, k); return s ? s.l : k; }
+
+/* ── Verdicts communs ─────────────────────────────────────────────────────── */
+function verdictPrelevement(){
+  var n = Object.keys(E.prelev).length, res = [], grave = false;
+  PRELEV.forEach(function(p){
+    if (p.manque && !E.prelev[p.k]){ res.push(p.manque); if (p.grave) grave = true; }
+  });
+  if (PAIR && !E.cote) res.push("côté non déclaré — organe pair");
+  return { n:n, res:res,
+    cls: res.length ? (grave ? "bad" : "warn") : (n === PRELEV.length ? "ok" : ""),
+    txt: n === 0 ? "—"
+       : (n + "/" + PRELEV.length + " item(s) confirmé(s)" +
+          (PAIR && E.cote ? ", " + par(COTES, E.cote).l.toLowerCase().split(" —")[0] : "") + ".") +
+         (res.length ? " Réserves : " + res.join(" ; ") + "." : " Prélèvement complet.") };
+}
+function verdictRetention(){
+  if (E.kcl) return { cls:"bad", borne:null, txt:KCL_TXT };
+  var pres = RETENTION.filter(function(r){ return E.retention[r.k] === "present"; });
+  if (!pres.length) return { cls:"", borne:null,
+    txt: Object.keys(E.retention).length ? "Aucun critère de rétention positif." : "—" };
+  var notes = [];
+  pres.forEach(function(r){ if (r.note) notes.push(r.note); });
+  var bons = pres.filter(function(r){ return r.q !== "mauvais"; });
+  if (!bons.length) return { cls:"warn", borne:null,
+    txt:"Seuls des prédicteurs MAUVAIS sont positifs — aucune borne recevable. " + notes.join(" ; ") + "." };
+  var top = bons.reduce(function(a, b){ return b.h > a.h ? b : a; });
+  if (top.alerte) notes.push(top.alerte);
+  return { cls:"ok", borne:top,
+    txt:"Rétention " + top.b + " — critère : " + top.l.toLowerCase() + " (" + top.d + ")." +
+        (notes.length ? " Réserves : " + notes.join(" ; ") + "." : "") };
+}
+function verdictMaturation(){
+  var sa = num("sa"), att = stadeAttendu(sa), obs = E.stade ? par(STADES, E.stade) : null;
+  if (!obs) return { cls:"", att:att, txt: att
+    ? "Stade attendu à " + sa + " SA : " + att.l.toLowerCase() + ". Confirmer ou choisir."
+    : "Saisir le terme pour afficher le stade attendu." };
+  if (!att) return { cls:"warn", att:null,
+    txt:"Stade " + obs.l.toLowerCase() + " — sans terme, aucune discordance n'est calculable." };
+  var io = STADES.indexOf(obs), ia = STADES.indexOf(att), t, cls;
+  if (io === ia){ cls = "ok"; t = "Maturation conforme au terme : " + obs.l.toLowerCase() + " à " + sa + " SA."; }
+  else if (io < ia){ cls = "warn";
+    t = "Retard de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (RETARD_NOTE ? " " + RETARD_NOTE : ""); }
+  else { cls = "warn";
+    t = "Avance de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (AVANCE_NOTE ? " " + AVANCE_NOTE : ""); }
+  if (obs.note) t += " (" + obs.note + ")";
+  return { cls:cls, att:att, txt:t };
+}
+
+/* ── Peinture ─────────────────────────────────────────────────────────────── */
+function classe(act, v){
+  if (act === "neg") return v === "present" ? "no" : "on";
+  if (act === "les") return v === "anormal" ? "no" : "on";
+  return "on";
+}
+function poser(id, v){
+  var e = $(id), t = e.querySelector("b").textContent;
+  e.className = "verdict" + (v.cls ? " " + v.cls : "");
+  e.innerHTML = "<b>" + esc(t) + "</b>" + esc(v.txt);
+}
+function tally(id, n, sur){ $(id).textContent = n ? n + "/" + sur : "—"; }
+
+function peindreDiags(){
+  var A = associations();
+  if (!A.length){
+    $("diags").innerHTML = '<p class="note" style="margin:0">Aucun signe anormal coché : rien à associer.</p>';
+    return;
+  }
+  $("diags").innerHTML = A.map(function(a){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(a.d.l) +
+      '<span class="meta">' + a.pris.length + "/" + a.d.signes.length + " signe(s), seuil " + seuil(a.d) +
+      (a.muets.length ? " · " + a.muets.length + " non regardé(s)" : "") + '</span></div>' +
+      '<span class="chip ' + (a.tenu ? "on" : "") + '" style="cursor:default">' +
+      (a.tenu ? "association tenue" : "faisceau incomplet") + '</span></div>' +
+      '<div class="unfold">' +
+      '<div class="note" style="margin:0">' +
+      (a.pivot ? "" : "Signe pivot non coché : " + esc(nomSigne(a.d.cle)) + ".<br>") +
+      esc(a.pris.map(nomSigne).join(" · ")) +
+      (a.muets.length ? "<br>Non regardés : " + esc(a.muets.map(nomSigne).join(" · ")) + "." : "") +
+      '</div>' +
+      '<div class="stop"><b>Ce qu\'il ne faut pas conclure</b>' + esc(a.d.stop) + '</div></div></div>';
+  }).join("");
+}
+
+function peindre(){
+  if (PAIR) document.querySelectorAll("#cote .chip").forEach(function(b){
+    b.className = "chip" + (E.cote === b.dataset.k ? " on" : "");
+  });
+  document.querySelectorAll("#prelevement .chip").forEach(function(b){
+    b.className = "chip" + (E.prelev[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#retention .chip").forEach(function(b){
+    b.className = "chip" + (E.retention[b.dataset.k] === b.dataset.v ? " on" : "");
+  });
+  $("kcl").firstChild.className = "chip" + (E.kcl ? " no" : "");
+  document.querySelectorAll("#stades .chip").forEach(function(b){
+    var att = stadeAttendu(num("sa"));
+    b.className = "chip" + (E.stade === b.dataset.k ? " on"
+                          : (att && att.k === b.dataset.k ? " sugg" : ""));
+  });
+  if (MESURE){
+    document.querySelectorAll("#mesDefs .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.def === b.dataset.k ? " on" : "");
+    });
+    if ($("mesOpts")) document.querySelectorAll("#mesOpts .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.opt === b.dataset.k ? " on" : "");
+    });
+  }
+  document.querySelectorAll("#variantes .chip").forEach(function(b){
+    b.className = "chip" + (E.variantes[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#signes .chip").forEach(function(b){
+    b.className = "chip" + (E.signes[b.dataset.k] === b.dataset.v
+                            ? " " + classe("les", b.dataset.v) : "");
+  });
+  peindreDiags();
+  document.querySelectorAll('[data-act="foeto"]').forEach(function(b){
+    b.className = "chip" + (E.foeto[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#negatifs .chip").forEach(function(b){
+    b.className = "chip" + (E.negatifs[b.dataset.k] === b.dataset.v
+                            ? " " + classe("neg", b.dataset.v) : "");
+  });
+  var sug = suggerer();
+  document.querySelectorAll("#techniques .chip").forEach(function(b){
+    b.className = "chip" + (E.techniques[b.dataset.k] ? " on" : (sug[b.dataset.k] ? " sugg" : ""));
+  });
+
+  tally("tPrelevement", Object.keys(E.prelev).length, PRELEV.length);
+  tally("tRetention",   Object.keys(E.retention).length, RETENTION.length);
+  tally("tMaturation",  (E.stade ? 1 : 0) + (MESURE && E.mesure.def ? 1 : 0), MESURE ? 2 : 1);
+  tally("tVariantes",   Object.keys(E.variantes).length, VARIANTES.length);
+  tally("tSignes",     Object.keys(E.signes).length, SIGNES.length);
+  tally("tFoeto",       Object.keys(E.foeto).length, nbFoeto());
+  tally("tNegatifs",    Object.keys(E.negatifs).length, NEGATIFS.length);
+  tally("tTechniques",  Object.keys(E.techniques).length, TECHNIQUES.length);
+
+  poser("vPrelevement", verdictPrelevement());
+  poser("vRetention",   verdictRetention());
+  poser("vMaturation",  verdictMaturation());
+  if (MESURE) poser("vMesure", verdictMesure());
+
+  var cr = composer();
+  $("cr").textContent = cr;
+  $("tCR").textContent = cr.split("\n").length + " lignes";
+}
+
+/* ── Compte rendu — la sortie du module, écrite par les clics ─────────────── */
+function composer(){
+  var sa = num("sa"), L = [];
+  L.push(TITRE_CR + " — grille de lecture");
+  L.push((dossier || "dossier —") + " · " + (sa != null ? sa + " SA" : "terme —") +
+         " · " + ($("operateur").value.trim() || "lecteur —") +
+         (PAIR ? " · " + (E.cote ? par(COTES, E.cote).l : "côté non déclaré") : ""));
+  L.push("");
+
+  L.push("PRÉLÈVEMENT");
+  L.push("  " + verdictPrelevement().txt);
+
+  L.push("");
+  L.push("RÉTENTION");
+  L.push("  " + verdictRetention().txt);
+
+  L.push("");
+  L.push("MATURATION");
+  L.push("  " + verdictMaturation().txt);
+  if (MESURE) L.push("  " + verdictMesure().txt);
+
+  var vus = VARIANTES.filter(function(v){ return E.variantes[v.k]; });
+  if (vus.length){
+    L.push("");
+    L.push("VARIANTES NORMALES VUES ET ÉCARTÉES");
+    L.push("  " + vus.map(function(v){ return v.l.toLowerCase(); }).join(" · "));
+  }
+
+  var anormales = SIGNES.filter(function(x){ return E.signes[x.k] === "anormal"; });
+  var normales  = SIGNES.filter(function(x){ return E.signes[x.k] === "normal"; });
+  L.push("");
+  L.push("SIGNES");
+  if (!anormales.length && !normales.length) L.push("  aucun axe exploré.");
+  anormales.forEach(function(x){ L.push("  " + (x.g ? x.g + " · " : "") + x.l + " — ANORMAL"); });
+  if (normales.length)
+    L.push("  Normaux : " + normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  var muets = SIGNES.filter(function(x){ return !E.signes[x.k]; });
+  if (muets.length)
+    L.push("  Non explorés : " + muets.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+
+  var fo = Object.keys(E.foeto);
+  if (fo.length){
+    L.push("");
+    L.push("TERMES FOETO");
+    fo.forEach(function(id){ L.push("  " + foetoLabel(id) + " [" + id + "]"); });
+  }
+
+  var A = associations();
+  L.push("");
+  L.push("ASSOCIATIONS LUES");
+  if (!A.length) L.push("  aucune : les signes cochés ne dessinent aucune association.");
+  A.forEach(function(a){
+    L.push("  " + a.d.l + " — " + (a.tenu ? "association tenue" : "faisceau incomplet") +
+           " (" + a.pris.length + "/" + a.d.signes.length + ", seuil " + seuil(a.d) + ")");
+    L.push("      · " + a.pris.map(nomSigne).join(" · "));
+    if (!a.pivot) L.push("      · signe pivot non coché : " + nomSigne(a.d.cle));
+    if (a.muets.length) L.push("      · non regardés : " + a.muets.map(nomSigne).join(" · "));
+    L.push("      · ne pas conclure : " + a.d.stop);
+  });
+
+  L.push("");
+  L.push("NÉGATIFS OBLIGATOIRES");
+  NEGATIFS.forEach(function(n){
+    var v = E.negatifs[n.k];
+    L.push("  " + (v === "absent" ? "· " + n.l
+                 : v === "present" ? "! " + n.ko
+                 : "? " + n.l + " — non vérifié"));
+  });
+
+  var t = TECHNIQUES.filter(function(x){ return E.techniques[x.k]; });
+  if (t.length){
+    L.push("");
+    L.push("TECHNIQUES DEMANDÉES");
+    t.forEach(function(x){ L.push("  · " + x.l + " — " + x.q); });
+  }
+
+  if (E.libre.trim()){
+    L.push("");
+    L.push("REMARQUE");
+    E.libre.trim().split("\n").forEach(function(x){ L.push("  " + x); });
+  }
+
+  L.push("");
+  L.push("— La micro décrit ; la conclusion nomme. Grille v" + VERSION + " issue de " + SOURCE + ".");
+  return L.join("\n");
+}
+
+/* ── Clics ────────────────────────────────────────────────────────────────── */
+document.addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest("button[data-act]") : null;
+  if (!b || b.closest("section.off")) return;
+  var k = b.dataset.k, v = b.dataset.v, a = b.dataset.act;
+  if (a === "cote"){ E.cote = E.cote === k ? null : k; }
+  else if (a === "prelev"){ if (E.prelev[k]) delete E.prelev[k]; else E.prelev[k] = true; }
+  else if (a === "ret"){ if (E.retention[k] === v) delete E.retention[k]; else E.retention[k] = v; }
+  else if (a === "kcl"){ E.kcl = !E.kcl; }
+  else if (a === "stade"){ E.stade = E.stade === k ? null : k; }
+  else if (a === "mdef"){ E.mesure.def = E.mesure.def === k ? null : k; }
+  else if (a === "mopt"){ E.mesure.opt = E.mesure.opt === k ? null : k; }
+  else if (a === "var"){ if (E.variantes[k]) delete E.variantes[k]; else E.variantes[k] = true; }
+  else if (a === "les"){ if (E.signes[k] === v) delete E.signes[k]; else E.signes[k] = v; }
+  else if (a === "neg"){ if (E.negatifs[k] === v) delete E.negatifs[k]; else E.negatifs[k] = v; }
+  else if (a === "tech"){ if (E.techniques[k]) delete E.techniques[k]; else E.techniques[k] = true; }
+  else if (a === "foeto"){ if (E.foeto[k]) delete E.foeto[k]; else E.foeto[k] = true; }
+  else return;
+  peindre(); enregistrer();
+});
+document.addEventListener("click", function(ev){
+  var t = ev.target.closest ? ev.target.closest("[data-pick]") : null;
+  if (t){ foetoAjouter(t.dataset.pick); $("rqFoeto").value = ""; $("sgFoeto").classList.remove("on"); }
+});
+$("foetoPlus").onclick = function(){
+  var box = $("foetoTous");
+  if (!box.children.length) box.innerHTML = FOETO.sections.map(function(s){
+    return s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("");
+  }).join("");
+  box.hidden = !box.hidden; peindre();
+};
+$("rqFoeto").addEventListener("input", function(){ rechercherFoeto(this.value); });
+$("btnNegAll").onclick = function(){
+  NEGATIFS.forEach(function(n){ if (!E.negatifs[n.k]) E.negatifs[n.k] = "absent"; });
+  peindre(); enregistrer();
+};
+$("btnCopie").onclick = function(){
+  var t = composer();
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(t).then(function(){ flash("Compte rendu copié."); },
+                                          function(){ flash("Copie refusée par le navigateur."); });
+  else flash("Presse-papiers indisponible en file://.");
+};
+document.addEventListener("input", function(e){
+  var id = e.target.id;
+  if (id.indexOf("m_") === 0) E.mesure.v[id.slice(2)] = num(id);
+  else if (id === "libre") E.libre = e.target.value;
+  else if (id === "sa") majSa();
+  else return;
+  peindre(); enregistrer();
+});
+function majSa(){
+  var sa = num("sa"), att = stadeAttendu(sa), h = $("saHint");
+  h.className = "hint" + (att ? " good" : "");
+  h.textContent = att ? "Stade attendu : " + att.l.toLowerCase() + " (" + bornesTxt(att) + ")."
+                      : "SA = semaines de gestation + 2. Commande le stade attendu.";
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────────
+   localStorage est erratique en file:// et cloisonné par fichier sur certains
+   navigateurs : la saisie va en IndexedDB, y compris les champs texte.       */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction("saisies", mode), out = fn(t.objectStore("saisies"));
+    /* Tester la présence de `result`, pas sa valeur : un get() qui ne trouve rien
+       a bien un `result` (undefined) — comparé à undefined, la requête elle-même
+       était rendue, et un dossier jamais saisi s'annonçait comme restitué. */
+    t.oncomplete = function(){ res(out && "result" in out ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("readonly",  function(s){ return s.get(d); }); }
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  ["secPrelevement","secRetention","secMaturation","secVariantes","secSignes","secFoeto",
+   "secNegatifs","secTechniques","secCR","secSortie"].forEach(function(id){
+    $(id).classList.toggle("off", !ouvert);
+  });
+}
+
+/* ── Collecte / restitution ───────────────────────────────────────────────── */
+function collecter(){
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    organe: ORGANE,
+    source: SOURCE,
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    terme_sa: num("sa"),
+    grille: JSON.parse(JSON.stringify(E)),
+    compte_rendu: composer()
+  };
+}
+function appliquer(o){
+  var g = o.grille || {};
+  E = neuf();
+  ["prelev","retention","variantes","signes","negatifs","techniques","foeto"].forEach(function(c){
+    if (g[c]) E[c] = g[c];
+  });
+  Object.keys(E.foeto).forEach(function(id){
+    if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')) foetoAjouter(id);
+  });
+  E.kcl = !!g.kcl; E.stade = g.stade || null; E.cote = g.cote || null;
+  if (g.mesure){
+    E.mesure.def = g.mesure.def || null;
+    E.mesure.opt = g.mesure.opt || null;
+    champs().forEach(function(c){
+      E.mesure.v[c.id] = (g.mesure.v && g.mesure.v[c.id] != null) ? g.mesure.v[c.id] : null;
+    });
+  }
+  E.libre = g.libre || "";
+  $("sa").value = o.terme_sa != null ? o.terme_sa : "";
+  champs().forEach(function(c){ $("m_" + c.id).value = E.mesure.v[c.id] != null ? E.mesure.v[c.id] : ""; });
+  $("libre").value = E.libre;
+  majSa(); peindre();
+}
+function vider(){
+  E = neuf();
+  ["sa","libre"].forEach(function(id){ $(id).value = ""; });
+  champs().forEach(function(c){ $("m_" + c.id).value = ""; });
+  majSa(); peindre();
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, ok1 = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = ok1 && op, h = $("dossierHint");
+  h.className = "hint" + (v && !ok1 ? " bad" : ok1 ? " good" : "");
+  h.textContent = !v ? "Libre, mis en majuscules. Conditionne l'enregistrement."
+                : ok1 ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                      : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la grille.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json."
+    : ok1 ? "Saisir le lecteur pour activer l'export."
+          : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){
+    dossier = v;
+    vider();
+    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    if (rec){ appliquer(rec); flash("Grille du " + dossier + " restituée."); }
+  } else if (!ok && dossier){
+    dossier = ""; vider();
+  }
+  peindre();
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+$("btnExport").onclick = function(){
+  if (!dossierOk(dossier)) return;
+  var out = collecter();
+  telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+              dossier + "_" + MODULE + ".json");
+  var n = NEGATIFS.filter(function(x){ return E.negatifs[x.k]; }).length;
+  flash("Grille exportée." + (n < NEGATIFS.length ? " ⚠ " + (NEGATIFS.length - n) + " négatif(s) non vérifié(s)." : ""));
+};
+function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.grille) throw new Error("aucune clé « grille »");
+  if (o.dossier) $("dossier").value = normDossier(o.dossier);
+  if (o.operateur) $("operateur").value = o.operateur;
+  return majDossier().then(function(){
+    if (!dossier) throw new Error("numéro de dossier absent ou lecteur manquant");
+    appliquer(o); enregistrer();
+    return true;
+  });
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    Promise.resolve().then(function(){ return relire(JSON.parse(String(fr.result))); })
+      .then(function(){ flash("Grille relue."); })
+      .catch(function(e){ flash("Relecture impossible : " + e.message); });
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la grille du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    await tx("readwrite", function(s){ return s.delete(dossier); });
+    vider(); flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les grilles de TOUS les dossiers sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("readwrite", function(s){ return s.clear(); });
+  vider(); flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Axes de la grille", PRELEV.length + " prélèvement · " + RETENTION.length + " rétention · " +
+                             STADES.length + " stades · " + SIGNES.length + " signes · " +
+                             DIAGS.length + " associations · " +
+                             NEGATIFS.length + " négatifs · " + TECHNIQUES.length + " techniques");
+  ligne("Source", SOURCE + " — la fiche est la source, ce module en est la sortie");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+(async function(){
+  $("ver").textContent = "v" + VERSION;
+  E = neuf();
+  batir(); majSa(); peindre();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — aucune saisie ne sera conservée. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir le fichier avec ?selftest=1 ───────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+  function clic(act, k, v){
+    var s = '[data-act="' + act + '"][data-k="' + k + '"]' + (v ? '[data-v="' + v + '"]' : "");
+    var b = document.querySelector(s);
+    if (!b){ ko.push("bouton introuvable : " + s); return null; }
+    b.click(); return b;
+  }
+  function crTient(t){ return $("cr").textContent.indexOf(t) >= 0; }
+  var pause = function(){ return new Promise(function(r){ setTimeout(r, 30); }); };
+
+  /* Intégrité des tableaux — pure, sans DOM */
+  ["PRELEV","RETENTION","STADES","VARIANTES","SIGNES","DIAGS","NEGATIFS","TECHNIQUES"].forEach(function(nom){
+    var t = { PRELEV:PRELEV, RETENTION:RETENTION, STADES:STADES, VARIANTES:VARIANTES,
+              SIGNES:SIGNES, DIAGS:DIAGS, NEGATIFS:NEGATIFS, TECHNIQUES:TECHNIQUES }[nom];
+    chk("clés uniques dans " + nom, new Set(t.map(function(x){ return x.k; })).size === t.length);
+  });
+  chk("stades ordonnés",      STADES.every(function(s, i){ return !i || s.max > STADES[i-1].max; }));
+  chk("dernier stade ouvert", STADES[STADES.length-1].max === 99);
+  chk("sans terme, pas de stade", stadeAttendu(null) === null);
+  chk("chaque association a son « ne pas conclure »",
+      DIAGS.every(function(d){ return d.stop && d.signes.length >= 2; }));
+  chk("chaque association ne cite que des signes déclarés",
+      DIAGS.every(function(d){ return d.signes.every(function(k){ return !!par(SIGNES, k); }); }));
+  chk("le signe pivot fait partie de l'association",
+      DIAGS.every(function(d){ return !d.cle || d.signes.indexOf(d.cle) >= 0; }));
+  chk("seuil d'association atteignable",
+      DIAGS.every(function(d){ return seuil(d) >= 1 && seuil(d) <= d.signes.length; }));
+  chk("chaque négatif a son défaut", NEGATIFS.every(function(n){ return n.ko && n.p; }));
+  chk("une borne de rétention au moins est bonne",
+      RETENTION.some(function(r){ return r.q === "bon"; }));
+
+  /* Verrou */
+  chk("verrouillé au départ",  $("secSignes").classList.contains("off"));
+  clic("prelev", PRELEV[0].k);
+  chk("clic ignoré sous verrou", !E.prelev[PRELEV[0].k]);
+  set("dossier", "26p0123");
+  chk("lecteur manquant",      $("secSignes").classList.contains("off"));
+  set("operateur", "RM");
+  await pause();
+  chk("déverrouillé",         !$("secSignes").classList.contains("off"));
+  chk("dossier normalisé",     $("dossier").value === "26P0123");
+  chk("export activé",        !$("btnExport").disabled);
+
+  /* Chips */
+  clic("prelev", PRELEV[0].k);
+  chk("chip prélèvement posée", E.prelev[PRELEV[0].k] === true &&
+      document.querySelector('[data-act="prelev"][data-k="' + PRELEV[0].k + '"]').className.indexOf("on") >= 0);
+  clic("prelev", PRELEV[0].k);
+  chk("chip retirée au 2e clic", !E.prelev[PRELEV[0].k]);
+
+  /* Rétention — le fœticide prime sur toute borne */
+  var bon = RETENTION.filter(function(r){ return r.q === "bon"; })[0];
+  clic("ret", bon.k, "present");
+  chk("borne posée",           $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("kcl", "kcl");
+  chk("KCl invalide la datation", $("vRetention").className.indexOf("bad") >= 0);
+  clic("kcl", "kcl");
+  chk("KCl levé, borne revenue", $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("ret", bon.k, "present");
+
+  /* Côté — organe pair */
+  if (PAIR){
+    chk("bloc côté visible",   !$("coteBloc").hidden);
+    chk("côté manquant en réserve",
+        verdictPrelevement().res.indexOf("côté non déclaré — organe pair") >= 0);
+    clic("cote", "droit");
+    chk("côté posé",            E.cote === "droit" && crTient("Droit — 1/2"));
+    clic("cote", "droit");
+    chk("2e clic retire le côté", E.cote === null);
+    clic("cote", "deux");
+  } else {
+    chk("pas de bloc côté sur organe impair", $("coteBloc").hidden);
+  }
+
+  /* Signes et associations */
+  var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
+  chk("rien à associer au départ", $("diags").textContent.indexOf("Aucun signe anormal") >= 0);
+  clic("les", l0.k, "anormal");
+  chk("signe posé anormal",    E.signes[l0.k] === "anormal");
+  chk("association esquissée",  $("diags").textContent.indexOf(d0.l) >= 0);
+  clic("les", l0.k, "anormal");
+  chk("2e clic remet à non exploré", !E.signes[l0.k]);
+  clic("les", l0.k, "normal");
+  chk("normal ne nourrit pas l'association", associations().length === 0);
+  clic("les", l0.k, "normal");
+
+  /* L'association complète se tient, et elle seule */
+  d0.signes.forEach(function(k){ clic("les", k, "anormal"); });
+  var a0 = associations().filter(function(a){ return a.d.k === d0.k; })[0];
+  chk("association tenue",     a0 && a0.tenu);
+  chk("CR : association écrite", crTient(d0.l + " — association tenue"));
+  chk("CR : ne pas conclure",  crTient("ne pas conclure : " + d0.stop));
+  d0.signes.slice(1).forEach(function(k){ clic("les", k, "anormal"); });
+  chk("retirer les signes défait l'association",
+      (associations().filter(function(a){ return a.d.k === d0.k; })[0] || {}).pris.length === 1);
+
+  /* Négatifs */
+  $("btnNegAll").click();
+  chk("tous les négatifs posés", Object.keys(E.negatifs).length === NEGATIFS.length);
+  clic("neg", NEGATIFS[0].k, "present");
+  chk("négatif retourné en rouge", E.negatifs[NEGATIFS[0].k] === "present" &&
+      document.querySelector('[data-act="neg"][data-k="' + NEGATIFS[0].k + '"][data-v="present"]').className.indexOf("no") >= 0);
+  chk("CR : défaut écrit",     crTient("! " + NEGATIFS[0].ko));
+  clic("neg", NEGATIFS[0].k, "absent");
+
+  /* Compte rendu */
+  clic("tech", TECHNIQUES[0].k);
+  set("libre", "Bloc non parvenu.");
+  chk("CR : en-tête dossier",  crTient("26P0123") && crTient("RM"));
+  chk("CR : signe anormal",    crTient(l0.l + " — ANORMAL"));
+  chk("CR : non explorés dits", crTient("Non explorés :"));
+  chk("CR : technique demandée", crTient(TECHNIQUES[0].l));
+  chk("CR : remarque libre",   crTient("Bloc non parvenu."));
+  chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
+
+  /* Contrôles propres à l'organe */
+  await testsOrgane(chk, clic, set, crTient, pause);
+
+  /* Termes FOETO — seulement si la fiche en rattache */
+  if (FOETO.sections.length){
+    var f0 = FOETO.sections[0].termes[0].id;
+    chk("FOETO : sections rendues", $("foeto").querySelectorAll(".sousTitre").length === FOETO.sections.length);
+    clic("foeto", f0);
+    chk("FOETO : terme coché",      E.foeto[f0] === true && $("tFoeto").textContent.indexOf("1/") === 0);
+    chk("FOETO : CR le porte",      crTient("[" + f0 + "]"));
+    chk("FOETO : exporté",          collecter().grille.foeto[f0] === true);
+    set("rqFoeto", foetoLabel(f0).slice(0, 4));
+    chk("FOETO : recherche",        $("sgFoeto").querySelectorAll("[data-pick]").length >= 1);
+    $("sgFoeto").querySelector("[data-pick]").click();
+    chk("FOETO : recherche vidée",  $("rqFoeto").value === "" && !$("sgFoeto").classList.contains("on"));
+    chk("FOETO : id lisible",       /^FOETO:/.test(f0));
+    clic("foeto", f0);
+    Object.keys(E.foeto).forEach(function(id){ delete E.foeto[id]; }); peindre();
+  }
+
+  /* Enveloppe, persistance, relecture — l'organe a pu reposer ses propres signes */
+  if (E.signes[l0.k] !== "anormal"){
+    if (E.signes[l0.k]) clic("les", l0.k, E.signes[l0.k]);
+    clic("les", l0.k, "anormal");
+  }
+  var snap = collecter();
+  chk("enveloppe conforme",    snap.schema_version === SCHEMA && snap.module === MODULE &&
+                               snap.module_version === VERSION && snap.dossier === "26P0123" &&
+                               snap.organe === ORGANE && !!snap.exported_at);
+  chk("version en entête",     $("ver").textContent === "v" + VERSION);
+  chk("CR dans le JSON",       snap.compte_rendu.indexOf(TITRE_CR + " — grille de lecture") === 0);
+
+  await putSaisie(snap);
+  vider();
+  chk("vider efface la grille", Object.keys(E.signes).length === 0);
+  var relu = await getSaisie("26P0123");
+  appliquer(relu);
+  chk("IndexedDB restitue",    E.signes[l0.k] === "anormal" &&
+                               $("sa").value === String(snap.terme_sa));
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+  chk("banc remis à zéro",     Object.keys(E.signes).length === 0 && $("secSignes").classList.contains("off"));
+  await relire(snap);
+  chk("relecture d'un JSON",   E.signes[l0.k] === "anormal" && dossier === "26P0123");
+  var refus = false;
+  try { await relire({module:"autopsie", grille:{}}); } catch(e){ refus = /module/.test(e.message); }
+  chk("JSON d'un autre module refusé", refus);
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>

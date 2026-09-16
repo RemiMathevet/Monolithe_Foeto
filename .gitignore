@@ -2,11 +2,30 @@ public/
 __pycache__/
 
 # popote locale de publication — hors dépôt, voir README « Si vous rediffusez »
-publier.py
-serveur.py
-verif.js
-batterie.py
+# Ancrés à la racine (« / ») : sans cela `serveur.py` ignorait aussi
+# hub/serveur.py, et le serveur du hub sortait du dépôt sans bruit.
+/publier.py
+/serveur.py
+/verif.js
 
-# transcription des tables de trois articles sous droits : le depot est
-# public, ces JSON restent locaux. Voir references_pdf/PROVENANCE.md
-references_pdf/
+# hub — donnees de travail, hors depot public
+hub/arrivee/
+hub/archive/
+hub/rejets/
+hub/photos/
+hub/hub.sqlite*
+hub/index.json
+hub/exemples/_cliche_de_controle.jpg
+hub/__pycache__/
+hub/references/*.json
+hub/outils/corrections/
+hub/bamara.json
+hub/.sonde_sqlite*
+hub/exemples/cas/
+# python portable pose dans app/ pour le partage — jamais dans le depot
+hub/app/python/
+hub/app/WPy*/
+
+# étui des grilles, produit par micro/assembler.py
+micro/microscopie.html
+/batterie.py

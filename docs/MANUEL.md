@@ -116,7 +116,26 @@ si IndexedDB fonctionne et si le stockage est persistant. « Non accordé »
 signifie que le navigateur peut effacer les données locales s'il manque de
 place : exporter sans attendre.
 
-## 7. Ce qu'il ne faut pas faire
+## 7. Le hub — reprendre les JSON sur l'ordinateur
+
+Double-clic sur `serveur.bat` à la racine du dépôt : le serveur local démarre
+et la page de gestion s'ouvre quelques secondes plus tard sur
+<http://127.0.0.1:5005>. Les JSON récupérés du téléphone se déposent dans
+`hub/arrivee/` (ou se glissent sur la page), l'onglet **Ingestion** les
+reprend d'un clic : archive horodatée, base SQLite, clichés en JPEG.
+
+![Hub — dossiers](captures/09_hub_dossiers.png)
+
+Chaque dossier montre ses modules reçus et manquants ; « Saisir / Rouvrir »
+ouvre le module déjà positionné sur le numéro, avec un bouton *enregistrer au
+hub*. Le numéro de dossier y est aussi libre que dans les modules.
+
+![Hub — fiche d'un dossier](captures/10_hub_fiche.png)
+
+Le détail (ingestion en ligne de commande, comptes rendus, BaMaRa,
+sauvegarde) est dans [hub/README.md](../hub/README.md).
+
+## 8. Ce qu'il ne faut pas faire
 
 - Ne pas renommer le fichier `.html` : le nom du module entre dans le nom de
   l'export.

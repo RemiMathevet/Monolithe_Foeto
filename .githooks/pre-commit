@@ -4,11 +4,20 @@
 # ponytail: grep sur les lignes ajoutees, pas sur l'arbre entier — un fichier
 # deja commite ne redeclenche pas le garde-fou a chaque commit suivant.
 
-FICTIFS='26P0123|25P9999|25P1234'
+# Plage reservee aux cas de demonstration generes par
+# hub/exemples/generer_cas.py : 25P9990 a 25P9999.
+FICTIFS='26P0123|25P1234|25P999[0-9]'
 
-trouves=$(git diff --cached --diff-filter=ACM -U0 |
+# Pas de \b : « _ » compte comme lettre pour grep, et un numero colle a un
+# souligne (_NNPNNNN_administratif.json, nommage des archives et exports)
+# passait sans etre vu. On decoupe donc chaque ligne en mots — tout ce qui
+# n'est ni lettre ni chiffre separe — et on compare des mots entiers.
+# --diff-filter avec R : un fichier renomme ET modifie compte aussi.
+# Le hook s'exclut lui-meme : sa liste FICTIFS ressemble a un numero.
+trouves=$(git diff --cached --diff-filter=ACMR -U0 -- . ':!.githooks/pre-commit' |
           grep '^+' |
-          grep -Eoi '\b[0-9]{2}[PAB][0-9]{3,6}\b' |
+          tr -c 'A-Za-z0-9\n' '\n' |
+          grep -Exi '[0-9]{2}[PAB][0-9]{3,6}' |
           grep -Evi "^($FICTIFS)$" |
           sort -u)
 
