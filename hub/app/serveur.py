@@ -220,11 +220,6 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
     def akinator_css():
         return send_file(ICI / "web" / "akinator.css", mimetype="text/css")
 
-    @app.get("/comparer.js")
-    def comparer_js():
-        """Le comparateur de syndromes de la page Biblio. Voir web/comparer.js."""
-        return send_file(ICI / "web" / "comparer.js", mimetype="application/javascript")
-
     @app.get("/bamara_fichier.user.js")
     def bamara_userscript():
         """Le script de pré-remplissage, servi pour l'installer dans Tampermonkey.
