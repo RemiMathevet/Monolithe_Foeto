@@ -120,44 +120,83 @@ place : exporter sans attendre.
 
 Double-clic sur `serveur.bat` à la racine du dépôt : le serveur local démarre
 et la page de gestion s'ouvre quelques secondes plus tard sur
-<http://127.0.0.1:5005>. Les JSON récupérés du téléphone se déposent dans
-`hub/arrivee/` (ou se glissent sur la page), l'onglet **Ingestion** les
-reprend d'un clic : archive horodatée, base SQLite, clichés en JPEG.
+<http://127.0.0.1:5005>. Il n'écoute que sur ce poste, sans compte : la
+protection est celle de la session Windows. Saisir ses initiales en haut à
+droite, elles sont recopiées dans chaque saisie faite depuis le hub.
+
+1. Copier les JSON récupérés du téléphone dans `hub/arrivee/`, ou les glisser
+   sur l'onglet **Ingestion**.
+2. « Reprendre les saisies » : chaque fichier est archivé tel quel, horodaté,
+   rangé en base, ses clichés reconstitués en JPEG. Le compte rendu s'affiche
+   ligne par ligne ; ce qui n'est pas passé est dans `hub/rejets/` avec son
+   motif.
+3. L'onglet **Dossiers** liste les cas : modules reçus et manquants, statut,
+   remarques. Tout se corrige dans le module, jamais en base : « Saisir /
+   Rouvrir » ouvre le module positionné sur le numéro, avec un bouton
+   *enregistrer au hub* ; la nouvelle saisie devient courante, l'ancienne est
+   gardée.
 
 ![Hub — dossiers](captures/09_hub_dossiers.png)
 
-Chaque dossier montre ses modules reçus et manquants ; « Saisir / Rouvrir »
-ouvre le module déjà positionné sur le numéro, avec un bouton *enregistrer au
-hub*. Le numéro de dossier y est aussi libre que dans les modules.
-
 ![Hub — fiche d'un dossier](captures/10_hub_fiche.png)
 
-**Biblio.** Télécharger `data_hub_vN.zip` sur
-[data.pazuzu.uk/browse/scripts](https://data.pazuzu.uk/browse/scripts) et le
-glisser dans l'onglet **Biblio** : les fiches de lecture microscopique, les
-familles de syndromes fœtaux et l'akinator (matrice des livres + termes
-FOETO) sont alors consultables hors ligne. Un nouveau paquet remplace le
-précédent.
+Le numéro de dossier y est aussi libre que dans les modules (il devient un
+nom de répertoire : lettres, chiffres, `. _ -`). Les onglets **Comptes
+rendus**, **Statistiques**, **Contrôle qualité** et **Sauvegarde** sont
+décrits dans [hub/README.md](../hub/README.md).
+
+## 8. Biblio — fiches, familles, akinator hors ligne
+
+1. Télécharger `data_hub_vN.zip` sur
+   [data.pazuzu.uk/browse/scripts](https://data.pazuzu.uk/browse/scripts).
+2. Le glisser dans l'onglet **Biblio** (ou le poser dans `hub/arrivee/`). Le
+   hub vérifie le manifest et l'empreinte de chaque fichier, garde le zip en
+   archive et remplace le paquet précédent en entier.
+3. Quatre vues : **Fiches micro** (les fiches de lecture par organe, celles
+   dont sortent les grilles), **Familles** (familles de syndromes fœtaux :
+   membres, signes cœur / partiels / discriminants, parenté), **Akinator**
+   (diagnostic syndromique bayésien sur la matrice attestée par les livres +
+   termes FOETO — saisir deux signes, répondre aux questions discriminantes),
+   **Paquet** (version, sources, empreintes).
 
 ![Biblio — fiche](captures/11_biblio_fiche.png)
 
 ![Biblio — akinator](captures/13_biblio_akinator.png)
 
-**BaMaRa.** Onglet **BaMaRa** → « Lot des dossiers déclarables » (un JSON par
-dossier, à décompresser dans un dossier) et « Installer le script »
-(Tampermonkey). Sur bamara.bndmr.fr, glisser les fichiers dans le panneau du
-script, puis dossier après dossier : « Remplir cette page », relire, taper ce
-qui manque, valider, « Fait, dossier suivant ». Rien ne circule entre le hub
-et BaMaRa autrement que par ce fichier.
+Un nouveau paquet se dépose de la même façon ; la version affichée est celle
+du manifest.
+
+## 9. BaMaRa — par fichier, jamais par réseau
+
+Le hub prépare le document au format BaMaRa mais n'envoie rien et n'ouvre
+aucune adresse à un script extérieur. Le seul transfert est un fichier que
+l'opérateur déplace lui-même.
+
+1. Onglet **BaMaRa** : renseigner une fois les réglages du site (code, libellé,
+   FINESS…), gardés dans `hub/bamara.json`, hors dépôt.
+2. « **Lot des dossiers déclarables (zip)** » : un `<dossier>_bamara.json` par
+   dossier déclarable (IMG, ISG, MFIU, MPN, MNN, naissance vivante) non
+   ouvert, chacun avec la liste de ce qui manque. Le décompresser dans un
+   dossier. « document » sur une ligne fait la même chose pour un seul cas.
+3. « **Installer le script** » : Tampermonkey l'installe. Il ne connaît pas le
+   hub — ni adresse, ni requête.
+4. Sur bamara.bndmr.fr, le panneau du script apparaît : glisser les fichiers
+   ou choisir le dossier décompressé. La file survit aux changements de page.
+5. Dossier après dossier : ouvrir le patient dans BaMaRa, « **Remplir cette
+   page** » (ou une section), relire les champs surlignés, taper ce que le
+   panneau liste « à taper soi-même » (le statut diagnostique, toujours),
+   valider dans BaMaRa, puis « **Fait, dossier suivant** ». « HPO » copie les
+   codes dans le presse-papiers.
 
 ![Hub — BaMaRa](captures/15_bamara_hub.png)
 
 ![Script sur une page BaMaRa (maquette)](captures/14_bamara_userscript.png)
 
-Le détail (ingestion en ligne de commande, comptes rendus, BaMaRa,
-sauvegarde) est dans [hub/README.md](../hub/README.md).
+Un libellé que le script ne trouve pas sur la page est listé « pas sur cette
+page » : s'il devrait y être, c'est la ligne correspondante de `FIELD_MAP`
+dans `BAMARA/bamara_fichier.user.js` qui est à corriger.
 
-## 8. Ce qu'il ne faut pas faire
+## 10. Ce qu'il ne faut pas faire
 
 - Ne pas renommer le fichier `.html` : le nom du module entre dans le nom de
   l'export.
@@ -165,3 +204,9 @@ sauvegarde) est dans [hub/README.md](../hub/README.md).
   dossier : les deux écriraient dans le même stockage.
 - Ne pas compter sur le stockage local comme archive : l'export JSON est la
   seule copie qui survit à un nettoyage du navigateur.
+- Ne pas corriger une saisie dans la base du hub : rouvrir le module, corriger,
+  ré-enregistrer.
+- Ne pas lier le serveur du hub à une autre adresse que `127.0.0.1` : il n'a
+  pas d'authentification.
+- Ne pas mettre `hub/` dans un dépôt ou un partage : `hub.sqlite`, `archive/`
+  et `photos/` sont nominatifs. Seul `hub/app/` se partage.
