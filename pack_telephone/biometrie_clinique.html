@@ -210,7 +210,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 
 var MODULE = "biometrie_clinique";
 var SCHEMA = "0.1.0";
-var VERSION = "1.2.1";   /* version du document ; à incrémenter à chaque diffusion */
+var VERSION = "1.3.0";   /* version du document ; à incrémenter à chaque diffusion */
 var DB_NAME = "foeto-biometrie-clinique", DB_VER = 2, db = null;
 
 /* ── Guihard-Costa 2002 — biométries, bi-hebdomadaire (masse g, reste mm) ─── */
@@ -626,9 +626,13 @@ function verrouiller(ouvert){
 
 /* ── Collecte / restitution ───────────────────────────────────────────────── */
 function collecter(){
-  var mesures = {};
-  TOUTES.forEach(function(m){ var v = num("v_" + m.k); mesures[m.k] = isFinite(v) ? v : null; });
+  var mesures = {}, ecarts_ = {}, libelles = {};
   var sa = num("terme_sa"), j = num("terme_j");
+  TOUTES.forEach(function(m){
+    var v = num("v_" + m.k); mesures[m.k] = isFinite(v) ? v : null; libelles[m.k] = m.l;
+    /* Les DS partent avec la mesure : le hub n'a pas les tables, le module si. */
+    if (isFinite(v)) ecarts(m, v, sa).forEach(function(e){ (ecarts_[m.k] = ecarts_[m.k] || {})[e.src] = +e.z.toFixed(2); });
+  });
   return {
     schema_version: SCHEMA,
     module: MODULE,
@@ -638,7 +642,9 @@ function collecter(){
     exported_at: new Date().toISOString(),
     terme: { sa: isFinite(sa) ? sa : null, jours: isFinite(j) ? j : 0 },
     sexe: $("sexe").value || null,
-    mesures: mesures
+    mesures: mesures,
+    libelles: libelles,
+    ecarts: ecarts_          /* {mesure: {GC: z, MA: z, MB: z}}, calculés ici */
   };
 }
 function appliquer(o){

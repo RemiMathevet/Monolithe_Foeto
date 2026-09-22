@@ -691,11 +691,15 @@ function rendreEtages(d){
 
 /* Un dictionnaire de mesures : biométrie clinique. */
 function rendreMesures(d){
-  var cles = Object.keys(d.mesures || {});
+  var cles = Object.keys(d.mesures || {}), ec = d.ecarts || {}, lib = d.libelles || {};
   var faites = cles.filter(function(k){ return d.mesures[k] != null; });
   return "<h3>Mesures — " + faites.length + "/" + cles.length + "</h3>" +
-    '<div class="grille">' + cles.map(function(k){ return tuile(k, d.mesures[k]); }).join("") +
-    "</div>";
+    '<div class="grille">' + cles.map(function(k){
+      /* DS exportés par le module (v1.3.0+) : GC / MA / MB selon les tables qui couvrent le terme. */
+      var z = Object.keys(ec[k] || {}).map(function(src){ return esc(src) + " " + zSpan(ec[k][src]); }).join(" · ");
+      return '<div class="tuile"><span class="k">' + esc(lib[k] || k) + '</span>' +
+        '<span class="v">' + esc(lisible(d.mesures[k])) + (z ? ' <span class="note" style="margin:0 0 0 6px;display:inline">' + z + "</span>" : "") + "</span></div>";
+    }).join("") + "</div>";
 }
 
 /* Tout le reste : administratif, radiologie. On descend l'arbre du JSON, les
