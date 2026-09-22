@@ -139,6 +139,166 @@ td{padding:8px;border-bottom:1px solid var(--rule);vertical-align:top}
 .md pre{font-family:var(--mono);font-size:12px;background:var(--paper);padding:10px;overflow:auto}
 .md blockquote{border-left:3px solid var(--rule);margin:8px 0;padding:4px 12px;color:var(--ink-soft)}
 .md table{font-size:13px;margin:8px 0 12px} .md hr{border:0;border-top:1px solid var(--rule);margin:14px 0}
+.grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:9px}
+.tuile{border:1px solid var(--rule);border-radius:var(--rayon);padding:8px 10px;background:var(--saisie)}
+.tuile .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+          color:var(--ink-soft);display:block;margin-bottom:2px}
+.tuile .v{font-size:15px;word-break:break-word}
+.cliches{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+figure{margin:0;border:1px solid var(--rule);border-radius:var(--rayon);overflow:hidden;background:var(--saisie)}
+figure img{display:block;width:100%;height:120px;object-fit:cover;background:var(--paper)}
+figure figcaption{padding:6px 8px;font-size:12px;line-height:1.3}
+figure .m{font-family:var(--mono);font-size:10px;color:var(--ink-soft);letter-spacing:.06em}
+.alerte{border-left:3px solid var(--amber);padding:6px 10px;background:var(--chaud);
+        font-size:13.5px;margin-bottom:6px}
+.drop{border:1px dashed var(--rule);border-radius:3px;padding:20px;text-align:center;
+      color:var(--ink-soft);font-size:14px}
+.drop.actif{border-color:var(--drape);background:var(--drape-soft);color:var(--drape)}
+.flash{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);
+       color:var(--paper);padding:9px 15px;border-radius:var(--rayon);font-size:14px;opacity:0;
+       transition:opacity .2s;pointer-events:none;max-width:90vw;z-index:80}
+.flash.on{opacity:1}
+.z{font-family:var(--mono);font-size:13px}
+.z.fort{color:var(--alert);font-weight:600}
+ul.liste{margin:0;padding-left:18px;font-size:14px}
+ul.liste li{margin-bottom:5px}
+tr.gris td,li.gris{color:var(--ink-soft)}
+/* Bandeau de navigation : les pages du hub, pas les onglets d'un dossier.
+   Même vocabulaire visuel que les onglets de la fiche, un cran au-dessus. */
+.ruban{display:flex;gap:2px;margin:0 0 16px;padding:0 6px;background:var(--tete);
+       border:1px solid var(--rule);border-radius:3px;overflow-x:auto}
+.ruban button{padding:10px 14px;font-size:13.5px;border:none;background:none;
+              cursor:pointer;color:var(--ink-soft);border-bottom:2px solid transparent;
+              white-space:nowrap;font-family:inherit}
+.ruban button:hover{color:var(--ink)}
+.ruban button.on{color:var(--ink);border-bottom-color:var(--drape);font-weight:600}
+.ruban .coin{margin-left:auto;display:flex;align-items:center;gap:8px;padding:4px 4px 4px 12px}
+.ruban .coin label{margin:0;white-space:nowrap}
+.ruban .coin input{width:120px;padding:5px 8px;font-size:13.5px}
+.page[hidden]{display:none}
+
+/* Une barre proportionnelle plutôt qu'un camembert : on y compare des
+   longueurs, ce que l'œil fait bien, et ça reste lisible imprimé en noir. */
+.barres{display:grid;gap:5px}
+.barre{display:grid;grid-template-columns:minmax(130px,1fr) 3fr 46px;gap:9px;
+       align-items:center;font-size:13.5px}
+.barre .t{color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.barre .j{background:var(--paper);border-radius:2px;height:14px;overflow:hidden}
+.barre .j span{display:block;height:100%;background:var(--drape)}
+.barre .n{font-family:var(--mono);font-size:12.5px;text-align:right;color:var(--ink)}
+.bloc{margin-bottom:20px}
+.bloc h3{margin:0 0 8px;font-size:12px;font-family:var(--mono);letter-spacing:.09em;
+         text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.editeur{width:100%;min-height:320px;font-family:var(--mono);font-size:12.5px;
+         line-height:1.5;padding:10px;border:1px solid var(--rule);border-radius:3px;
+         background:var(--saisie);resize:vertical;tab-size:2;box-sizing:border-box}
+.rendu{white-space:pre-wrap;font-family:var(--mono);font-size:12.5px;line-height:1.5;
+       background:var(--paper);border:1px solid var(--rule);border-radius:3px;
+       padding:12px;max-height:58vh;overflow:auto}
+.deux{display:grid;grid-template-columns:1fr 1fr;gap:14px 34px;align-items:start}
+@media (max-width:900px){ .deux{grid-template-columns:1fr} }
+
+/* Options d'affichage, appliquées à toute la page. */
+body.compact .cas{padding:8px 12px}
+body.compact .cas .l3{margin-top:3px}
+body.compact .panneau{padding:11px}
+body.compact table th,body.compact table td{padding:4px 7px}
+body.sansVides tr.gris,body.sansVides li.gris{display:none}
+body.sansVignettes figure img{display:none}
+body.grand{font-size:16px}
+
+/* ── Thèmes ───────────────────────────────────────────────────────────────────
+   Tout le dessin passe par des variables, donc un thème n'est presque qu'une
+   redéfinition de couleurs. Les deux derniers vont plus loin : Windows 98
+   remplace les coins arrondis par des biseaux, et le mode terminal remplace la
+   typographie et les boutons. Aucun ne touche à la structure de la page — un
+   thème qui déplacerait les choses ne serait plus un thème.
+   Le thème ne change rien aux données, et l'impression ignore tout ça. */
+
+/* Sombre — mêmes rapports de contraste, luminosités inversées. */
+body.theme-sombre{
+  --paper:#12171A; --card:#1A2126; --saisie:#151C21; --tete:#161D22;
+  --ink:#DCE4E4; --ink-soft:#93A0A0; --rule:#2F3B41;
+  --drape:#3FB3A4; --drape-soft:#12302D; --sur-drape:#08181A;
+  --alert:#E08472; --amber:#D6B45C; --chaud:#241F14;
+}
+body.theme-sombre header{border-bottom-color:var(--rule)}
+body.theme-sombre th{border-bottom-color:var(--rule)}
+body.theme-sombre .barre .j{background:#0D1215}
+body.theme-sombre .flash{background:var(--drape);color:var(--sur-drape)}
+body.theme-sombre figure img{background:#0D1215}
+
+/* Windows 98 — gris 3D, biseaux, barres de titre bleu marine, rien d'arrondi.
+   Les biseaux sont faits avec quatre bordures de couleurs différentes, comme
+   à l'époque : c'est ce qui donne le relief sans une seule image. */
+body.theme-w98{
+  --paper:#008080; --card:#C0C0C0; --saisie:#FFFFFF; --tete:#C0C0C0;
+  --ink:#000000; --ink-soft:#404040; --rule:#808080;
+  --drape:#000080; --drape-soft:#B4B4C8; --sur-drape:#FFFFFF;
+  --alert:#800000; --amber:#806000; --chaud:#E0E0C0; --rayon:0;
+  --police:Tahoma,"MS Sans Serif",Geneva,Verdana,sans-serif;
+  --mono:"Courier New",Courier,monospace;
+  font-size:15px;
+}
+body.theme-w98 section,body.theme-w98 .volet,body.theme-w98 aside.colonne,
+body.theme-w98 .tuile,body.theme-w98 figure,body.theme-w98 .ruban{
+  border:2px solid;border-color:#FFFFFF #404040 #404040 #FFFFFF;box-shadow:1px 1px 0 #000}
+body.theme-w98 header{background:var(--drape);color:#fff;border:none;
+  padding:6px 9px;margin-bottom:12px}
+body.theme-w98 header .eyebrow,body.theme-w98 header .sub,body.theme-w98 header .ver{color:#D8D8E8}
+body.theme-w98 header a{color:#fff}
+body.theme-w98 h1{color:#fff;font-size:17px}
+body.theme-w98 .btn,body.theme-w98 .pilule{
+  background:#C0C0C0;color:#000;border:2px solid;
+  border-color:#FFFFFF #404040 #404040 #FFFFFF;border-radius:0;box-shadow:1px 1px 0 #000}
+body.theme-w98 .btn:active,body.theme-w98 .pilule.on{
+  border-color:#404040 #FFFFFF #FFFFFF #404040;box-shadow:none}
+body.theme-w98 .pilule.on{background:#000080;color:#fff}
+body.theme-w98 input,body.theme-w98 select,body.theme-w98 textarea{
+  border:2px solid;border-color:#404040 #FFFFFF #FFFFFF #404040;border-radius:0}
+body.theme-w98 .onglet.on,body.theme-w98 .ruban button.on{
+  background:#DFDFDF;border-bottom-color:transparent;font-weight:700}
+body.theme-w98 .drop{border:2px dashed #808080}
+body.theme-w98 .barre .j{background:#fff;border:1px solid #808080;height:16px}
+body.theme-w98 .barre .j span{background:#000080}
+body.theme-w98 .flash{background:#C0C0C0;color:#000;border:2px solid;
+  border-color:#FFFFFF #404040 #404040 #FFFFFF}
+
+/* Terminal — une seule police, un seul plan, du phosphore. Les boutons
+   redeviennent ce qu'ils sont dans un terminal : du texte entre crochets. */
+body.theme-cli{
+  --paper:#0A0E0A; --card:#0A0E0A; --saisie:#0A0E0A; --tete:#0A0E0A;
+  --ink:#8CE68C; --ink-soft:#4E9E5E; --rule:#1F4A2A;
+  --drape:#7FE0B0; --drape-soft:#0F2418; --sur-drape:#0A0E0A;
+  --alert:#F08A7A; --amber:#E0C070; --chaud:#141810; --rayon:0;
+  --police:var(--mono);
+  font-size:14.5px;
+}
+body.theme-cli h1,body.theme-cli h2,body.theme-cli h3{font-family:var(--mono)}
+body.theme-cli h1::before{content:"$ ";color:var(--ink-soft)}
+body.theme-cli section,body.theme-cli .volet,body.theme-cli aside.colonne,
+body.theme-cli .tuile,body.theme-cli figure{border-style:solid;border-width:1px}
+body.theme-cli .btn{background:transparent;color:var(--drape);border-color:transparent;
+  padding:6px 4px;text-transform:none}
+body.theme-cli .btn::before{content:"[ "}
+body.theme-cli .btn::after{content:" ]"}
+body.theme-cli .btn:hover{background:var(--drape-soft)}
+body.theme-cli .btn:disabled{color:var(--ink-soft)}
+body.theme-cli .ruban button.on::before{content:"› "}
+body.theme-cli .barre .j{background:transparent;border:1px solid var(--rule);height:12px}
+body.theme-cli .barre .j span{background:var(--drape)}
+body.theme-cli .pastille{border-radius:0}
+body.theme-cli .flash{background:var(--drape);color:var(--sur-drape)}
+body.theme-cli input,body.theme-cli select,body.theme-cli textarea{
+  border-radius:0;color:var(--ink)}
+body.theme-cli figure img{opacity:.9}
+
+@media print{
+  body{background:#fff}
+  .noprint{display:none!important}
+  .appli{display:block} .colonne{display:none} .volet{border:none}
+  .onglets{display:none} .panneau{padding:0} .ruban{display:none}
+}
 </style>
 </head>
 <body>
@@ -1554,10 +1714,12 @@ $("panBamara").addEventListener("click", function(e){
 
 /* ── Modules servis ──────────────────────────────────────────────────────── */
 /* ── Biblio : le paquet data_hub ─────────────────────────────────────────
-   Un zip publié par data.pazuzu.uk (akinator, familles, fiches), repris par
-   ingerer_paquet() et servi tel quel sous /biblio/. Trois lecteurs, un par
+   Un zip publié par data.pazuzu.uk (akinator, familles, fiches, syndromes),
+   repris par ingerer_paquet() et servi tel quel sous /biblio/. Un lecteur par
    fichier ; rien ici ne sait fabriquer la matière, seulement la montrer. */
-var BIBLIO = { man:null, vue:"fiches", familles:null };
+var BIBLIO = { man:null, vue:"fiches", familles:null, syndromes:null };
+
+function plat(t){ return String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
 
 function md(texte){
   /* Rendu Markdown minimal — titres, listes, tableaux, gras, code, citations.
@@ -1621,6 +1783,7 @@ function pageBiblio(){
     $("ongletsBiblio").hidden = false;
     $("ongletsBiblio").innerHTML =
       [["fiches", "Fiches micro (" + (o.fiches || []).length + ")"],
+       ["syndromes", "Syndromes (" + (src.syndromes || "—") + ")"],
        ["familles", "Familles (" + (src.familles || "—") + ")"],
        ["akinator", "Akinator (" + ((src.akinator || {}).n_diseases || "—") + " maladies)"],
        ["paquet", "Paquet v" + o.version]]
@@ -1665,6 +1828,44 @@ function vueBiblio(v){
         .then(function(t){ $("corpsFiche").innerHTML = md(t); })
         .catch(function(e){ $("corpsFiche").innerHTML = vide("Fiche illisible : " + e.message); });
     };
+    return;
+  }
+  if (v === "syndromes"){
+    /* syndromes/_index.tsv : fichier, entite, nom, orpha, livres, debut, n_foetal, n_total.
+       Filtre « fœtales » = même règle que data.pazuzu : début prénatal ou néonatal,
+       ou âge inconnu et au moins la moitié des signes fœtaux. */
+    pan.innerHTML = vide("Lecture…");
+    if (!(o.sources || {}).syndromes){ pan.innerHTML = vide("Ce paquet ne porte pas de fiches par syndrome (v5 ou plus)."); return; }
+    (BIBLIO.syndromes ? Promise.resolve(BIBLIO.syndromes)
+                      : fetch("/biblio/syndromes/_index.tsv").then(function(r){ return r.text(); }).then(function(t){
+                          var l = t.replace(/\r/g, "").split("\n").filter(Boolean), cols = l.shift().split("\t");
+                          BIBLIO.syndromes = l.map(function(x){ var c = x.split("\t"), o = {}; cols.forEach(function(k, i){ o[k] = c[i] || ""; });
+                            o.foetale = /pr[ée]natal|n[ée]onatal/i.test(o.debut) || (!/postnatal|enfance|adulte/i.test(o.debut) && +o.n_total > 0 && +o.n_foetal / +o.n_total >= 0.5);
+                            o.cle = plat(o.nom + " " + o.orpha + " " + o.livres + " " + o.entite); return o; });
+                          return BIBLIO.syndromes; }))
+    .then(function(syn){
+      pan.innerHTML = '<div class="deux"><div class="colonne">' +
+        '<input id="chSyn" type="search" placeholder="nom, ORPHA, livre…" style="width:100%;margin-bottom:6px">' +
+        '<label class="note" style="display:block;margin-bottom:6px"><input type="checkbox" id="synFoetal" checked> fœtales seulement</label>' +
+        '<div id="listeSyn"></div></div><div id="corpsSyn">' + vide("Choisir un syndrome.") + "</div></div>";
+      function lister(){
+        var q = plat($("chSyn").value), f = $("synFoetal").checked;
+        var sel = syn.filter(function(s){ return (!f || s.foetale) && (!q || s.cle.indexOf(q) >= 0); });
+        $("listeSyn").innerHTML = sel.slice(0, 300).map(function(s){
+          return '<button class="btn ghost" style="display:block;width:100%;text-align:left;margin-bottom:4px" data-f="' + esc(s.fichier) + '">' +
+            esc(s.nom) + ' <span class="mono" style="opacity:.6">' + esc(s.orpha || "") + (s.debut ? " · " + esc(s.debut) : "") +
+            (+s.n_total ? " · " + s.n_foetal + "/" + s.n_total + " fœtaux" : "") + "</span></button>"; }).join("") +
+          (sel.length > 300 ? vide(sel.length + " résultats, 300 affichés — préciser.") : sel.length ? "" : vide("Rien."));
+      }
+      $("chSyn").oninput = lister; $("synFoetal").onchange = lister; lister();
+      $("listeSyn").onclick = function(e){
+        var b = e.target.closest("button[data-f]"); if (!b) return;
+        $("corpsSyn").innerHTML = vide("Lecture…");
+        fetch("/biblio/syndromes/" + b.dataset.f).then(function(r){ return r.text(); })
+          .then(function(t){ $("corpsSyn").innerHTML = md(t); })
+          .catch(function(e){ $("corpsSyn").innerHTML = vide("Fiche illisible : " + e.message); });
+      };
+    }).catch(function(e){ pan.innerHTML = vide("Index des syndromes illisible : " + e.message); });
     return;
   }
   if (v === "familles"){
