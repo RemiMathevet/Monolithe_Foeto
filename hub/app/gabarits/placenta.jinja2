@@ -1,5 +1,5 @@
 {# titre: Compte rendu placentaire #}
-{# version: 1.0.0 #}
+{# version: 1.1.0 #}
 {#
    Le placenta est le gros de l'activité et se lit seul : macro parée, tranches,
    grille histologique. Ce gabarit ne réclame donc rien du fœtus — s'il y a un
@@ -97,6 +97,27 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% elif p.terme_sa %
 
 {% if grille_placenta %}
 {{ titre("Microscopie") }}
+{% if grille_placenta.composition %}
+{% set cp = grille_placenta.composition %}
+{% for sec in cp.sections if sec.texte %}
+  {{ sec.label }} : {{ sec.texte }}
+
+{% endfor %}
+{% for grp, labels in cp.anormaux_sans_terme.items() %}
+  {{ grp }} — signes anormaux relevés par la grille : {{ labels | join(' ; ') }}.
+
+{% endfor %}
+{% if cp.hors_section %}
+  Autres termes posés : {{ cp.hors_section | join(' ; ') }}.
+
+{% endif %}
+{% set muettes = cp.sections | selectattr('statut', 'equalto', 'non_atteste') | map(attribute='label') | list %}
+{% if muettes %}
+  Non attesté par la grille : {{ muettes | join(', ') | lower }}.
+
+{% endif %}
+{{ sous("Grille de lecture") }}
+{% endif %}
 {% for ligne in grille_placenta.compte_rendu.split('\n') %}
 {{ "  " ~ ligne if ligne else "" }}
 {% endfor %}

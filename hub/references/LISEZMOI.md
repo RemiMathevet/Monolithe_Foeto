@@ -8,6 +8,7 @@ des modules de saisie :
 |---|---|---|
 | `autopsie.json` | `Macro/autopsie.html` | masses d'organes — Guihard-Costa 2002 (GC), Maroun 2017 (MA, par grade de macération), Muller-Brochut 2018 (MB, 12-20 SA) |
 | `biometrie_clinique.json` | `Macro/biometrie_clinique.html` | masse fœtale, pied, VT, VC, PC, BIP, FO, main, PT, PA — mêmes trois sources |
+| `grille_placenta.json` | `micro/grille_placenta.html` | groupe et libellé de chaque signe ; groupe qui atteste chaque section du CR placentaire (`SECTIONS_CR` dans l'extracteur) |
 
 Chaque fichier porte aussi la correspondance champ → clé de table (`champs`,
 `mesures`), les diviseurs d'unité (`mad`, `mbd` : saisie en mm, table en cm)
@@ -33,3 +34,12 @@ grade de macération, organes pairs notés sur la somme droite + gauche.
 ## Ordre de recherche
 
 `<base>/references/` d'abord (la racine passée à `--base`), puis ce dossier.
+
+## CR placentaire composé
+
+Les phrases viennent du paquet `data_hub` (`biblio/cr_phrases.json`) : sections
+(ordre, texte normal) et phrase de chaque terme FOETO. `cr.composer_placenta()`
+écrit la phrase des termes posés dans leur section. Une section sans terme ne
+reçoit son texte normal que si le groupe de la grille qui l'atteste a au moins
+un signe « normal » et aucun « anormal » ; sinon elle ne s'écrit pas. Les
+artères utéro-placentaires ne sont attestées par aucun groupe.

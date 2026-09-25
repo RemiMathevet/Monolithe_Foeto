@@ -40,6 +40,8 @@ class References:
     def __init__(self, racine: Path = None):
         self.autopsie = {}             # {GC, MA, MB, champs}
         self.biometrie_clinique = {}   # {GC, MA, MB, mesures}
+        self.grille_placenta = {}      # {groupes, signes, sections_cr}
+        self.racine = Path(racine) if racine else None   # biblio/ y vit
         self.sources = {}
         self.erreurs = []
         self.dossier = None
@@ -54,7 +56,7 @@ class References:
 
     def charger(self, d: Path):
         self.dossier = d
-        for nom in ("autopsie", "biometrie_clinique"):
+        for nom in ("autopsie", "biometrie_clinique", "grille_placenta"):
             f = d / f"{nom}.json"
             if not f.is_file():
                 continue

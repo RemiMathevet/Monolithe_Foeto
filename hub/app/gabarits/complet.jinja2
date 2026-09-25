@@ -1,5 +1,5 @@
 {# titre: Compte rendu complet #}
-{# version: 1.2.0 #}
+{# version: 1.3.0 #}
 {#
    Ce gabarit parcourt les trames plutôt que de nommer les champs : un champ
    ajouté à un module apparaît ici sans qu'on y touche, avec son libellé. Ce
@@ -299,6 +299,28 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 {% endif %}
 
 {{ sous(g.organe | capitalize + (" — " + g.cote if g.cote else "")) }}
+{% if g.module == 'grille_placenta' and g.composition %}
+{% set grille_placenta = g %}
+{% set cp = grille_placenta.composition %}
+{% for sec in cp.sections if sec.texte %}
+  {{ sec.label }} : {{ sec.texte }}
+
+{% endfor %}
+{% for grp, labels in cp.anormaux_sans_terme.items() %}
+  {{ grp }} — signes anormaux relevés par la grille : {{ labels | join(' ; ') }}.
+
+{% endfor %}
+{% if cp.hors_section %}
+  Autres termes posés : {{ cp.hors_section | join(' ; ') }}.
+
+{% endif %}
+{% set muettes = cp.sections | selectattr('statut', 'equalto', 'non_atteste') | map(attribute='label') | list %}
+{% if muettes %}
+  Non attesté par la grille : {{ muettes | join(', ') | lower }}.
+
+{% endif %}
+  Grille de lecture :
+{% endif %}
 {% for ligne in g.compte_rendu.split('\n') %}
 {{ "  " ~ ligne if ligne else "" }}
 {% endfor %}

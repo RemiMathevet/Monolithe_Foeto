@@ -1,0 +1,418 @@
+{
+ "module": "grille_placenta",
+ "module_version": "1.0.1",
+ "groupes": {
+  "G1": "Cordon",
+  "G2": "Membranes",
+  "G3": "Parenchyme sous cordon — plaque choriale et bloc d'insertion",
+  "G4": "Marge — rouleau et parenchyme marginal",
+  "G5": "Parenchyme systémique — trois blocs pleine épaisseur"
+ },
+ "signes": {
+  "aou": {
+   "groupe": "G1",
+   "label": "Artère ombilicale unique sur coupe à circonférence complète, ≥ 5 cm de l'insertion"
+  },
+  "phlebiteOmb": {
+   "groupe": "G1",
+   "label": "Phlébite ombilicale (polynucléaires dans la paroi veineuse)"
+  },
+  "arteriteOmb": {
+   "groupe": "G1",
+   "label": "Artérite ombilicale, une ou deux artères"
+  },
+  "funisiteNecro": {
+   "groupe": "G1",
+   "label": "Funisite nécrosante, extension à la gelée de Wharton"
+  },
+  "thromboseOmb": {
+   "groupe": "G1",
+   "label": "Thrombose d'un vaisseau ombilical"
+  },
+  "myonecrose": {
+   "groupe": "G1",
+   "label": "Nécrose de la paroi vasculaire, périphérique, adjacente à la gelée"
+  },
+  "hematomeCordon": {
+   "groupe": "G1",
+   "label": "Hématome funiculaire avec organisation, lignes de Zahn ou polynucléaires"
+  },
+  "striction": {
+   "groupe": "G1",
+   "label": "Striction : gelée absente ou subtotale, cordon extrêmement spiralé"
+  },
+  "cordonGrele": {
+   "groupe": "G1",
+   "label": "Gelée de Wharton condensée en liseré, ± microcalcifications diffuses (cordon grêle)"
+  },
+  "oedemeCordon": {
+   "groupe": "G1",
+   "label": "Œdème de la gelée, cordon épais"
+  },
+  "meconiumWharton": {
+   "groupe": "G1",
+   "label": "Macrophages méconiaux dans la gelée de Wharton"
+  },
+  "vaisseauxMembraneux": {
+   "groupe": "G1",
+   "label": "Insertion vélamenteuse ou vaisseaux membraneux (insertion marginale comprise)"
+  },
+  "variceOmb": {
+   "groupe": "G1",
+   "label": "Varice ou ectasie d'un vaisseau ombilical"
+  },
+  "hypertorsion": {
+   "groupe": "G1",
+   "label": "Hypertorsion avec indentations périphériques du cordon"
+  },
+  "sousChorionite": {
+   "groupe": "G2",
+   "label": "Polynucléaires maternels dans le fibrinoïde sous-chorial / chorionite"
+  },
+  "chorioamniotite": {
+   "groupe": "G2",
+   "label": "Polynucléaires dans le chorion fibreux et/ou l'amnios"
+  },
+  "necrosante": {
+   "groupe": "G2",
+   "label": "Chorioamniotite nécrosante : caryorrhexis des polynucléaires, nécrose amniocytaire, membrane basale hyperéosinophile"
+  },
+  "microabces": {
+   "groupe": "G2",
+   "label": "Polynucléaires confluents ou microabcès sous-choriaux"
+  },
+  "migrationAmnios": {
+   "groupe": "G2",
+   "label": "Polynucléaires en migration vers l'amnios (sens de la chimiotaxie)"
+  },
+  "meconiumAmnios": {
+   "groupe": "G2",
+   "label": "Macrophages méconiaux dans l'amnios"
+  },
+  "meconiumChorion": {
+   "groupe": "G2",
+   "label": "Macrophages méconiaux dans le chorion et la caduque capsulaire"
+  },
+  "amniosDegenere": {
+   "groupe": "G2",
+   "label": "Amnios vacuolisé, hérissé, nécrosé (méconium prolongé, laparoschisis)"
+  },
+  "amniosNodosum": {
+   "groupe": "G2",
+   "label": "Amnios nodosum : nodules de vernix PAS et bleu alcian positifs, non kératinisés"
+  },
+  "atherose": {
+   "groupe": "G2",
+   "label": "Athérose aiguë déciduale : nécrose fibrinoïde, macrophages spumeux, vaisseau dilaté"
+  },
+  "muscularisation": {
+   "groupe": "G2",
+   "label": "Muscularisation persistante des artérioles spiralées (défaut de remodelage)"
+  },
+  "hypertrophieMurale": {
+   "groupe": "G2",
+   "label": "Hypertrophie murale des vaisseaux déciduaux, paroi > 1/3 de la circonférence"
+  },
+  "thromboseDeciduale": {
+   "groupe": "G2",
+   "label": "Thrombose récente d'une artère déciduale"
+  },
+  "lymphocytesT": {
+   "groupe": "G2",
+   "label": "Infiltrat lymphocytaire T péri-artériel décidual"
+  },
+  "deciduitePlasmo": {
+   "groupe": "G2",
+   "label": "Plasmocytes dans la caduque (déciduite plasmocytaire)"
+  },
+  "necroseDeciduale": {
+   "groupe": "G2",
+   "label": "Nécrose déciduale membraneuse"
+  },
+  "hemosiderine": {
+   "groupe": "G2",
+   "label": "Hémosidérine dans les membranes (bleu de Prusse positif)"
+  },
+  "collageneDense": {
+   "groupe": "G2",
+   "label": "Dépôt collagène dense sans inflammation"
+  },
+  "brides": {
+   "groupe": "G2",
+   "label": "Brides ou feuillets amniotiques ; chorion nodosum"
+  },
+  "pseudokyste": {
+   "groupe": "G2",
+   "label": "Pseudokyste du chorion lisse, îlots de fibrinoïde à cellules X"
+  },
+  "vasculiteChoriale": {
+   "groupe": "G3",
+   "label": "Vasculite des vaisseaux de la plaque choriale"
+  },
+  "ectasie": {
+   "groupe": "G3",
+   "label": "Ectasie d'un vaisseau chorial ou souche ≥ 4 fois le diamètre des vaisseaux voisins"
+  },
+  "thrombusChorial": {
+   "groupe": "G3",
+   "label": "Thrombus d'un vaisseau chorial : récent (fibrine adhérente), en organisation (néo-intima), organisé, ancien (calcifié)"
+  },
+  "fibrineIntramurale": {
+   "groupe": "G3",
+   "label": "Dépôt de fibrine intramural sous-endothélial (non occlusif par définition)"
+  },
+  "coussinFibrine": {
+   "groupe": "G3",
+   "label": "Coussin myxoïde intimal AVEC fibrine ou calcification"
+  },
+  "souchesKystiques": {
+   "groupe": "G3",
+   "label": "Villosités souches dilatées, kystiques, œdémateuses, mêlées de villosités normales"
+  },
+  "vaisseauxTortueux": {
+   "groupe": "G3",
+   "label": "Vaisseaux souches à paroi épaisse, tortueux, anévrismaux, manchons de mésenchyme lâche"
+  },
+  "citernes": {
+   "groupe": "G3",
+   "label": "Citernes centrales de matériel myxoïde (acide hyaluronique, bleu alcian)"
+  },
+  "trophoNormalPMD": {
+   "groupe": "G3",
+   "label": "Trophoblaste normal, contours lisses, sans pseudo-inclusion, sur des souches kystiques"
+  },
+  "magistral": {
+   "groupe": "G3",
+   "label": "Patron vasculaire magistral de la plaque choriale (gros vaisseaux non dichotomiques)"
+  },
+  "chorangiome": {
+   "groupe": "G3",
+   "label": "Nodule capillaire expansif d'une souche sous-choriale, péricytes présents"
+  },
+  "langhansExces": {
+   "groupe": "G3",
+   "label": "Fibrinoïde sous-chorial de Langhans épais, chorioamnion épaissi"
+  },
+  "infiltratChorialBasal": {
+   "groupe": "G3",
+   "label": "Infiltrat granulocytaire maternel bien limité de la plaque choriale basale"
+  },
+  "amniosDecolle": {
+   "groupe": "G3",
+   "label": "Amnios décollé de la plaque choriale"
+  },
+  "infarctusPeriph": {
+   "groupe": "G4",
+   "label": "Infarctus périphérique (marginal)"
+  },
+  "hemorragieMarginale": {
+   "groupe": "G4",
+   "label": "Hémorragie marginale ancienne, hématome marginal"
+  },
+  "hemosiderineMarge": {
+   "groupe": "G4",
+   "label": "Hémosidérine et fibrine au bord, membranes à insertion enroulée (circumvallé histologique)"
+  },
+  "villositesAtrophiques": {
+   "groupe": "G4",
+   "label": "Villosités marginales atrophiques, fibrine périvillositaire de bord"
+  },
+  "dvhSousChorial": {
+   "groupe": "G4",
+   "label": "Paucité villositaire focale sous-choriale ou péri-lésionnelle"
+  },
+  "ruptureFoyer": {
+   "groupe": "G4",
+   "label": "Foyer intense de polynucléaires au site de rupture"
+  },
+  "caduqueCapsulaire": {
+   "groupe": "G4",
+   "label": "Caduque capsulaire nécrosée / hémorragique au bord"
+  },
+  "infarctus": {
+   "groupe": "G5",
+   "label": "Infarctus : collapsus de la chambre intervilleuse ET perte de basophilie du trophoblaste, jusqu'aux « ghost villi »"
+  },
+  "hrp": {
+   "groupe": "G5",
+   "label": "Hématome rétroplacentaire adhérent : sang et fibrine (frais) ; polynucléaires, macrophages, sidérophages (chronique)"
+  },
+  "dvh": {
+   "groupe": "G5",
+   "label": "Hypoplasie villositaire distale : terminales rares, fines, allongées, deux tiers inférieurs"
+  },
+  "matAcceleree": {
+   "groupe": "G5",
+   "label": "Villosités d'aspect terme pour le terme, nœuds ↑, fibrine intervilleuse, alternant avec des plages de paucité"
+  },
+  "agglutination": {
+   "groupe": "G5",
+   "label": "Villosités agglutinées par la fibrine (2 à 20), touchant d'autres villosités"
+  },
+  "noeudsAugmentes": {
+   "groupe": "G5",
+   "label": "Nœuds syncytiaux augmentés (≥ 5 noyaux, bombant), hors bordure de lésion"
+  },
+  "avascTrophoVivant": {
+   "groupe": "G5",
+   "label": "Villosités avasculaires à trophoblaste VIVANT (lésion « inside out »)"
+  },
+  "vsk": {
+   "groupe": "G5",
+   "label": "Caryorrhexis stromale-vasculaire villositaire (VSK)"
+  },
+  "obliterationSouche": {
+   "groupe": "G5",
+   "label": "Oblitération de vaisseau souche : septation fibroblastique, sclérose de collapsus"
+  },
+  "thrombusSouche": {
+   "groupe": "G5",
+   "label": "Thrombus mural ou occlusif d'un vaisseau souche"
+  },
+  "foyersPetits": {
+   "groupe": "G5",
+   "label": "Petits foyers de villosités avasculaires (< 5 villosités par foyer)"
+  },
+  "foyersLarges": {
+   "groupe": "G5",
+   "label": "Foyers larges d'avascularité, cumul ≥ 45 villosités sur 3 sections ou > 15 par section"
+  },
+  "hemorragieIntravill": {
+   "groupe": "G5",
+   "label": "Hémorragie intravillositaire"
+  },
+  "villite": {
+   "groupe": "G5",
+   "label": "Villite chronique lymphohistiocytaire, foyers < 10 villosités contiguës"
+  },
+  "villiteLarge": {
+   "groupe": "G5",
+   "label": "Villite chronique, ≥ 1 foyer > 10 villosités contiguës, sur > 1 coupe"
+  },
+  "villitePlasmo": {
+   "groupe": "G5",
+   "label": "Villite à prédominance plasmocytaire"
+  },
+  "villiteObliteration": {
+   "groupe": "G5",
+   "label": "Villite avec destruction d'un vaisseau souche musculaire"
+  },
+  "avascAvecVillite": {
+   "groupe": "G5",
+   "label": "Villosités avasculaires dans un placenta avec villite"
+  },
+  "intervilliteChronique": {
+   "groupe": "G5",
+   "label": "Histiocytes mononucléés dans la chambre intervilleuse (intervillite chronique)"
+  },
+  "pnIntervilleux": {
+   "groupe": "G5",
+   "label": "Polynucléaires dans la chambre intervilleuse"
+  },
+  "perivillite": {
+   "groupe": "G5",
+   "label": "Périvillite"
+  },
+  "inclusionsVirales": {
+   "groupe": "G5",
+   "label": "Inclusions virales (CMV en œil de hibou), parvovirus"
+  },
+  "fibrineEIVconserve": {
+   "groupe": "G5",
+   "label": "Fibrinoïde périvillositaire comblant l'espace, chambre intervilleuse CONSERVÉE, villosités épargnées dans la lésion"
+  },
+  "fibrineTransmurale": {
+   "groupe": "G5",
+   "label": "Fibrinoïde transmural, de la plaque choriale à la basale, > 50 % d'une lame"
+  },
+  "fibrine2550": {
+   "groupe": "G5",
+   "label": "Fibrinoïde sur 25–50 % d'une lame"
+  },
+  "fibrineBasale3mm": {
+   "groupe": "G5",
+   "label": "Fibrinoïde basal encastrant les villosités sur ≥ 3 mm le long du plancher"
+  },
+  "populationMonotone": {
+   "groupe": "G5",
+   "label": "Population villositaire monotone (≥ 10 villosités) à capillaires centraux"
+  },
+  "mvsReduites": {
+   "groupe": "G5",
+   "label": "Membranes vasculo-syncytiales réduites pour le terme"
+  },
+  "cytotrophoContinu": {
+   "groupe": "G5",
+   "label": "Cytotrophoblaste en couche continue au-delà du terme attendu"
+  },
+  "capillairesSup10": {
+   "groupe": "G5",
+   "label": "Villosités terminales à > 10 capillaires, 10 villosités, 10 champs, hors zones ischémiques"
+  },
+  "villositesRondes": {
+   "groupe": "G5",
+   "label": "Villosités terminales grandes, rondes, à vascularisation proéminente au faible grossissement"
+  },
+  "pericytes": {
+   "groupe": "G5",
+   "label": "Capillaires à couche de péricytes et membrane basale discontinue, villosités intermédiaires et souches"
+  },
+  "oedemeDiffus": {
+   "groupe": "G5",
+   "label": "Œdème villositaire diffus, circonférentiel, stroma pâle, trophoblaste conservé"
+  },
+  "oedemeFocal": {
+   "groupe": "G5",
+   "label": "Œdème villositaire focal, irrégulier, non circonférentiel, entre villosités normales"
+  },
+  "hofbauer": {
+   "groupe": "G5",
+   "label": "Cellules de Hofbauer et canaux stromaux proéminents"
+  },
+  "erythroblastes": {
+   "groupe": "G5",
+   "label": "Au moins un érythroblaste dans la plupart des champs au fort grossissement"
+  },
+  "nrbcIntervilleux": {
+   "groupe": "G5",
+   "label": "Hématies nucléées nombreuses dans la chambre intervilleuse (côté maternel)"
+  },
+  "vacuolesIntracell": {
+   "groupe": "G5",
+   "label": "Vacuoles intracellulaires vides du trophoblaste, des cellules de Hofbauer, de l'endothélium"
+  },
+  "granuleuxEosino": {
+   "groupe": "G5",
+   "label": "Matériel granuleux éosinophile intracellulaire"
+  },
+  "minéralisationMB": {
+   "groupe": "G5",
+   "label": "Minéralisation de la membrane basale trophoblastique"
+  },
+  "implantationSuperficielle": {
+   "groupe": "G5",
+   "label": "Cellules géantes ↑ et trophoblaste extravilleux immature au site d'implantation"
+  },
+  "atheroseBasale": {
+   "groupe": "G5",
+   "label": "Athérose ou muscularisation persistante des artères spiralées de la plaque basale"
+  },
+  "proliferationTropho": {
+   "groupe": "G5",
+   "label": "Prolifération trophoblastique circonférentielle ou atypique"
+  },
+  "calcifPoussiere": {
+   "groupe": "G5",
+   "label": "Microcalcifications stromales poussiéreuses diffuses"
+  }
+ },
+ "sections_cr": {
+  "cr_cordon": "G1",
+  "cr_membranes": "G2",
+  "cr_plaque_choriale": "G3",
+  "cr_villosites_faible": "G5",
+  "cr_villosites_fort": "G5",
+  "cr_espace_intervilleux": "G5",
+  "cr_plaque_basale": "G5"
+ }
+}

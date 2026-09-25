@@ -16,6 +16,8 @@ saisie.
 Écrit :
   autopsie.json            masses d'organes  — GC_ORG, MA_ORG, MB_ORG + champs
   biometrie_clinique.json  biométrie externe — GC, MA, MB + mesures
+  grille_placenta.json     groupe et libellé de chaque signe de la grille, et
+                           le groupe qui atteste chaque section de CR placentaire
 """
 
 import json
@@ -83,6 +85,32 @@ def champs_masse(html: str):
     return out
 
 
+# La section de CR placentaire (foeto_structures, paquet data_hub) et le groupe
+# de la grille dont l'exploration l'atteste. Une section absente d'ici n'a
+# jamais de texte normal écrit d'office : les artères utéro-placentaires se
+# lisent dans les membranes pariétales ET la plaque basale, et leur texte
+# normal affirme un remodelage que la grille ne relève pas.
+SECTIONS_CR = {
+    "cr_cordon": "G1",
+    "cr_membranes": "G2",
+    "cr_plaque_choriale": "G3",
+    "cr_villosites_faible": "G5",
+    "cr_villosites_fort": "G5",
+    "cr_espace_intervilleux": "G5",
+    "cr_plaque_basale": "G5",
+}
+
+
+def grille_placenta(html: str):
+    groupes = dict(re.findall(r'\b(G\d)\s*=\s*"([^"]+)"', html))
+    signes = {k: {"groupe": g, "label": l}
+              for g, k, l in re.findall(r'\{\s*g:(G\d),\s*k:"(\w+)",\s*l:"([^"]*)"', html)}
+    if not groupes or not signes:
+        sys.exit("grille_placenta : groupes ou signes introuvables — la forme a changé ?")
+    return {"module": "grille_placenta", "module_version": version(html),
+            "groupes": groupes, "signes": signes, "sections_cr": SECTIONS_CR}
+
+
 def main():
     aut = (MACRO / "autopsie.html").read_text(encoding="utf-8")
     bio = (MACRO / "biometrie_clinique.html").read_text(encoding="utf-8")
@@ -97,6 +125,11 @@ def main():
                              "unite": g.get("unite"), "libelle": m.get("l")}
                      for g in trame for m in g["mesures"]}}
 
+    gp = grille_placenta((DEPOT / "micro" / "grille_placenta.html").read_text(encoding="utf-8"))
+    (ICI / "grille_placenta.json").write_text(json.dumps(gp, ensure_ascii=False, indent=1) + "\n",
+                                              encoding="utf-8")
+    print(f"grille_placenta.json — module v{gp['module_version']} : {len(gp['signes'])} signes, "
+          f"{len(gp['groupes'])} groupes")
     for nom, o in (("autopsie", a), ("biometrie_clinique", b)):
         (ICI / f"{nom}.json").write_text(json.dumps(o, ensure_ascii=False, indent=1) + "\n",
                                          encoding="utf-8")

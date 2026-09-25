@@ -201,6 +201,29 @@ def main():
     t("les normaux ne passent pas pour des anomalies",
       "tubes proximaux" not in " ".join(rein["anormaux"]))
 
+    print("Composition placentaire (phrases du paquet data_hub)")
+    # Un cr_phrases.json minimal : deux sections, un terme. Les signes de la
+    # grille viennent de references/grille_placenta.json (tiré du module).
+    sig = refs.grille_placenta.get("signes") or {}
+    cordon = [k for k, v in sig.items() if v["groupe"] == "G1"]
+    phrases = {"sections": [
+        {"id": "cr_cordon", "domaine": "placenta", "label": "Cordon", "texte_normal": "Cordon normal."},
+        {"id": "cr_membranes", "domaine": "placenta", "label": "Membranes", "texte_normal": "Membranes normales."}],
+        "termes": {"FOETO:X": {"label": "Méconium", "section": "cr_membranes", "phrase": "Méconium dans l'amnion."}}}
+    comp = compte_rendu.composer_placenta(
+        {"grille": {"signes": {cordon[0]: "normal"}, "foeto": {"FOETO:X": 1}}}, phrases, refs.grille_placenta)
+    t("références de la grille placentaire chargées", len(sig) > 50, str(len(sig)))
+    t("section explorée normale → texte normal",
+      comp and comp["sections"][0]["texte"] == "Cordon normal.", str(comp and comp["sections"][0]))
+    t("terme posé → sa phrase", comp and comp["sections"][1]["texte"] == "Méconium dans l'amnion.")
+    comp = compte_rendu.composer_placenta(
+        {"grille": {"signes": {cordon[0]: "normal", cordon[1]: "anormal"}, "foeto": {}}}, phrases,
+        refs.grille_placenta)
+    t("anomalie sans terme → pas de texte normal",
+      comp["sections"][0]["texte"] is None and comp["sections"][1]["statut"] == "non_atteste")
+    t("sans paquet → pas de composition",
+      compte_rendu.composer_placenta({"grille": {}}, {}, refs.grille_placenta) is None)
+
     print("Rendu")
     dispo = compte_rendu.gabarits_disponibles()
     for nom in sorted(dispo):

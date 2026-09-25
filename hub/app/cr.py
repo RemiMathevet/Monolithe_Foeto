@@ -269,6 +269,63 @@ def _grille(module, d):
             "libre": (g.get("libre") or "").strip()}
 
 
+def phrases_cr(racine):
+    """Le cr_phrases.json du dernier paquet data_hub repris, ou {}.
+
+    Relu à chaque compte rendu : un paquet se remplace sans redémarrer.
+    """
+    f = Path(racine) / "biblio" / "cr_phrases.json" if racine else None
+    try:
+        return json.loads(f.read_text(encoding="utf-8")) if f and f.is_file() else {}
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def composer_placenta(d, phrases, ref):
+    """La microscopie placentaire section par section, à la manière de LumiV3.
+
+    Une section porte les phrases des termes FOETO posés qui y sont rangés.
+    Sans terme, elle reçoit son texte normal seulement si le groupe de la
+    grille qui l'atteste a été exploré (au moins un signe « normal ») et n'a
+    rien d'anormal ; sinon elle ne s'écrit pas — on n'affirme pas ce qui n'a
+    pas été regardé. Renvoie None sans paquet ou sans références.
+    """
+    if not phrases or not ref:
+        return None
+    g = d.get("grille") or {}
+    termes = phrases.get("termes") or {}
+    poses = list((g.get("foeto") or {}).keys())
+    etat = {}
+    for k, v in (g.get("signes") or {}).items():
+        sg = (ref.get("signes") or {}).get(k)
+        if sg and v in ("normal", "anormal"):
+            e = etat.setdefault(sg["groupe"], {"normal": 0, "anormal": []})
+            if v == "normal":
+                e["normal"] += 1
+            else:
+                e["anormal"].append(sg["label"])
+    sections, ranges = [], set()
+    for sec in phrases.get("sections") or []:
+        if sec.get("domaine") != "placenta":
+            continue
+        ici = [i for i in poses if (termes.get(i) or {}).get("section") == sec["id"]]
+        ranges.update(ici)
+        gr = (ref.get("sections_cr") or {}).get(sec["id"])
+        e = etat.get(gr) or {"normal": 0, "anormal": []}
+        if ici:
+            texte, statut = " ".join((termes[i].get("phrase") or termes[i].get("label") or i).rstrip(".") + "."
+                                     for i in ici), "lesion"
+        elif gr and e["normal"] and not e["anormal"]:
+            texte, statut = sec.get("texte_normal"), "normal"
+        else:
+            texte, statut = None, ("anomalie_sans_terme" if e["anormal"] else "non_atteste")
+        sections.append({"id": sec["id"], "label": sec["label"], "statut": statut, "texte": texte})
+    groupes = (ref.get("groupes") or {})
+    return {"sections": sections,
+            "hors_section": [(termes.get(i) or {}).get("label") or i for i in poses if i not in ranges],
+            "anormaux_sans_terme": {groupes.get(k, k): v["anormal"] for k, v in etat.items() if v["anormal"]}}
+
+
 def _trame(d):
     """Les étapes d'une trame, réduites à ce qui est rempli, ordre conservé."""
     etapes = []
@@ -300,6 +357,11 @@ def contexte(cx, numero, refs: biometrie.References, modules_attendus):
     # d'ingestion, et la grille du placenta se lit avec la macro placentaire.
     grilles = [_grille(m, v["donnees"]) for m, v in sorted(s.items())
                if m.startswith("grille_")]
+    phrases = phrases_cr(refs.racine)
+    for gr in grilles:
+        if gr["module"] == "grille_placenta":
+            gr["composition"] = composer_placenta(s["grille_placenta"]["donnees"], phrases,
+                                                  refs.grille_placenta)
 
     # Le terme : celui de l'administratif fait autorité, les modules le
     # redonnent et peuvent diverger — on le dit plutôt que de choisir seul.
