@@ -1,5 +1,5 @@
 {# titre: Compte rendu complet #}
-{# version: 1.0.0 #}
+{# version: 1.1.0 #}
 {#
    Ce gabarit parcourt les trames plutôt que de nommer les champs : un champ
    ajouté à un module apparaît ici sans qu'on y touche, avec son libellé. Ce
@@ -229,6 +229,74 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 {% endif %}
 {% endif %}
 
+{% if placenta.present %}
+{% set p = placenta.champs %}
+{{ titre("Placenta — examen macroscopique") }}
+{% if p.grand_axe or p.masse %}
+  Galette{% if p.forme %} {{ p.forme | lower }}{% endif %}{% if p.grand_axe and p.petit_axe %} de {{ p.grand_axe }} × {{ p.petit_axe }} cm{% endif %}{% if p.epaisseur %}, épaisse de {{ p.epaisseur }} cm{% endif %}{% if p.masse %}, masse parée {{ p.masse }} g{% endif %}{% if p.completude %} — {{ p.completude | fr | lower }}{% endif %}.
+
+{% endif %}
+{% if placenta.rapport_fp %}
+  Rapport fœto-placentaire {{ placenta.rapport_fp }} ({{ p.masse_foetale }} g / {{ p.masse }} g) — à situer
+  dans son percentile pour le terme et le référentiel retenu, pas à lire seul.
+
+{% endif %}
+{% if p.etat_choriale or p.remarques_choriale %}
+  Plaque choriale : {{ p.etat_choriale | fr | lower }}{% if p.remarques_choriale %} — {{ p.remarques_choriale | phrase }}{% endif %}.
+
+{% endif %}
+{% if p.etat_basale or p.remarques_basale %}
+  Plaque basale : {{ p.etat_basale | fr | lower }}{% if p.remarques_basale %} — {{ p.remarques_basale | phrase }}{% endif %}.
+
+{% endif %}
+{% if p.cordon_insertion or p.cordon_longueur or p.cordon_particularites %}
+  Cordon : insertion {{ p.cordon_insertion | fr | lower }}{% if p.cordon_longueur %}, {{ p.cordon_longueur }} cm{% endif %}{% if p.cordon_spiralisation %}, spiralisation {{ p.cordon_spiralisation | lower }}{% endif %}{% if p.cordon_particularites %} — {{ p.cordon_particularites | fr | lower }}{% endif %}{% if p.remarques_cordon %} ({{ p.remarques_cordon | phrase }}){% endif %}.
+
+{% endif %}
+{% if p.membranes_insertion or p.membranes_aspect or p.remarques_membranes %}
+  Membranes : insertion {{ p.membranes_insertion | fr | lower }}{% if p.membranes_marginee_pct %} sur {{ p.membranes_marginee_pct }} % de la circonférence{% endif %}{% if p.membranes_aspect %}, aspect {{ p.membranes_aspect | lower }}{% endif %}{% if p.remarques_membranes %} — {{ p.remarques_membranes | phrase }}{% endif %}.
+
+{% endif %}
+{% if placenta.tranches %}
+  Tranches de section : {{ placenta.tranches | length }} groupe(s) photographié(s){% if p.remarques_tranches %} — {{ p.remarques_tranches | phrase }}{% endif %}.
+
+{% elif p.remarques_tranches %}
+  Tranches de section : {{ p.remarques_tranches | phrase }}.
+{% endif %}
+{% for l in placenta.lesions %}
+{% if loop.first %}
+
+{{ sous("Lésions prélevées") }}
+{% endif %}
+  Lésion n° {{ l.lesion }}{% if l.cassette %} — cassette {{ l.cassette }}{% endif %}{% if l.description %} : {{ l.description | phrase }}{% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if micro.present %}
+{{ titre("Microscopie") }}
+{% for s in micro.sections %}
+{% if s.champs %}
+
+{{ sous(s.titre) }}
+{% for c in s.champs %}
+  {{ c.label }} : {{ c | valeur }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% for g in grilles %}
+{% if loop.first %}
+{{ titre("Grilles de lecture") }}
+{% endif %}
+
+{{ sous(g.organe | capitalize + (" — " + g.cote if g.cote else "")) }}
+{% for ligne in g.compte_rendu.split('\n') %}
+{{ "  " ~ ligne if ligne else "" }}
+{% endfor %}
+{% endfor %}
+
 {% if neuropath.etapes %}
 {{ titre("Neuropathologie") }}
 {% for e in neuropath.etapes %}
@@ -254,7 +322,8 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 
 {{ titre("Conclusion") }}
   À rédiger.
-{% if clinique.anormaux or autopsie.masses | selectattr('alerte') | list %}
+{% set anormaux_grilles = grilles | map(attribute='anormaux') | map('length') | sum %}
+{% if clinique.anormaux or autopsie.masses | selectattr('alerte') | list or micro.anormaux or anormaux_grilles %}
 
   Éléments à reprendre dans la conclusion :
 {% for a in clinique.anormaux %}
@@ -264,6 +333,21 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 {% for m in autopsie.masses if m.alerte %}
   · {{ m.label }} : {{ m.detail }}, écart supérieur à 2 DS
 {% endfor %}
+{% for organe, c in micro.anormaux %}
+  · Microscopie {{ organe | lower }} — {{ c.label }}{% if c.termes %} : {{ c.termes | join(', ') }}{% endif %}
+
+{% endfor %}
+{% for g in grilles %}
+{% for a in g.anormaux %}
+  · Grille {{ g.organe | lower }} — {{ a }}
+{% endfor %}
+{% endfor %}
+{% endif %}
+{% set termes_foeto = grilles | map(attribute='foeto') | sum(start=[]) %}
+{% if termes_foeto %}
+
+  Termes FOETO posés aux grilles : {% for f in termes_foeto %}{{ f.label }} [{{ f.id }}]{% if not loop.last %} · {% endif %}{% endfor %}.
+
 {% endif %}
 
 --

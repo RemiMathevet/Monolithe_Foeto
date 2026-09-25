@@ -238,10 +238,22 @@ brouillon. Il est enregistré avec sa date, son gabarit et sa version — on peu
 donc montrer plus tard ce qui avait été écrit, même après un changement de
 gabarit ou de table.
 
-Deux gabarits pour l'instant : **complet** (la trame entière, section par
-section) et **synthèse** (une page : ce qui est fait, ce qui manque, ce qui
-sort de la norme). Ce sont des brouillons, et c'est écrit dedans : rien n'y est
+Trois gabarits pour l'instant : **complet** (la trame entière, partie par
+partie — identification, renseignements, examen externe, biométrie, imagerie,
+examen interne, placenta, microscopie, grilles de lecture, neuropathologie,
+iconographie), **synthèse** (une page : ce qui est fait, ce qui manque, ce qui
+sort de la norme) et **placentaire** (le placenta seul : macro parée, tranches,
+lésions, grille histologique — pour les dossiers sans fœtus, qui sont le gros
+de l'activité). Ce sont des brouillons, et c'est écrit dedans : rien n'y est
 validé par un humain.
+
+Deux exceptions à la règle ci-dessous, toutes deux assumées. La macro
+placentaire range ses champs par identifiant sans libellé : le gabarit
+placentaire les nomme donc lui-même, ce qui est le prix juste pour une trame de
+vingt-cinq champs qui doit sortir en phrases. Et les grilles d'organes ne
+sortent pas les libellés de leurs signes : leur compte rendu, celui que la
+grille compose elle-même, est repris tel quel — c'est le seul endroit où ces
+libellés existent hors du HTML.
 
 **Les gabarits ne nomment pas les champs.** Ils demandent « les champs remplis
 de l'étape thorax » et le module fournit les libellés, qu'il embarque déjà dans
@@ -250,6 +262,16 @@ la première diffusion de module ; celui-ci suit la trame. Un champ ajouté
 apparaît donc dans le compte rendu sans qu'on y touche, avec le libellé qu'a vu
 la personne qui l'a rempli. Corollaire : ce qui n'est pas rempli ne s'écrit
 pas — un compte rendu qui aligne des « non renseigné » se relit mal.
+
+Les gabarits s'éprouvent sur un dossier complet, en base :
+
+    python3 hub/outils/verifier_cr.py
+
+Il monte une base jetable, y ingère les exemples du dépôt plus une saisie de
+placenta, de micro et de deux grilles, rend tous les gabarits présents et
+vérifie que chaque partie est bien arrivée dans le texte. Un gabarit ne se
+relit pas : Jinja rend une clé de contexte mal tapée par du vide, sans rien
+dire.
 
 ### Vérifier les tables des modules
 

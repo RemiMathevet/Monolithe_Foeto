@@ -1,0 +1,139 @@
+{# titre: Compte rendu placentaire #}
+{# version: 1.0.0 #}
+{#
+   Le placenta est le gros de l'activité et se lit seul : macro parée, tranches,
+   grille histologique. Ce gabarit ne réclame donc rien du fœtus — s'il y a un
+   dossier fœtal, il apporte le terme et l'indication, sinon la macro placentaire
+   les porte elle-même.
+
+   Il décrit et situe ; il ne classe pas. Amsterdam n'est pas le cadre universel :
+   le référentiel se choisit à la relecture, et ce qui n'entre dans aucun se dit
+   tel quel plutôt que d'être plié.
+#}
+{%- macro titre(t) -%}
+{{ t | upper }}
+{{ '=' * (t | length) }}
+{%- endmacro -%}
+{%- macro sous(t) -%}
+{{ t }}
+{{ '-' * (t | length) }}
+{%- endmacro -%}
+{% set p = placenta.champs %}
+COMPTE RENDU D'EXAMEN PLACENTAIRE — BROUILLON
+Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% elif p.terme_sa %} — {{ p.terme_sa }} SA{% if p.terme_jours %} + {{ p.terme_jours }} j{% endif %}{% endif %}
+
+{{ titre("Renseignements") }}
+{% if p.indication or issue.indication %}
+  Indication : {{ p.indication | fr(issue.indication | fr('—')) }}{% if p.indication_detail %} — {{ p.indication_detail | phrase }}{% endif %}.
+
+{% endif %}
+{% if p.terme_source %}
+  Datation : {{ p.terme_source }}.
+{% endif %}
+{% if p.sexe or issue.sexe %}
+  Sexe : {{ p.sexe | fr(issue.sexe | fr('—')) }}.
+{% endif %}
+{% if circuit.medecin or circuit.service %}
+  Demandeur : {{ circuit.medecin | fr }}{% if circuit.service %}, {{ circuit.service }}{% endif %}.
+
+{% endif %}
+{% if circuit.date_reception %}
+  Reçu le {{ date_variable(circuit.date_reception) | fr }}{% if circuit.date_examen %}, examiné le {{ date_variable(circuit.date_examen) | fr }}{% endif %}.
+
+{% endif %}
+{% if grossesse.contexte_clinique %}
+  Contexte : {{ grossesse.contexte_clinique | phrase }}.
+{% endif %}
+{% if terme.discordant %}
+  ⚠ Termes discordants entre modules : {% for m, v in terme.vu_par.items() %}{{ m }} {{ v }} SA{% if not loop.last %}, {% endif %}{% endfor %}{% if terme.sa %} — administratif {{ terme.sa }} SA{% endif %}. Le terme retenu ci-dessus est celui de l'administratif.
+
+{% endif %}
+
+{% if not placenta.present %}
+  Aucune macroscopie placentaire n'est parvenue pour ce dossier. Ce brouillon ne
+  porte donc que ce qui a été saisi ailleurs.
+{% else %}
+{{ titre("Macroscopie") }}
+{% if p.grand_axe or p.masse or p.forme %}
+  Galette{% if p.forme %} {{ p.forme | lower }}{% endif %}{% if p.grand_axe and p.petit_axe %} de {{ p.grand_axe }} × {{ p.petit_axe }} cm{% endif %}{% if p.epaisseur %}, épaisse de {{ p.epaisseur }} cm{% endif %}{% if p.masse %}, masse parée {{ p.masse }} g{% endif %}{% if p.completude %} — {{ p.completude | fr | lower }}{% endif %}.
+
+{% endif %}
+{% if placenta.rapport_fp %}
+  Rapport fœto-placentaire {{ placenta.rapport_fp }} ({{ p.masse_foetale }} g / {{ p.masse }} g).
+  À situer dans son percentile pour le terme et le référentiel retenu : le rapport
+  seul ne dit ni l'insuffisance ni l'excès.
+{% elif p.masse %}
+  Masse fœtale non renseignée : le rapport fœto-placentaire n'est pas calculé.
+{% endif %}
+
+{{ sous("Plaque choriale") }}
+  {{ p.etat_choriale | fr("non décrite") }}{% if p.remarques_choriale %} — {{ p.remarques_choriale | phrase }}{% endif %}.
+
+{{ sous("Plaque basale") }}
+  {{ p.etat_basale | fr("non décrite") }}{% if p.remarques_basale %} — {{ p.remarques_basale | phrase }}{% endif %}.
+
+{{ sous("Cordon") }}
+  Insertion {{ p.cordon_insertion | fr("non précisée") | lower }}{% if p.cordon_longueur %}, longueur {{ p.cordon_longueur }} cm{% endif %}{% if p.cordon_spiralisation %}, spiralisation {{ p.cordon_spiralisation | lower }}{% endif %}{% if p.cordon_particularites %} — {{ p.cordon_particularites | fr | lower }}{% endif %}{% if p.remarques_cordon %} ({{ p.remarques_cordon | phrase }}){% endif %}.
+
+{{ sous("Membranes") }}
+  Insertion {{ p.membranes_insertion | fr("non précisée") | lower }}{% if p.membranes_marginee_pct %} sur {{ p.membranes_marginee_pct }} % de la circonférence{% endif %}{% if p.membranes_aspect %}, aspect {{ p.membranes_aspect | lower }}{% endif %}{% if p.remarques_membranes %} — {{ p.remarques_membranes | phrase }}{% endif %}.
+
+{{ sous("Tranches de section") }}
+{% if placenta.tranches %}
+  {{ placenta.tranches | length }} groupe(s) de tranches photographié(s){% if p.remarques_tranches %} — {{ p.remarques_tranches | phrase }}{% endif %}.
+
+{% else %}
+  {{ p.remarques_tranches | fr("Non documentées.") }}
+{% endif %}
+{% for l in placenta.lesions %}
+{% if loop.first %}
+
+{{ sous("Lésions prélevées") }}
+{% endif %}
+  Lésion n° {{ l.lesion }}{% if l.cassette %} — cassette {{ l.cassette }}{% endif %}{% if l.description %} : {{ l.description | phrase }}{% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if grille_placenta %}
+{{ titre("Microscopie") }}
+{% for ligne in grille_placenta.compte_rendu.split('\n') %}
+{{ "  " ~ ligne if ligne else "" }}
+{% endfor %}
+{% else %}
+{{ titre("Microscopie") }}
+  Grille placentaire non parvenue.
+{% endif %}
+
+{% for c in cliches if c.module == 'macro_placenta' %}
+{% if loop.first %}
+{{ titre("Iconographie") }}
+{% endif %}
+  {{ c.label or c.cle }}
+{% endfor %}
+
+{{ titre("Conclusion") }}
+  À rédiger.
+{% if grille_placenta and grille_placenta.anormaux %}
+
+  Éléments à reprendre :
+{% for a in grille_placenta.anormaux %}
+  · {{ a }}
+{% endfor %}
+{% endif %}
+{% if grille_placenta and grille_placenta.foeto %}
+
+  Termes FOETO posés : {% for f in grille_placenta.foeto %}{{ f.label }} [{{ f.id }}]{% if not loop.last %} · {% endif %}{% endfor %}.
+
+{% endif %}
+
+  Cadre de lecture : à situer dans le référentiel retenu — Amsterdam n'est pas le
+  seul, et la maturation villositaire se lit sur Vogel. Ce qui n'entre dans aucun
+  cadre se dit tel quel plutôt que d'être plié à celui qu'on a sous la main.
+
+--
+Brouillon produit le {{ genere_at | dtc }} à partir des saisies en base. À relire
+et à corriger avant signature : rien ici n'a été validé par un humain.
+{% if placenta.present %}
+Modules repris : {% for m, v in modules.items() if m in ('macro_placenta', 'grille_placenta', 'administratif') %}{{ m }} v{{ v.module_version }} ({{ v.operateur | fr }}){% if not loop.last %} · {% endif %}{% endfor %}.
+{% endif %}

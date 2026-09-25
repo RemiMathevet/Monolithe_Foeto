@@ -113,6 +113,10 @@ def rempli(c):
     """Un champ de trame porte-t-il quelque chose ?"""
     if c.get("type") == "chips":
         return bool(c.get("valeurs"))
+    if c.get("type") == "axe":
+        # micro.html : trois états. « Non regardé » n'est pas un constat et ne
+        # s'écrit donc pas — un axe muet reste muet dans le compte rendu.
+        return bool(c.get("etat") or c.get("termes") or c.get("autre") or c.get("note"))
     if c.get("type") == "masse2":
         return c.get("total") is not None
     if c.get("type") == "masse":
@@ -126,6 +130,22 @@ def valeur_champ(c):
     t = c.get("type")
     if t == "chips":
         return ", ".join(c.get("valeurs") or [])
+    if t == "axe":
+        # Le libellé des deux pôles (« fin » / « épaissi »…) vit dans la grille
+        # et n'est pas exporté : on écrit l'état, puis ce qui a été coché.
+        bouts = []
+        if c.get("etat") == "anormal":
+            bouts.append("ANORMAL")
+        elif c.get("etat") == "normal":
+            bouts.append("vu normal")
+        termes = list(c.get("termes") or [])
+        if c.get("autre"):
+            termes.append(str(c["autre"]))
+        if termes:
+            bouts.append(", ".join(termes))
+        if c.get("note"):
+            bouts.append(phrase(c["note"]))
+        return " — ".join(bouts) or "—"
     if t == "masse2":
         d, g, tot = c.get("droite"), c.get("gauche"), c.get("total")
         if d is not None and g is not None:
@@ -157,6 +177,90 @@ def saisies_courantes(cx, numero):
     return out
 
 
+def _placenta(d):
+    """La macro placentaire, ramenée à ses champs posés.
+
+    Ce module-ci range ses champs par identifiant, sans libellé
+    (`sections[].champs = {id: valeur}`) : le gabarit placentaire les nomme
+    donc lui-même, comme un compte rendu se rédige. C'est l'exception assumée
+    à la règle « on parcourt la trame » — elle vaut pour les quatre-vingt-dix
+    champs de l'autopsie, pas pour une trame de vingt-cinq champs stable qui
+    doit sortir en phrases.
+    """
+    if not d:
+        return {"present": False, "champs": {}, "tranches": [], "lesions": []}
+    ch, titres = {}, {}
+    for sec in d.get("sections") or []:
+        titres[sec.get("id")] = sec.get("titre")
+        for k, v in (sec.get("champs") or {}).items():
+            if v is not None and v != "" and v != []:
+                ch[k] = v
+    mf, mp = ch.get("masse_foetale"), ch.get("masse")
+    nb = (int, float)
+    # Le rapport se donne, il ne s'interprète pas : son percentile dépend du
+    # terme et du référentiel retenu, que le module ne connaît pas.
+    rfp = round(mf / mp, 2) if isinstance(mf, nb) and isinstance(mp, nb) and mp else None
+    return {"present": True, "champs": ch, "titres": titres,
+            "tranches": d.get("tranches") or [],
+            "lesions": [l for l in (d.get("lesions") or [])
+                        if l.get("cassette") or l.get("description") or l.get("lesion")],
+            "rapport_fp": rfp}
+
+
+def _micro(d):
+    """micro.html : des sections d'organes, chacune portant ses libellés."""
+    sections = []
+    for sec in d.get("sections") or []:
+        champs = [c for c in (sec.get("champs") or []) if rempli(c)]
+        sections.append({"n": sec.get("n"), "rang": sec.get("rang"),
+                         "organe": sec.get("organe"),
+                         "titre": sec.get("titre") or sec.get("organe"),
+                         "champs": champs,
+                         "anormaux": [c for c in champs if c.get("etat") == "anormal"],
+                         "total": len(sec.get("champs") or []),
+                         "faits": len(champs)})
+    return {"present": bool(sections), "sections": sections,
+            "terme_sa": d.get("terme_sa"),
+            "anormaux": [(s["titre"], c) for s in sections for c in s["anormaux"]]}
+
+
+def _bloc(texte, titre):
+    """Un bloc du compte rendu composé par une grille : ses lignes indentées."""
+    m = re.search(r"^" + re.escape(titre) + r"$\n((?:  .+\n?)+)", texte or "", re.M)
+    return m.group(1) if m else ""
+
+
+RE_ANORMAL = re.compile(r"^ {2}(.+?) — ANORMAL$", re.M)
+RE_FOETO = re.compile(r"^ {2}(.+?) \[([^\[\]]+)\]$", re.M)
+
+
+def _grille(module, d):
+    """Une grille d'organe. Son texte fait foi, on n'en refabrique pas un autre.
+
+    Les libellés des signes vivent dans le HTML de la grille et ne sortent pas
+    dans le JSON : le seul endroit où ils existent, c'est le compte rendu que
+    la grille compose elle-même. On le reprend tel quel, et on en relit deux
+    blocs pour la conclusion.
+
+    ponytail: extraction par motif sur SIGNES et TERMES FOETO. Si composer()
+    change de forme, ces deux listes tombent à vide — le texte intégral, lui,
+    reste juste ; une grille qui exporterait ses libellés ferait tomber ceci.
+    """
+    cr = d.get("compte_rendu") or ""
+    g = d.get("grille") or {}
+    return {"module": module,
+            "organe": d.get("organe") or module.replace("grille_", ""),
+            "source": d.get("source"),
+            "terme_sa": d.get("terme_sa"),
+            "cote": g.get("cote"),
+            "stade": g.get("stade"),
+            "compte_rendu": cr.strip(),
+            "anormaux": RE_ANORMAL.findall(_bloc(cr, "SIGNES")),
+            "foeto": [{"label": a, "id": b}
+                      for a, b in RE_FOETO.findall(_bloc(cr, "TERMES FOETO"))],
+            "libre": (g.get("libre") or "").strip()}
+
+
 def _trame(d):
     """Les étapes d'une trame, réduites à ce qui est rempli, ordre conservé."""
     etapes = []
@@ -182,6 +286,12 @@ def contexte(cx, numero, refs: biometrie.References, modules_attendus):
     rad = (s.get("radio") or {}).get("donnees", {})
     aut = (s.get("autopsie") or {}).get("donnees", {})
     neu = (s.get("neuropath") or {}).get("donnees", {})
+    plac = (s.get("macro_placenta") or {}).get("donnees", {})
+    mic = (s.get("micro") or {}).get("donnees", {})
+    # Les grilles arrivent une par organe ; l'ordre alphabétique vaut le hasard
+    # d'ingestion, et la grille du placenta se lit avec la macro placentaire.
+    grilles = [_grille(m, v["donnees"]) for m, v in sorted(s.items())
+               if m.startswith("grille_")]
 
     # Le terme : celui de l'administratif fait autorité, les modules le
     # redonnent et peuvent diverger — on le dit plutôt que de choisir seul.
@@ -189,9 +299,13 @@ def contexte(cx, numero, refs: biometrie.References, modules_attendus):
     sa = issue.get("terme_sa") if issue.get("terme_sa") is not None else d.get("terme_sa")
     j = issue.get("terme_j") if issue.get("terme_j") is not None else d.get("terme_jours")
     termes_vus = {}
-    for nom, doc in (("autopsie", aut), ("neuropath", neu)):
+    for nom, doc in (("autopsie", aut), ("neuropath", neu), ("micro", mic)):
         if doc.get("terme_sa") is not None:
             termes_vus[nom] = doc["terme_sa"]
+    for sec in plac.get("sections") or []:
+        t_pl = (sec.get("champs") or {}).get("terme_sa")
+        if t_pl is not None:
+            termes_vus["macro_placenta"] = t_pl
     for nom, doc in (("biometrie_clinique", bio), ("radio", rad)):
         t = doc.get("terme") or {}
         if t.get("sa") is not None:
@@ -276,6 +390,12 @@ def contexte(cx, numero, refs: biometrie.References, modules_attendus):
         "autopsie": {"etapes": _trame(aut), "masses": lignes_masses,
                      "maceration": aut.get("maceration_maroun"),
                      "ouverture_at": aut.get("ouverture_at")},
+        "placenta": _placenta(plac),
+        "micro": _micro(mic),
+        "grilles": grilles,
+        "grille_placenta": next((g for g in grilles
+                                 if g["module"] == "grille_placenta"), None),
+        "grilles_foetales": [g for g in grilles if g["module"] != "grille_placenta"],
         "neuropath": {"etapes": _trame(neu)},
         "z": z,
         "z_divergences": divergences,

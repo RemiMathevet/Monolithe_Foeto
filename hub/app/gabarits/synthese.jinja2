@@ -25,7 +25,8 @@ MODULES
 
 CE QUI SORT DE LA NORME
 {% set alertes = autopsie.masses | selectattr('alerte') | list %}
-{% if not clinique.anormaux and not alertes and not coherence %}
+{% set anormaux_grilles = grilles | map(attribute='anormaux') | map('length') | sum %}
+{% if not clinique.anormaux and not alertes and not coherence and not micro.anormaux and not anormaux_grilles %}
   Rien de signalé parmi ce qui a été saisi.
 {% endif %}
 {% for a in clinique.anormaux %}
@@ -36,6 +37,18 @@ CE QUI SORT DE LA NORME
   · Masse — {{ m.label }} : {{ m.detail }}{% if m.z_gc is not none %}, GC {{ m.z_gc | zt }}{% endif %}{% if m.z_ma is not none %}, Maroun {{ m.z_ma | zt }}{% endif %}
 
 {% endfor %}
+{% for organe, c in micro.anormaux %}
+  · Microscopie — {{ organe }} : {{ c.label }}{% if c.termes %} ({{ c.termes | join(', ') }}){% endif %}
+
+{% endfor %}
+{% for g in grilles %}
+{% for a in g.anormaux %}
+  · Grille {{ g.organe }}{% if g.cote %} ({{ g.cote }}){% endif %} — {{ a }}
+{% endfor %}
+{% endfor %}
+{% if placenta.rapport_fp %}
+  · Rapport fœto-placentaire {{ placenta.rapport_fp }} — à situer dans son percentile, pas à lire seul
+{% endif %}
 {% for c in coherence %}
   · Cohérence à la saisie — {{ c }}
 {% endfor %}
@@ -58,6 +71,16 @@ CHIFFRES
 {% endif %}
 {% if autopsie.masses %}
   Masses pesées : {{ autopsie.masses | length }}{% if not references.dispo %} (z du module, pas de tables installées){% endif %}.
+
+{% endif %}
+{% if micro.present %}
+  Microscopie : {{ micro.sections | length }} organe(s), {{ micro.sections | map(attribute='faits') | sum }} champ(s) renseigné(s).
+{% endif %}
+{% if grilles %}
+  Grilles de lecture : {{ grilles | map(attribute='organe') | join(', ') }}.
+{% endif %}
+{% if placenta.present %}
+  Placenta : macroscopie saisie{% if placenta.lesions %}, {{ placenta.lesions | length }} lésion(s) prélevée(s){% endif %}{% if grille_placenta %}, grille histologique parvenue{% endif %}.
 
 {% endif %}
 {% if cliches %}
