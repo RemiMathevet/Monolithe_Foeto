@@ -10,52 +10,19 @@ référence se corrige, et un z gelé dans un JSON de 2026 ne bénéficiera jama
 de la correction. Le z du module reste en base, horodaté : il dit ce qui était
 affiché à la saisie, et un écart entre les deux est un signal à regarder.
 
-Les tables ne sont pas dans ce fichier. Elles vivent dans `references/*.json`
-et sont absentes du dépôt : ce sont des transcriptions d'articles publiés, et
-leur diffusion se décide ailleurs que dans un module de calcul. Sans elles, ce
-module se contente de reprendre le z du module de saisie et le dit — le hub
-n'est jamais bloqué faute de références, il est seulement moins bon.
-
-Voir `references/LISEZMOI.md` pour le format attendu, et
-`references/importer_luminarium.py` pour les extraire d'une copie de
-FoetoPath Luminarium.
+Les tables ne sont pas dans ce fichier : `references/extraire_modules.py` les
+recopie des modules de saisie (autopsie, biométrie clinique) dans
+`references/*.json`, versionnés. Une table se corrige donc dans le module, on
+relance l'extraction, et le hub recalcule tous les dossiers avec elle. Sans
+ces fichiers, le hub reprend le z des modules et le dit.
 """
 
 import json
-import math
 from pathlib import Path
 
-# ── Ce que la trame d'autopsie appelle une masse, et l'organe correspondant
-#    dans les tables. Un champ absent d'ici n'est simplement pas pesé contre
-#    une référence ; il reste affiché avec sa valeur.
-ORGANES = {
-    "thymus_masse":     "thymus",
-    "coeur_masse":      "coeur",
-    "poumons_masse":    "poumons",
-    "foie_masse":       "foie",
-    "pancreas_masse":   "pancreas",
-    "rate_masse":       "rate",
-    "surrenales_masse": "surrenales",
-    "reins_masse":      "reins",
-    "cerveau_masse":    "cerveau",
-}
-
-# Maroun nomme les organes en anglais, et stratifie certains d'entre eux par
-# grade de macération : la clé porte alors le grade (`liver 0 1`, `liver 2`).
-# Le cœur et le cerveau n'ont pas de variante — la macération ne les fait pas
-# varier de la même façon. Le pancréas n'est pas dans la table.
-MAROUN_NOMS = {
-    "thymus":     "thymus",
-    "coeur":      "heart",
-    "poumons":    "lungs",
-    "foie":       "liver",
-    "rate":       "spleen",
-    "reins":      "kidneys",
-    "surrenales": "adrenals",
-    "cerveau":    "brain",
-}
-
 SEUIL_ALERTE = 2.0        # au-delà, on le signale
+ICI = Path(__file__).resolve().parent
+REFERENCES_DEPOT = ICI.parent / "references"   # hub/references, versionné
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -63,31 +30,31 @@ SEUIL_ALERTE = 2.0        # au-delà, on le signale
 # ══════════════════════════════════════════════════════════════════════════════
 
 class References:
-    """Les tables disponibles, ou l'absence de tables.
+    """Les tables recopiées des modules par references/extraire_modules.py.
 
-    `dispo` est faux quand rien n'a été trouvé : tout le reste du hub continue
-    de fonctionner, les z affichés viennent alors des modules et sont marqués
-    comme tels.
+    On cherche d'abord <racine>/references (la base de travail), puis
+    hub/references du dépôt. `dispo` est faux quand rien n'a été trouvé : le
+    reste du hub continue, les z affichés viennent alors des modules.
     """
 
     def __init__(self, racine: Path = None):
-        self.organes = {}        # {"13-14": {"coeur": {"moy":.., "sd":..}}}
-        self.biometries = {}     # {"13-14": {"masse": {"moy":.., "sd":..}}}
-        self.maroun = {}         # {"24": {"Mean": {...}, "SD": {...}}}
+        self.autopsie = {}             # {GC, MA, MB, champs}
+        self.biometrie_clinique = {}   # {GC, MA, MB, mesures}
         self.sources = {}
         self.erreurs = []
-        if racine:
-            self.charger(racine)
+        self.dossier = None
+        for d in ([Path(racine) / "references"] if racine else []) + [REFERENCES_DEPOT]:
+            if (d / "autopsie.json").is_file() or (d / "biometrie_clinique.json").is_file():
+                self.charger(d)
+                break
 
     @property
     def dispo(self):
-        return bool(self.organes or self.biometries or self.maroun)
+        return bool(self.autopsie or self.biometrie_clinique)
 
-    def charger(self, racine: Path):
-        d = Path(racine) / "references"
-        if not d.is_dir():
-            return
-        for nom, attribut in (("guihard_costa", None), ("maroun", "maroun")):
+    def charger(self, d: Path):
+        self.dossier = d
+        for nom in ("autopsie", "biometrie_clinique"):
             f = d / f"{nom}.json"
             if not f.is_file():
                 continue
@@ -96,16 +63,13 @@ class References:
             except (OSError, json.JSONDecodeError) as e:
                 self.erreurs.append(f"{f.name} illisible : {e}")
                 continue
-            self.sources[nom] = o.get("source") or nom
-            if attribut == "maroun":
-                self.maroun = {str(k): v for k, v in (o.get("par_sa") or {}).items()}
-            else:
-                self.organes = o.get("organes") or {}
-                self.biometries = o.get("biometries") or {}
+            setattr(self, nom, o)
+            for cle, src in (o.get("sources") or {}).items():
+                self.sources[cle] = src
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Calcul
+# Calcul — la règle des modules (zs() de l'autopsie, ecarts() de la biométrie)
 # ══════════════════════════════════════════════════════════════════════════════
 
 def z(valeur, moy, sd):
@@ -118,14 +82,6 @@ def z(valeur, moy, sd):
         return None
 
 
-def classe_gc(sa):
-    """Guihard-Costa stratifie par classes de deux semaines, à partir de 13 SA."""
-    if sa is None or sa < 13:
-        return None
-    bas = sa if sa % 2 else sa - 1
-    return f"{bas}-{bas + 1}"
-
-
 def interpreter(v):
     if v is None:
         return None
@@ -134,89 +90,116 @@ def interpreter(v):
     return "au-dessus" if v > 0 else "au-dessous"
 
 
-def _maroun_cle(organe, maceration):
-    """Les clés Maroun à essayer pour un organe, du plus précis au plus large.
+def cle_gc(table, sa):
+    """La classe Guihard-Costa (« 23-24 ») qui contient le terme."""
+    for k in table or {}:
+        bas, haut = (int(x) for x in k.split("-"))
+        if bas <= sa <= haut:
+            return k
+    return None
 
-    On cherche d'abord celle qui couvre exactement le grade de macération
-    observé, puis les regroupements, puis la clé nue pour les organes que la
-    table ne stratifie pas.
-    """
-    nom = MAROUN_NOMS.get(organe, organe)
-    g = maceration if maceration is not None else 0
-    if g <= 1:
-        variantes = [f"{nom} 0 1", f"{nom} 0 1 2 3"]
-    elif g == 2:
-        variantes = [f"{nom} 2", f"{nom} 2 3"]
-    else:
-        variantes = [f"{nom} 3", f"{nom} 2 3"]
-    return variantes + [nom]
+
+def rang_ma(table, sa):
+    for r in table or []:
+        if r.get("s") == sa:
+            return r
+    return None
+
+
+def rang_mb(table, sa):
+    return (table or {}).get(str(sa)) if 12 <= sa <= 20 else None
+
+
+def grade_ma(mg, maceration):
+    """Suffixe Maroun selon le grade de macération (mg=1 : 01/2/3 ; mg=2 : 01/23)."""
+    g = maceration or 0
+    if mg == 1:
+        return "01" if g <= 1 else "2" if g == 2 else "3"
+    if mg == 2:
+        return "01" if g <= 1 else "23"
+    return None
+
+
+def _ref(t, cle):
+    r = (t or {}).get(cle) if cle else None
+    return r if r and r.get("m") is not None else None
+
+
+def _z3(tables, sa, cles, valeur, maceration=None):
+    """{GC, MA, MB} → (z, attendu) pour une valeur, comme le module."""
+    gc, ma, mb = tables.get("GC"), tables.get("MA"), tables.get("MB")
+    k = cle_gc(gc, sa)
+    lignes = {"GC": (gc.get(k) if k else None, cles.get("gc"), 1),
+              "MA": (rang_ma(ma, sa), cles.get("ma"), cles.get("mad") or 1),
+              "MB": (rang_mb(mb, sa), cles.get("mb"), cles.get("mbd") or 1)}
+    if cles.get("mg") and cles.get("ma"):
+        lignes["MA"] = (lignes["MA"][0], cles["ma"] + "_" + grade_ma(cles["mg"], maceration), 1)
+    out = {}
+    for src, (t, cle, div) in lignes.items():
+        r = _ref(t, cle)
+        if r:
+            out[src] = (z(valeur / div, r["m"], r["sd"]), {"moy": r["m"], "sd": r["sd"], "cle": cle})
+    return k, out
+
+
+def _ligne(nom, classe, res):
+    r = {"organe": nom, "classe": classe}
+    for src in ("GC", "MA", "MB"):
+        zz, att = res.get(src, (None, None))
+        r["z_" + src.lower()] = zz
+        r["attendu_" + src.lower()] = att
+    r["alerte"] = any(v is not None and abs(v) >= SEUIL_ALERTE
+                      for v in (r["z_gc"], r["z_ma"], r["z_mb"]))
+    return r
 
 
 def calculer(refs: References, sa, maceration, masses, biometries=None):
-    """Les z d'un dossier, calculés ici.
+    """Les z d'un dossier, calculés ici avec les tables des modules.
 
     `masses` : {champ_id: grammes} pris de la trame d'autopsie.
-    `biometries` : {cle: valeur} pris de la biométrie clinique.
+    `biometries` : {cle: valeur} pris de la biométrie clinique (clés « bio_<cle> »).
 
-    Renvoie {champ_id: {z_gc, z_ma, attendu_gc, attendu_ma, classe, alerte}}.
-    Un champ sans référence utilisable ressort avec des z à None : c'est une
-    information, pas une erreur — il n'y a pas de table à tous les termes.
+    Renvoie {champ: {z_gc, z_ma, z_mb, attendu_*, classe, alerte}}. Un champ
+    sans référence au terme ressort avec des z à None : il n'y a pas de table
+    à tous les termes, ce n'est pas une erreur.
     """
     out = {}
-    cl = classe_gc(sa)
-    tgc = refs.organes.get(cl, {}) if cl else {}
-    tma = refs.maroun.get(str(sa), {}) if sa is not None else {}
-    moy_ma, sd_ma = (tma.get("Mean") or {}), (tma.get("SD") or {})
-
+    if sa is None:
+        return out
+    sa = int(round(float(sa)))
+    a, b = refs.autopsie, refs.biometrie_clinique
     for champ, grammes in (masses or {}).items():
-        organe = ORGANES.get(champ)
-        if organe is None:
+        cles = (a.get("champs") or {}).get(champ)
+        if cles is None or grammes is None:
             continue
-        r = {"organe": organe, "classe": cl, "z_gc": None, "z_ma": None,
-             "attendu_gc": None, "attendu_ma": None}
-        ref = tgc.get(organe)
-        if ref:
-            r["z_gc"] = z(grammes, ref.get("moy"), ref.get("sd"))
-            r["attendu_gc"] = {"moy": ref.get("moy"), "sd": ref.get("sd")}
-        for cle in _maroun_cle(organe, maceration):
-            if cle in moy_ma and moy_ma[cle] is not None:
-                r["z_ma"] = z(grammes, moy_ma[cle], sd_ma.get(cle))
-                r["attendu_ma"] = {"moy": moy_ma[cle], "sd": sd_ma.get(cle),
-                                   "cle": cle}
-                break
-        fort = [v for v in (r["z_gc"], r["z_ma"]) if v is not None and abs(v) >= SEUIL_ALERTE]
-        r["alerte"] = bool(fort)
-        out[champ] = r
-
-    tbio = refs.biometries.get(cl, {}) if cl else {}
+        k, res = _z3(a, sa, cles, float(grammes), maceration)
+        out[champ] = _ligne(champ, k, res)
     for cle, valeur in (biometries or {}).items():
-        ref = tbio.get(cle)
-        if not ref:
+        cles = (b.get("mesures") or {}).get(cle)
+        if not cles or valeur is None:
             continue
-        v = z(valeur, ref.get("moy"), ref.get("sd"))
-        out["bio_" + cle] = {"organe": cle, "classe": cl, "z_gc": v, "z_ma": None,
-                             "attendu_gc": {"moy": ref.get("moy"), "sd": ref.get("sd")},
-                             "attendu_ma": None,
-                             "alerte": v is not None and abs(v) >= SEUIL_ALERTE}
+        k, res = _z3(b, sa, cles, float(valeur))
+        if res:
+            out["bio_" + cle] = _ligne(cle, k, res)
     return out
 
 
 def comparer(calcule, du_module, tolerance=0.15):
     """Les divergences entre le z d'ici et celui affiché à la saisie.
 
-    Un écart franc signale soit une table qui a changé, soit un terme corrigé
-    après coup, soit une erreur. Dans les trois cas il faut le savoir plutôt
-    que de choisir silencieusement.
+    `du_module` : {champ: {gc|GC: z, ma|MA: z, mb|MB: z}} — l'autopsie écrit
+    ses sources en minuscules, la biométrie en majuscules. Un écart franc
+    signale une table corrigée, un terme rectifié après coup, ou une erreur.
     """
     ecarts = []
     for champ, r in (calcule or {}).items():
         m = (du_module or {}).get(champ) or {}
-        for cle_ici, cle_la in (("z_gc", "gc"), ("z_ma", "ma")):
-            a, b = r.get(cle_ici), m.get(cle_la)
+        for src in ("gc", "ma", "mb"):
+            a, b = r.get("z_" + src), m.get(src, m.get(src.upper()))
             if a is None or b is None:
                 continue
             if abs(a - b) > tolerance:
-                ecarts.append({"champ": champ, "reference": cle_la,
+                ecarts.append({"champ": champ, "reference": src,
                                "serveur": a, "module": b,
                                "ecart": round(abs(a - b), 2)})
     return ecarts

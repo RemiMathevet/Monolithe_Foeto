@@ -296,12 +296,10 @@ en silence, et distingue les deux causes :
   concordent pas entre le module et ce poste, et la transcription est à vérifier
   contre l'article.
 
-`references/` est **vide dans le dépôt** : ce sont des transcriptions
-d'articles publiés et ce dépôt est public. Sans elles le hub fonctionne, les z
-affichés sont ceux des modules et le sont dit. `references/LISEZMOI.md` donne
-le format, et `references/importer_luminarium.py` les extrait d'une copie de
-FoetoPath Luminarium — les deux dépôts n'ayant pas la même licence, les y
-verser reste une décision d'auteur.
+`references/*.json` sont recopiés des modules d'autopsie et de biométrie
+clinique par `references/extraire_modules.py` : une table se corrige dans le
+module, on relance l'extraction, et le hub recalcule tous les dossiers avec
+elle. Détails dans `references/LISEZMOI.md`.
 
 ---
 

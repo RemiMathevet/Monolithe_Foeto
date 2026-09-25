@@ -17,7 +17,6 @@ hub/hub.sqlite*
 hub/index.json
 hub/exemples/_cliche_de_controle.jpg
 hub/__pycache__/
-hub/references/*.json
 hub/outils/corrections/
 hub/bamara.json
 hub/.sonde_sqlite*
