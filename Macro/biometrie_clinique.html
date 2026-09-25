@@ -210,7 +210,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 
 var MODULE = "biometrie_clinique";
 var SCHEMA = "0.1.0";
-var VERSION = "1.3.0";   /* version du document ; à incrémenter à chaque diffusion */
+var VERSION = "1.3.1";   /* version du document ; à incrémenter à chaque diffusion */
 var DB_NAME = "foeto-biometrie-clinique", DB_VER = 2, db = null;
 
 /* ── Guihard-Costa 2002 — biométries, bi-hebdomadaire (masse g, reste mm) ─── */
@@ -309,6 +309,8 @@ var TRAME = [
   ]}
 ];
 var TOUTES = TRAME.reduce(function(a,g){ return a.concat(g.mesures); }, []);
+var UNITE = {};   /* unité de saisie de chaque mesure : celle de son instrument */
+TRAME.forEach(function(g){ g.mesures.forEach(function(m){ UNITE[m.k] = g.unite; }); });
 
 /* ── Utilitaires ──────────────────────────────────────────────────────────── */
 function $(id){ return document.getElementById(id); }
@@ -644,6 +646,7 @@ function collecter(){
     sexe: $("sexe").value || null,
     mesures: mesures,
     libelles: libelles,
+    unites: UNITE,           /* {mesure: "g" | "mm"} — le CR écrit la valeur avec son unité */
     ecarts: ecarts_          /* {mesure: {GC: z, MA: z, MB: z}}, calculés ici */
   };
 }
@@ -925,6 +928,7 @@ async function autotest(){
   var snap = collecter();
   chk("collecte lit les mm",      snap.mesures.vt === 246);
   chk("collecte garde les vides", snap.mesures.dici === null);
+  chk("unités exportées",         snap.unites.masse === "g" && snap.unites.vt === "mm" && snap.unites.pied === "mm");
   chk("version en entête",        $("ver").textContent === "v" + VERSION);
   chk("version dans le JSON",     snap.module_version === VERSION);
   chk("enveloppe conforme",       snap.schema_version === SCHEMA && snap.module === MODULE &&

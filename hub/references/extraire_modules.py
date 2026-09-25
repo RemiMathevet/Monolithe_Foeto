@@ -93,7 +93,8 @@ def main():
     trame = litteral(bio, "TRAME")
     b = {"module": "biometrie_clinique", "module_version": version(bio), "sources": SOURCES,
          "GC": litteral(bio, "GC"), "MA": litteral(bio, "MA"), "MB": litteral(bio, "MB"),
-         "mesures": {m["k"]: {k: m[k] for k in ("gc", "ma", "mad", "mb", "mbd") if k in m}
+         "mesures": {m["k"]: {**{k: m[k] for k in ("gc", "ma", "mad", "mb", "mbd") if k in m},
+                             "unite": g.get("unite"), "libelle": m.get("l")}
                      for g in trame for m in g["mesures"]}}
 
     for nom, o in (("autopsie", a), ("biometrie_clinique", b)):

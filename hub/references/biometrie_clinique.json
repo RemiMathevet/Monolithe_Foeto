@@ -1,6 +1,6 @@
 {
  "module": "biometrie_clinique",
- "module_version": "1.3.0",
+ "module_version": "1.3.1",
  "sources": {
   "GC": "Guihard-Costa AM et al., 2002",
   "MA": "Maroun LL, Graem N, 2017",
@@ -1460,60 +1460,98 @@
   "masse": {
    "gc": "masse",
    "ma": "B",
-   "mb": "Fetus"
+   "mb": "Fetus",
+   "unite": "g",
+   "libelle": "Masse fœtale"
   },
   "pied": {
    "gc": "pied",
    "ma": "F",
    "mb": "Foot",
-   "mbd": 10
+   "mbd": 10,
+   "unite": "mm",
+   "libelle": "Longueur pied"
   },
   "bip": {
    "mb": "BPD",
-   "mbd": 10
+   "mbd": 10,
+   "unite": "mm",
+   "libelle": "BIP"
   },
   "fo": {
    "mb": "FOD",
-   "mbd": 10
+   "mbd": 10,
+   "unite": "mm",
+   "libelle": "FO (fronto-occipital)"
   },
-  "dici": {},
-  "dice": {},
-  "fpg": {},
-  "fpd": {},
-  "dim": {},
-  "sternum": {},
+  "dici": {
+   "unite": "mm",
+   "libelle": "DICI"
+  },
+  "dice": {
+   "unite": "mm",
+   "libelle": "DICE"
+  },
+  "fpg": {
+   "unite": "mm",
+   "libelle": "FPG (fente palpébrale G)"
+  },
+  "fpd": {
+   "unite": "mm",
+   "libelle": "FPD (fente palpébrale D)"
+  },
+  "dim": {
+   "unite": "mm",
+   "libelle": "DIM (intermamelonnaire)"
+  },
+  "sternum": {
+   "unite": "mm",
+   "libelle": "Hauteur sternum"
+  },
   "main": {
    "mb": "Hand",
-   "mbd": 10
+   "mbd": 10,
+   "unite": "mm",
+   "libelle": "Hauteur main"
   },
   "vt": {
    "gc": "VT",
    "ma": "H",
    "mad": 10,
    "mb": "CFL",
-   "mbd": 10
+   "mbd": 10,
+   "unite": "mm",
+   "libelle": "VT (vertex-talon)"
   },
   "vc": {
    "gc": "VC",
    "ma": "C",
    "mad": 10,
    "mb": "CRL",
-   "mbd": 10
+   "mbd": 10,
+   "unite": "mm",
+   "libelle": "VC (vertex-coccyx)"
   },
   "pc": {
    "gc": "PC",
    "ma": "D",
    "mad": 10,
    "mb": "HC",
-   "mbd": 10
+   "mbd": 10,
+   "unite": "mm",
+   "libelle": "PC (périmètre crânien)"
   },
   "pt": {
    "mb": "TC",
-   "mbd": 10
+   "mbd": 10,
+   "unite": "mm",
+   "libelle": "PT (périmètre thoracique)"
   },
   "pa": {
    "mb": "AC",
-   "mbd": 10
+   "mbd": 10,
+   "unite": "mm",
+   "libelle": "PA (périmètre abdominal)"
   }
  }
 }

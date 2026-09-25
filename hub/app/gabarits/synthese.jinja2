@@ -1,5 +1,5 @@
 {# titre: Synthèse — une page #}
-{# version: 1.0.0 #}
+{# version: 1.1.0 #}
 {#
    De quoi parler d'un dossier en réunion : ce qui a été fait, ce qui manque,
    ce qui sort de la norme. Rien de rédigé, tout en listes.
@@ -34,7 +34,7 @@ CE QUI SORT DE LA NORME
 
 {% endfor %}
 {% for m in alertes %}
-  · Masse — {{ m.label }} : {{ m.detail }}{% if m.z_gc is not none %}, GC {{ m.z_gc | zt }}{% endif %}{% if m.z_ma is not none %}, Maroun {{ m.z_ma | zt }}{% endif %}
+  · Masse — {{ m.label }} : {{ m.detail }}{% set t = m | ds3 %}{% if t %} ({{ t }}){% endif %}
 
 {% endfor %}
 {% for organe, c in micro.anormaux %}

@@ -1,5 +1,5 @@
 {# titre: Compte rendu complet #}
-{# version: 1.1.0 #}
+{# version: 1.2.0 #}
 {#
    Ce gabarit parcourt les trames plutôt que de nommer les champs : un champ
    ajouté à un module apparaît ici sans qu'on y touche, avec son libellé. Ce
@@ -148,11 +148,14 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 
 {% if biometrie.mesures %}
 {{ titre("Biométrie externe") }}
-{% for cle, v in biometrie.mesures.items() %}
-{% set r = z.get('bio_' ~ cle) %}
-  {{ cle }} : {{ v }}{% if r and r.z_gc is not none %} ({{ r.z_gc | zt }}){% endif %}
+{% for l in biometrie.lignes %}
+{% set t = l | ds3 %}
+  {{ l.label }} : {{ l.valeur | fr }} {{ l.unite }}{% if t %} ({{ t }}){% endif %}{% if l.alerte %}  ⚠{% endif %}
 
 {% endfor %}
+{% if references.sources %}
+  Écarts-types : {% for k, v in references.sources.items() %}{{ k }} {{ v }}{% if not loop.last %} ; {% endif %}{% endfor %}.
+{% endif %}
 {% endif %}
 
 {% if radio.squelette or radio.biometries %}
@@ -218,9 +221,13 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 
 {{ sous("Masses d'organes") }}
 {% for m in autopsie.masses %}
-  {{ m.label }} : {{ m.detail }}{% if m.z_gc is not none %} — Guihard-Costa {{ m.z_gc | zt }}{% endif %}{% if m.z_ma is not none %} — Maroun {{ m.z_ma | zt }}{% endif %}{% if m.alerte %}  ⚠{% endif %}
+{% set t = m | ds3 %}
+  {{ m.label }} : {{ m.detail }}{% if t %} ({{ t }}){% endif %}{% if m.alerte %}  ⚠{% endif %}
 
 {% endfor %}
+{% if references.sources %}
+  Écarts-types : {% for k, v in references.sources.items() %}{{ k }} {{ v }}{% if not loop.last %} ; {% endif %}{% endfor %}.
+{% endif %}
 {% if not references.dispo %}
 
   Note : aucune table de référence n'est installée sur ce poste. Les écarts-types

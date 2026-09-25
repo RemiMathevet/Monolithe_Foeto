@@ -104,9 +104,17 @@ def phrase(v):
 
 
 def zt(v, signe=True):
+    """Un écart-type à la française : une décimale, virgule, vrai signe moins."""
     if v is None:
         return "—"
-    return f"{v:+.2f} DS" if signe else f"{v:.2f}"
+    t = f"{v:+.1f}" if signe and round(v, 1) != 0 else f"{abs(v) if round(v, 1) == 0 else v:.1f}"
+    return t.replace(".", ",").replace("-", "\u2212") + (" DS" if signe else "")
+
+
+def ds3(r):
+    """« GC +0,3 DS ; MA −0,1 DS » — les sources qui couvrent le terme, nommées."""
+    return " ; ".join(f"{src} {zt(r.get('z_' + src.lower()))}" for src in ("GC", "MA", "MB")
+                      if r.get("z_" + src.lower()) is not None)
 
 
 def rempli(c):
@@ -340,11 +348,29 @@ def contexte(cx, numero, refs: biometrie.References, modules_attendus):
                 lignes_masses.append({
                     "id": c["id"], "label": c.get("label"), "valeur": masses[c["id"]],
                     "detail": valeur_champ(c),
-                    "z_gc": r.get("z_gc"), "z_ma": r.get("z_ma"),
+                    "z_gc": r.get("z_gc"), "z_ma": r.get("z_ma"), "z_mb": r.get("z_mb"),
                     "attendu_gc": r.get("attendu_gc"), "attendu_ma": r.get("attendu_ma"),
                     "alerte": r.get("alerte", False),
                     "z_module": z_module.get(c["id"]) or {},
                 })
+
+    # Biométrie externe : libellé, valeur, unité, DS. L'unité et le libellé
+    # viennent du document (biométrie ≥ 1.3.1 / 1.3.0), sinon des références ;
+    # le DS d'ici quand les tables sont là, sinon celui du module.
+    ref_mes = refs.biometrie_clinique.get("mesures") or {}
+    lignes_bio = []
+    for cle, v in mesures.items():
+        r = z.get("bio_" + cle)
+        if not r:
+            em = (bio.get("ecarts") or {}).get(cle) or {}
+            r = {"z_" + k.lower(): em.get(k) for k in ("GC", "MA", "MB")}
+        lignes_bio.append({
+            "cle": cle, "label": (bio.get("libelles") or {}).get(cle) or (ref_mes.get(cle) or {}).get("libelle") or cle, "valeur": v,
+            "unite": (bio.get("unites") or {}).get(cle) or (ref_mes.get(cle) or {}).get("unite") or "",
+            "z_gc": r.get("z_gc"), "z_ma": r.get("z_ma"), "z_mb": r.get("z_mb"),
+            "alerte": any(x is not None and abs(x) >= biometrie.SEUIL_ALERTE
+                          for x in (r.get("z_gc"), r.get("z_ma"), r.get("z_mb"))),
+        })
 
     anormaux = []
     for e in clin.get("etages") or []:
@@ -385,7 +411,7 @@ def contexte(cx, numero, refs: biometrie.References, modules_attendus):
                      "faits": sum(1 for e in clin.get("etages") or []
                                   for i in e.get("items") or [] if i.get("etat")),
                      "total": sum(len(e.get("items") or []) for e in clin.get("etages") or [])},
-        "biometrie": {"mesures": mesures, "sexe": bio.get("sexe")},
+        "biometrie": {"mesures": mesures, "lignes": lignes_bio, "sexe": bio.get("sexe")},
         "radio": rad,
         "autopsie": {"etapes": _trame(aut), "masses": lignes_masses,
                      "maceration": aut.get("maceration_maroun"),
@@ -422,7 +448,7 @@ def environnement():
     env = SandboxedEnvironment(loader=FileSystemLoader(str(GABARITS)),
                                trim_blocks=True, lstrip_blocks=True,
                                keep_trailing_newline=True, autoescape=False)
-    env.filters.update(fr=fr, dtc=dtc, zt=zt, valeur=valeur_champ, phrase=phrase)
+    env.filters.update(fr=fr, dtc=dtc, zt=zt, ds3=ds3, valeur=valeur_champ, phrase=phrase)
     env.globals.update(rempli=rempli, date_variable=date_variable)
     return env
 
