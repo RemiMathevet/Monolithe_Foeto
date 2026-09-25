@@ -842,7 +842,9 @@ def ingerer(cx, racine: Path, brut: bytes, nom: str, provenance="telephone", dry
     # La modalité d'entrée est dans le chemin d'archive, pas seulement en base :
     # une arborescence doit se relire sans la base qui va avec.
     rel_archive = archive_rel or \
-        f"archive/{dossier}/{provenance}/{horodatage()}_{dossier}_{module}.json"
+        f"archive/{dossier}/{provenance}/{horodatage()}_{dossier}_{module}_{empreinte[:8]}.json"
+    # L'empreinte dans le nom : deux versions reprises dans la même seconde
+    # (enregistrer deux fois de suite depuis un module) ne s'écrasent pas.
     cx.execute("INSERT OR IGNORE INTO dossiers (numero) VALUES (?)", (dossier,))
     cx.execute("UPDATE saisies SET courant=0 WHERE dossier=? AND module=?", (dossier, module))
     sid = ins(cx, "saisies",
@@ -867,6 +869,29 @@ def ingerer(cx, racine: Path, brut: bytes, nom: str, provenance="telephone", dry
     if d.get("_avertissement_nom"):
         msg += f" [{d['_avertissement_nom']}]"
     return "info", msg, sid
+
+
+def rendre_courante(cx, sid):
+    """Remet une saisie remplacée en tête de son module. Renvoie (dossier, module).
+
+    Rien n'est effacé : la saisie qui était courante passe à l'historique,
+    comme lors d'une reprise. On réindexe celle qu'on remonte, pour que ce
+    qu'elle écrit sur la fiche du dossier (terme, sexe… pour l'administratif)
+    redevienne le sien.
+    """
+    r = cx.execute("SELECT dossier, module, schema_version, donnees_json, courant "
+                   "FROM saisies WHERE id=?", (sid,)).fetchone()
+    if not r:
+        raise Refus("saisie inconnue")
+    if not r["courant"]:
+        cx.execute("UPDATE saisies SET courant=0 WHERE dossier=? AND module=?",
+                   (r["dossier"], r["module"]))
+        cx.execute("UPDATE saisies SET courant=1 WHERE id=?", (sid,))
+        d = json.loads(r["donnees_json"] or "{}")
+        if d and (r["module"], r["schema_version"]) in ADAPTATEURS:
+            indexer(cx, sid, r["dossier"], r["module"], r["schema_version"], d)
+        majuscule_statut(cx, r["dossier"])
+    return r["dossier"], r["module"]
 
 
 def ingerer_fichier(cx, racine: Path, chemin: Path, dry=False):
@@ -1002,6 +1027,12 @@ def ecrire_photos(cx, racine: Path, sid, dossier, module, d):
         if attendu and int(attendu) != len(octets):
             raise Refus(f"cliché « {cle} » : {len(octets)} octets décodés, {attendu} annoncés")
         rel = f"photos/{dossier}/{module}/{cle}{ext}"
+        empreinte = sha256(octets)
+        vieux = racine / rel
+        if vieux.exists() and sha256(vieux.read_bytes()) != empreinte:
+            # Même clé, autre image : c'est une nouvelle version du cliché. On
+            # la range à côté pour que la version remplacée garde le sien.
+            rel = f"photos/{dossier}/{module}/{cle}_{empreinte[:8]}{ext}"
         ecrire_cliche(octets, racine / rel, faire_vignette=True)
         ins(cx, "photos", saisie_id=sid, dossier=dossier, module=module, cle=cle,
             label=txt(p.get("label")),
@@ -1010,7 +1041,7 @@ def ecrire_photos(cx, racine: Path, sid, dossier, module, d):
             nom=txt(p.get("name")), mime=mime, octets=len(octets),
             largeur=entier(p.get("w")), hauteur=entier(p.get("h")),
             largeur_src=entier(p.get("ow")), hauteur_src=entier(p.get("oh")),
-            added_at=txt(p.get("addedAt")), chemin=rel, sha256=sha256(octets))
+            added_at=txt(p.get("addedAt")), chemin=rel, sha256=empreinte)
         n += 1
     return n
 
@@ -1063,8 +1094,19 @@ def construire_index(cx):
         masses = [dict(r) for r in cx.execute(
             "SELECT mesure, libelle, valeur, z_gc, z_ma, z_mb FROM vue_masses WHERE dossier=? AND valeur IS NOT NULL",
             (num_,))]
+        # Les saisies remplacées et le journal du dossier : l'onglet Historique.
+        historique = [dict(r) for r in cx.execute(
+            """SELECT s.id, s.module, s.module_version, s.operateur, s.provenance,
+                      s.exported_at, s.ingere_at, s.archive,
+                      (SELECT COUNT(*) FROM photos p WHERE p.saisie_id = s.id) AS cliches
+                 FROM saisies s WHERE s.dossier=? AND s.courant=0
+                ORDER BY s.ingere_at DESC, s.id DESC""", (num_,))]
+        journal_ = [dict(r) for r in cx.execute(
+            """SELECT at, niveau, module, message FROM journal WHERE dossier=?
+                ORDER BY id DESC LIMIT 100""", (num_,))]
         dossiers.append({**dict(d), "saisies": saisies, "photos": photos,
-                         "anomalies": anomalies, "alertes": alertes, "masses": masses})
+                         "anomalies": anomalies, "alertes": alertes, "masses": masses,
+                         "historique": historique, "journal": journal_})
 
     return {
         "genere_at": dt.datetime.now().isoformat(timespec="seconds"),

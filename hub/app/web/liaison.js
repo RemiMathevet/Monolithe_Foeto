@@ -176,6 +176,20 @@
     dire("préparation…");
     try {
       var doc = window.paquet ? await window.paquet() : window.collecter();
+      /* Garde-fou : ce qui part devient la saisie courante. Un formulaire
+         rouvert vide qui remplacerait une saisie remplie masquerait tout sur
+         la fiche — on demande avant. */
+      var hub = await docHub(n, false);
+      if (hub) {
+        var perte = [];
+        var ph = (hub.photos || []).length, pd = (doc.photos || []).length;
+        if (pd < ph) perte.push(ph + " cliché(s) au hub, " + pd + " ici");
+        var rh = remplis(hub, 0), rd = remplis(doc, 0);
+        if (rd < rh) perte.push(rh + " valeurs au hub, " + rd + " ici");
+        if (perte.length && !confirm("La saisie du hub est plus complète que celle-ci (" +
+            perte.join(" ; ") + ").\n\nEnregistrer quand même ? L'ancienne reste dans " +
+            "l'historique du dossier.")) { dire("envoi annulé"); this.disabled = false; return; }
+      }
       dire("envoi…");
       var r = await fetch(API + "/api/saisie", {
         method: "POST",
@@ -199,6 +213,40 @@
      Le hub renvoie le document archivé, clichés compris, pour que relire()
      puisse remonter les blobs en base locale comme le ferait un import de
      fichier. Les modules sans clichés n'ont qu'appliquer(). */
+  /* Le document courant du hub pour ce module, ou null s'il n'y en a pas.
+     Sans clichés : donnees_json, quelques Ko. Avec : le fichier d'archive. */
+  async function docHub(n, cliches) {
+    var r = await fetch(API + "/api/saisie/" + encodeURIComponent(n) + "/" +
+                        encodeURIComponent(window.MODULE) + (cliches ? "?cliches=1" : ""));
+    if (r.status === 404) return null;
+    var o = await r.json();
+    if (!r.ok) throw new Error(o.erreur || ("HTTP " + r.status));
+    return o;
+  }
+  async function appliquerHub(o) {
+    if (window.relire) await window.relire(o);
+    else {
+      if (window.vider) window.vider();
+      poser("dossier", o.dossier);
+      poser("operateur", o.operateur);
+      window.appliquer(o);
+      if (window.majTousZ) window.majTousZ();
+    }
+  }
+  /* Nombre de valeurs renseignées dans un document, enveloppe et clichés
+     exclus. Les constantes d'un module (titres d'étapes, trame attendue…)
+     sont des deux côtés d'une comparaison : elles s'annulent. */
+  var ENV = { schema_version: 1, module: 1, module_version: 1, dossier: 1,
+              operateur: 1, exported_at: 1, photos: 1 };
+  function remplis(v, prof) {
+    if (v == null || v === "" || v === false) return 0;
+    if (Array.isArray(v)) return v.reduce(function (s, x) { return s + remplis(x, prof + 1); }, 0);
+    if (typeof v === "object") return Object.keys(v).reduce(function (s, k) {
+      return s + (prof === 0 && ENV[k] ? 0 : remplis(v[k], prof + 1));
+    }, 0);
+    return 1;
+  }
+
   el("hubRelire").onclick = async function () {
     var manque = pret();
     if (manque) { dire(manque, true); (el("operateur") || el("dossier")).focus(); return; }
@@ -207,25 +255,35 @@
     this.disabled = true;
     dire("lecture…");
     try {
-      var r = await fetch(API + "/api/saisie/" + encodeURIComponent(n) + "/" +
-                          encodeURIComponent(window.MODULE) + "?cliches=1");
-      if (r.status === 404) { dire("aucune saisie de ce module pour " + n, true); this.disabled = false; return; }
-      var o = await r.json();
-      if (!r.ok) throw new Error(o.erreur || ("HTTP " + r.status));
-      if (window.relire) await window.relire(o);
-      else {
-        if (window.vider) window.vider();
-        poser("dossier", o.dossier);
-        poser("operateur", o.operateur);
-        window.appliquer(o);
-        if (window.majTousZ) window.majTousZ();
-      }
+      var o = await docHub(n, true);
+      if (!o) { dire("aucune saisie de ce module pour " + n, true); this.disabled = false; return; }
+      await appliquerHub(o);
       dire("saisie du " + n + " restituée");
     } catch (e) {
       dire("échec : " + e.message, true);
     }
     this.disabled = false;
   };
+
+  /* ── Rouvert depuis le hub ───────────────────────────────────────────────
+     Le module ne restitue que la mémoire de CE navigateur : une saisie faite
+     sur le téléphone ou un autre poste le laisse vide. Si le hub en sait plus
+     que ce qui vient d'être restitué, on reprend la version du hub, clichés
+     compris — sinon « Enregistrer » remplacerait la saisie par un formulaire
+     vide. Une saisie locale au moins aussi remplie n'est jamais écrasée. */
+  async function reprendreDuHub(n) {
+    try {
+      var hub = await docHub(n, false);
+      if (!hub || !window.collecter || pret()) return;
+      if (remplis(hub, 0) <= remplis(window.collecter(), 0)) return;
+      dire("reprise de la saisie du hub…");
+      await appliquerHub(await docHub(n, true));
+      dire("saisie du " + n + " reprise du hub — corriger puis enregistrer");
+    } catch (e) {
+      dire("reprise du hub impossible : " + e.message, true);
+    }
+  }
+  if (params.get("dossier")) setTimeout(function () { reprendreDuHub(params.get("dossier")); }, 600);
 
   dire(params.get("dossier") ? "dossier " + params.get("dossier") + " — non enregistré"
                              : "non enregistré");

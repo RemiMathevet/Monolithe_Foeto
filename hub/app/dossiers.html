@@ -780,7 +780,8 @@ function ongletsDe(d){
   });
   if ((d.photos || []).length) l.push({id:"cliches", t:"Clichés (" + d.photos.length + ")"});
   if (SERVI) l.push({id:"cr", t:"Compte rendu" + (d.comptes_rendus ? " (" + d.comptes_rendus + ")" : "")});
-  if ((d.historique || []).length) l.push({id:"historique", t:"Historique"});
+  var nh = (d.historique || []).length;
+  if (nh || (d.journal || []).length) l.push({id:"historique", t:"Historique" + (nh ? " (" + nh + ")" : "")});
   return l;
 }
 function rendreOnglets(d){
@@ -1103,15 +1104,49 @@ function relireCr(id){
 }
 
 function panneauHistorique(d){
-  return '<p class="note" style="margin-top:0">Les saisies remplacées. Rien n\'est écrasé : ' +
-    "une correction crée une nouvelle saisie, l'ancienne reste ici avec sa date.</p>" +
-    '<div class="scroll"><table><thead><tr><th>Module</th><th>Version</th><th>Entrée</th>' +
-    "<th>Reprise</th><th>Archive</th></tr></thead><tbody>" +
-    (d.historique || []).map(function(s){
-      return "<tr><td>" + esc(s.module) + '</td><td class="mono">' + esc(s.module_version) +
-        "</td><td>" + esc(s.provenance) + "</td><td>" + esc(dateCourte(s.ingere_at)) +
-        '</td><td class="mono" style="font-size:11px">' + esc(s.archive) + "</td></tr>";
-    }).join("") + "</tbody></table></div>";
+  /* Chaque module : sa version courante en tête, puis celles qu'elle a
+     remplacées. Rien n'est écrasé ; « Rendre courante » remonte une ancienne
+     version et fait descendre l'actuelle ici. */
+  var parMod = {};
+  (d.historique || []).forEach(function(s){ (parMod[s.module] = parMod[s.module] || []).push(s); });
+  var lignes = Object.keys(parMod).sort().map(function(m){
+    var cour = (d.saisies || []).filter(function(s){ return s.module === m; })[0];
+    var nc = (d.photos || []).filter(function(p){ return p.module === m; }).length;
+    var l = cour ? [ligneHisto(cour, nc, true)] : [];
+    return l.concat(parMod[m].map(function(s){ return ligneHisto(s, s.cliches, false); })).join("");
+  }).join("");
+  var h = '<p class="note" style="margin-top:0">Une reprise crée une nouvelle saisie ; ' +
+    "l'ancienne reste ici avec sa date et ses clichés.</p>";
+  if (lignes)
+    h += '<div class="scroll"><table><thead><tr><th>Module</th><th></th><th>Version</th>' +
+      "<th>Opérateur</th><th>Entrée</th><th>Exporté</th><th>Repris</th><th>Clichés</th>" +
+      "<th>Archive</th><th></th></tr></thead><tbody>" + lignes + "</tbody></table></div>";
+  var j = d.journal || [];
+  if (j.length)
+    h += '<h3 style="margin:18px 0 6px">Journal du dossier</h3>' +
+      '<div class="scroll"><table><thead><tr><th>Quand</th><th>Niveau</th><th>Module</th>' +
+      "<th>Message</th></tr></thead><tbody>" +
+      j.map(function(e){
+        return '<tr><td class="mono">' + esc(e.at) + "</td><td>" + esc(e.niveau) + "</td><td>" +
+          esc(e.module || "") + "</td><td>" + esc(e.message) + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
+  return h;
+}
+function ligneHisto(s, nc, courante){
+  return "<tr" + (courante ? ' style="font-weight:600"' : "") + "><td>" + esc(s.module) +
+    "</td><td>" + (courante ? "courante" : "") + '</td><td class="mono">' + esc(s.module_version) +
+    "</td><td>" + esc(s.operateur || "") + "</td><td>" + esc(s.provenance) +
+    "</td><td>" + esc(dateCourte(s.exported_at)) + "</td><td>" + esc(dateCourte(s.ingere_at)) +
+    "</td><td>" + (nc || 0) + '</td><td class="mono" style="font-size:11px">' + esc(s.archive) +
+    '</td><td class="noprint">' + (SERVI && !courante
+      ? '<button class="btn ghost mini" onclick="rendreCourante(' + s.id + ')">Rendre courante</button>' : "") +
+    "</td></tr>";
+}
+function rendreCourante(id){
+  api("/api/saisie/" + id + "/courante", {method: "POST"}).then(function(o){
+    flash(o.module + " : version " + id + " rendue courante.");
+    return rafraichir();
+  }).catch(function(e){ flash("Impossible : " + e.message); });
 }
 
 /* ── Export CSV de la liste filtrée ───────────────────────────────────────── */

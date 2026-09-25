@@ -373,6 +373,22 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
         finally:
             cx.close()
 
+    @app.post("/api/saisie/<int:sid>/courante")
+    def api_rendre_courante(sid):
+        """Remonte une saisie de l'historique — l'actuelle y descend."""
+        cx = base()
+        try:
+            dossier, module = ingest.rendre_courante(cx, sid)
+            journal(cx, "info", f"saisie {sid} rendue courante", dossier=dossier, module=module)
+            cx.commit()
+            ecrire_index(cx, racine)
+            return jsonify({"dossier": dossier, "module": module})
+        except Refus as e:
+            cx.rollback()
+            return erreur(str(e), 404)
+        finally:
+            cx.close()
+
     @app.post("/api/saisie")
     def api_poser_saisie():
         """Reçoit l'enveloppe d'un module servi par le hub.
