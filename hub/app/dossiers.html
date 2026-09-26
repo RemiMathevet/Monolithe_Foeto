@@ -420,7 +420,10 @@ try {
 
 <div class="page" id="pg_stats" hidden>
   <main class="volet"><div class="tete"><h2>Statistiques</h2>
-    <span class="actions noprint"><button class="btn ghost" id="btnStats" type="button">Rafraîchir</button></span>
+    <span class="actions noprint">
+      <label>examens du <input type="date" id="statsDu"></label>
+      <label>au <input type="date" id="statsAu"></label>
+      <button class="btn ghost" id="btnStats" type="button">Rafraîchir</button></span>
   </div><div class="panneau" id="panStats"></div></main>
 </div>
 
@@ -1508,7 +1511,8 @@ function telecharger(nom, texte, type){
 /* ── Statistiques ────────────────────────────────────────────────────────── */
 function pageStats(){
   $("panStats").innerHTML = vide("Comptage…");
-  api("/api/stats").then(function(o){
+  var du = $("statsDu").value, au = $("statsAu").value;
+  api("/api/stats?du=" + encodeURIComponent(du) + "&au=" + encodeURIComponent(au)).then(function(o){
     var attendus = o.attendus || [];
     var parModule = {};
     (o.modules || []).forEach(function(m){ parModule[m.cle] = m.n; });
@@ -1532,7 +1536,9 @@ function pageStats(){
       barres(o.mois, "Examens par mois") +
       '<p class="note">Ces chiffres décrivent la base de travail, pas l\'activité du ' +
       "service : un dossier repris deux fois n'y compte qu'une, un dossier jamais " +
-      "ingéré n'y est pas.</p>";
+      "ingéré n'y est pas.</p>" +
+      (du || au ? '<p class="note">Période sur la date d\'examen, bornes incluses : ' +
+        "un dossier sans date d'examen n'y entre pas.</p>" : "");
   }).catch(function(e){ $("panStats").innerHTML = vide("Statistiques indisponibles : " + e.message); });
 }
 
@@ -2135,6 +2141,7 @@ var CHARGEURS = {
  ["btnBamara","bamara"],["btnModules","modules"]].forEach(function(x){
   var b = $(x[0]); if (b) b.onclick = function(){ recharger(x[1]); };
 });
+["statsDu","statsAu"].forEach(function(id){ $(id).onchange = function(){ recharger("stats"); }; });
 
 appliquerOptions();
 /* La section de pilotage vit désormais dans la page Ingestion. On la déplace

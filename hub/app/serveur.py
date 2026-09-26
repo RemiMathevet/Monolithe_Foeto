@@ -658,8 +658,20 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
     def api_stats():
         """Ce que la base sait dire d'elle-même. Aucun calcul métier ici :
         des comptages, et les regroupements qu'un fœtopathologiste lit."""
+        # Période optionnelle sur la date d'examen (?du=AAAA-MM-JJ&au=…) :
+        # les dossiers retenus vont dans une table temporaire d, que tous
+        # les comptages lisent. Sans date d'examen, un dossier sort du filtre.
+        try:
+            du, au = (dt.date.fromisoformat(request.args[k]).isoformat()
+                      if request.args.get(k) else None for k in ("du", "au"))
+        except ValueError:
+            return erreur("date invalide (attendu AAAA-MM-JJ)")
         cx = base()
         try:
+            cx.execute("""CREATE TEMP TABLE d AS SELECT * FROM dossiers
+                          WHERE (?1 IS NULL OR date_examen >= ?1)
+                            AND (?2 IS NULL OR date_examen <= ?2)""", (du, au))
+            dans_d = " dossier IN (SELECT numero FROM d)"
             def compte(sql, *a):
                 return [dict(r) for r in cx.execute(sql, a)]
             tranches = compte("""
@@ -671,42 +683,44 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
                          WHEN terme_sa < 34         THEN '28 à 33 SA'
                          ELSE '34 SA et plus' END AS cle,
                        COUNT(*) AS n
-                FROM dossiers GROUP BY cle ORDER BY MIN(COALESCE(terme_sa, 99))""")
+                FROM d GROUP BY cle ORDER BY MIN(COALESCE(terme_sa, 99))""")
             delais = compte("""
                 SELECT julianday(date_examen) - julianday(date_reception) AS j
-                FROM dossiers
+                FROM d
                 WHERE date_examen IS NOT NULL AND date_reception IS NOT NULL""")
             jours = sorted(int(x["j"]) for x in delais if x["j"] is not None)
             return jsonify({
-                "dossiers": cx.execute("SELECT COUNT(*) FROM dossiers").fetchone()[0],
+                "dossiers": cx.execute("SELECT COUNT(*) FROM d").fetchone()[0],
                 "saisies": cx.execute(
-                    "SELECT COUNT(*) FROM saisies WHERE courant=1").fetchone()[0],
-                "cliches": cx.execute("SELECT COUNT(*) FROM photos").fetchone()[0],
+                    "SELECT COUNT(*) FROM saisies WHERE courant=1 AND" + dans_d).fetchone()[0],
+                "cliches": cx.execute("SELECT COUNT(*) FROM photos WHERE" + dans_d).fetchone()[0],
                 "octets_cliches": cx.execute(
-                    "SELECT COALESCE(SUM(octets),0) FROM photos").fetchone()[0],
-                "statut": compte("SELECT statut AS cle, COUNT(*) n FROM dossiers"
+                    "SELECT COALESCE(SUM(octets),0) FROM photos WHERE" + dans_d).fetchone()[0],
+                "statut": compte("SELECT statut AS cle, COUNT(*) n FROM d"
                                  " GROUP BY statut ORDER BY n DESC"),
                 "issue": compte("SELECT COALESCE(type_issue,'non saisi') AS cle,"
-                                " COUNT(*) n FROM dossiers GROUP BY cle ORDER BY n DESC"),
+                                " COUNT(*) n FROM d GROUP BY cle ORDER BY n DESC"),
                 "sexe": compte("SELECT COALESCE(sexe,'non saisi') AS cle, COUNT(*) n"
-                               " FROM dossiers GROUP BY cle ORDER BY n DESC"),
+                               " FROM d GROUP BY cle ORDER BY n DESC"),
                 "terme": tranches,
                 "maceration": compte("""
                     SELECT 'grade ' || COALESCE(a.maceration_maroun, '?') AS cle,
                            COUNT(*) n
                     FROM autopsie a JOIN saisies s ON s.id = a.saisie_id AND s.courant=1
+                    JOIN d ON d.numero = s.dossier
                     GROUP BY cle ORDER BY cle"""),
                 "provenance": compte("SELECT provenance AS cle, COUNT(*) n FROM saisies"
-                                     " WHERE courant=1 GROUP BY cle ORDER BY n DESC"),
+                                     " WHERE courant=1 AND" + dans_d + " GROUP BY cle ORDER BY n DESC"),
                 "modules": compte("""
                     SELECT module AS cle, COUNT(DISTINCT dossier) n
-                    FROM saisies WHERE courant=1 GROUP BY module"""),
+                    FROM saisies WHERE courant=1 AND""" + dans_d + """ GROUP BY module"""),
                 "mois": compte("""
                     SELECT substr(date_examen,1,7) AS cle, COUNT(*) n
-                    FROM dossiers WHERE date_examen IS NOT NULL
+                    FROM d WHERE date_examen IS NOT NULL
                     GROUP BY cle ORDER BY cle"""),
                 "delai": ({"n": len(jours), "median": jours[len(jours)//2],
                            "min": jours[0], "max": jours[-1]} if jours else None),
+                "periode": {"du": du, "au": au},
                 "attendus": ORDRE_MODULES,
                 "facultatifs": sorted(MODULES_FACULTATIFS),
             })
