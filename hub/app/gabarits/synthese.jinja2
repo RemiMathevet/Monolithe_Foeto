@@ -1,5 +1,5 @@
 {# titre: Synthèse — une page #}
-{# version: 1.1.0 #}
+{# version: 1.2.0 #}
 {#
    De quoi parler d'un dossier en réunion : ce qui a été fait, ce qui manque,
    ce qui sort de la norme. Rien de rédigé, tout en listes.
@@ -24,28 +24,16 @@ MODULES
 {% endfor %}
 
 CE QUI SORT DE LA NORME
-{% set alertes = autopsie.masses | selectattr('alerte') | list %}
-{% set anormaux_grilles = grilles | map(attribute='anormaux') | map('length') | sum %}
-{% if not clinique.anormaux and not alertes and not coherence and not micro.anormaux and not anormaux_grilles %}
+{% if not retenues and not coherence %}
   Rien de signalé parmi ce qui a été saisi.
 {% endif %}
-{% for a in clinique.anormaux %}
-  · Examen externe — {{ a.label }} ({{ a.etage }}){% if a.anomalies %} : {{ a.anomalies | join(', ') }}{% endif %}
+{% for p in retenues %}
+  · {{ p.groupe }} — {{ p.libelle }}{% if p.detail %} : {{ p.detail }}{% endif %}{% if p.code %} [{{ p.code }}]{% endif %}
 
 {% endfor %}
-{% for m in alertes %}
-  · Masse — {{ m.label }} : {{ m.detail }}{% set t = m | ds3 %}{% if t %} ({{ t }}){% endif %}
-
-{% endfor %}
-{% for organe, c in micro.anormaux %}
-  · Microscopie — {{ organe }} : {{ c.label }}{% if c.termes %} ({{ c.termes | join(', ') }}){% endif %}
-
-{% endfor %}
-{% for g in grilles %}
-{% for a in g.anormaux %}
-  · Grille {{ g.organe }}{% if g.cote %} ({{ g.cote }}){% endif %} — {{ a }}
-{% endfor %}
-{% endfor %}
+{% if ecartees %}
+  ({{ ecartees | length }} proposition(s) écartée(s) à la validation.)
+{% endif %}
 {% if placenta.rapport_fp %}
   · Rapport fœto-placentaire {{ placenta.rapport_fp }} — à situer dans son percentile, pas à lire seul
 {% endif %}

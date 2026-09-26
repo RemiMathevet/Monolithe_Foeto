@@ -355,7 +355,9 @@ const state = {
     useFoeto: true,
 };
 
-function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+// akEsc et non esc : une fonction globale esc() écraserait celle de la page du hub,
+// qui échappe aussi les guillemets pour ses attributs onclick.
+function akEsc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
 function setContext(ctx) {
     state.contextFilter = ctx;
@@ -402,7 +404,7 @@ function renderSigns() {
         const polChar = sign.polarity === 'present' ? '+' : '−';
         html += '<div class="sign-row" id="signRow' + idx + '">';
         html += '<div class="pol-btn ' + polCls + '" onclick="togglePol(' + idx + ')" ' + (!isInput ? 'style="pointer-events:none;opacity:0.6"' : '') + '>' + polChar + '</div>';
-        html += '<input type="text" class="ak-input sign-input" value="' + esc(sign.query) + '" placeholder="Signe ' + (idx+1) + '..." ' + (!isInput ? 'disabled' : '') + ' onfocus="state.activeSearch='+idx+'" oninput="searchHPO('+idx+',this.value)" id="input'+idx+'">';
+        html += '<input type="text" class="ak-input sign-input" value="' + akEsc(sign.query) + '" placeholder="Signe ' + (idx+1) + '..." ' + (!isInput ? 'disabled' : '') + ' onfocus="state.activeSearch='+idx+'" oninput="searchHPO('+idx+',this.value)" id="input'+idx+'">';
         if (isInput && state.signs.length > 2) html += '<button class="ak-btn" onclick="removeSign('+idx+')" style="padding:4px 8px">&times;</button>';
         html += '</div>';
     });
@@ -434,8 +436,8 @@ function searchHPO(idx, query) {
         const ctxBadge = r.type === 'foeto' ? '<span class="ctx-badge foeto">FOETO</span>'
             : r.context === 'prenatal' ? '<span class="ctx-badge pre">pre</span>'
             : r.context === 'postnatal' ? '<span class="ctx-badge post">post</span>' : '';
-        dd += '<div class="ak-dropdown-item" onclick="selectHPO('+idx+',\''+r.id+'\',\''+esc(r.name).replace(/'/g, "\\'")+'\')">';
-        dd += '<div>'+esc(r.name)+ctxBadge+'</div><div class="hpo-id">'+r.id+'</div></div>';
+        dd += '<div class="ak-dropdown-item" onclick="selectHPO('+idx+',\''+r.id+'\',\''+akEsc(r.name).replace(/'/g, "\\'")+'\')">';
+        dd += '<div>'+akEsc(r.name)+ctxBadge+'</div><div class="hpo-id">'+r.id+'</div></div>';
     });
     dd += '</div>';
     row.insertAdjacentHTML('beforeend', dd);
@@ -508,7 +510,7 @@ function updateRanking() {
         const top = ranking[0];
         html += '<div class="rank-top">';
         html += '<div style="display:flex;justify-content:space-between;align-items:baseline">';
-        html += '<div><a href="/browse/syndromes/'+top.id+'" style="font-size:15px;font-weight:600;color:var(--ak-warning);text-decoration:none" target="_blank">'+esc(top.name)+'</a></div>';
+        html += '<div><a href="/browse/syndromes/'+top.id+'" style="font-size:15px;font-weight:600;color:var(--ak-warning);text-decoration:none" target="_blank">'+akEsc(top.name)+'</a></div>';
         html += '<div style="font-size:18px;font-weight:700;font-family:var(--ak-mono);color:var(--ak-warning)">'+(top.probability*100).toFixed(1)+'%</div>';
         html += '</div>';
         html += '<div style="font-size:10px;font-family:var(--ak-mono);color:var(--ak-text3);margin-top:2px">'+top.id;
@@ -537,7 +539,7 @@ function updateRanking() {
         const barW = ranking[0].probability > 0 ? Math.min(pct / ranking[0].probability * 100, 100) : 0;
         html += '<div class="rank-item">';
         html += '<div class="rank-num">'+(i+2)+'</div>';
-        html += '<div style="flex:1;min-width:0"><div style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><a href="/browse/syndromes/'+d.id+'" style="color:var(--ak-text);text-decoration:none" target="_blank">'+esc(d.name)+'</a></div>';
+        html += '<div style="flex:1;min-width:0"><div style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><a href="/browse/syndromes/'+d.id+'" style="color:var(--ak-text);text-decoration:none" target="_blank">'+akEsc(d.name)+'</a></div>';
         html += '<div class="rank-bar"><div class="rank-fill" style="width:'+barW+'%;background:'+(pct>10?'var(--ak-accent)':'var(--ak-text3)')+'"></div></div></div>';
         html += '<div style="font-size:12px;font-family:var(--ak-mono);color:'+(pct>10?'var(--ak-accent)':'var(--ak-text3)')+';font-weight:'+(pct>10?'600':'400')+';min-width:46px;text-align:right">'+(pct>=1?pct.toFixed(1):pct.toFixed(2))+'%</div>';
         html += '</div>';
@@ -568,7 +570,7 @@ function renderSuggestions(suggestions) {
         if (state.additional.some(o => o.hpo === s.hpo)) return;
         const name = Engine.hpoName(s.hpo);
         html += '<div class="suggest'+(i===0?' top':'')+'">';
-        html += '<div style="flex:1"><div class="suggest-name">'+esc(name)+'</div>';
+        html += '<div style="flex:1"><div class="suggest-name">'+akEsc(name)+'</div>';
         html += '<div class="suggest-meta">IG='+s.infoGain.toFixed(3)+' bit &middot; P(oui)='+(s.pYes*100).toFixed(0)+'%</div></div>';
         html += '<button class="suggest-btn yes" onclick="answer(\''+s.hpo+'\',\'present\')">Oui</button>';
         html += '<button class="suggest-btn no" onclick="answer(\''+s.hpo+'\',\'absent\')">Non</button>';
@@ -594,7 +596,7 @@ function renderObsHistory() {
         const polCol = obs.polarity === 'present' ? 'var(--ak-success)' : 'var(--ak-danger)';
         html += '<div style="display:flex;gap:6px;align-items:center;padding:3px 0;font-size:12px">';
         html += '<span style="color:'+polCol+';font-weight:700;width:14px">'+polChar+'</span>';
-        html += '<span style="flex:1">'+esc(Engine.hpoName(obs.hpo))+'</span>';
+        html += '<span style="flex:1">'+akEsc(Engine.hpoName(obs.hpo))+'</span>';
         html += '<button class="ak-btn" onclick="removeObs('+i+')" style="padding:2px 6px;font-size:10px">&times;</button>';
         html += '</div>';
     });

@@ -628,8 +628,8 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
             return erreur("source vide")
         cx = base()
         try:
-            return jsonify({"texte": compte_rendu.apercu(cx, numero, texte, refs,
-                                                         ORDRE_MODULES)})
+            rendu, fmt = compte_rendu.apercu(cx, numero, texte, refs, ORDRE_MODULES)
+            return jsonify({"texte": rendu, "format": fmt})
         except Exception as e:
             # Une erreur de gabarit est une information pour celui qui l'écrit,
             # pas une panne du serveur : on la rend telle quelle.
@@ -945,6 +945,23 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
         finally:
             cx.close()
 
+    @app.get("/api/dossiers/<numero>/propositions")
+    def api_cr_propositions(numero):
+        """L'anormal du dossier à valider avant le compte rendu, avec les
+        propositions écartées au dernier brouillon."""
+        if not DOSSIER_OK.match(numero):
+            return erreur("numéro de dossier inutilisable (lettres, chiffres, . _ -)")
+        cx = base()
+        try:
+            ctx = compte_rendu.contexte(cx, numero, refs, ORDRE_MODULES)
+            return jsonify({"propositions": ctx["propositions"],
+                            "ecartees": compte_rendu.ecartees_precedentes(cx, numero),
+                            "terme": ctx["terme"]["texte"]})
+        except ValueError as e:
+            return erreur(str(e), 404)
+        finally:
+            cx.close()
+
     @app.post("/api/dossiers/<numero>/cr")
     def api_cr_generer(numero):
         """Produit un brouillon et l'enregistre.
@@ -959,14 +976,19 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
             return erreur("Jinja2 est absent — il vient avec Flask : pip install flask", 501)
         corps = request.get_json(silent=True) or {}
         gabarit = corps.get("gabarit") or "complet"
+        ecartees = corps.get("ecartees")
+        if ecartees is not None and not (isinstance(ecartees, list)
+                                         and all(isinstance(x, str) for x in ecartees)):
+            return erreur("ecartees : liste d'identifiants attendue")
         cx = base()
         try:
-            i, texte = compte_rendu.rendre(cx, numero, gabarit, refs, ORDRE_MODULES,
-                                           operateur=(corps.get("operateur") or "").strip() or None)
+            i, texte, fmt = compte_rendu.rendre(
+                cx, numero, gabarit, refs, ORDRE_MODULES,
+                operateur=(corps.get("operateur") or "").strip() or None, ecartees=ecartees)
             journal(cx, "info", f"compte rendu « {gabarit} » produit", dossier=numero)
             cx.commit()
             ecrire_index(cx, racine)
-            return jsonify({"id": i, "gabarit": gabarit, "texte": texte})
+            return jsonify({"id": i, "gabarit": gabarit, "texte": texte, "format": fmt})
         except ValueError as e:
             return erreur(str(e), 404)
         except Exception as e:                      # une erreur de gabarit est lisible

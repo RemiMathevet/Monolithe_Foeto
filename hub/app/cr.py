@@ -434,12 +434,19 @@ def contexte(cx, numero, refs: biometrie.References, modules_attendus):
                           for x in (r.get("z_gc"), r.get("z_ma"), r.get("z_mb"))),
         })
 
+    # Examen clinique : en 0.1.0 les anomalies sont des libellés, en 0.2.0 des
+    # {label, hpo_id}. Les gabarits reçoivent des libellés, le code HPO voyage
+    # à côté pour les propositions.
     anormaux = []
     for e in clin.get("etages") or []:
         for i in e.get("items") or []:
             if i.get("etat") == "anormal":
-                anormaux.append({"etage": e.get("titre"), "label": i.get("label"),
-                                 "anomalies": i.get("anomalies") or [],
+                codes = [x if isinstance(x, dict) else {"label": x, "hpo_id": None}
+                         for x in i.get("anomalies") or []]
+                anormaux.append({"etage": e.get("titre"), "id": i.get("id") or i.get("label"),
+                                 "label": i.get("label"),
+                                 "anomalies": [x.get("label") for x in codes],
+                                 "codes": codes,
                                  "precisions": i.get("precisions")})
 
     photos = [dict(r) for r in cx.execute(
@@ -447,7 +454,7 @@ def contexte(cx, numero, refs: biometrie.References, modules_attendus):
              FROM photos p JOIN saisies s ON s.id = p.saisie_id AND s.courant = 1
             WHERE p.dossier=? ORDER BY p.module, p.cle""", (numero,))]
 
-    return {
+    ctx = {
         "dossier": numero,
         "genere_at": dt.datetime.now().isoformat(timespec="seconds"),
         "statut": d.get("statut"),
@@ -493,13 +500,82 @@ def contexte(cx, numero, refs: biometrie.References, modules_attendus):
                        "erreurs": refs.erreurs},
         "cliches": photos,
     }
+    # Sans validation (aperçu, appel direct), tout ce qui est proposé est retenu.
+    ctx["propositions"] = propositions(ctx)
+    ctx["retenues"], ctx["ecartees"] = ctx["propositions"], []
+    return ctx
+
+
+def propositions(ctx):
+    """Tout l'anormal du dossier, un constat par ligne, à valider avant le CR.
+
+    Rien n'est interprété : on reprend ce que les modules ont coché anormal et
+    les mesures à 2 DS ou plus. L'identifiant est stable d'un brouillon à
+    l'autre — un constat écarté le reste, un constat apparu depuis arrive coché.
+    """
+    out = []
+
+    def p(id_, groupe, libelle, detail=None, code=None):
+        out.append({"id": id_, "groupe": groupe, "libelle": libelle,
+                    "detail": detail or None, "code": code})
+
+    for a in ctx["clinique"]["anormaux"]:
+        if a["codes"]:
+            for x in a["codes"]:
+                p(f"clin:{a['id']}:{x.get('hpo_id') or x.get('label')}", "Examen externe",
+                  x.get("label"), " — ".join(filter(None, [a["label"], a["precisions"]])),
+                  x.get("hpo_id"))
+        else:
+            p(f"clin:{a['id']}", "Examen externe", a["label"], a["precisions"])
+    for l in ctx["biometrie"]["lignes"]:
+        if l["alerte"]:
+            p(f"bio:{l['cle']}", "Biométrie externe", l["label"],
+              f"{fr(l['valeur'])} {l['unite']} ({ds3(l)})")
+    for m in ctx["autopsie"]["masses"]:
+        if m["alerte"]:
+            p(f"masse:{m['id']}", "Masses d'organes", m["label"], f"{m['detail']} ({ds3(m)})")
+    for e in ctx["autopsie"]["etapes"]:
+        for c in e["champs"]:
+            for h in c.get("hpo") or [] if c.get("type") == "chips" else []:
+                p(f"aut:{c.get('id')}:{h.get('hpo_id')}", "Examen interne", h.get("label"),
+                  f"{e['titre']} — {c.get('label')}", h.get("hpo_id"))
+    rad = ctx["radio"]
+    for h in rad.get("hpo") or []:
+        p(f"radio:{h.get('code')}", "Imagerie", h.get("term_fr") or h.get("code"),
+          None, h.get("code"))
+    for nom, o in ((rad.get("biometries") or {}).get("os_longs") or {}).items():
+        z = (o or {}).get("zscore_chitty")
+        if z is not None and abs(z) >= biometrie.SEUIL_ALERTE:
+            p(f"os:{nom}", "Imagerie", nom, f"{fr(o.get('moyenne'))} mm ({zt(z)}, Chitty)")
+    for titre, c in ctx["micro"]["anormaux"]:
+        p(f"micro:{titre}:{c.get('id')}", "Microscopie", f"{titre} — {c.get('label')}",
+          ", ".join(list(c.get("termes") or []) + ([c["autre"]] if c.get("autre") else [])))
+    for g in ctx["grilles"]:
+        for a in g["anormaux"]:
+            p(f"grille:{g['module']}:{a}", "Grilles de lecture", f"{g['organe'].capitalize()} — {a}")
+        for f in g["foeto"]:
+            p(f"foeto:{g['module']}:{f['id']}", "Grilles de lecture", f["label"],
+              f"terme posé à la grille {g['organe']}", f["id"])
+    for e in ctx["neuropath"]["etapes"]:
+        for c in e["champs"]:
+            z = (c.get("zscore") or {}).get("z")
+            if z is not None and abs(z) >= biometrie.SEUIL_ALERTE:
+                p(f"neuro:{c.get('id')}", "Neuropathologie", c.get("label"),
+                  f"{valeur_champ(c)} ({zt(z)} contre {c['zscore'].get('reference')})")
+    return out
 
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Rendu
 # ══════════════════════════════════════════════════════════════════════════════
 
-def environnement():
+def format_de(texte):
+    """« html » si l'en-tête du gabarit porte {# format: html #}, sinon « texte »."""
+    m = re.search(r"\{#\s*format:\s*(\w+)\s*#\}", (texte or "")[:600])
+    return "html" if m and m.group(1) == "html" else "texte"
+
+
+def environnement(html=False):
     if not JINJA:
         raise RuntimeError("Jinja2 est absent — il vient avec Flask : pip install flask")
     # Bac à sable et non Environment : la page Comptes rendus laisse écrire
@@ -509,7 +585,7 @@ def environnement():
     # accès ; les filtres et globals déclarés ci-dessous restent disponibles.
     env = SandboxedEnvironment(loader=FileSystemLoader(str(GABARITS)),
                                trim_blocks=True, lstrip_blocks=True,
-                               keep_trailing_newline=True, autoescape=False)
+                               keep_trailing_newline=True, autoescape=html)
     env.filters.update(fr=fr, dtc=dtc, zt=zt, ds3=ds3, valeur=valeur_champ, phrase=phrase)
     env.globals.update(rempli=rempli, date_variable=date_variable)
     return env
@@ -545,8 +621,9 @@ def apercu(cx, numero, texte, refs, modules_attendus):
     enregistrer — ni le gabarit, ni le compte rendu produit.
     """
     ctx = contexte(cx, numero, refs, modules_attendus)
-    rendu = environnement().from_string(texte).render(**ctx)
-    return re.sub(r"\n{3,}", "\n\n", rendu).strip() + "\n"
+    fmt = format_de(texte)
+    rendu = environnement(fmt == "html").from_string(texte).render(**ctx)
+    return re.sub(r"\n{3,}", "\n\n", rendu).strip() + "\n", fmt
 
 
 def enregistrer_gabarit(nom, texte):
@@ -575,22 +652,43 @@ def gabarits_disponibles():
         ver = re.search(r"\{#\s*version:\s*(.+?)\s*#\}", tete)
         out[f.stem] = {"id": f.stem,
                        "titre": titre.group(1) if titre else f.stem,
-                       "version": ver.group(1) if ver else "1.0.0"}
+                       "version": ver.group(1) if ver else "1.0.0",
+                       "format": format_de(tete)}
     return out
 
 
-def rendre(cx, numero, gabarit, refs, modules_attendus, operateur=None):
-    """Produit le compte rendu et l'enregistre. Renvoie (id, texte)."""
+def ecartees_precedentes(cx, numero):
+    """Les propositions écartées au dernier brouillon du dossier : le choix se
+    garde d'un brouillon à l'autre."""
+    r = cx.execute("""SELECT ecartees FROM comptes_rendus
+                       WHERE dossier=? AND ecartees IS NOT NULL
+                       ORDER BY id DESC LIMIT 1""", (numero,)).fetchone()
+    return json.loads(r[0]) if r else []
+
+
+def rendre(cx, numero, gabarit, refs, modules_attendus, operateur=None, ecartees=None):
+    """Produit le compte rendu et l'enregistre. Renvoie (id, texte, format).
+
+    `ecartees` : identifiants des propositions refusées à la validation ; None
+    reprend le choix du dernier brouillon.
+    """
     dispo = gabarits_disponibles()
     if gabarit not in dispo:
         raise ValueError(f"gabarit « {gabarit} » inconnu "
                          f"(disponibles : {', '.join(dispo) or 'aucun'})")
     ctx = contexte(cx, numero, refs, modules_attendus)
-    texte = environnement().get_template(gabarit + ".jinja2").render(**ctx)
+    if ecartees is None:
+        ecartees = ecartees_precedentes(cx, numero)
+    ecartees = set(ecartees)
+    ctx["retenues"] = [p for p in ctx["propositions"] if p["id"] not in ecartees]
+    ctx["ecartees"] = [p for p in ctx["propositions"] if p["id"] in ecartees]
+    fmt = dispo[gabarit]["format"]
+    texte = environnement(fmt == "html").get_template(gabarit + ".jinja2").render(**ctx)
     texte = re.sub(r"\n{3,}", "\n\n", texte).strip() + "\n"
     cur = cx.execute("""INSERT INTO comptes_rendus
-                          (dossier, gabarit, gabarit_version, texte, operateur)
-                        VALUES (?,?,?,?,?)""",
-                     (numero, gabarit, dispo[gabarit]["version"], texte, operateur))
+                          (dossier, gabarit, gabarit_version, texte, operateur, format, ecartees)
+                        VALUES (?,?,?,?,?,?,?)""",
+                     (numero, gabarit, dispo[gabarit]["version"], texte, operateur, fmt,
+                      json.dumps(sorted(ecartees), ensure_ascii=False)))
     cx.commit()
-    return cur.lastrowid, texte
+    return cur.lastrowid, texte, fmt

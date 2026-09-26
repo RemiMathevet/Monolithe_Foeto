@@ -1,25 +1,38 @@
 {# titre: Compte rendu complet #}
-{# version: 1.3.0 #}
+{# version: 2.0.0 #}
+{# format: html #}
 {#
    Ce gabarit parcourt les trames plutôt que de nommer les champs : un champ
    ajouté à un module apparaît ici sans qu'on y touche, avec son libellé. Ce
    qui n'a pas été rempli ne s'écrit pas — un compte rendu qui aligne des
    « non renseigné » se relit mal et n'apprend rien.
+
+   Format html : rendu avec échappement automatique, affiché en white-space
+   pre-wrap — le texte garde ses retraits, les mesures sortent en tableaux.
+   Les styles sont posés en ligne pour survivre au copier-coller vers Word.
 #}
 {%- macro titre(t) -%}
-{{ t | upper }}
-{{ '=' * (t | length) }}
+<h2 style="font-size:15px;margin:16px 0 0;white-space:normal">{{ t | upper }}</h2>
 {%- endmacro -%}
 {%- macro sous(t) -%}
-{{ t }}
-{{ '-' * (t | length) }}
+<h3 style="font-size:13.5px;margin:10px 0 0;white-space:normal">{{ t }}</h3>
+{%- endmacro -%}
+{#- Mesures et DS. white-space:normal : sous pre-wrap, les retours à la ligne
+    entre balises de tableau deviendraient des cellules fantômes. -#}
+{%- macro tableau(lignes, masses=false) -%}
+<table style="border-collapse:collapse;white-space:normal;margin:4px 0 4px 16px;font-size:13px">
+<tr>{% for h in ["Mesure", "Valeur", "GC", "MA", "MB"] %}<th style="border:1px solid #999;padding:2px 8px;text-align:left;background:#f2f2f2">{{ h }}</th>{% endfor %}</tr>
+{% for l in lignes %}
+<tr{% if l.alerte %} style="font-weight:bold;background:#fff1e0"{% endif %}><td style="border:1px solid #999;padding:2px 8px">{{ l.label }}{% if l.alerte %} ⚠{% endif %}</td><td style="border:1px solid #999;padding:2px 8px">{% if masses %}{{ l.detail }}{% else %}{{ l.valeur | fr }} {{ l.unite }}{% endif %}</td>{% for z in [l.z_gc, l.z_ma, l.z_mb] %}<td style="border:1px solid #999;padding:2px 8px;text-align:right">{{ z | zt }}</td>{% endfor %}</tr>
+{% endfor %}
+</table>
 {%- endmacro -%}
 {%- macro champs(etape) -%}
 {% for c in etape.champs %}
   {{ c.label }} : {{ c | valeur }}
 {% endfor %}
 {%- endmacro -%}
-COMPTE RENDU D'EXAMEN FŒTOPATHOLOGIQUE — BROUILLON
+<b>COMPTE RENDU D'EXAMEN FŒTOPATHOLOGIQUE — BROUILLON</b>
 Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 
 {{ titre("Identification") }}
@@ -148,11 +161,7 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 
 {% if biometrie.mesures %}
 {{ titre("Biométrie externe") }}
-{% for l in biometrie.lignes %}
-{% set t = l | ds3 %}
-  {{ l.label }} : {{ l.valeur | fr }} {{ l.unite }}{% if t %} ({{ t }}){% endif %}{% if l.alerte %}  ⚠{% endif %}
-
-{% endfor %}
+{{ tableau(biometrie.lignes) }}
 {% if references.sources %}
   Écarts-types : {% for k, v in references.sources.items() %}{{ k }} {{ v }}{% if not loop.last %} ; {% endif %}{% endfor %}.
 {% endif %}
@@ -181,13 +190,14 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 {% set os = (radio.biometries or {}).os_longs or {} %}
 {% if os %}
 
-{{ sous("Os longs (mm, z de Chitty)") }}
-{% for nom, o in os.items() %}
-{% if o.moyenne is not none %}
-  {{ nom }} : {{ o.moyenne }}{% if o.droite is not none and o.gauche is not none %} (D {{ o.droite }} / G {{ o.gauche }}){% endif %}{% if o.zscore_chitty is not none %} — {{ o.zscore_chitty | zt }}{% endif %}
-
-{% endif %}
+{{ sous("Os longs (z de Chitty)") }}
+<table style="border-collapse:collapse;white-space:normal;margin:4px 0 4px 16px;font-size:13px">
+<tr>{% for h in ["Os", "Moyenne (mm)", "D / G (mm)", "Chitty"] %}<th style="border:1px solid #999;padding:2px 8px;text-align:left;background:#f2f2f2">{{ h }}</th>{% endfor %}</tr>
+{% for nom, o in os.items() if o.moyenne is not none %}
+{% set fort = o.zscore_chitty is not none and (o.zscore_chitty >= 2 or o.zscore_chitty <= -2) %}
+<tr{% if fort %} style="font-weight:bold;background:#fff1e0"{% endif %}><td style="border:1px solid #999;padding:2px 8px">{{ nom }}{% if fort %} ⚠{% endif %}</td><td style="border:1px solid #999;padding:2px 8px;text-align:right">{{ o.moyenne }}</td><td style="border:1px solid #999;padding:2px 8px">{% if o.droite is not none and o.gauche is not none %}{{ o.droite }} / {{ o.gauche }}{% else %}—{% endif %}</td><td style="border:1px solid #999;padding:2px 8px;text-align:right">{{ o.zscore_chitty | zt }}</td></tr>
 {% endfor %}
+</table>
 {% endif %}
 {% set sc = radio.scores_staturaux or {} %}
 {% if sc.hadlock_sa or sc.adalian_sa %}
@@ -220,11 +230,7 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 {% if autopsie.masses %}
 
 {{ sous("Masses d'organes") }}
-{% for m in autopsie.masses %}
-{% set t = m | ds3 %}
-  {{ m.label }} : {{ m.detail }}{% if t %} ({{ t }}){% endif %}{% if m.alerte %}  ⚠{% endif %}
-
-{% endfor %}
+{{ tableau(autopsie.masses, masses=true) }}
 {% if references.sources %}
   Écarts-types : {% for k, v in references.sources.items() %}{{ k }} {{ v }}{% if not loop.last %} ; {% endif %}{% endfor %}.
 {% endif %}
@@ -332,10 +338,20 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 {% if e.champs %}
 
 {{ sous(e.titre) }}
-{% for c in e.champs %}
-  {{ c.label }} : {{ c | valeur }}{% if c.zscore and c.zscore.z is not none %} — {{ c.zscore.z | zt }} contre {{ c.zscore.reference }}{% endif %}
+{% for c in e.champs if not (c.zscore and c.zscore.z is not none) %}
+  {{ c.label }} : {{ c | valeur }}
 
 {% endfor %}
+{% set mesures_z = e.champs | selectattr('zscore') | selectattr('zscore.z', 'number') | list %}
+{% if mesures_z %}
+<table style="border-collapse:collapse;white-space:normal;margin:4px 0 4px 16px;font-size:13px">
+<tr>{% for h in ["Mesure", "Valeur", "Attendu (moy. ± ET)", "z", "Référence"] %}<th style="border:1px solid #999;padding:2px 8px;text-align:left;background:#f2f2f2">{{ h }}</th>{% endfor %}</tr>
+{% for c in mesures_z %}
+{% set fort = c.zscore.z >= 2 or c.zscore.z <= -2 %}
+<tr{% if fort %} style="font-weight:bold;background:#fff1e0"{% endif %}><td style="border:1px solid #999;padding:2px 8px">{{ c.label }}{% if fort %} ⚠{% endif %}</td><td style="border:1px solid #999;padding:2px 8px">{{ c | valeur }}</td><td style="border:1px solid #999;padding:2px 8px">{% if c.zscore.attendu_m is not none %}{{ c.zscore.attendu_m | fr }} ± {{ c.zscore.attendu_sd | fr }}{% else %}—{% endif %}</td><td style="border:1px solid #999;padding:2px 8px;text-align:right">{{ c.zscore.z | zt }}</td><td style="border:1px solid #999;padding:2px 8px">{{ c.zscore.source or c.zscore.reference }}</td></tr>
+{% endfor %}
+</table>
+{% endif %}
 {% endif %}
 {% endfor %}
 {% endif %}
@@ -351,37 +367,24 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 
 {{ titre("Conclusion") }}
   À rédiger.
-{% set anormaux_grilles = grilles | map(attribute='anormaux') | map('length') | sum %}
-{% if clinique.anormaux or autopsie.masses | selectattr('alerte') | list or micro.anormaux or anormaux_grilles %}
+{% if retenues %}
 
-  Éléments à reprendre dans la conclusion :
-{% for a in clinique.anormaux %}
-  · {{ a.label }}{% if a.anomalies %} — {{ a.anomalies | join(', ') }}{% endif %}
-
-{% endfor %}
-{% for m in autopsie.masses if m.alerte %}
-  · {{ m.label }} : {{ m.detail }}, écart supérieur à 2 DS
-{% endfor %}
-{% for organe, c in micro.anormaux %}
-  · Microscopie {{ organe | lower }} — {{ c.label }}{% if c.termes %} : {{ c.termes | join(', ') }}{% endif %}
-
-{% endfor %}
-{% for g in grilles %}
-{% for a in g.anormaux %}
-  · Grille {{ g.organe | lower }} — {{ a }}
-{% endfor %}
-{% endfor %}
+  Éléments retenus pour la conclusion :
+{% for p in retenues %}
+{% if loop.changed(p.groupe) %}
+  <i>{{ p.groupe }}</i>
 {% endif %}
-{% set termes_foeto = grilles | map(attribute='foeto') | sum(start=[]) %}
-{% if termes_foeto %}
+    · {{ p.libelle }}{% if p.detail %} — {{ p.detail }}{% endif %}{% if p.code %} [{{ p.code }}]{% endif %}
 
-  Termes FOETO posés aux grilles : {% for f in termes_foeto %}{{ f.label }} [{{ f.id }}]{% if not loop.last %} · {% endif %}{% endfor %}.
-
+{% endfor %}
 {% endif %}
 
 --
 Brouillon produit le {{ genere_at | dtc }} à partir des saisies en base. À relire
 et à corriger avant signature : rien ici n'a été validé par un humain.
+{% if ecartees %}
+Propositions écartées à la validation : {% for p in ecartees %}{{ p.libelle }}{% if not loop.last %} · {% endif %}{% endfor %}.
+{% endif %}
 {% if manquants %}
 Modules non parvenus : {{ manquants | join(', ') }}.
 {% endif %}

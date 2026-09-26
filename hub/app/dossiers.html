@@ -195,6 +195,19 @@ tr.gris td,li.gris{color:var(--ink-soft)}
 .rendu{white-space:pre-wrap;font-family:var(--mono);font-size:12.5px;line-height:1.5;
        background:var(--paper);border:1px solid var(--rule);border-radius:3px;
        padding:12px;max-height:58vh;overflow:auto}
+/* Compte rendu au format html : le texte garde ses retraits (pre-wrap), les
+   titres et tableaux du gabarit échappent aux styles d'interface de la page. */
+.crDoc{white-space:pre-wrap;font-family:var(--sans);font-size:13.5px;line-height:1.5;
+       color:#1a1a1a;background:#fff}
+.crDoc h2,.crDoc h3,.crDoc th{display:block;font-family:inherit;letter-spacing:normal;
+       text-transform:none;color:inherit;font-weight:700}
+.crDoc th{display:table-cell;font-size:inherit}
+.crDoc table{width:auto}
+.crDoc td{vertical-align:middle}
+.crProps{border:1px solid var(--rule);border-radius:3px;padding:10px 14px;margin-bottom:14px}
+.crProps label{display:flex;gap:8px;align-items:baseline;padding:2px 0;cursor:pointer}
+.crProps label.ecartee{opacity:.5;text-decoration:line-through}
+.crProps .groupe{margin:10px 0 2px;font-weight:600}
 .deux{display:grid;grid-template-columns:1fr 1fr;gap:14px 34px;align-items:start}
 @media (max-width:900px){ .deux{grid-template-columns:1fr} }
 
@@ -1018,10 +1031,13 @@ function panneauCliches(d){
 /* Le dernier brouillon affiché, gardé pendant la session : produire un
    compte rendu rafraîchit l'index, ce qui reconstruit le volet — sans cela
    le texte qu'on vient de lire disparaîtrait sous les yeux. */
-var CR_AFFICHE = {numero: null, entete: null, texte: null};
+var CR_AFFICHE = {numero: null, entete: null, texte: null, format: null};
 
 function panneauCr(d){
-  var h = '<div class="row noprint" style="margin-bottom:12px">' +
+  var h = '<div class="noprint"><h3>Synthèse et alertes</h3>' +
+    '<div class="crProps" id="crProps"><p class="note" style="margin:0">Relecture du dossier…</p></div>' +
+    '<div class="crProps" id="crPistes" hidden></div></div>' +
+    '<div class="row noprint" style="margin-bottom:12px">' +
     '<div class="field" style="flex:0 1 260px"><label for="crGabarit">Gabarit</label>' +
     '<select id="crGabarit"><option>chargement…</option></select></div>' +
     '<div class="field" style="flex:0 0 auto">' +
@@ -1031,10 +1047,104 @@ function panneauCr(d){
     '<div id="crTexte"></div><div id="crListe"></div>';
   setTimeout(function(){
     chargerCr(d.numero);
+    chargerPropositions(d.numero);
     if (CR_AFFICHE.numero === d.numero && CR_AFFICHE.texte)
-      afficherCr(CR_AFFICHE.texte, CR_AFFICHE.entete);
+      afficherCr(CR_AFFICHE.texte, CR_AFFICHE.entete, CR_AFFICHE.format);
   }, 0);
   return h;
+}
+/* L'anormal du dossier, à valider avant le brouillon : ce qui est décoché
+   n'entre pas dans la conclusion. Le choix est gardé avec le brouillon et
+   repris au suivant ; un constat apparu depuis arrive coché. */
+function chargerPropositions(numero){
+  api("/api/dossiers/" + encodeURIComponent(numero) + "/propositions").then(function(o){
+    if (!$("crProps")) return;
+    var ps = o.propositions || [], ec = o.ecartees || [], groupe = null;
+    if (!ps.length){
+      $("crProps").innerHTML = '<p class="note" style="margin:0">Rien d\'anormal parmi ce qui a été saisi' +
+        " (signes cochés anormaux, mesures à 2 DS ou plus).</p>";
+      return;
+    }
+    $("crProps").innerHTML = '<p class="note" style="margin:0 0 4px">' + ps.length +
+      " constat(s) anormal(aux) — décocher ce qui ne doit pas entrer dans la conclusion.</p>" +
+      ps.map(function(p){
+        var off = ec.indexOf(p.id) >= 0;
+        var t = (p.groupe !== groupe ? '<div class="groupe">' + esc(p.groupe) + "</div>" : "");
+        groupe = p.groupe;
+        return t + '<label' + (off ? ' class="ecartee"' : "") + '><input type="checkbox" class="crProp" value="' +
+          esc(p.id) + '" data-code="' + esc(p.code || "") + '"' + (off ? "" : " checked") +
+          ' onchange="this.parentNode.classList.toggle(\'ecartee\', !this.checked); pistesAk()"><span>' +
+          esc(p.libelle) + (p.detail ? ' <span class="note">— ' + esc(p.detail) + "</span>" : "") +
+          (p.code ? ' <span class="mono note">' + esc(p.code) + "</span>" : "") + "</span></label>";
+      }).join("");
+    pistesAk();
+  }).catch(function(e){
+    if ($("crProps")) $("crProps").innerHTML = '<p class="note" style="margin:0">Propositions indisponibles : ' +
+      esc(e.message) + "</p>";
+  });
+}
+/* Pistes syndromiques : l'akinator hors ligne (paquet data_hub) nourri des
+   codes HPO/FOETO cochés ci-dessus. Passif — aucun bouton, recalculé à chaque
+   case — et consultatif : rien n'en entre dans le compte rendu. Signes
+   présents seuls ; l'akinator complet (absents, questions) reste dans Biblio. */
+var AK_PRET = null;
+function moteurAk(){
+  if (!AK_PRET) AK_PRET = new Promise(function(ok, ko){
+    if (typeof Engine !== "undefined") return ok();
+    var sc = document.createElement("script"); sc.src = "/akinator.js";
+    sc.onload = ok; sc.onerror = function(){ ko(new Error("akinator.js introuvable")); };
+    document.head.appendChild(sc);
+  }).then(function(){
+    if (Engine.count().diseases) return;          // déjà chargé par l'onglet Biblio
+    return fetch("/biblio/akinator.json").then(function(r){
+      if (!r.ok) throw new Error("aucun paquet data_hub installé (onglet Biblio)");
+      return r.json();
+    }).then(function(data){ Engine.load(data); });
+  }).catch(function(e){ AK_PRET = null; throw e; });  // un paquet installé plus tard sera repris
+  return AK_PRET;
+}
+function pistesAk(){
+  var box = $("crPistes"); if (!box) return;
+  var codes = Array.prototype.filter.call(document.querySelectorAll("#crProps .crProp"), function(c){
+    return c.checked && /^(HP|FOETO):/.test(c.dataset.code || "");
+  }).map(function(c){ return c.dataset.code; });
+  codes = codes.filter(function(c, i){ return codes.indexOf(c) === i; });
+  box.hidden = false;
+  var tete = '<div class="groupe" style="margin-top:0">Pistes syndromiques — akinator ' +
+    '<span class="note">(aide à la réflexion, n\'entre pas dans le compte rendu)</span></div>';
+  if (!codes.length){
+    box.innerHTML = tete + '<p class="note" style="margin:0">Aucun code HPO ou FOETO coché.</p>';
+    return;
+  }
+  box.innerHTML = tete + '<p class="note" style="margin:0">Calcul…</p>';
+  moteurAk().then(function(){
+    if (!$("crPistes")) return;
+    var connus = codes.filter(function(c){ return Engine.hpoName(c) !== c; });
+    if (!connus.length){
+      box.innerHTML = tete + '<p class="note" style="margin:0">Aucun des ' + codes.length +
+        " code(s) coché(s) n'est dans la matrice de l'akinator.</p>";
+      return;
+    }
+    var r = Engine.posteriors(connus, [], true).slice(0, 5).filter(function(d){ return d.probability >= 0.01; });
+    box.innerHTML = tete + '<p class="note" style="margin:0 0 4px">' + connus.length + " code(s) sur " +
+      codes.length + " reconnu(s) par la matrice (livres + FOETO), signes présents seuls.</p>" +
+      (r.length ? r.map(function(d){
+        var vus = Object.keys(d.matchInfo || {}).map(function(h){ return Engine.hpoName(h); });
+        return '<div style="display:flex;gap:10px;align-items:baseline;padding:2px 0">' +
+          '<span class="num" style="min-width:52px;text-align:right">' + (d.probability * 100).toFixed(1) + " %</span>" +
+          "<span>" + esc(d.name) + ' <span class="mono note">' + esc(d.id) + "</span>" +
+          (vus.length ? '<br><span class="note">' + esc(vus.join(" · ")) + "</span>" : "") + "</span></div>";
+      }).join("") : '<p class="note" style="margin:0">Aucune piste au-dessus de 1 %.</p>');
+  }).catch(function(e){
+    if ($("crPistes")) box.innerHTML = tete + '<p class="note" style="margin:0">Akinator indisponible : ' +
+      esc(e.message) + "</p>";
+  });
+}
+function ecarteesCr(){
+  var cases = document.querySelectorAll("#crProps .crProp");
+  if (!cases.length) return null;               // panneau non chargé : le serveur reprend le dernier choix
+  return Array.prototype.filter.call(cases, function(c){ return !c.checked; })
+    .map(function(c){ return c.value; });
 }
 function chargerCr(numero){
   api("/api/gabarits").then(function(o){
@@ -1068,33 +1178,48 @@ function chargerCr(numero){
       : '<p class="note">Aucun brouillon produit pour ce dossier.</p>';
   }).catch(function(){});
 }
-function afficherCr(texte, entete){
-  CR_AFFICHE = {numero: COURANT, entete: entete, texte: texte};
+function afficherCr(texte, entete, format){
+  CR_AFFICHE = {numero: COURANT, entete: entete, texte: texte, format: format};
   if (!$("crTexte")) return;
+  var cadre = "border:1px solid var(--rule);border-radius:3px;padding:14px;margin:0;" +
+    "max-height:70vh;overflow:auto";
   $("crTexte").innerHTML = (entete ? '<h3>' + esc(entete) + "</h3>" : "") +
     '<div class="row noprint" style="margin-bottom:8px"><div class="field" style="flex:0 0 auto">' +
     '<button class="btn ghost mini" onclick="copierCr()">Copier</button></div>' +
     '<div class="field" style="flex:0 0 auto">' +
     '<button class="btn ghost mini" onclick="window.print()">Imprimer</button></div></div>' +
-    '<pre id="crPre" style="white-space:pre-wrap;font-family:var(--mono);font-size:13px;' +
-    "line-height:1.5;background:#fff;border:1px solid var(--rule);border-radius:3px;" +
-    'padding:14px;margin:0;max-height:70vh;overflow:auto">' + esc(texte) + "</pre>";
+    // html : produit par un gabarit à échappement automatique, les saisies y
+    // arrivent échappées ; le reste (anciens brouillons, texte) passe par esc().
+    (format === "html"
+      ? '<div id="crPre" class="crDoc" style="' + cadre + '">' + texte + "</div>"
+      : '<pre id="crPre" style="white-space:pre-wrap;font-family:var(--mono);font-size:13px;' +
+        "line-height:1.5;background:#fff;" + cadre + '">' + esc(texte) + "</pre>");
 }
 function copierCr(){
-  var t = $("crPre") ? $("crPre").textContent : "";
-  if (navigator.clipboard) navigator.clipboard.writeText(t)
-    .then(function(){ flash("Compte rendu copié."); })
-    .catch(function(){ flash("Copie refusée par le navigateur."); });
-  else flash("Copie indisponible dans ce navigateur.");
+  var el = $("crPre");
+  if (!el){ flash("Rien à copier."); return; }
+  var ok = function(){ flash("Compte rendu copié."); };
+  var ko = function(){ flash("Copie refusée par le navigateur."); };
+  if (!navigator.clipboard){ flash("Copie indisponible dans ce navigateur."); return; }
+  // html : texte enrichi (tableaux gardés dans Word) avec le texte brut en repli.
+  if (CR_AFFICHE.format === "html" && window.ClipboardItem){
+    var html = '<div style="white-space:pre-wrap;font-family:Arial,sans-serif;font-size:11pt">' +
+               el.innerHTML + "</div>";
+    navigator.clipboard.write([new ClipboardItem({
+      "text/html": new Blob([html], {type: "text/html"}),
+      "text/plain": new Blob([el.innerText], {type: "text/plain"})
+    })]).then(ok).catch(ko);
+  } else navigator.clipboard.writeText(el.textContent).then(ok).catch(ko);
 }
 function genererCr(numero){
   var g = $("crGabarit").value;
   $("crNote").textContent = "Rendu en cours…";
   api("/api/dossiers/" + encodeURIComponent(numero) + "/cr", {
     method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({gabarit:g, operateur: ($("operateur") || {}).value || null})
+    body: JSON.stringify({gabarit:g, operateur: ($("operateur") || {}).value || null,
+                          ecartees: ecarteesCr()})
   }).then(function(o){
-    afficherCr(o.texte, "Brouillon — " + o.gabarit);
+    afficherCr(o.texte, "Brouillon — " + o.gabarit, o.format);
     flash("Brouillon produit.");
     return rafraichir();
   }).then(function(){ ONGLET = "cr"; ouvrir(numero, true); })
@@ -1103,7 +1228,7 @@ function genererCr(numero){
 }
 function relireCr(id){
   api("/api/cr/" + id).then(function(o){
-    afficherCr(o.texte, o.gabarit + " — produit le " + dateCourte(o.genere_at));
+    afficherCr(o.texte, o.gabarit + " — produit le " + dateCourte(o.genere_at), o.format);
   }).catch(function(e){ flash("Illisible : " + e.message); });
 }
 
@@ -1663,7 +1788,11 @@ function crApercu(){
   api("/api/gabarits/" + encodeURIComponent(CR_GABARIT) + "/apercu", {
     method:"POST", headers:{"Content-Type":"application/json"},
     body: JSON.stringify({dossier: d, source: $("crSource").value})
-  }).then(function(o){ $("crRendu").textContent = o.texte; })
+  }).then(function(o){
+    var r = $("crRendu");
+    r.classList.toggle("crDoc", o.format === "html");
+    if (o.format === "html") r.innerHTML = o.texte; else r.textContent = o.texte;
+  })
     .catch(function(e){ $("crRendu").textContent = "✗ " + e.message; });
 }
 function crEnregistrer(){

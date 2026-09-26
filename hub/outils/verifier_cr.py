@@ -134,8 +134,10 @@ ATTENDU = {
                  "Stade de développement : ANORMAL — retard de maturation",
                  "GRILLES DE LECTURE",
                  "zone néphrogène amincie — ANORMAL",
-                 "Grille rein — glomérules · zone néphrogène amincie",
-                 "Hypoplasie rénale [FOETO:0042]"],
+                 "Rein — glomérules · zone néphrogène amincie",
+                 "Hypoplasie rénale [FOETO:0042]",
+                 "Éléments retenus pour la conclusion",
+                 "<table", "−5,7 DS", "Attendu (moy. ± ET)"],
                 ["Axe non regardé"]),
     "placenta": (["COMPTE RENDU D'EXAMEN PLACENTAIRE",
                   "Galette ovale de 17 × 14 cm, épaisse de 2.5 cm, masse parée 300 g",
@@ -146,8 +148,9 @@ ATTENDU = {
                   "Termes discordants entre modules :", "macro_placenta 32 SA",
                   "Lésion n° 1 — cassette K3"],
                  ["Grille placentaire non parvenue"]),
-    "synthese": (["Grille rein (droit) — glomérules · zone néphrogène amincie",
-                  "Microscopie — Poumon : Stade de développement",
+    "synthese": (["Grilles de lecture — Rein — glomérules · zone néphrogène amincie",
+                  "Microscopie — Poumon — Stade de développement : retard de maturation",
+                  "[FOETO:0042]",
                   "Grilles de lecture : placenta, rein"],
                  []),
 }
@@ -228,7 +231,7 @@ def main():
     dispo = compte_rendu.gabarits_disponibles()
     for nom in sorted(dispo):
         try:
-            _, texte = compte_rendu.rendre(cx, DOSSIER, nom, refs, ingest.ORDRE_MODULES,
+            _, texte, _fmt = compte_rendu.rendre(cx, DOSSIER, nom, refs, ingest.ORDRE_MODULES,
                                            operateur="contrôle")
         except Exception as e:                      # noqa: BLE001
             t(f"{nom} — rendu", False, f"{type(e).__name__} : {e}")
@@ -241,6 +244,31 @@ def main():
             t(f"{nom} — sans « {frag[:48]} »", frag not in texte)
     for nom in ATTENDU:
         t(f"gabarit {nom} présent", nom in dispo)
+
+    print("Propositions")
+    props = {p["id"]: p for p in ctx["propositions"]}
+    groupes = {p["groupe"] for p in ctx["propositions"]}
+    t("groupes attendus", {"Examen externe", "Biométrie externe", "Masses d'organes",
+                           "Microscopie", "Grilles de lecture"} <= groupes, str(groupes))
+    t("identifiants uniques", len(props) == len(ctx["propositions"]))
+    t("anomalies cliniques en libellés",
+      all(isinstance(x, str) for a in ctx["clinique"]["anormaux"] for x in a["anomalies"]))
+    foeto = "foeto:grille_rein:FOETO:0042"
+    t("terme FOETO de grille proposé", foeto in props and props[foeto]["code"] == "FOETO:0042")
+    t("axe micro normal non proposé", not any(i.startswith("micro:") and "vx" in i for i in props))
+    _, texte, fmt = compte_rendu.rendre(cx, DOSSIER, "complet", refs, ingest.ORDRE_MODULES,
+                                        ecartees=[foeto])
+    t("complet en html", fmt == "html")
+    t("écartée : hors conclusion, nommée en pied",
+      "Propositions écartées à la validation : Hypoplasie rénale" in texte
+      and texte.count("[FOETO:0042]") == 1, "")        # reste celle du texte de grille
+    t("écartées reprises au brouillon suivant",
+      compte_rendu.ecartees_precedentes(cx, DOSSIER) == [foeto])
+    _, texte, _ = compte_rendu.rendre(cx, DOSSIER, "synthese", refs, ingest.ORDRE_MODULES)
+    t("synthèse sans l'écartée", "[FOETO:0042]" not in texte)
+    _, texte, _ = compte_rendu.rendre(cx, DOSSIER, "synthese", refs, ingest.ORDRE_MODULES,
+                                      ecartees=[])
+    t("tout recoché → revient", "[FOETO:0042]" in texte)
 
     cx.close()
     print(f"\n{ok} vérification(s) passée(s), {rate} en échec — base jetable : {racine}")
