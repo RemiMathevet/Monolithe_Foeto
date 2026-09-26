@@ -996,8 +996,9 @@ function panneauCliches(d){
   return '<div class="cliches">' + (d.photos || []).map(function(p){
     var vig = p.chemin.replace(/([^\/]+)$/, "vignettes/$1");
     return "<figure>" +
+      '<a href="' + esc(p.chemin) + '" target="_blank" rel="noopener">' +
       '<img loading="lazy" src="' + esc(vig) + '" alt="' + esc(p.label || p.cle) + '"' +
-      ' onerror="this.onerror=null;this.src=' + js(p.chemin) + '">' +
+      ' onerror="this.onerror=null;this.src=' + js(p.chemin) + '"></a>' +
       "<figcaption>" + esc(p.label || p.cle) +
         '<div class="m">' + esc(p.module) + (p.etape ? " · " + esc(p.etape) : "") +
         (p.largeur ? " · " + esc(p.largeur) + "×" + esc(p.hauteur) : "") + "</div>" +
@@ -2247,6 +2248,7 @@ if (/[?&]selftest=1/.test(location.search)){
     h = $("panneau").innerHTML;
     chk("clichés : vignette",       h.indexOf("vignettes/k.jpg") >= 0);
     chk("clichés : repli",          h.indexOf("photos/26P0123/radio/k.jpg") >= 0);
+    chk("clichés : clic = original", h.indexOf('href="photos/26P0123/radio/k.jpg"') >= 0);
 
     ONGLET = "historique"; ouvrir("26P0123", true);
     chk("historique : ancienne",    $("panneau").innerHTML.indexOf("archive/vieux.json") >= 0);
