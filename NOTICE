@@ -1,0 +1,46 @@
+Monolithe_Foeto — Hub Light
+https://github.com/RemiMathevet/Monolithe_Foeto
+
+Licences
+--------
+Code (modules HTML, scripts, serveur, gabarits de compte rendu) :
+  GNU Affero General Public License v3.0 ou ultérieure — fichier LICENSE.
+  SPDX-License-Identifier: AGPL-3.0-or-later
+Contenu (documentation .md, captures, textes) :
+  Creative Commons Attribution 4.0 International — fichier LICENSE-CONTENT.
+  SPDX-License-Identifier: CC-BY-4.0
+Données tierces, non couvertes par ces deux licences et gardant la leur :
+  HPO (Human Phenotype Ontology, licence propre, attribution requise),
+  Orphanet (CC BY 4.0), valeurs de référence publiées (Guihard-Costa 2002,
+  Maroun 2017, Muller-Brochut 2018, Chitty) citées à leur source.
+
+AVIS À CONSERVER — condition additionnelle au titre de l'article 7(b) de
+l'AGPL-3.0. Toute copie, redistribution ou version modifiée de ce logiciel
+doit conserver l'avis ci-dessous, sans l'altérer, dans ce fichier NOTICE,
+dans l'en-tête des modules HTML qui le portent et dans les mentions
+affichées par l'interface (pied de page du hub, mentions « usage de
+recherche » à côté des écarts-types et des pistes syndromiques).
+
+  Ce logiciel n'est pas un dispositif médical au sens du règlement (UE)
+  2017/745. Il ne porte pas de marquage CE et ne pose aucun diagnostic.
+  C'est un outil de saisie et de documentation : toute conclusion appartient
+  au praticien qui relit et signe.
+
+  Les écarts-types calculés et les pistes syndromiques proposées sont
+  fournis à des fins de recherche uniquement (Research Use Only). Ils ne se
+  substituent ni à l'interprétation du praticien ni aux références publiées.
+
+NOTICE TO BE PRESERVED — additional term under section 7(b) of the
+AGPL-3.0. Any copy, redistribution or modified version of this software must
+keep the notice below, unaltered, in this NOTICE file, in the header of the
+HTML modules that carry it, and in the notices displayed by the user
+interface.
+
+  This software is not a medical device within the meaning of Regulation
+  (EU) 2017/745. It bears no CE marking and makes no diagnosis. It is a data
+  entry and documentation tool: any conclusion belongs to the practitioner
+  who reviews and signs.
+
+  Computed standard deviation scores and suggested syndromes are provided
+  for research use only (RUO). They replace neither the practitioner's
+  interpretation nor the published references.

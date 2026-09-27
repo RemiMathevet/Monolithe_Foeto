@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<!-- Avis à conserver (AGPL-3.0 §7b, voir NOTICE) : pas un dispositif médical ; écarts-types et pistes syndromiques à usage de recherche uniquement (RUO). -->
 <html lang="fr">
 <head>
 <meta charset="utf-8">
@@ -204,6 +205,11 @@ tr.gris td,li.gris{color:var(--ink-soft)}
 .crDoc th{display:table-cell;font-size:inherit}
 .crDoc table{width:auto}
 .crDoc td{vertical-align:middle}
+.avis{font-size:11px;color:var(--ink-soft);text-align:center;margin:10px 16px 14px}
+.avis a{color:inherit}
+.ruo{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;padding:0 4px;margin-left:6px;
+     border:1px solid var(--rule);border-radius:3px;color:var(--ink-soft);font-weight:400;
+     text-transform:none;vertical-align:middle;cursor:help}
 .crProps{border:1px solid var(--rule);border-radius:3px;padding:10px 14px;margin-bottom:14px}
 .crProps label{display:flex;gap:8px;align-items:baseline;padding:2px 0;cursor:pointer}
 .crProps label.ecartee{opacity:.5;text-decoration:line-through}
@@ -479,6 +485,12 @@ try {
 
 </div><!-- /wrap -->
 
+<!-- Avis à conserver (AGPL-3.0 §7b, voir NOTICE) ; le lien vers le code
+     source est l'offre qu'exige l'article 13 quand le hub est servi à d'autres. -->
+<p class="avis noprint">Pas un dispositif médical : outil de saisie et de documentation, il ne pose aucun
+  diagnostic. Écarts-types et pistes syndromiques : usage de recherche uniquement (RUO).
+  · <a href="https://github.com/RemiMathevet/Monolithe_Foeto" target="_blank" rel="noopener">Code source</a> (AGPL-3.0)</p>
+
 <input type="file" id="pick" accept="application/json,.json" hidden>
 <div class="flash" id="flash" role="status" aria-live="polite"></div>
 
@@ -644,6 +656,12 @@ function tuile(k, v){
   return '<div class="tuile"><span class="k">' + esc(k) + '</span>' +
          '<span class="v">' + esc(lisible(v)) + "</span></div>";
 }
+/* Petite marque posée là où s'affichent des écarts-types ou des syndromes
+   proposés — avis à conserver (NOTICE, AGPL-3.0 §7b). */
+var RUO = '<span class="ruo" title="Usage de recherche uniquement (Research Use Only) — ' +
+  'ne se substitue ni à l\'interprétation du praticien ni aux références publiées. ' +
+  'Ce logiciel n\'est pas un dispositif médical.">RUO</span>';
+
 function zSpan(v, seuil){
   if (v == null) return "—";
   var f = Math.abs(v) >= (seuil || 2);
@@ -661,7 +679,7 @@ function rendreEtapes(d){
     }).length;
     return "<h3>" + esc(e.titre || e.id) + " — " + faits + "/" + champs.length + "</h3>" +
       '<div class="scroll"><table><thead><tr><th style="width:38%">Champ</th>' +
-      "<th>Valeur</th><th>" + esc(zTete) + "</th></tr></thead><tbody>" +
+      "<th>Valeur</th><th>" + esc(zTete) + RUO + "</th></tr></thead><tbody>" +
       champs.map(function(c){
         var val, z = "—", vide = false;
         if (c.type === "chips"){
@@ -709,7 +727,7 @@ function rendreEtages(d){
 function rendreMesures(d){
   var cles = Object.keys(d.mesures || {}), ec = d.ecarts || {}, lib = d.libelles || {};
   var faites = cles.filter(function(k){ return d.mesures[k] != null; });
-  return "<h3>Mesures — " + faites.length + "/" + cles.length + "</h3>" +
+  return "<h3>Mesures — " + faites.length + "/" + cles.length + RUO + "</h3>" +
     '<div class="grille">' + cles.map(function(k){
       /* DS exportés par le module (v1.3.0+) : GC / MA / MB selon les tables qui couvrent le terme. */
       var z = Object.keys(ec[k] || {}).map(function(src){ return esc(src) + " " + zSpan(ec[k][src]); }).join(" · ");
@@ -926,7 +944,7 @@ function panneauDossier(d, slugs){
       }).join("") + "</ul>";
   }
   if ((d.masses || []).length){
-    h += "<h3>Masses d'organes</h3>" +
+    h += "<h3>Masses d'organes" + RUO + "</h3>" +
       '<div class="scroll"><table><thead><tr><th>Organe</th><th>Masse (g)</th>' +
       "<th>z Guihard-Costa</th><th>z Maroun A</th><th>z Maroun B</th></tr></thead><tbody>" +
       d.masses.map(function(m){
@@ -1066,7 +1084,8 @@ function chargerPropositions(numero){
       return;
     }
     $("crProps").innerHTML = '<p class="note" style="margin:0 0 4px">' + ps.length +
-      " constat(s) anormal(aux) — décocher ce qui ne doit pas entrer dans la conclusion.</p>" +
+      " constat(s) anormal(aux) — décocher ce qui ne doit pas entrer dans la conclusion. " +
+      "Les écarts-types sont à usage de recherche" + RUO + "</p>" +
       ps.map(function(p){
         var off = ec.indexOf(p.id) >= 0;
         var t = (p.groupe !== groupe ? '<div class="groupe">' + esc(p.groupe) + "</div>" : "");
@@ -1110,8 +1129,8 @@ function pistesAk(){
   }).map(function(c){ return c.dataset.code; });
   codes = codes.filter(function(c, i){ return codes.indexOf(c) === i; });
   box.hidden = false;
-  var tete = '<div class="groupe" style="margin-top:0">Pistes syndromiques — akinator ' +
-    '<span class="note">(aide à la réflexion, n\'entre pas dans le compte rendu)</span></div>';
+  var tete = '<div class="groupe" style="margin-top:0">Pistes syndromiques — akinator' + RUO +
+    ' <span class="note">(aide à la réflexion, n\'entre pas dans le compte rendu)</span></div>';
   if (!codes.length){
     box.innerHTML = tete + '<p class="note" style="margin:0">Aucun code HPO ou FOETO coché.</p>';
     return;
@@ -2072,7 +2091,7 @@ function vueBiblio(v){
   if (v === "akinator"){
     pan.innerHTML = '<div id="akinator-app">' +
       '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">' +
-        '<div style="flex:1;min-width:200px"><b>Akinator</b> <span style="font-size:11px;opacity:.7">diagnostic syndromique bayésien, matrice des livres + FOETO</span></div>' +
+        '<div style="flex:1;min-width:200px"><b>Akinator</b> <span style="font-size:11px;opacity:.7">diagnostic syndromique bayésien, matrice des livres + FOETO</span>' + RUO + '</div>' +
         '<div class="ctx-toggle" id="ctxToggle"><button class="active" data-ctx="" onclick="setContext(\'\')">Tous</button>' +
         '<button data-ctx="prenatal" onclick="setContext(\'prenatal\')">Prénatal</button><button data-ctx="postnatal" onclick="setContext(\'postnatal\')">Postnatal</button></div>' +
         '<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer"><input type="checkbox" id="hierToggle" checked onchange="state.useHierarchy=this.checked;updateRanking()"> Hiérarchie HPO</label>' +

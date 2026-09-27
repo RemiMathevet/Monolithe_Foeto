@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | Monolithe_Foeto
+# SPDX-License-Identifier: AGPL-3.0-or-later | Hub Light | Monolithe_Foeto
 """
 Assemble les dix-huit grilles de lecture en un seul document.
 
@@ -98,7 +98,7 @@ def version_de(html):
 
 
 ETUI = r"""<!DOCTYPE html>
-<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | Monolithe_Foeto -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later | Hub Light | Monolithe_Foeto -->
 <!-- Produit par micro/assembler.py — ne pas modifier à la main : toute retouche
      serait perdue à la prochaine rediffusion d'une grille. Les grilles vivent
      dans micro/grille_*.html, et c'est là qu'on les corrige. -->

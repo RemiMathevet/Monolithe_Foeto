@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | Monolithe_Foeto
+# SPDX-License-Identifier: AGPL-3.0-or-later | Hub Light | Monolithe_Foeto
 """Refait pack_telephone/ — les modules de salle, ceux qu'on ouvre sur le
 téléphone ou la tablette d'autopsie — et pack_telephone.zip à côté.
 
@@ -43,6 +43,10 @@ l'adresse d'un module pour vérifier qu'il est intact (bandeau vert).
 
 Copies des fichiers de Macro/ et Radio/ du dépôt Monolithe_Foeto ; en cas de
 doute, la source fait foi. Empreintes SHA-256 dans `EMPREINTES.txt`.
+
+Licence AGPL-3.0-or-later (`LICENSE`). Ces modules ne sont pas des dispositifs
+médicaux ; les écarts-types qu'ils calculent sont à usage de recherche
+uniquement (RUO). Avis à conserver en cas de rediffusion : voir `NOTICE`.
 """
 
 
@@ -63,6 +67,9 @@ def main():
         shutil.copy2(src, PACK / src.name)
         lignes.append(f"- `{src.name}` — {titre} (v{version})")
         empreintes.append(f"{sha(src)}  {src.name}")
+    # L'AGPL veut sa licence avec toute copie, et le NOTICE porte l'avis §7(b).
+    for nom in ("LICENSE", "NOTICE"):
+        shutil.copy2(ICI / nom, PACK / nom)
     (PACK / "LISEZMOI.md").write_text(LISEZMOI.format(liste="\n".join(lignes)), encoding="utf-8")
     (PACK / "EMPREINTES.txt").write_text("\n".join(empreintes) + "\n", encoding="utf-8")
     with zipfile.ZipFile(ICI / "pack_telephone.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:

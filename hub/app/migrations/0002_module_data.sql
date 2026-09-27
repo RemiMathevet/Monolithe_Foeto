@@ -1,4 +1,4 @@
--- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | Monolithe_Foeto
+-- SPDX-License-Identifier: AGPL-3.0-or-later | Hub Light | Monolithe_Foeto
 -- ════════════════════════════════════════════════════════════════════════════
 -- 0002 — le JSON de module entre en base, les tables par module deviennent
 --        un index reconstructible, et le dossier gagne ce qui relève de la

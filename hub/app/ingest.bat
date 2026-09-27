@@ -1,5 +1,5 @@
 @echo off
-rem SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light
+rem SPDX-License-Identifier: AGPL-3.0-or-later | Hub Light
 rem Lance ingest.py avec le premier python trouve : un python portable pose
 rem a cote (python\python.exe ou WPy64-*\python-*\python.exe), sinon celui du PATH.
 setlocal

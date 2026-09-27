@@ -1,4 +1,4 @@
-<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 -->
+<!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # Références biométriques
 
 Les tables avec lesquelles le hub recalcule les écarts-types (DS), recopiées

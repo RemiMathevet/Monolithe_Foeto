@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | Monolithe_Foeto
+/* SPDX-License-Identifier: AGPL-3.0-or-later | Hub Light | Monolithe_Foeto
    ═══════════════════════════════════════════════════════════════════════════
    Liaison au hub — injectée par le serveur, jamais présente dans le fichier.
 

@@ -119,25 +119,38 @@ ne dit rien du format accepté par les modules, qui est libre). Après clone :
 git config core.hooksPath .githooks
 ```
 
+## Destination et statut réglementaire
+
+**Ce logiciel n'est pas un dispositif médical** au sens du règlement (UE)
+2017/745 : il ne porte pas de marquage CE et ne pose aucun diagnostic. C'est
+un outil de saisie et de documentation de l'examen fœtopathologique ; le
+compte rendu qu'il produit est un brouillon, et toute conclusion appartient au
+praticien qui le relit et le signe.
+
+Les **écarts-types** calculés contre les références publiées et les **pistes
+syndromiques** proposées par l'akinator sont fournis **à des fins de recherche
+uniquement (Research Use Only)**. L'interface le rappelle là où ils
+s'affichent.
+
+Cet avis est une condition additionnelle de la licence du code (AGPL-3.0,
+article 7(b)) : quiconque redistribue ou modifie ce logiciel doit le conserver
+— voir [`NOTICE`](NOTICE).
+
 ## Licence
 
-`SPDX-License-Identifier: CC-BY-NC-SA-4.0`
+Deux licences, selon la nature du fichier ; chaque fichier porte sa ligne SPDX,
+y compris les modules HTML, faits pour circuler seuls sur une clé USB.
 
-[CC BY-NC-SA 4.0](LICENSE) — réutilisation et modification libres, attribution
-demandée, partage à l'identique, **usage commercial exclu**. Une seule licence
-pour tout le dépôt : les formulaires, les scripts, le vocabulaire et les
-gabarits de compte rendu. Chaque fichier porte la ligne SPDX, y compris les
-modules HTML — ils sont faits pour circuler seuls, détachés de ce dépôt, et
-doivent rester lisibles quant à leur licence une fois arrivés sur une clé USB.
+- **Code** — modules HTML, scripts, serveur, gabarits de compte rendu :
+  [GNU AGPL v3 ou ultérieure](LICENSE) (`AGPL-3.0-or-later`). Libre d'usage,
+  de modification et de redistribution, usage commercial compris ; toute
+  version modifiée, y compris servie à d'autres par le réseau (le hub, une
+  démonstration), doit publier son code source sous la même licence.
+- **Contenu** — documentation `.md`, captures, textes :
+  [CC BY 4.0](LICENSE-CONTENT) (`CC-BY-4.0`), attribution demandée.
+- **Données tierces** — HPO, Orphanet, valeurs de référence publiées : elles
+  gardent leur licence et se citent à leur source (détail dans `NOTICE`). Le
+  paquet data_hub de la Biblio n'est pas dans ce dépôt.
 
-GitHub affichera « Other » plutôt qu'un badge : son détecteur ne connaît aucune
-licence non commerciale (il porte CC0, CC-BY et CC-BY-SA, tous trois autorisant
-l'usage commercial). Le badge est donc inatteignable tant que la clause NC est
-là — c'est un effet du choix de licence, pas un défaut du fichier `LICENSE`.
-
-Deux limites à connaître, la clause NC étant un choix délibéré : une licence
-Creative Commons n'accorde **pas de licence de brevet** et n'a pas de notion de
-« code source » comme en ont les licences logicielles ; et le partage à
-l'identique s'applique aussi aux dérivés des scripts. Si un usage logiciel plus
-strict devient nécessaire, PolyForm Noncommercial 1.0.0 dit la même chose en
-termes faits pour du code.
+Les versions publiées avant ce changement restent disponibles sous
+CC BY-NC-SA 4.0, licence sous laquelle elles ont été diffusées.

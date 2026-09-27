@@ -19,3 +19,7 @@ l'adresse d'un module pour vérifier qu'il est intact (bandeau vert).
 
 Copies des fichiers de Macro/ et Radio/ du dépôt Monolithe_Foeto ; en cas de
 doute, la source fait foi. Empreintes SHA-256 dans `EMPREINTES.txt`.
+
+Licence AGPL-3.0-or-later (`LICENSE`). Ces modules ne sont pas des dispositifs
+médicaux ; les écarts-types qu'ils calculent sont à usage de recherche
+uniquement (RUO). Avis à conserver en cas de rediffusion : voir `NOTICE`.

@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: CC-BY-NC-SA-4.0
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Fabrique grille_<organe>.html a partir de grilles/<organe>.js.
 
     python3 gen_grille.py rein          # ecrit grille_rein.html
@@ -53,7 +53,7 @@ def bloc_foeto(organe):
     return "var FOETO = " + json.dumps(out, ensure_ascii=False, separators=(",", ":")) + ";"
 
 SHELL = r"""<!DOCTYPE html>
-<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
 <html lang="fr">
 <head>
 <meta charset="utf-8">

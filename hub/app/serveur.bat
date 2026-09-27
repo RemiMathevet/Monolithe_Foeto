@@ -1,5 +1,5 @@
 @echo off
-rem SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light
+rem SPDX-License-Identifier: AGPL-3.0-or-later | Hub Light
 rem Demarre le serveur local du hub et ouvre la page de gestion.
 rem Cherche le premier python trouve : un python portable pose a cote
 rem (python\python.exe ou WPy64-*\python-*\python.exe), sinon celui du PATH.

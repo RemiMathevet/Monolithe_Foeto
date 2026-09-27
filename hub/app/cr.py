@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | Monolithe_Foeto
+# SPDX-License-Identifier: AGPL-3.0-or-later | Hub Light | Monolithe_Foeto
 """
 Compte rendu : contexte, rendu Jinja, enregistrement.
 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: CC-BY-SA-4.0 | transposé de foetodata_hub/templates/akinator.html
+// SPDX-License-Identifier: AGPL-3.0-or-later | transposé de foetodata_hub/templates/akinator.html
 // Moteur bayésien de l'akinator, hors ligne : lit /biblio/akinator.json (paquet data_hub).
 // Même code que data.pazuzu.uk/browse/akinator, moins le choix de matrice côté serveur.
 // Attend dans la page : #akStatus #akLoading #akMain #signsCard #suggestionsCard #obsCard

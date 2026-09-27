@@ -1,5 +1,5 @@
 {# titre: Compte rendu placentaire #}
-{# version: 1.1.0 #}
+{# version: 1.2.0 #}
 {#
    Le placenta est le gros de l'activité et se lit seul : macro parée, tranches,
    grille histologique. Ce gabarit ne réclame donc rien du fœtus — s'il y a un
@@ -155,6 +155,7 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% elif p.terme_sa %
 --
 Brouillon produit le {{ genere_at | dtc }} à partir des saisies en base. À relire
 et à corriger avant signature : rien ici n'a été validé par un humain.
+Outil de saisie et de documentation, pas un dispositif médical.
 {% if placenta.present %}
 Modules repris : {% for m, v in modules.items() if m in ('macro_placenta', 'grille_placenta', 'administratif') %}{{ m }} v{{ v.module_version }} ({{ v.operateur | fr }}){% if not loop.last %} · {% endif %}{% endfor %}.
 {% endif %}

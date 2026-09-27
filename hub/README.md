@@ -1,4 +1,4 @@
-<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 -->
+<!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # Hub — reprise des saisies et gestion des cas
 
 Les modules HTML produisent des JSON sur le téléphone ou la tablette de salle.
@@ -505,4 +505,7 @@ touche pas.
 
 ## Licence
 
-`SPDX-License-Identifier: CC-BY-NC-SA-4.0` — même licence que le reste du dépôt.
+Documentation : `SPDX-License-Identifier: CC-BY-4.0` ; code du hub :
+`AGPL-3.0-or-later`. Voir le README et le `NOTICE` à la racine du dépôt, dont
+l'avis « pas un dispositif médical — DS et pistes syndromiques à usage de
+recherche uniquement » est à conserver par quiconque redistribue.

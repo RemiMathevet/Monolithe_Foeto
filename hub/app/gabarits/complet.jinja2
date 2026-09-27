@@ -1,5 +1,5 @@
 {# titre: Compte rendu complet #}
-{# version: 2.0.0 #}
+{# version: 2.1.0 #}
 {# format: html #}
 {#
    Ce gabarit parcourt les trames plutôt que de nommer les champs : un champ
@@ -163,7 +163,7 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 {{ titre("Biométrie externe") }}
 {{ tableau(biometrie.lignes) }}
 {% if references.sources %}
-  Écarts-types : {% for k, v in references.sources.items() %}{{ k }} {{ v }}{% if not loop.last %} ; {% endif %}{% endfor %}.
+  Écarts-types : {% for k, v in references.sources.items() %}{{ k }} {{ v }}{% if not loop.last %} ; {% endif %}{% endfor %}. Usage de recherche uniquement (RUO).
 {% endif %}
 {% endif %}
 
@@ -232,7 +232,7 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 {{ sous("Masses d'organes") }}
 {{ tableau(autopsie.masses, masses=true) }}
 {% if references.sources %}
-  Écarts-types : {% for k, v in references.sources.items() %}{{ k }} {{ v }}{% if not loop.last %} ; {% endif %}{% endfor %}.
+  Écarts-types : {% for k, v in references.sources.items() %}{{ k }} {{ v }}{% if not loop.last %} ; {% endif %}{% endfor %}. Usage de recherche uniquement (RUO).
 {% endif %}
 {% if not references.dispo %}
 
@@ -382,6 +382,8 @@ Dossier {{ dossier }}{% if terme.sa %} — {{ terme.texte }}{% endif %}
 --
 Brouillon produit le {{ genere_at | dtc }} à partir des saisies en base. À relire
 et à corriger avant signature : rien ici n'a été validé par un humain.
+Outil de saisie et de documentation, pas un dispositif médical ; écarts-types
+et pistes syndromiques à usage de recherche uniquement (RUO).
 {% if ecartees %}
 Propositions écartées à la validation : {% for p in ecartees %}{{ p.libelle }}{% if not loop.last %} · {% endif %}{% endfor %}.
 {% endif %}

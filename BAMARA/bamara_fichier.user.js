@@ -7,10 +7,10 @@
 // @grant        GM_addStyle
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @license      CC-BY-NC-SA-4.0
+// @license      AGPL-3.0-or-later
 // ==/UserScript==
 
-/* SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | Monolithe_Foeto
+/* SPDX-License-Identifier: AGPL-3.0-or-later | Hub Light | Monolithe_Foeto
 
    Ce script ne connaît pas le hub. Il n'a ni @connect ni GM_xmlhttpRequest :
    les documents lui arrivent par un fichier que l'opérateur glisse dans son
