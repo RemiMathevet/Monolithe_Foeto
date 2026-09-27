@@ -1537,8 +1537,9 @@ CONST = {k: re.compile(r'var %s\s*=\s*"([^"]+)"' % k) for k in ("ORGANE", "TITRE
 
 
 def fabriquer(nom):
-    """nom = « rein », ou « rein.test » pour une variante d'essai du même organe :
-    grilles/rein.test.js → grille_rein_test.html, l'organe exporté reste « rein »."""
+    """nom = « rein », ou « rein.v2 » pour une version publiée à côté de la
+    précédente : grilles/rein.v2.js → grille_rein_v2.html, l'organe exporté
+    reste « rein »."""
     organe = nom.split(".")[0]
     frag = (FRAGMENTS / (nom + ".js")).read_text(encoding="utf-8")
     vals = {}

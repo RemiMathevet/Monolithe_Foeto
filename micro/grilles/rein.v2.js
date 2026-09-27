@@ -1,4 +1,5 @@
-/* Grille de lecture — rein et voies urinaires hautes. VARIANTE D'ESSAI 2.0.0.
+/* Grille de lecture — rein et voies urinaires hautes. VERSION 2 (2.0.0).
+   Publiée à côté de la v1 (rein.js, 1.1.1) tant qu'elle n'a pas été validée à l'usage.
    Fond : ~/Bureau/fiches_lecture/fiche_rein.md (§1 à §9).
    Ce qui change par rapport à rein.js (1.1.1), sans rien retrancher :
    · le bon couple au bon endroit : un signe est un CONSTAT, présent / absent /
