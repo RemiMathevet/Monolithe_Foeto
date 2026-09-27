@@ -1,0 +1,12 @@
+signe	libellé du signe	code proposé	libellé du code	pourquoi ce n'est pas net
+collecteursDil	Dilatation des tubes collecteurs	FOETO:PF.REN-MAL-007	Canaux collecteurs dilatés entourés de tissu conjonctif dense	le terme ajoute le tissu conjonctif dense
+fibrosePeriKyst	Fibrose péri-kystique	FOETO:PF.REN-MAL-054	Œdème fibro-interstitiel périkystique	œdème ≠ fibrose
+kystesRadiaires	Kystes fusiformes radiaires, tous les néphrons atteints	FOETO:PF.REN-MAL-033	Kystes dérivés des canaux collecteurs	origine, pas aspect
+resteNephro	Reste néphrogénique — nodule persistant sans expansion	FOETO:PF.REN-MAL-043	Néphroblastomatose	un reste isolé ≠ néphroblastomatose (restes multiples/diffus)
+kystesNoyau	Amas de kystes translucides centrés sur un noyau fibreux dense	HP:0000003	Multicystic kidney dysplasia	HPO nomme la dysplasie, pas l'aspect
+kystesDiffus	Kystes corticaux ET médullaires diffus	HP:0005562	Multiple renal cysts	moins précis que le signe
+kystesInegaux	Kystes de taille inégale, sans systématisation	HP:0005562	Multiple renal cysts	moins précis que le signe
+uretereDilate	Uretère ou bassinet dilaté en amont	HP:0000072 / HP:0000126	Hydroureter / Hydronephrosis	le signe réunit deux constats : le scinder ?
+desorganisation	Désorganisation architecturale, perte du gradient cortico-médullaire	HP:0000110	Renal dysplasia	HPO nomme la maladie, le signe décrit
+tcpRarefies	Tubes contournés proximaux absents ou raréfiés (CD10)	—	(FOETO:PF.REN-DYS-001 Dysgenèse tubulaire rénale = un diagnostic)	aucun terme de signe
+voute	Retard d'ossification de la voûte crânienne	—	aucun HPO trouvé par « ossification of the skull » / « calvaria »	à chercher à la main

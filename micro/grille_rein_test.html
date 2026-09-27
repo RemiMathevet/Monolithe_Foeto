@@ -1,64 +1,10 @@
-# SPDX-License-Identifier: CC-BY-NC-SA-4.0
-"""Fabrique grille_<organe>.html a partir de grilles/<organe>.js.
-
-    python3 gen_grille.py rein          # ecrit grille_rein.html
-    python3 gen_grille.py               # tous les fragments de grilles/
-    node verif.js grille_rein.html      # banc d'essai headless
-
-La mecanique (verrou, chips, verdicts, IndexedDB, export, banc d'essai) est
-ecrite UNE fois ici ; le fragment d'organe ne porte que ses tableaux et les
-deux ou trois verdicts qui lui sont propres. Les modules doivent rester des
-fichiers autonomes ouvrables par double-clic hors reseau : pas de module ES,
-pas de fetch, donc pas de fichier commun a cote — d'ou la generation.
-
-grille_poumon.html est anterieur et reste ecrit a la main : il porte un calcul
-de rapport de poids que rien d'autre ne demande. Ne pas le regenerer.
-
-Section 07 « Termes FOETO » : les termes de foeto_terms que le triage contre
-la fiche de l'organe a retenus comme LESION, groupes par sous-section de
-fiche, un terme coche exporte son id ; recherche a 3 lettres sur les
-libelles fr/en des termes LESION et HORS_FICHE de la meme fiche. Lu dans la
-base au moment de la generation (bloc_foeto) ; base absente = bloc vide.
-"""
-
-import json
-import re
-import sqlite3
-import sys
-from pathlib import Path
-
-ICI = Path(__file__).parent
-FRAGMENTS = ICI / "grilles"
-DB = Path("/home/mathevet/Bureau/foeto_base/syndromes_foetaux.db")
-
-
-def bloc_foeto(organe):
-    """var FOETO = {sections:[{t, termes:[{id,l}]}], formes:{id:[...]}} pour l'organe"""
-    vide = "var FOETO = " + json.dumps({"sections": [], "formes": {}}) + ";"
-    if not DB.exists():
-        return vide
-    c = sqlite3.connect("file:%s?mode=ro" % DB, uri=True)
-    # le placenta est trie contre « diffusion/fiche_placenta.md#1 », #2, #3 (fiche par tranches) :
-    # on apparie sur le nom de fichier, pas sur le chemin
-    fiche = "%%fiche_%s.md%%" % organe
-    rows = c.execute("""select id, label_fr, label_en, triage_verdict, triage_section from foeto_terms
-                        where triage_fiche like ? and triage_verdict in ('LESION','HORS_FICHE')
-                        order by triage_section, label_fr""", (fiche,)).fetchall()
-    sections, formes = {}, {}
-    for i, fr, en, v, sec in rows:
-        formes[i] = [x for x in (fr, en) if x] + (["(hors fiche)"] if v == "HORS_FICHE" else [])
-        if v == "LESION":
-            sections.setdefault(sec or "Autres", []).append({"id": i, "l": fr or en})
-    out = {"sections": [{"t": t, "termes": ts} for t, ts in sections.items()], "formes": formes}
-    return "var FOETO = " + json.dumps(out, ensure_ascii=False, separators=(",", ":")) + ";"
-
-SHELL = r"""<!DOCTYPE html>
+<!DOCTYPE html>
 <!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
 <html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Grille de lecture — {{TITRE}}</title>
+<title>Grille de lecture — rein et voies urinaires hautes</title>
 <style>
 :root{
   --paper:#EDEFEE; --card:#FFFFFF;
@@ -191,8 +137,8 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 
 <header>
   <p class="eyebrow">Fœtopathologie · lecture microscopique</p>
-  <h1>Grille de lecture — {{TITRE}} <span class="ver" id="ver"></span></h1>
-  <p class="sub">Sortie de <code>{{SOURCE}}</code>. Tout se clique ; seuls le dossier, le terme et les comptes se tapent. Document autonome : rien n'est transmis.</p>
+  <h1>Grille de lecture — rein et voies urinaires hautes <span class="ver" id="ver"></span></h1>
+  <p class="sub">Sortie de <code>fiche_rein.md</code>. Tout se clique ; seuls le dossier, le terme et les comptes se tapent. Document autonome : rien n'est transmis.</p>
 </header>
 
 <!-- 01 — Dossier -->
@@ -331,7 +277,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
    Document autonome. Aucune bibliothèque, aucun module ES, aucune police
    distante, aucun fetch : doit fonctionner par double-clic hors réseau.
 
-   Ce module est la SORTIE de {{SOURCE}}, jamais l'inverse. Les bornes, les
+   Ce module est la SORTIE de fiche_rein.md, jamais l'inverse. Les bornes, les
    spécificités et les « ce qu'il ne faut pas conclure » sont recopiés de la
    fiche ; ils ne se corrigent pas ici mais dans la fiche.
 
@@ -339,19 +285,509 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
    réserves visibles. Un critère non cliqué n'est pas un négatif — c'est un
    non-regardé, et le compte rendu le dit.
 
-   Fichier ENGENDRÉ par gen_grille.py depuis grilles/{{ORGANE}}.js.
+   Fichier ENGENDRÉ par gen_grille.py depuis grilles/rein.js.
    Corriger le fragment, pas ce fichier.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
 
 /* ╔═══════════════════════════════════════════════════════════════════════╗
-   ║  FRAGMENT D'ORGANE — grilles/{{ORGANE}}.js                            ║
+   ║  FRAGMENT D'ORGANE — grilles/rein.js                            ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
-{{ORGANE_JS}}
+/* Grille de lecture — rein et voies urinaires hautes. VARIANTE D'ESSAI 2.0.0.
+   Fond : ~/Bureau/fiches_lecture/fiche_rein.md (§1 à §9).
+   Ce qui change par rapport à rein.js (1.1.1), sans rien retrancher :
+   · le bon couple au bon endroit : un signe est un CONSTAT, présent / absent /
+     non regardé (plus normal / anormal) ; la rétention l'était déjà ;
+   · les négatifs obligatoires ne se cochent plus une seconde fois : ils se
+     déduisent d'un signe répondu absent ou d'une donnée consignée ;
+   · le prélèvement sépare ce qui qualifie la lecture des critères de coupe,
+     destinés à la future grille macro fixée ;
+   · les signes sont groupés, le contexte hors lame à part ;
+   · un signe PRÉSENT exporte ses codes FOETO/HPO — correspondances nettes
+     seulement ; les partielles attendent l'arbitrage (rein.codes_a_valider.tsv).
+   Forme : gen_grille.py, calquée sur grille_poumon.html.
+   Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
+
+var ORGANE  = "rein";
+var TITRE   = "rein et voies urinaires hautes";
+var SOURCE  = "fiche_rein.md";
+var MODULE  = "grille_rein";
+var VERSION = "2.0.0";
+var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
+var ETATS   = "presence";
+/* Paragraphes sans étendue : le contexte hors lame n'est pas une lésion qui s'étend. */
+var GROUPES_SANS_ETENDUE = ["Contexte hors lame — macro, foie, clinique"];
+var PAIR    = true;
+
+var TITRE_CR    = "REIN";
+var STADE_TITRE = "État de la zone néphrogène";
+
+var KCL_TXT = "Fœticide par KCl déclaré — la nécrose tubulaire et la basophilie induites par le geste " +
+              "ne sont pas datables. Aucune borne de rétention n'est recevable.";
+
+/* La zone néphrogène s'épuise ; un retard signifie un blastème encore là au terme. */
+var RETARD_NOTE = "Une zone néphrogène plus riche qu'attendue au terme n'est pas un retard de " +
+                  "maturation isolé : reprendre le CRG et la datation avant de conclure.";
+
+/* C'est la branche qui porte le sens au rein : la néphrogenèse s'est arrêtée trop tôt. */
+var AVANCE_NOTE = "Une zone néphrogène épuisée avant le terme fait discuter une néphrogenèse arrêtée " +
+                  "(obstruction, hypoplasie, phénocopie médicamenteuse) — à confronter au CRG. " +
+                  "La fin de la néphrogenèse a quatre bornes sourcées différentes : ne pas la lire à la semaine.";
+
+var TECH_NOTE = "Les pointillés sont des propositions déduites des clics, jamais des prescriptions. " +
+                "Le CD15 est absent du corpus du service : le proposer, c'est ouvrir une pratique, pas la rappeler.";
+
+/* ── 01 · Prélèvement ─────────────────────────────────────────────────────── */
+var PRELEV = [
+  { k:"sagittale",  g:"Qualifie la lecture", l:"Coupe sagittale, capsule → bassinet", grave:true,
+    manque:"sans coupe sagittale orientée le CRG n'est pas qualifié (« such well-oriented areas are not " +
+           "necessarily common on routine autopsy sections » [ernst, ch. 8])" },
+  { k:"corticale",  g:"Qualifie la lecture", l:"Cortex entier, capsule → artère arciforme", grave:true,
+    manque:"le compte radial exige la colonne complète de la capsule à l'artère arciforme" },
+  { k:"bertin", g:"Critères de coupe — iront à la grille macro fixée", l:"Une colonne de Bertin sur la coupe",
+    manque:"sans colonne de Bertin, la limite cortico-médullaire n'est pas jugeable" },
+  { k:"medullaire", g:"Critères de coupe — iront à la grille macro fixée", l:"Médullaire incluse",
+    manque:"le critère opérationnel de dysplasie (tube à collerette) siège dans la médullaire" },
+  { k:"cotes", g:"Critères de coupe — iront à la grille macro fixée", l:"Les deux reins échantillonnés séparément",
+    manque:"92 % des CR écrivent « les reins » comme un objet unique — une asymétrie ne se voit qu'en séparant" },
+  { k:"pole", g:"Critères de coupe — iront à la grille macro fixée", l:"Pôles supérieur et inférieur documentés",
+    manque:"dans un duplex la dysplasie est polaire : une coupe médiane peut être normale" },
+  { k:"foie", g:"Critères de coupe — iront à la grille macro fixée", l:"Fragment de foie prélevé",
+    manque:"la plaque ductale est constante dans la PKRA — sans foie, la distinction PKRA/PKDA reste ouverte" },
+  { k:"congele", g:"Critères de coupe — iront à la grille macro fixée", l:"Fragment congelé pour ADN fœtal",
+    manque:"« accurate genetic counseling can be offered only in the presence of fetal DNA samples » [keeling, ch. 24]" },
+  { k:"voies", g:"Critères de coupe — iront à la grille macro fixée", l:"Uretères et bassinets suivis",
+    manque:"une obstruction basse ne se conclut pas sur le seul parenchyme" }
+];
+
+/* ── 02 · Rétention ───────────────────────────────────────────────────────── */
+/* Modificateurs communs, énoncés par [ernst, ch. 37] sur la série des délais. */
+var MODIF = "délai accéléré par l'anasarque et par un intervalle délivrance-autopsie > 24 h, ralenti par un terme < 27 SA";
+
+var RETENTION = [
+  { k:"basoTubIso", l:"Basophilie des tubes, isolée", b:"≥ 4 h", d:"« Tubules — ≥ 4 h »", h:4, q:"bon",
+    note:"l'attribution de cette ligne au rein est une RECONSTRUCTION : la colonne d'organe est amputée " +
+         "à l'extraction de [ernst, ch. 37]", alerte:MODIF },
+  { k:"basoTubQq",  l:"Basophilie tubulaire étendue, parenchyme conservé", b:"≈ 2–4 semaines",
+    d:"pratique du service", h:336, q:"moyen",
+    note:"divergence frontale : « there is no fetal organ that provides a good estimate of the timing of " +
+         "fetal death between 2 and 4 weeks » [ernst, ch. 37], alors que le service date précisément cette " +
+         "fenêtre sur le rein — écrire laquelle des deux lectures on retient",
+    alerte:MODIF },
+  { k:"basoRein",   l:"Rein basophile en totalité", b:"rang 10 de la série", d:"délai non sourcé", h:240, q:"moyen",
+    note:"le rein figure aux rangs 1 ET 10 de [keeling, ch. 15, Table 15.6] ; la colonne des délais a été " +
+         "perdue à l'extraction — le rang est conservé, pas le chiffre" },
+  { k:"necroseTub", l:"Nécrose tubulaire aiguë", b:"—", d:"non datable seule", h:0, q:"mauvais",
+    note:"lésion ou artefact de lyse, jamais départageable sur la seule morphologie" },
+  { k:"poussiere",  l:"« Basophilic dust » interstitielle", b:"—", d:"non datable seule", h:0, q:"mauvais",
+    note:"faire un Gram tissulaire avant de conclure : des colonies bactériennes post-mortem donnent la même image" },
+  { k:"mulberry",   l:"Aspect « mulberry » des glomérules", b:"≈ 2–3 jours", d:"« usually apparent at 2–3 days »",
+    h:60, q:"moyen", alerte:MODIF },
+  { k:"tcpAbsents", l:"TCP non identifiables", b:"—", d:"non interprétable sur macéré", h:0, q:"mauvais",
+    note:"conclure une dysplasie tubulaire rénale sur un rein macéré sans CD10 est une faute" }
+];
+
+/* ── 03 · Maturation — zone néphrogène ────────────────────────────────────── */
+var STADES = [
+  { k:"blastemeAbondant", l:"Zone continue, blastème abondant", max:30 },
+  { k:"blastemePeu",      l:"Zone continue, blastème peu abondant", max:34 },
+  { k:"discontinue",      l:"Zone discontinue, foyers isolés", max:38 },
+  { k:"absente",          l:"Zone absente, tubes matures jusqu'à la capsule", max:99,
+    note:"le « cortex corticis » est un aspect POSTNATAL, pas un stade fœtal — piège classique" }
+];
+
+/* ── 03 bis · Compte radial glomérulaire ──────────────────────────────────── */
+/* Deux barèmes issus de la MÊME source, divergents. On affiche les deux. */
+function baremeT156(sa){
+  var P = [{ max:25.5, lo:3,  hi:3,  l:"3",     sa:"< 25 SA" },
+           { max:28,   lo:5,  hi:7,  l:"5–7",   sa:"≈ 26 SA" },
+           { max:32,   lo:8,  hi:9,  l:"8–9",   sa:"≈ 30 SA" },
+           { max:36,   lo:9,  hi:10, l:"9–10",  sa:"≈ 34 SA" },
+           { max:99,   lo:10, hi:14, l:"10–14", sa:"≈ 38 SA" }];
+  for (var i = 0; i < P.length; i++) if (sa < P[i].max) return P[i];
+  return P[P.length - 1];
+}
+/* Règle A : 2–3 rangées à 18–19 SA, plateau jusqu'à 25 SA, puis +1 rangée par
+   semaine jusqu'à 35–36 SA, 12–14 à l'arrêt de la néphrogenèse. */
+function baremeRegleA(sa){
+  if (sa < 20)   return { lo:2,  hi:3,  l:"2–3",   sa:"18–19 SA" };
+  if (sa < 25.5) return { lo:2,  hi:3,  l:"2–3",   sa:"zone quiescente jusqu'à 25 SA" };
+  var n = 3 + Math.round(Math.min(sa, 36) - 25);
+  if (sa >= 35)  return { lo:12, hi:14, l:"12–14", sa:"≥ 35 SA, néphrogenèse achevée" };
+  return { lo:n - 1, hi:n + 1, l:(n - 1) + "–" + (n + 1), sa:Math.round(sa) + " SA, +1 rangée/semaine" };
+}
+
+var MESURE = {
+  titre:"Compte radial glomérulaire (CRG)",
+  defLabel:"barème déclaré",
+  optLabel:"méthode de comptage",
+  defs:[{ k:"t156",   l:"Table 15.6 [keeling, ch. 15]" },
+        { k:"regleA", l:"Règle +1 rangée/semaine [keeling, ch. 24]" }],
+  opts:[{ k:"hes",   l:"HES seul" },
+        { k:"cd10",  l:"CD10" },
+        { k:"cd15",  l:"CD15" },
+        { k:"duo",   l:"CD10 + CD15" }],
+  champs:[{ id:"crg", label:"CRG (rangées)", min:0, max:30, step:1 }]
+};
+
+function situe(n, b){ return n < b.lo ? "bas" : n > b.hi ? "haut" : "conforme"; }
+
+/* Le compte est une observation ; le barème est l'interprétation qui vient après.
+   On n'exige donc jamais un barème pour entrer un CRG : sans barème déclaré on
+   situe le compte dans les DEUX, et on dit s'ils s'accordent. */
+function verdictMesure(){
+  var n = E.mesure.v.crg, sa = num("sa");
+  if (n == null) return { cls:"", txt:"CRG non compté — la maturation rénale reste non chiffrée." };
+  if (sa == null) return { cls:"warn",
+    txt:"CRG = " + n + " rangées — sans terme, aucune attente n'est calculable." };
+
+  var a = baremeT156(sa), b = baremeRegleA(sa);
+  var t = "CRG = " + n + " rangées à " + sa + " SA. Table 15.6 : " + a.l + " (" + a.sa + ") ; " +
+          "règle +1/semaine : " + b.l + " (" + b.sa + ").";
+  var cls = "ok", res = [], sit;
+
+  if (!E.mesure.def){
+    var sa156 = situe(n, a), saA = situe(n, b);
+    t += " Barème non déclaré — le compte est consigné, l'interprétation reste ouverte : ";
+    if (sa156 === saA){ sit = sa156; t += "les deux barèmes le situent " + sa156 + "."; }
+    else { sit = null; cls = "warn";
+      t += sa156 + " selon la Table 15.6, " + saA + " selon la règle +1/semaine — " +
+           "les deux barèmes ne s'accordent pas ici, déclarer lequel on retient."; }
+  } else {
+    var ref = E.mesure.def === "t156" ? a : b;
+    sit = situe(n, ref);
+    if (a.l !== b.l)
+      t += " Les deux barèmes divergent ici — barème retenu : " +
+           (E.mesure.def === "t156" ? "Table 15.6" : "règle +1/semaine") + ".";
+  }
+
+  if (sit === "bas"){ cls = "bad";
+    t += " Compte BAS — trois lectures restent ouvertes : fœtus plus jeune que " +
+         "le terme déclaré, hypoplasie rénale, néphrogenèse arrêtée."; }
+  else if (sit === "haut"){ if (cls === "ok") cls = "warn";
+    t += (n > 14
+      ? " Compte au-dessus du maximum de 12–14 rangées — excès de néphrons (le corpus décrit 16 rangées à 29,5 SA)."
+      : " Compte HAUT."); }
+  else if (sit === "conforme"){ t += " Compte conforme."; }
+
+  if (!E.prelev.sagittale) res.push("coupe sagittale non confirmée — le compte n'est pas qualifié");
+  if (!E.prelev.corticale) res.push("colonne capsule→artère arciforme non confirmée");
+  if (!E.mesure.opt)       res.push("méthode de comptage non déclarée");
+  if (E.mesure.opt === "hes" && RETENTION.some(function(r){ return E.retention[r.k] === "present"; }))
+    res.push("HES seul sur un rein en rétention : compter en CD10 (± CD15)");
+  if (!E.stade) res.push("état de la zone néphrogène non consigné — le CRG n'est que la moitié du critère de datation");
+  if (res.length){ if (cls === "ok") cls = "warn"; t += " Réserves : " + res.join(" ; ") + "."; }
+  return { cls:cls, txt:t };
+}
+
+/* ── 05 · Variantes normales ──────────────────────────────────────────────── */
+var VARIANTES = [
+  { k:"lobulation",  l:"Lobulation fœtale conservée" },
+  { k:"blasteme",    l:"Blastème sous-capsulaire d'un fœtus jeune" },
+  { k:"glomImmat",   l:"Glomérules immatures en virgule sous la capsule" },
+  { k:"colonnes",    l:"Colonnes de Bertin proéminentes" },
+  { k:"erythro",     l:"Îlots d'érythropoïèse interstitielle" },
+  { k:"vacuoles",    l:"Vacuolisation claire des TCP du fœtus jeune" },
+  { k:"cristaux",    l:"Cristaux d'urate dans les tubes médullaires" },
+  { k:"pelvis",      l:"Bassinet extrarénal ample sans dilatation calicielle" },
+  { k:"sclerose",    l:"Rares glomérules scléreux (plancher 1–2 % [ernst] · < 1 % service)" }
+];
+
+/* ── 06 · Signes ──────────────────────────────────────────────────────────────
+   On coche ce qu'on voit, un signe à la fois. Aucun nom de maladie ici : les
+   noms se lisent en dessous, dans DIAGS, par association des signes cochés. */
+var SIGNES = [
+  /* Un signe est un constat : présent, absent, ou non regardé (rien cliqué).
+     « Absent » est un clic explicite — l'absence de clic n'est jamais un négatif. */
+  { k:"tubeCollerette", g:"Architecture et kystes", l:"Tube dilaté à collerette de cellules fusiformes, dans la MÉDULLAIRE",
+    meta:"critère opérationnel de la dysplasie" },
+  { k:"tubeColleretteCort", g:"Architecture et kystes", l:"Tube à collerette CORTICAL seulement",
+    meta:"n'a pas la valeur du critère médullaire" },
+  { k:"smaCollerette", g:"Architecture et kystes",  l:"Collerette SMA-positive" },
+  { k:"desorganisation", g:"Architecture et kystes", l:"Désorganisation architecturale, perte du gradient cortico-médullaire" },
+  { k:"cartilage", g:"Architecture et kystes",      l:"Îlot de cartilage", meta:"rare — son absence ne réfute rien" },
+  { k:"kystesInegaux", g:"Architecture et kystes",  l:"Kystes de taille inégale, sans systématisation" },
+  { k:"kysteSC", foeto:"FOETO:PF.REN-MAL-036", hpo:"HP:0000803", g:"Architecture et kystes",        l:"Kyste sous-capsulaire cortical", meta:"« hallmark of obstruction »" },
+  { k:"kystesNoyau", foeto:"FOETO:PF.REN-MAL-003", g:"Architecture et kystes",    l:"Amas de kystes translucides centrés sur un noyau fibreux dense" },
+  { k:"kystesRadiaires", g:"Architecture et kystes", l:"Kystes fusiformes radiaires, tous les néphrons atteints" },
+  { k:"kystesGlom", foeto:"FOETO:PF.REN-MAL-034", g:"Architecture et kystes",     l:"Kystes glomérulaires nombreux" },
+  { k:"kystesDiffus", foeto:"FOETO:PF.REN-MAL-032", g:"Architecture et kystes",   l:"Kystes corticaux ET médullaires diffus" },
+  { k:"intercalaire", g:"Architecture et kystes",   l:"Parenchyme intercalaire normal entre les kystes" },
+  { k:"fibrosePeriKyst", g:"Architecture et kystes", l:"Fibrose péri-kystique" },
+  { k:"collecteursNorm", foeto:"FOETO:PF.REN-MAL-008", g:"Architecture et kystes", l:"Tubes collecteurs médullaires normaux, non dilatés" },
+  { k:"collecteursDil", g:"Architecture et kystes", l:"Dilatation des tubes collecteurs" },
+  { k:"blastemeBande", g:"Architecture et kystes",  l:"Blastème en bande dense parallèle à la surface",
+    meta:"néphrogenèse arrêtée — décrite dès 23 SA" },
+  { k:"fibroseSC", g:"Architecture et kystes",      l:"Fibrose interstitielle sous-capsulaire" },
+  { k:"tcpRarefies", g:"Tubes, glomérules, vaisseaux",    l:"Tubes contournés proximaux absents ou raréfiés (CD10)" },
+  { k:"glomRetractes", foeto:"FOETO:PF.REN-MAL-021", g:"Tubes, glomérules, vaisseaux",  l:"Glomérules rétractés, serrés" },
+  { k:"arteriolesEp", foeto:"FOETO:PF.REN-MAL-006", g:"Tubes, glomérules, vaisseaux",   l:"Paroi des artérioles épaissie" },
+  { k:"renineAbsente", foeto:"FOETO:PF.REN-MAL-001", g:"Tubes, glomérules, vaisseaux",  l:"Rénine non marquée dans les cellules juxta-glomérulaires" },
+  { k:"crgBas", g:"Tubes, glomérules, vaisseaux",         l:"CRG abaissé pour le terme" },
+  { k:"crgHaut", g:"Tubes, glomérules, vaisseaux",        l:"CRG au-dessus de 12–14 rangées" },
+  { k:"nephronsReduits", foeto:"FOETO:PF.REN-MAL-047", g:"Tubes, glomérules, vaisseaux", l:"Néphrons normalement constitués, en nombre réduit" },
+  { k:"noyauxPerdus", g:"Nécrose",   l:"Perte des noyaux tubulaires, membranes basales nues" },
+  { k:"debrisLumieres", g:"Nécrose", l:"Débris cellulaires dans les lumières tubulaires" },
+  { k:"regeneration", g:"Nécrose",   l:"Régénération épithéliale (mitoses, noyaux hyperchromatiques)",
+    meta:"le seul élément vital de la série" },
+  { k:"scleroseSurPlancher", hpo:"HP:0000096", g:"Sclérose", l:"Glomérules scléreux au-dessus du plancher retenu" },
+  { k:"scleroseSegm", g:"Sclérose",   l:"Sclérose segmentaire" },
+  { k:"fibroseInterst", hpo:"HP:0005576", g:"Sclérose", l:"Fibrose interstitielle" },
+  { k:"cmv", foeto:"FOETO:PF.REN-MAL-031", g:"Infection",            l:"Inclusions virales de type CMV (noyau en œil de hibou)",
+    meta:"survit à la macération sévère" },
+  { k:"infiltrat", g:"Infection",      l:"Infiltrat inflammatoire interstitiel" },
+  { k:"microAbces", g:"Infection",     l:"Micro-abcès, polynucléaires dans les tubes" },
+  { k:"colonies", g:"Infection",       l:"Colonies bactériennes (Gram tissulaire)" },
+  { k:"noduleBlast", g:"Prolifération",    l:"Nodule blastémateux expansif, à limites nettes" },
+  { k:"triphasique", g:"Prolifération",    l:"Contingent triphasique (blastème, épithélium, stroma)" },
+  { k:"resteNephro", g:"Prolifération",    l:"Reste néphrogénique — nodule persistant sans expansion" },
+  { k:"mitoses", g:"Prolifération",        l:"Mitoses nombreuses" },
+  { k:"uretereDilate", g:"Contexte hors lame — macro, foie, clinique",  l:"Uretère ou bassinet dilaté en amont" },
+  { k:"reinsVolumineux", hpo:"HP:0000105", g:"Contexte hors lame — macro, foie, clinique", l:"Reins volumineux, contour conservé" },
+  { k:"reinsPetits", hpo:"HP:0000089", g:"Contexte hors lame — macro, foie, clinique",    l:"Reins de petite taille, architecture conservée" },
+  { k:"poidsAugmente", g:"Contexte hors lame — macro, foie, clinique",  l:"Reins de poids augmenté" },
+  { k:"plaqueDuctale", hpo:"HP:0006563", g:"Contexte hors lame — macro, foie, clinique",  l:"Plaque ductale sur le fragment de foie" },
+  { k:"anomAssociees", g:"Contexte hors lame — macro, foie, clinique",  l:"Anomalies extrarénales associées (polydactylie, encéphalocèle, foie)" },
+  { k:"voute", g:"Contexte hors lame — macro, foie, clinique",          l:"Retard d'ossification de la voûte crânienne", meta:"constant dans la DTR" },
+  { k:"exposition", g:"Contexte hors lame — macro, foie, clinique",     l:"Exposition maternelle ARA2 / IEC / AINS documentée" },
+  { k:"syndromique", g:"Contexte hors lame — macro, foie, clinique",    l:"Contexte syndromique (Beckwith-Wiedemann, diabète maternel)" }
+];
+
+/* ── 06 bis · Associations — affichées, jamais cochées ────────────────────────
+   Le nom se déduit des signes. « cle » est le signe pivot : sans lui le compte
+   peut être atteint sans que l'association tienne. */
+var DIAGS = [
+  { k:"dysplasie", l:"Dysplasie rénale", cle:"tubeCollerette", min:1,
+    signes:["tubeCollerette","smaCollerette","desorganisation","cartilage","kystesInegaux"],
+    stop:" — l'absence de cartilage ne réfute rien : il est rare et son absence n'exclut pas la dysplasie. " +
+         "Un tube à collerette CORTICAL n'a pas la même valeur : le critère est médullaire. La dysplasie " +
+         "n'est pas un diagnostic étiologique — elle peut être obstructive ou syndromique." },
+
+  { k:"obstruction", l:"Obstruction des voies urinaires", min:2,
+    signes:["kysteSC","kystesNoyau","blastemeBande","collecteursDil","fibroseSC","uretereDilate"],
+    stop:" — le kyste sous-capsulaire n'est PAS spécifique de l'obstruction : les AINS donnent la même " +
+         "image. Ne pas nommer le niveau de l'obstacle sans les voies urinaires sur la table." },
+
+  { k:"pkra", l:"Polykystose autosomique récessive (PKRA)", cle:"kystesRadiaires", min:2,
+    signes:["kystesRadiaires","plaqueDuctale","reinsVolumineux"],
+    stop:" — la plaque ductale est CONSTANTE dans la PKRA : sans foie examiné, la PKRA n'est ni retenue " +
+         "ni écartée. Des kystes glomérulaires nombreux l'écartent." },
+
+  { k:"pkda", l:"Polykystose autosomique dominante (PKDA)", min:2,
+    signes:["kystesInegaux","intercalaire","kystesGlom","reinsVolumineux"],
+    stop:" — des kystes glomérulaires nombreux écartent la PKRA, ils ne signent pas la PKDA pour autant." },
+
+  { k:"ciliopathie", l:"Ciliopathie syndromique (Meckel, Bardet-Biedl)", min:2,
+    signes:["kystesDiffus","collecteursNorm","fibrosePeriKyst","anomAssociees"],
+    stop:" — un tube primitif à collerette EXCLUT le Meckel : c'est un critère d'exclusion, pas une " +
+         "nuance. Ne pas nommer un syndrome sur le rein seul, sans l'examen fœtal complet." },
+
+  { k:"hypoplasie", l:"Hypoplasie rénale", cle:"crgBas", min:2,
+    signes:["crgBas","reinsPetits","nephronsReduits"],
+    stop:" — ne jamais écrire « hypoplasie oligoméganéphronique » sur un fœtus : l'hypertrophie " +
+         "compensatrice qui la définit est postnatale. Un CRG bas peut aussi ne dire que : fœtus plus " +
+         "jeune que le terme déclaré." },
+
+  { k:"hyperplasie", l:"Excès de néphrons", cle:"crgHaut", min:1,
+    signes:["crgHaut","poidsAugmente","syndromique"],
+    stop:" — le corpus décrit jusqu'à 16 rangées à 29,5 SA : au-dessus du maximum théorique, l'excès " +
+         "se constate, il ne se conclut pas seul." },
+
+  { k:"dtr", l:"Dysplasie tubulaire rénale (DTR) et ses phénocopies", cle:"tcpRarefies", min:2,
+    signes:["tcpRarefies","glomRetractes","arteriolesEp","renineAbsente","voute","exposition"],
+    stop:" — l'image est une CONVERGENCE : DTR génétique, blocage du système rénine-angiotensine, " +
+         "AINS donnent le même rein. Sans l'anamnèse médicamenteuse, écrire la lésion, pas la cause. " +
+         "Sur macéré, ne rien conclure sans CD10." },
+
+  { k:"nta", l:"Nécrose tubulaire aiguë", min:2,
+    signes:["noyauxPerdus","debrisLumieres","regeneration"],
+    stop:" — lésion et artefact de lyse post-mortem ne sont jamais départageables sur la seule " +
+         "morphologie. La régénération, elle, est vitale : c'est le seul élément qui tranche." },
+
+  { k:"glomSclerose", l:"Glomérulosclérose", cle:"scleroseSurPlancher", min:1,
+    signes:["scleroseSurPlancher","scleroseSegm","fibroseInterst"],
+    stop:" — deux planchers coexistent : 1–2 % [ernst] et < 1 % (service). Écrire le pourcentage compté " +
+         "et le plancher retenu, ne pas trancher entre les deux." },
+
+  { k:"infection", l:"Infection", min:2,
+    signes:["cmv","infiltrat","microAbces","colonies"],
+    stop:" — les inclusions virales SURVIVENT à la macération sévère : leur absence sur un rein macéré " +
+         "n'exclut rien, mais leur présence reste lisible. Ne pas confondre colonies post-mortem et " +
+         "infection anténatale." },
+
+  { k:"nephroblastome", l:"Prolifération blastémateuse / néphroblastome", cle:"noduleBlast", min:2,
+    signes:["noduleBlast","triphasique","resteNephro","mitoses"],
+    stop:" — un blastème sous-capsulaire physiologique n'est pas un reste néphrogénique, et un reste " +
+         "néphrogénique n'est pas un néphroblastome. Le panel de 13 marqueurs est une pratique de " +
+         "service : le nommer comme tel." }
+];
+
+/* ── 07 · Négatifs obligatoires ───────────────────────────────────────────── */
+/* Ceux que les sources imposent et que le corpus des 176 CR n'écrit jamais. */
+var NEGATIFS = [
+  { k:"zone", l:"État de la zone néphrogène et du blastème consigné", p:"jamais écrit dans le corpus",
+    ko:"état de la zone néphrogène NON consigné — la moitié du critère de datation manque",
+    auto:function(){ return E.stade ? true : null; } },
+  { k:"kysteSC", signe:"kysteSC", l:"Absence de kyste sous-capsulaire cortical", p:"« hallmark of obstruction »",
+    ko:"kyste sous-capsulaire cortical PRÉSENT — obstruction ou AINS" },
+  { k:"orientation", l:"Orientation de la coupe déclarée", p:"conditionne la validité du CRG",
+    ko:"orientation de la coupe NON déclarée — le CRG n'est pas qualifié",
+    auto:function(){ return E.prelev.sagittale ? true : null; } },
+  { k:"voiesHautes", signe:"uretereDilate", l:"Voies urinaires hautes non dilatées", p:"uretères et bassinets suivis",
+    ko:"voies urinaires hautes ANORMALES ou non examinées" },
+  { k:"crg", l:"CRG compté et rapporté au barème", p:"84 mentions dans 128 des 176 CR",
+    ko:"CRG NON compté ou barème non nommé",
+    auto:function(){ return E.mesure.v.crg != null && E.mesure.def ? true : null; } },
+  { k:"tcp", signe:"tcpRarefies", l:"Tubes contournés proximaux présents", p:"leur raréfaction ouvre la DTR",
+    ko:"TCP raréfiés ou absents — contrôler en CD10 avant de conclure" },
+  { k:"cortMed", signe:"desorganisation", l:"Différenciation cortico-médullaire respectée", p:"sa perte ouvre la dysplasie",
+    ko:"différenciation cortico-médullaire PERDUE" },
+  { k:"symetrie", l:"Les deux reins comparés", p:"92 % des CR traitent « les reins » comme un objet unique",
+    ko:"reins NON comparés séparément — une asymétrie ne serait pas vue",
+    auto:function(){ return E.prelev.cotes || E.cote === "deux" ? true : null; } }
+];
+
+/* ── 08 · Techniques ──────────────────────────────────────────────────────── */
+var TECHNIQUES = [
+  { k:"cd10",     l:"CD10", q:"tubes contournés proximaux" },
+  { k:"ema",      l:"EMA", q:"tubes distaux et collecteurs" },
+  { k:"cd10cd15", l:"CD10 + CD15", q:"comptage du CRG sur rein macéré" },
+  { k:"emaCd10",  l:"EMA / CD10 sur les kystes", q:"arbre de typage des kystes, Fig. 24.30" },
+  { k:"sma",      l:"Anti-actine musculaire lisse", q:"collerette du tube dysplasique" },
+  { k:"renine",   l:"Anti-rénine", q:"cellules juxta-glomérulaires, axe DTR" },
+  { k:"trichrome",l:"Trichrome de Masson", q:"fibrose interstitielle et péri-kystique" },
+  { k:"perls",    l:"Perls", q:"dépôts ferriques" },
+  { k:"gram",     l:"Gram tissulaire", q:"colonies bactériennes vs « basophilic dust »" },
+  { k:"adn",      l:"Envoi du congelé en génétique", q:"conseil génétique impossible sans ADN fœtal" }
+];
+
+/* ── Propositions de techniques — déduites des clics, jamais imposées ─────── */
+function suggerer(){
+  var s = {};
+  function anormal(k){ return E.signes[k] === POS; }
+  function ret(k){ return E.retention[k] === "present"; }
+
+  /* Les propositions suivent les SIGNES : une technique se demande sur ce qu'on
+     a vu, pas sur le nom qu'on lui donnerait. */
+  if (anormal("tubeCollerette") || anormal("tubeColleretteCort")) s.sma = 1;
+  if (anormal("desorganisation")){ s.sma = 1; s.trichrome = 1; }
+  if (anormal("kysteSC") || anormal("kystesNoyau") || anormal("kystesInegaux") ||
+      anormal("kystesRadiaires") || anormal("kystesGlom") || anormal("kystesDiffus")) s.emaCd10 = 1;
+  if (anormal("fibrosePeriKyst") || anormal("fibroseSC") || anormal("fibroseInterst")) s.trichrome = 1;
+  if (anormal("kystesRadiaires") || anormal("plaqueDuctale") || anormal("anomAssociees")) s.adn = 1;
+  if (anormal("crgBas") || anormal("nephronsReduits")){ s.cd10 = 1; s.adn = 1; }
+  if (anormal("tcpRarefies")){ s.cd10 = 1; s.renine = 1; }
+  if (anormal("renineAbsente") || anormal("arteriolesEp") || anormal("voute")){ s.renine = 1; s.adn = 1; }
+  if (anormal("scleroseSurPlancher") || anormal("scleroseSegm")) s.trichrome = 1;
+  if (anormal("cmv") || anormal("infiltrat") || anormal("microAbces") || anormal("colonies")) s.gram = 1;
+  if (anormal("noduleBlast") || anormal("resteNephro")) s.cd10 = 1;
+
+  if (ret("poussiere")) s.gram = 1;
+  if (ret("tcpAbsents")) s.cd10 = 1;
+  /* Compter sur macéré à l'œil nu ne tient pas : le double marquage rend les glomérules. */
+  if (E.mesure.v.crg == null && RETENTION.some(function(r){ return E.retention[r.k] === "present" && r.q !== "mauvais"; }))
+    s.cd10cd15 = 1;
+  if (E.mesure.opt === "hes" && E.mesure.v.crg != null) s.cd10cd15 = 1;
+
+  if (E.prelev.congele && SIGNES.some(function(x){ return E.signes[x.k] === POS; }))
+    s.adn = 1;
+  return s;
+}
+
+/* ── Contrôles propres au rein ────────────────────────────────────────────── */
+async function testsOrgane(chk, clic, set, crTient, pause){
+  /* Les deux barèmes, isolément */
+  chk("T15.6 : 24 SA → 3",        baremeT156(24).l === "3");
+  chk("T15.6 : 30 SA → 8–9",      baremeT156(30).l === "8–9");
+  chk("T15.6 : 40 SA → 10–14",    baremeT156(40).l === "10–14");
+  chk("règle A : 19 SA → 2–3",    baremeRegleA(19).l === "2–3");
+  chk("règle A : plateau à 24 SA", baremeRegleA(24).l === "2–3");
+  chk("règle A : ≥ 35 SA → 12–14", baremeRegleA(36).l === "12–14");
+  /* Le point de la fiche : à 34 SA règle A ≈ 12, Table 15.6 donne 9–10. */
+  chk("divergence à 34 SA",       baremeT156(34).hi < baremeRegleA(34).lo);
+
+  set("sa", "34");
+  set("m_crg", "10");
+  /* Le compte s'entre sans barème : c'est une observation, pas une interprétation. */
+  chk("CRG accepté sans barème",  $("vMesure").className.indexOf("bad") < 0 &&
+      crTient("le compte est consigné, l'interprétation reste ouverte"));
+  chk("situé dans les deux barèmes", crTient("conforme selon la Table 15.6, bas selon la règle +1/semaine"));
+  chk("désaccord des barèmes signalé", crTient("les deux barèmes ne s'accordent pas ici"));
+
+  set("m_crg", "2");
+  chk("accord des deux barèmes",  crTient("les deux barèmes le situent bas"));
+  set("m_crg", "10");
+
+  clic("mdef", "t156");
+  chk("les deux barèmes affichés", crTient("Table 15.6 : 9–10") && crTient("règle +1/semaine : 11–13"));
+  chk("divergence nommée dans le CR", crTient("Les deux barèmes divergent ici"));
+  chk("conforme sous T15.6",      crTient("Compte conforme."));
+
+  clic("mdef", "regleA");
+  chk("bas sous règle A",         crTient("Compte BAS") && crTient("néphrogenèse arrêtée"));
+  chk("les trois lectures d'un CRG bas", crTient("hypoplasie") && crTient("fœtus plus jeune"));
+  chk("réserve zone néphrogène",  crTient("état de la zone néphrogène non consigné"));
+
+  set("m_crg", "16");
+  chk("excès de néphrons",        crTient("au-dessus du maximum") && crTient("16 rangées à 29,5 SA"));
+  set("m_crg", "");
+  clic("mdef", "regleA");
+
+  /* La branche qui porte le sens : zone épuisée avant le terme. */
+  clic("stade", "absente");
+  chk("néphrogenèse arrêtée sur avance", crTient("néphrogenèse arrêtée") &&
+      crTient("quatre bornes sourcées"));
+  clic("stade", "absente");
+
+  /* Divergences portées, jamais arbitrées */
+  chk("rétention : attribution reconstruite", par(RETENTION, "basoTubIso").note.indexOf("RECONSTRUCTION") >= 0);
+  chk("rétention : divergence 2–4 semaines", par(RETENTION, "basoTubQq").note.indexOf("divergence frontale") >= 0);
+  chk("sclérose : deux planchers",  par(DIAGS, "glomSclerose").stop.indexOf("1–2 %") >= 0 &&
+      par(DIAGS, "glomSclerose").stop.indexOf("< 1 %") >= 0);
+  chk("dysplasie : cartilage non réfutant", par(DIAGS, "dysplasie").stop.indexOf("n'exclut pas") >= 0);
+  chk("Meckel exclu par le tube à collerette", par(DIAGS, "ciliopathie").stop.indexOf("EXCLUT") >= 0);
+  chk("jamais d'HOM sur un fœtus", par(DIAGS, "hypoplasie").stop.indexOf("oligoméganéphronique") >= 0);
+  chk("DTR : convergence à trois", par(DIAGS, "dtr").stop.indexOf("CONVERGENCE") >= 0);
+
+  /* Le nom se déduit des signes — il ne se coche pas */
+  chk("aucun bouton ne porte un diagnostic",
+      DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
+
+  /* Le banc commun laisse des signes posés : on part d'un état voulu, pas supposé. */
+  function pose(k, v){ if (E.signes[k] !== v) clic("les", k, v); }
+  function ote(k){ if (E.signes[k]) clic("les", k, E.signes[k]); }
+  function tenue(k){ return associations().some(function(a){ return a.d.k === k && a.tenu; }); }
+
+  pose("tcpRarefies", POS);
+  pose("glomRetractes", POS);
+  chk("DTR se lit dans l'association", tenue("dtr") &&
+      crTient("Dysplasie tubulaire rénale (DTR) et ses phénocopies — association tenue"));
+  chk("DTR propose rénine et CD10", suggerer().renine === 1 && suggerer().cd10 === 1);
+
+  /* Le compte sans le pivot ne tient pas : la DTR se lit sur les TCP raréfiés */
+  ote("tcpRarefies");
+  pose("arteriolesEp", POS);
+  chk("sans le signe pivot, l'association ne tient pas", !tenue("dtr") &&
+      crTient("signe pivot non coché : Tubes contournés proximaux absents ou raréfiés"));
+  ote("glomRetractes"); ote("arteriolesEp");
+
+  /* Un tube à collerette CORTICAL ne fait pas la dysplasie */
+  ote("tubeCollerette");
+  pose("tubeColleretteCort", POS);
+  chk("collerette corticale ne tient pas la dysplasie", !tenue("dysplasie"));
+  pose("tubeCollerette", POS);
+  chk("collerette médullaire tient la dysplasie", tenue("dysplasie"));
+  chk("dysplasie propose le SMA", suggerer().sma === 1);
+  ote("tubeColleretteCort");
+
+  clic("ret", "poussiere", "present");
+  chk("poussière propose le Gram", suggerer().gram === 1);
+  clic("ret", "poussiere", "present");
+}
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
-{{FOETO_JS}}
+var FOETO = {"sections":[{"t":"5.1 Dysplasie rénale","termes":[{"id":"FOETO:PF.REN-MAL-010","l":"Différenciation myofibroblastique du blastème"},{"id":"FOETO:PF.REN-MAL-015","l":"Dépôts de protéine de Tamm-Horsfall"},{"id":"FOETO:PF.REN-MAL-027","l":"Hypodysplasie rénale"},{"id":"FOETO:PF.REN-MAL-047","l":"Réduction néphronique"}]},{"t":"5.11 Infection rénale","termes":[{"id":"FOETO:PF.REN-MAL-031","l":"Inclusions nucléaires à cytomégalovirus dans les tubules proximaux"}]},{"t":"5.2 Séquence d'obstruction basse — la dysplasie de l'uropathie","termes":[{"id":"FOETO:PF.REN-MAL-003","l":"Agglomérat multikystique sur noyau fibreux dense"},{"id":"FOETO:PF.REN-MAL-007","l":"Canaux collecteurs dilatés entourés de tissu conjonctif dense"},{"id":"FOETO:PF.REN-MAL-014","l":"Dysplasie médullaire rénale"},{"id":"FOETO:PF.REN-MAL-018","l":"Fibrose autour des calices et des canaux collecteurs médullaires"},{"id":"FOETO:PF.REN-MAL-028","l":"Hypoplasie corticomédullaire"},{"id":"FOETO:PF.REN-MAL-036","l":"Microkystes sous-capsulaires corticaux"},{"id":"FOETO:PF.REN-MAL-044","l":"Néphrons dysmorphiques résiduels"},{"id":"FOETO:PF.REN-MAL-045","l":"Papille aplatie et fibreuse"},{"id":"FOETO:PF.REN-MAL-046","l":"Rein multikystique"}]},{"t":"5.3 Polykystoses — PKRA vs PKDA, la distinction **est** morphologique sur la lame","termes":[{"id":"FOETO:PF.REN-MAL-033","l":"Kystes dérivés des canaux collecteurs"},{"id":"FOETO:PF.REN-MAL-034","l":"Kystes glomérulaires"},{"id":"FOETO:PF.REN-MAL-054","l":"Œdème fibro-interstitiel périkystique"}]},{"t":"5.4 Ciliopathies — Meckel et Bardet-Biedl","termes":[{"id":"FOETO:PF.REN-MAL-008","l":"Canaux collecteurs médullaires normaux non dilatés au sein de kystes"},{"id":"FOETO:PF.REN-MAL-032","l":"Kystes cortico-médullaires diffus"},{"id":"FOETO:PF.REN-MAL-035","l":"Kystes médullaires"},{"id":"FOETO:PF.REN-MAL-038","l":"Mésenchyme intercystique aplati quasi acellulaire"},{"id":"FOETO:PF.REN-MAL-040","l":"Mésenchyme lâche interkystique"}]},{"t":"5.5 Hypoplasie rénale et hypoplasie oligoméganéphronique (HOM)","termes":[{"id":"FOETO:PF.REN-MAL-026","l":"Hypertrophie glomérulaire compensatrice"},{"id":"FOETO:PF.REN-MAL-029","l":"Hypoplasie oligoméganéphronique"},{"id":"FOETO:PF.REN-MAL-030","l":"Hypoplasie rénale"}]},{"t":"5.6 Hyperplasie rénale et excès de néphrons","termes":[{"id":"FOETO:PF.REN-MAL-043","l":"Néphroblastomatose"}]},{"t":"5.7 Dysgénésie tubulaire rénale (DTR / RTD)","termes":[{"id":"FOETO:PF.REN-MAL-001","l":"Absence d'expression rénale de la rénine"},{"id":"FOETO:PF.REN-MAL-006","l":"Artérioles à paroi épaissie"},{"id":"FOETO:PF.REN-DYS-001","l":"Dysgenèse tubulaire rénale"},{"id":"FOETO:PF.REN-MAL-025","l":"Hyperexpression rénale de la rénine"}]},{"t":"5.8 Phénocopies toxiques de la DTR — **le piège de fond de cette fiche**","termes":[{"id":"FOETO:PF.REN-MAL-005","l":"Anomalies de néphrogénèse superficielle induites"},{"id":"FOETO:PF.REN-MAL-021","l":"Glomérules rétractés"},{"id":"FOETO:PF.REN-MAL-022","l":"Glomérules rétractés ischémiques"},{"id":"FOETO:PF.REN-MAL-049","l":"Tubes proximaux dédifférenciés"},{"id":"FOETO:PF.REN-MAL-050","l":"Tubules proximaux dédifférenciés"}]}],"formes":{"FOETO:PF.REN-MAL-002":["Accumulation mésangiale de matériel fibrillaire PAS-positif","Mesangial PAS-positive fibrillary material accumulation","(hors fiche)"],"FOETO:PF.REN-MAL-004":["Anomalie de la membrane basale tubulaire","Tubular basement membrane abnormality","(hors fiche)"],"FOETO:PF.REN-VAS-001":["Compaction glomérulaire corticale","Cortical glomerular crowding","(hors fiche)"],"FOETO:PF.REN-MAL-009":["Cylindres protéiques oblitérant les lumières tubulaires","Protein casts obliterating tubular lumina","(hors fiche)"],"FOETO:PF.REN-MAL-011":["Dilatation microkystique des tubules proximaux","Microcystic dilatation of proximal tubules","(hors fiche)"],"FOETO:PF.REN-MAL-012":["Dysplasie kystique cortico-médullaire massive","Massive corticomedullary cystic dysplasia","(hors fiche)"],"FOETO:PF.REN-MAL-013":["Dysplasie médullaire kystique","Cystic medullary dysplasia","(hors fiche)"],"FOETO:PF.REN-MAL-017":["Désorientation des tubes collecteurs","Collecting duct disorientation","(hors fiche)"],"FOETO:PF.REN-MAL-019":["Floculus glomérulaire rudimentaire dans kyste","Rudimentary glomerular tuft within cyst","(hors fiche)"],"FOETO:PF.REN-MAL-020":["Glomérules minuscules à floculus scléreux solidifié","Miniature glomeruli with solidified sclerotic tuft","(hors fiche)"],"FOETO:PF.REN-MAL-023":["Glomérulomégalie","Glomerulomegaly","(hors fiche)"],"FOETO:PF.REN-MAL-024":["Hypercellularité mésangiale glomérulaire","Glomerular mesangial hypercellularity","(hors fiche)"],"FOETO:PF.REN-MAL-037":["Microvacuolisation tubulaire","Tubular microvacuolization","(hors fiche)"],"FOETO:PF.REN-MAL-041":["Néphrite tubulo-interstitielle chronique avec atrophie tubulaire","Chronic tubulointerstitial nephritis with tubular atrophy","(hors fiche)"],"FOETO:PF.REN-MAL-042":["Néphrite tubulo-interstitielle chronique fœtale","Fetal chronic tubulointerstitial nephritis","(hors fiche)"],"FOETO:PF.REN-MAL-048":["Sclérose mésangiale diffuse","Diffuse mesangial sclerosis","(hors fiche)"],"FOETO:PF.REN-MAL-051":["Zone néphrogénique persistante après 36 SA","Persistent nephrogenic zone after 36 weeks","(hors fiche)"],"FOETO:PF.REN-MAL-052":["Épithélium kystique aplati","Flattened cystic epithelium","(hors fiche)"],"FOETO:PF.REN-MAL-053":["Épithélium kystique éosinophile stratifié","Stratified eosinophilic cystic epithelium","(hors fiche)"],"FOETO:PF.REN-MAL-010":["Différenciation myofibroblastique du blastème","Myofibroblastic differentiation of blastema"],"FOETO:PF.REN-MAL-015":["Dépôts de protéine de Tamm-Horsfall","Tamm-Horsfall protein deposits"],"FOETO:PF.REN-MAL-027":["Hypodysplasie rénale","Renal hypodysplasia"],"FOETO:PF.REN-MAL-047":["Réduction néphronique","Nephron deficit / reduced nephron number"],"FOETO:PF.REN-MAL-031":["Inclusions nucléaires à cytomégalovirus dans les tubules proximaux","Cytomegalovirus nuclear inclusions in proximal tubules"],"FOETO:PF.REN-MAL-003":["Agglomérat multikystique sur noyau fibreux dense","Multicystic kidney with dense fibrous core"],"FOETO:PF.REN-MAL-007":["Canaux collecteurs dilatés entourés de tissu conjonctif dense","Dilated collecting ducts surrounded by dense connective tissue"],"FOETO:PF.REN-MAL-014":["Dysplasie médullaire rénale","Renal medullary dysplasia"],"FOETO:PF.REN-MAL-018":["Fibrose autour des calices et des canaux collecteurs médullaires","Pericalyceal and periductal medullary fibrosis"],"FOETO:PF.REN-MAL-028":["Hypoplasie corticomédullaire","Corticomedullary hypoplasia"],"FOETO:PF.REN-MAL-036":["Microkystes sous-capsulaires corticaux","Subcapsular cortical microcysts"],"FOETO:PF.REN-MAL-044":["Néphrons dysmorphiques résiduels","Dysmorphic residual nephrons"],"FOETO:PF.REN-MAL-045":["Papille aplatie et fibreuse","Flattened fibrotic renal papilla"],"FOETO:PF.REN-MAL-046":["Rein multikystique","Multicystic dysplastic kidney"],"FOETO:PF.REN-MAL-033":["Kystes dérivés des canaux collecteurs","Collecting duct-derived cysts"],"FOETO:PF.REN-MAL-034":["Kystes glomérulaires","Glomerular cysts"],"FOETO:PF.REN-MAL-054":["Œdème fibro-interstitiel périkystique","Pericystic fibro-interstitial edema"],"FOETO:PF.REN-MAL-008":["Canaux collecteurs médullaires normaux non dilatés au sein de kystes","Non-dilated medullary collecting ducts amid cortical cysts"],"FOETO:PF.REN-MAL-032":["Kystes cortico-médullaires diffus","Diffuse corticomedullary cysts"],"FOETO:PF.REN-MAL-035":["Kystes médullaires","Medullary cysts"],"FOETO:PF.REN-MAL-038":["Mésenchyme intercystique aplati quasi acellulaire","Featureless intercystic mesenchyme"],"FOETO:PF.REN-MAL-040":["Mésenchyme lâche interkystique","Loose intercystic mesenchyme"],"FOETO:PF.REN-MAL-026":["Hypertrophie glomérulaire compensatrice","Compensatory glomerular hypertrophy"],"FOETO:PF.REN-MAL-029":["Hypoplasie oligoméganéphronique","Oligomeganephronia"],"FOETO:PF.REN-MAL-030":["Hypoplasie rénale","Renal hypoplasia"],"FOETO:PF.REN-MAL-043":["Néphroblastomatose","Nephroblastomatosis"],"FOETO:PF.REN-MAL-001":["Absence d'expression rénale de la rénine","Absent renal renin expression"],"FOETO:PF.REN-MAL-006":["Artérioles à paroi épaissie","Thick-walled arterioles"],"FOETO:PF.REN-DYS-001":["Dysgenèse tubulaire rénale","Renal tubular dysgenesis"],"FOETO:PF.REN-MAL-025":["Hyperexpression rénale de la rénine","Renal renin overexpression"],"FOETO:PF.REN-MAL-005":["Anomalies de néphrogénèse superficielle induites","Drug-induced superficial nephrogenesis abnormalities"],"FOETO:PF.REN-MAL-021":["Glomérules rétractés","Retracted glomeruli"],"FOETO:PF.REN-MAL-022":["Glomérules rétractés ischémiques","Ischemic retracted glomeruli"],"FOETO:PF.REN-MAL-049":["Tubes proximaux dédifférenciés","Dedifferentiated proximal tubules"],"FOETO:PF.REN-MAL-050":["Tubules proximaux dédifférenciés","Dedifferentiated proximal tubules"]}};
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
@@ -1531,44 +1967,3 @@ async function autotest(){
 </script>
 </body>
 </html>
-"""
-
-CONST = {k: re.compile(r'var %s\s*=\s*"([^"]+)"' % k) for k in ("ORGANE", "TITRE", "SOURCE")}
-
-
-def fabriquer(nom):
-    """nom = « rein », ou « rein.test » pour une variante d'essai du même organe :
-    grilles/rein.test.js → grille_rein_test.html, l'organe exporté reste « rein »."""
-    organe = nom.split(".")[0]
-    frag = (FRAGMENTS / (nom + ".js")).read_text(encoding="utf-8")
-    vals = {}
-    for k, r in CONST.items():
-        m = r.search(frag)
-        if not m:
-            raise SystemExit("grilles/%s.js : « var %s » manquant" % (organe, k))
-        vals[k] = m.group(1)
-    if vals["ORGANE"] != organe:
-        raise SystemExit("grilles/%s.js declare ORGANE=%s" % (organe, vals["ORGANE"]))
-
-    page = SHELL
-    for k, v in vals.items():
-        page = page.replace("{{%s}}" % k, v)
-    page = page.replace("{{ORGANE_JS}}", frag.rstrip())
-    page = page.replace("{{FOETO_JS}}", bloc_foeto(organe))
-
-    reste = re.findall(r"\{\{(\w+)\}\}", page)
-    if reste:
-        raise SystemExit("marqueurs non substitues : %s" % ", ".join(sorted(set(reste))))
-
-    cible = ICI / ("grille_%s.html" % nom.replace(".", "_"))
-    cible.write_text(page, encoding="utf-8")
-    print("%s — %d octets, %d essais" %
-          (cible.name, len(page.encode()), len(re.findall(r"\bchk\(", page))))
-
-
-if __name__ == "__main__":
-    noms = sys.argv[1:] or sorted(p.stem for p in FRAGMENTS.glob("*.js"))
-    if not noms:
-        raise SystemExit(__doc__)
-    for n in noms:
-        fabriquer(n)

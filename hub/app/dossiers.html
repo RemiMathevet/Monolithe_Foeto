@@ -1106,8 +1106,10 @@ function moteurAk(){
 function pistesAk(){
   var box = $("crPistes"); if (!box) return;
   var codes = Array.prototype.filter.call(document.querySelectorAll("#crProps .crProp"), function(c){
-    return c.checked && /^(HP|FOETO):/.test(c.dataset.code || "");
-  }).map(function(c){ return c.dataset.code; });
+    return c.checked && c.dataset.code;
+  }).reduce(function(t, c){           // un signe de grille peut porter FOETO et HPO
+    return t.concat(c.dataset.code.split(/\s+/));
+  }, []).filter(function(x){ return /^(HP|FOETO):/.test(x); });
   codes = codes.filter(function(c, i){ return codes.indexOf(c) === i; });
   box.hidden = false;
   var tete = '<div class="groupe" style="margin-top:0">Pistes syndromiques — akinator ' +

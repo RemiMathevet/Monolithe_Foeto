@@ -238,7 +238,9 @@ def _bloc(texte, titre):
     return m.group(1) if m else ""
 
 
-RE_ANORMAL = re.compile(r"^ {2}(.+?) — ANORMAL$", re.M)
+# « — ANORMAL » : grilles 0.2.0 (normal/anormal) ; « — PRÉSENT » : grilles 0.3.0,
+# où un signe est un constat présent/absent.
+RE_ANORMAL = re.compile(r"^ {2}(.+?) — (?:ANORMAL|PRÉSENT)$", re.M)
 RE_FOETO = re.compile(r"^ {2}(.+?) \[([^\[\]]+)\]$", re.M)
 
 
@@ -266,7 +268,10 @@ def _grille(module, d):
             "anormaux": RE_ANORMAL.findall(_bloc(cr, "SIGNES")),
             "foeto": [{"label": a, "id": b}
                       for a, b in RE_FOETO.findall(_bloc(cr, "TERMES FOETO"))],
-            "libre": (g.get("libre") or "").strip()}
+            "libre": (g.get("libre") or "").strip(),
+            # Grilles 0.3.0 : les codes FOETO/HPO des signes présents, par libellé.
+            "codes": {c.get("l"): [x for x in (c.get("foeto"), c.get("hpo")) if x]
+                      for c in d.get("codes") or [] if c.get("l")}}
 
 
 def phrases_cr(racine):
@@ -552,7 +557,10 @@ def propositions(ctx):
           ", ".join(list(c.get("termes") or []) + ([c["autre"]] if c.get("autre") else [])))
     for g in ctx["grilles"]:
         for a in g["anormaux"]:
-            p(f"grille:{g['module']}:{a}", "Grilles de lecture", f"{g['organe'].capitalize()} — {a}")
+            # « Paragraphe (étendue) · libellé » en 0.3.0 : le code se retrouve par le libellé.
+            codes = g["codes"].get(a.rsplit(" · ", 1)[-1]) or []
+            p(f"grille:{g['module']}:{a}", "Grilles de lecture", f"{g['organe'].capitalize()} — {a}",
+              None, " ".join(codes) or None)
         for f in g["foeto"]:
             p(f"foeto:{g['module']}:{f['id']}", "Grilles de lecture", f["label"],
               f"terme posé à la grille {g['organe']}", f["id"])

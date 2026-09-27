@@ -575,6 +575,9 @@ ADAPTATEURS = {
 }
 ADAPTATEURS.update({(m, "0.1.0"): (1, adapt_microscopie) for m in MODULES_MICRO})
 ADAPTATEURS.update({(m, "0.2.0"): (4, adapt_microscopie) for m in MODULES_MICRO})
+# 0.3.0 : signes présent/absent, négatifs déduits (grille rein 2.0.0 d'abord). Même
+# rangement à plat : seules les valeurs des feuilles changent.
+ADAPTATEURS.update({(m, "0.3.0"): (4, adapt_microscopie) for m in MODULES_MICRO})
 
 # L'ordre du compte rendu, et celui des onglets de la fiche. La microscopie s'y
 # tient entre l'autopsie et la neuropathologie — c'est là qu'elle se fait.

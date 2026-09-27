@@ -203,6 +203,23 @@ def main():
       str(rein["foeto"]))
     t("les normaux ne passent pas pour des anomalies",
       "tubes proximaux" not in " ".join(rein["anormaux"]))
+    g3 = compte_rendu._grille("grille_rein", {"organe": "rein", "compte_rendu":
+        "SIGNES\n  Architecture et kystes · Kyste sous-capsulaire cortical — PRÉSENT\n"
+        "  Absents : tubes collecteurs dilatés.\n  Non regardés : cartilage.\n"})
+    t("grille 0.3.0 : signe présent relu comme anomalie",
+      g3["anormaux"] == ["Architecture et kystes · Kyste sous-capsulaire cortical"], str(g3["anormaux"]))
+    t("grille 0.3.0 : les absents ne passent pas pour des anomalies",
+      not any("collecteurs" in a for a in g3["anormaux"]))
+    t("grille 0.3.0 enregistrée", ("grille_rein", "0.3.0") in ingest.ADAPTATEURS)
+    g3c = compte_rendu._grille("grille_rein", {"organe": "rein", "compte_rendu":
+        "SIGNES\n  Architecture et kystes (focale) · Kyste sous-capsulaire cortical — PRÉSENT\n",
+        "codes": [{"k": "kysteSC", "l": "Kyste sous-capsulaire cortical",
+                   "foeto": "FOETO:PF.REN-MAL-036", "hpo": "HP:0000803"}]})
+    pr = compte_rendu.propositions({"clinique": {"anormaux": []}, "biometrie": {"lignes": []},
+        "autopsie": {"masses": [], "etapes": []}, "radio": {}, "micro": {"anormaux": []},
+        "grilles": [dict(g3c, module="grille_rein")], "neuropath": {"etapes": []}})
+    t("grille 0.3.0 : codes du signe rattachés à sa proposition",
+      any(x["code"] == "FOETO:PF.REN-MAL-036 HP:0000803" for x in pr), str([x["code"] for x in pr]))
 
     print("Composition placentaire (phrases du paquet data_hub)")
     # Un cr_phrases.json minimal : deux sections, un terme. Les signes de la
