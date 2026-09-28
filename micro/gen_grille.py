@@ -635,7 +635,7 @@ function resoudreF2(){
   if (!FOETO2) return;
   SIGNES.forEach(function(x){
     var s = x.f2 && FOETO2[x.f2];
-    if (s){ x.l = s.l; x.foeto2 = s.id; x.v1 = s.v1; }
+    if (s){ x.l = s.l; x.foeto2 = s.id; x.v1 = s.v1; if (s.hpo) x.hpo = s.hpo; }   // HPO complète, depuis la base
     else x.horsFiche = true;   // aucun signe de fiche derrière : non sourcé par la biblio
   });
   DIAGS.forEach(function(d){ if (d.f2 && FOETO2[d.f2]) d.foeto = [FOETO2[d.f2].id]; });
@@ -1584,10 +1584,12 @@ def bloc_foeto2(nom, frag):
     organe = nom.split(".")[0]
     c = sqlite3.connect("file:%s?mode=ro" % DB2, uri=True)
     base = {}
-    for i, k, l, t in c.execute("select id, k, label_fr, type from signes where organe = ?", (organe,)):
+    hpo_col = any(r[1] == "hpo" for r in c.execute("pragma table_info(signes)"))
+    for i, k, l, t, h in c.execute("select id, k, label_fr, type, %s from signes where organe = ?"
+                                   % ("hpo" if hpo_col else "null"), (organe,)):
         v1 = [r[0] for r in c.execute("select v1_id from correspondance_v1 where v2_id = ? and qualite = 'exacte' "
                                       "order by v1_id", (i,))]
-        base[k] = {"id": i, "l": l, "t": t, "v1": v1}
+        base[k] = {"id": i, "l": l, "t": t, "v1": v1, "hpo": h}
     inconnues = sorted(set(cles) - set(base))
     if inconnues:
         raise SystemExit("grilles/%s.js : clés absentes de FOETO v2 : %s" % (nom, ", ".join(inconnues)))

@@ -34,7 +34,7 @@ var ORGANE  = "rein";
 var TITRE   = "rein et voies urinaires hautes";
 var SOURCE  = "fiche_rein.md";
 var MODULE  = "grille_rein";
-var VERSION = "3.2.3";
+var VERSION = "3.2.4";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;   /* v3 : plus de section « Termes FOETO » */
@@ -247,7 +247,7 @@ var SIGNES = [
   { k:"cortexMince", f2:"cortex_mince", g:"Architecture et kystes" },
   { k:"cartilage", f2:"ilot_cartilage", g:"Architecture et kystes",      l:"Îlot de cartilage", meta:"rare — son absence ne réfute rien" },
   { k:"kystesInegaux", g:"Architecture et kystes",  l:"Kystes de taille inégale, sans systématisation" },
-  { k:"kysteSC", f2:"kystes_sous_capsulaires", hpo:"HP:0000803", g:"Architecture et kystes",        l:"Kyste sous-capsulaire cortical", meta:"« hallmark of obstruction »" },
+  { k:"kysteSC", f2:"kystes_sous_capsulaires", g:"Architecture et kystes",        l:"Kyste sous-capsulaire cortical", meta:"« hallmark of obstruction »" },
   { k:"kystesNoyau", f2:"kystes_noyau_fibreux", g:"Architecture et kystes",    l:"Amas de kystes translucides centrés sur un noyau fibreux dense" },
   { k:"kystesRadiaires", f2:"kystes_radies", g:"Architecture et kystes", l:"Kystes fusiformes radiaires, tous les néphrons atteints" },
   { k:"gradientKystes", f2:"gradient_kystes", g:"Architecture et kystes" },
@@ -308,11 +308,11 @@ var SIGNES = [
   { k:"mitoses", g:"Prolifération",        l:"Mitoses nombreuses" },
   { k:"uretereDilate", f2:"voies_urinaires_anormales", g:"Contexte hors lame — macro, foie, clinique",  l:"Uretère ou bassinet dilaté en amont" },
   { k:"reinsVolumineux", hpo:"HP:0000105", g:"Contexte hors lame — macro, foie, clinique", l:"Reins volumineux, contour conservé" },
-  { k:"reinsPetits", f2:"reins_petits_conserves", hpo:"HP:0000089", g:"Contexte hors lame — macro, foie, clinique",    l:"Reins de petite taille, architecture conservée" },
+  { k:"reinsPetits", f2:"reins_petits_conserves", g:"Contexte hors lame — macro, foie, clinique",    l:"Reins de petite taille, architecture conservée" },
   { k:"reinsIrreguliers", f2:"reins_petits_irreguliers", g:"Contexte hors lame — macro, foie, clinique" },
   { k:"reinsLobules", f2:"reins_volumineux_lobules", g:"Contexte hors lame — macro, foie, clinique" },
   { k:"poidsAugmente", g:"Contexte hors lame — macro, foie, clinique",  l:"Reins de poids augmenté" },
-  { k:"plaqueDuctale", f2:"plaque_ductale", hpo:"HP:0006563", g:"Contexte hors lame — macro, foie, clinique",  l:"Plaque ductale sur le fragment de foie" },
+  { k:"plaqueDuctale", f2:"plaque_ductale", g:"Contexte hors lame — macro, foie, clinique",  l:"Plaque ductale sur le fragment de foie" },
   { k:"anomAssociees", g:"Contexte hors lame — macro, foie, clinique",  l:"Anomalies extrarénales associées (polydactylie, encéphalocèle, foie)" },
   { k:"encephalocele", f2:"encephalocele", g:"Contexte hors lame — macro, foie, clinique" },
   { k:"voute", f2:"voute_ossification", g:"Contexte hors lame — macro, foie, clinique",          l:"Retard d'ossification de la voûte crânienne", meta:"constant dans la DTR" },
@@ -566,6 +566,7 @@ async function testsOrgane(chk, clic, set, crTient, pause){
       /25 SA/.test(document.querySelector('#mesDefs [data-k="t156"]').title));
   chk("v3.2 : la NTA tient sur les cylindres", par(DIAGS, "nta").cle === "cylindres" && !!par(SIGNES, "cylindres").foeto2);
   chk("v3.2 : un signe hors fiche est marqué", par(SIGNES, "regeneration").horsFiche === true && !par(SIGNES, "cylindres").horsFiche);
+  chk("v3.2.4 : HPO venu de la base", par(SIGNES, "kysteSC").hpo === "HP:0000803");
   chk("v3.1 : libellé venu de FOETO v2", par(SIGNES, "kysteSC").l === "Kystes sous-capsulaires corticaux");
   /* seules les correspondances v1 EXACTES suivent : MAL-036 est partielle (fiche § 10 C) */
   chk("v3.1 : codes v1 exacts seulement", codesDe(par(SIGNES, "kystesNoyau")).indexOf("FOETO:PF.REN-MAL-003") > 0 &&
