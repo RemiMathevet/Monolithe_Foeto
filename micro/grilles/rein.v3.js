@@ -34,7 +34,7 @@ var ORGANE  = "rein";
 var TITRE   = "rein et voies urinaires hautes";
 var SOURCE  = "fiche_rein.md";
 var MODULE  = "grille_rein";
-var VERSION = "3.2.1";
+var VERSION = "3.2.2";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;   /* v3 : plus de section « Termes FOETO » */
@@ -314,7 +314,7 @@ var SIGNES = [
   { k:"poidsAugmente", g:"Contexte hors lame — macro, foie, clinique",  l:"Reins de poids augmenté" },
   { k:"plaqueDuctale", f2:"plaque_ductale", hpo:"HP:0006563", g:"Contexte hors lame — macro, foie, clinique",  l:"Plaque ductale sur le fragment de foie" },
   { k:"anomAssociees", g:"Contexte hors lame — macro, foie, clinique",  l:"Anomalies extrarénales associées (polydactylie, encéphalocèle, foie)" },
-  { k:"encephalocele", f2:"encephalocele", g:"Contexte hors lame — macro, foie, clinique" },
+  { k:"encephalocele", l:"Encéphalocèle occipitale", g:"Contexte hors lame — macro, foie, clinique" },
   { k:"voute", f2:"voute_ossification", g:"Contexte hors lame — macro, foie, clinique",          l:"Retard d'ossification de la voûte crânienne", meta:"constant dans la DTR" },
   { k:"exposition", f2:"exposition_medicamenteuse", g:"Contexte hors lame — macro, foie, clinique",     l:"Exposition maternelle ARA2 / IEC / AINS documentée" },
   { k:"syndromique", g:"Contexte hors lame — macro, foie, clinique",    l:"Contexte syndromique (Beckwith-Wiedemann, diabète maternel)" }
