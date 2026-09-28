@@ -8,6 +8,9 @@
    et vont aux associations, affichés, jamais exportés d'office. La recherche
    « autre terme FOETO » reste en bas des signes pour le hors-fiche ; un terme
    déjà porté par un signe y pose le signe. Couverture vérifiée à la génération.
+   3.3.0 — branchée directement sur FOETO (V1 patchée depuis les fiches, termes
+   tagués « verbatim ») : un signe porte fv (un id FOETO) ; libellé et HPO arbitré
+   viennent de la base. Il n'y a plus de seconde base.
    3.1.0 — branchée sur FOETO v2 (foeto_base/foeto_v2.db, bâtie depuis
    fiche_rein.md) : un signe porte f2 (une clé de la base), son libellé et ses codes viennent
    de la base ; les codes v1 exacts suivent pour l'akinator. Un signe sans f2
@@ -34,7 +37,7 @@ var ORGANE  = "rein";
 var TITRE   = "rein et voies urinaires hautes";
 var SOURCE  = "fiche_rein.md";
 var MODULE  = "grille_rein";
-var VERSION = "3.2.4";
+var VERSION = "3.3.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;   /* v3 : plus de section « Termes FOETO » */
@@ -237,86 +240,86 @@ var VARIANTES = [
 var SIGNES = [
   /* Un signe est un constat : présent, absent, ou non regardé (rien cliqué).
      « Absent » est un clic explicite — l'absence de clic n'est jamais un négatif. */
-  { k:"tubeCollerette", f2:"tube_collerette", g:"Architecture et kystes", l:"Tube dilaté à collerette de cellules fusiformes, dans la MÉDULLAIRE",
+  { k:"tubeCollerette", fv:"FOETO:PF.REN-MAL-071", g:"Architecture et kystes", l:"Tube dilaté à collerette de cellules fusiformes, dans la MÉDULLAIRE",
     meta:"critère opérationnel de la dysplasie" },
-  { k:"tubePrimitif", f2:"tube_primitif", g:"Architecture et kystes" },
+  { k:"tubePrimitif", fv:"FOETO:PF.REN-MAL-072", g:"Architecture et kystes" },
   { k:"tubeColleretteCort", g:"Architecture et kystes", l:"Tube à collerette CORTICAL seulement",
     meta:"n'a pas la valeur du critère médullaire" },
   { k:"smaCollerette", g:"Architecture et kystes",  l:"Collerette SMA-positive" },
-  { k:"desorganisation", f2:"desorganisation", g:"Architecture et kystes", l:"Désorganisation architecturale, perte du gradient cortico-médullaire" },
-  { k:"cortexMince", f2:"cortex_mince", g:"Architecture et kystes" },
-  { k:"cartilage", f2:"ilot_cartilage", g:"Architecture et kystes",      l:"Îlot de cartilage", meta:"rare — son absence ne réfute rien" },
+  { k:"desorganisation", fv:"FOETO:PF.REN-MAL-016", g:"Architecture et kystes", l:"Désorganisation architecturale, perte du gradient cortico-médullaire" },
+  { k:"cortexMince", fv:"FOETO:PF.REN-MAL-056", g:"Architecture et kystes" },
+  { k:"cartilage", fv:"FOETO:PF.REN-MAL-060", g:"Architecture et kystes",      l:"Îlot de cartilage", meta:"rare — son absence ne réfute rien" },
   { k:"kystesInegaux", g:"Architecture et kystes",  l:"Kystes de taille inégale, sans systématisation" },
-  { k:"kysteSC", f2:"kystes_sous_capsulaires", g:"Architecture et kystes",        l:"Kyste sous-capsulaire cortical", meta:"« hallmark of obstruction »" },
-  { k:"kystesNoyau", f2:"kystes_noyau_fibreux", g:"Architecture et kystes",    l:"Amas de kystes translucides centrés sur un noyau fibreux dense" },
-  { k:"kystesRadiaires", f2:"kystes_radies", g:"Architecture et kystes", l:"Kystes fusiformes radiaires, tous les néphrons atteints" },
-  { k:"gradientKystes", f2:"gradient_kystes", g:"Architecture et kystes" },
-  { k:"kystesGlom", f2:"kystes_glomerulaires", g:"Architecture et kystes",     l:"Kystes glomérulaires nombreux" },
-  { k:"kystesGlomIsoles", f2:"kystes_glomerulaires_isoles", g:"Architecture et kystes" },
-  { k:"microkystesRares", f2:"microkystes_rares", g:"Architecture et kystes" },
+  { k:"kysteSC", fv:"FOETO:PF.REN-MAL-062", g:"Architecture et kystes",        l:"Kyste sous-capsulaire cortical", meta:"« hallmark of obstruction »" },
+  { k:"kystesNoyau", fv:"FOETO:PF.REN-MAL-003", g:"Architecture et kystes",    l:"Amas de kystes translucides centrés sur un noyau fibreux dense" },
+  { k:"kystesRadiaires", fv:"FOETO:PF.REN-NOR-017", g:"Architecture et kystes", l:"Kystes fusiformes radiaires, tous les néphrons atteints" },
+  { k:"gradientKystes", fv:"FOETO:PF.REN-NOR-013", g:"Architecture et kystes" },
+  { k:"kystesGlom", fv:"FOETO:PF.REN-MAL-034", g:"Architecture et kystes",     l:"Kystes glomérulaires nombreux" },
+  { k:"kystesGlomIsoles", fv:"FOETO:PF.REN-MAL-061", g:"Architecture et kystes" },
+  { k:"microkystesRares", fv:"FOETO:PF.REN-MAL-063", g:"Architecture et kystes" },
   { k:"kystesDiffus", g:"Architecture et kystes",   l:"Kystes corticaux ET médullaires diffus" },
   { k:"intercalaire", g:"Architecture et kystes",   l:"Parenchyme intercalaire normal entre les kystes" },
   { k:"fibrosePeriKyst", g:"Architecture et kystes", l:"Fibrose péri-kystique" },
-  { k:"collecteursNorm", f2:"collecteurs_normaux", g:"Architecture et kystes", l:"Tubes collecteurs médullaires normaux, non dilatés" },
+  { k:"collecteursNorm", fv:"FOETO:PF.REN-MAL-008", g:"Architecture et kystes", l:"Tubes collecteurs médullaires normaux, non dilatés" },
   { k:"collecteursDil", g:"Architecture et kystes", l:"Dilatation des tubes collecteurs" },
-  { k:"collecteursConj", f2:"collecteurs_manchon", g:"Architecture et kystes", l:"Tubes collecteurs dilatés cernés de tissu conjonctif dense" },
-  { k:"henleRares", f2:"henle_rares", g:"Architecture et kystes" },
-  { k:"kystesCollecteurs", f2:"kystes_collecteurs", g:"Architecture et kystes", l:"Kystes dérivés des tubes collecteurs", meta:"typage EMA+ / CD10−" },
-  { k:"kystesMed", f2:"kystes_medullaires", g:"Architecture et kystes", l:"Kystes médullaires" },
-  { k:"oedemePeriKyst", f2:"oedeme_perikystique", g:"Architecture et kystes", l:"Œdème fibro-interstitiel péri-kystique" },
-  { k:"mesAplati", f2:"mesenchyme_intercystique", g:"Architecture et kystes", l:"Mésenchyme inter-kystique aplati, quasi acellulaire" },
+  { k:"collecteursConj", fv:"FOETO:PF.REN-MAL-007", g:"Architecture et kystes", l:"Tubes collecteurs dilatés cernés de tissu conjonctif dense" },
+  { k:"henleRares", fv:"FOETO:PF.REN-NOR-001", g:"Architecture et kystes" },
+  { k:"kystesCollecteurs", fv:"FOETO:PF.REN-MAL-033", g:"Architecture et kystes", l:"Kystes dérivés des tubes collecteurs", meta:"typage EMA+ / CD10−" },
+  { k:"kystesMed", fv:"FOETO:PF.REN-MAL-035", g:"Architecture et kystes", l:"Kystes médullaires" },
+  { k:"oedemePeriKyst", fv:"FOETO:PF.REN-MAL-054", g:"Architecture et kystes", l:"Œdème fibro-interstitiel péri-kystique" },
+  { k:"mesAplati", fv:"FOETO:PF.REN-MAL-038", g:"Architecture et kystes", l:"Mésenchyme inter-kystique aplati, quasi acellulaire" },
   { k:"mesLache", g:"Architecture et kystes", l:"Mésenchyme inter-kystique lâche" },
-  { k:"nephronsDysmorphes", f2:"nephrons_rares", g:"Architecture et kystes", l:"Néphrons dysmorphiques résiduels" },
-  { k:"myofibroblastique", f2:"blasteme_sma", g:"Architecture et kystes", l:"Différenciation myofibroblastique du blastème" },
-  { k:"blastemeAbsent", f2:"blasteme_absent", g:"Architecture et kystes" },
-  { k:"fibrosePericalic", f2:"fibrose_pericalicielle", g:"Architecture et kystes", l:"Fibrose autour des calices et des tubes collecteurs médullaires" },
-  { k:"papilleAplatie", f2:"calices_dilates", g:"Architecture et kystes", l:"Papille aplatie et fibreuse" },
-  { k:"blastemeBande", f2:"blasteme_bande", g:"Architecture et kystes",  l:"Blastème en bande dense parallèle à la surface",
+  { k:"nephronsDysmorphes", fv:"FOETO:PF.REN-MAL-064", g:"Architecture et kystes", l:"Néphrons dysmorphiques résiduels" },
+  { k:"myofibroblastique", fv:"FOETO:PF.REN-MAL-010", g:"Architecture et kystes", l:"Différenciation myofibroblastique du blastème" },
+  { k:"blastemeAbsent", fv:"FOETO:PF.REN-MAL-055", g:"Architecture et kystes" },
+  { k:"fibrosePericalic", fv:"FOETO:PF.REN-MAL-018", g:"Architecture et kystes", l:"Fibrose autour des calices et des tubes collecteurs médullaires" },
+  { k:"papilleAplatie", fv:"FOETO:PF.REN-NOR-006", g:"Architecture et kystes", l:"Papille aplatie et fibreuse" },
+  { k:"blastemeBande", fv:"FOETO:PF.REN-NOR-032", g:"Architecture et kystes",  l:"Blastème en bande dense parallèle à la surface",
     meta:"néphrogenèse arrêtée — décrite dès 23 SA" },
   { k:"fibroseSC", g:"Architecture et kystes",      l:"Fibrose interstitielle sous-capsulaire" },
-  { k:"tcpRarefies", f2:"tcp_rares", g:"Tubes, glomérules, vaisseaux",    l:"Tubes contournés proximaux absents ou raréfiés (CD10)" },
-  { k:"tcpDediff", f2:"tcp_dedifferencies", g:"Tubes, glomérules, vaisseaux", l:"Tubes proximaux dédifférenciés (sans bordure en brosse, CD10 faible)",
+  { k:"tcpRarefies", fv:"FOETO:PF.REN-MAL-070", g:"Tubes, glomérules, vaisseaux",    l:"Tubes contournés proximaux absents ou raréfiés (CD10)" },
+  { k:"tcpDediff", fv:"FOETO:PF.REN-MAL-049", g:"Tubes, glomérules, vaisseaux", l:"Tubes proximaux dédifférenciés (sans bordure en brosse, CD10 faible)",
     meta:"doublon en base : PF.REN-MAL-050 « tubules » — un seul code exporté" },
-  { k:"glomRetractes", f2:"glomerules_retractes", g:"Tubes, glomérules, vaisseaux",  l:"Glomérules rétractés, serrés" },
-  { k:"nephronsSuperf", f2:"nephrons_superficiels_anormaux", g:"Tubes, glomérules, vaisseaux" },
-  { k:"hypertrophieGlom", f2:"hypertrophie_nephronique", g:"Tubes, glomérules, vaisseaux", l:"Hypertrophie glomérulaire",
+  { k:"glomRetractes", fv:"FOETO:PF.REN-MAL-021", g:"Tubes, glomérules, vaisseaux",  l:"Glomérules rétractés, serrés" },
+  { k:"nephronsSuperf", fv:"FOETO:PF.REN-MAL-005", g:"Tubes, glomérules, vaisseaux" },
+  { k:"hypertrophieGlom", fv:"FOETO:PF.REN-MAL-026", g:"Tubes, glomérules, vaisseaux", l:"Hypertrophie glomérulaire",
     meta:"compensatrice : surtout postnatale" },
-  { k:"arteriolesEp", f2:"arterioles_epaissies", g:"Tubes, glomérules, vaisseaux",   l:"Paroi des artérioles épaissie" },
-  { k:"renineAbsente", f2:"renine_anomalie", g:"Tubes, glomérules, vaisseaux",  l:"Rénine non marquée dans les cellules juxta-glomérulaires" },
-  { k:"renineHyper", f2:"renine_surexpression", g:"Tubes, glomérules, vaisseaux",  l:"Rénine hyperexprimée dans les cellules juxta-glomérulaires" },
-  { k:"tammHorsfall", f2:"tamm_horsfall", g:"Tubes, glomérules, vaisseaux", l:"Dépôts de protéine de Tamm-Horsfall", meta:"éosinophile amorphe, confirmé en IHC" },
-  { k:"crgBas", f2:"generations_reduites", g:"Tubes, glomérules, vaisseaux",         l:"CRG abaissé pour le terme" },
-  { k:"crgHaut", f2:"generations_exces", g:"Tubes, glomérules, vaisseaux",        l:"CRG au-dessus de 12–14 rangées" },
+  { k:"arteriolesEp", fv:"FOETO:PF.REN-MAL-006", g:"Tubes, glomérules, vaisseaux",   l:"Paroi des artérioles épaissie" },
+  { k:"renineAbsente", fv:"FOETO:PF.REN-MAL-069", g:"Tubes, glomérules, vaisseaux",  l:"Rénine non marquée dans les cellules juxta-glomérulaires" },
+  { k:"renineHyper", fv:"FOETO:PF.REN-MAL-025", g:"Tubes, glomérules, vaisseaux",  l:"Rénine hyperexprimée dans les cellules juxta-glomérulaires" },
+  { k:"tammHorsfall", fv:"FOETO:PF.REN-MAL-015", g:"Tubes, glomérules, vaisseaux", l:"Dépôts de protéine de Tamm-Horsfall", meta:"éosinophile amorphe, confirmé en IHC" },
+  { k:"crgBas", fv:"FOETO:PF.REN-MAL-047", g:"Tubes, glomérules, vaisseaux",         l:"CRG abaissé pour le terme" },
+  { k:"crgHaut", fv:"FOETO:PF.REN-NOR-020", g:"Tubes, glomérules, vaisseaux",        l:"CRG au-dessus de 12–14 rangées" },
   { k:"nephronsReduits", g:"Tubes, glomérules, vaisseaux", l:"Néphrons normalement constitués, en nombre réduit" },
   { k:"noyauxPerdus", g:"Nécrose",   l:"Perte des noyaux tubulaires, membranes basales nues" },
   { k:"debrisLumieres", g:"Nécrose", l:"Débris cellulaires dans les lumières tubulaires" },
   { k:"regeneration", g:"Nécrose",   l:"Régénération épithéliale (mitoses, noyaux hyperchromatiques)",
     meta:"le seul élément vital de la série" },
-  { k:"cylindres", f2:"cylindres", g:"Nécrose" },
+  { k:"cylindres", fv:"FOETO:PF.REN-MAL-057", g:"Nécrose" },
   { k:"scleroseSurPlancher", hpo:"HP:0000096", g:"Sclérose", l:"Glomérules scléreux au-dessus du plancher retenu" },
   { k:"scleroseSegm", g:"Sclérose",   l:"Sclérose segmentaire" },
   { k:"fibroseInterst", hpo:"HP:0005576", g:"Sclérose", l:"Fibrose interstitielle" },
-  { k:"cmv", f2:"inclusions_cmv", g:"Infection",            l:"Inclusions virales de type CMV (noyau en œil de hibou)",
+  { k:"cmv", fv:"FOETO:PF.REN-MAL-031", g:"Infection",            l:"Inclusions virales de type CMV (noyau en œil de hibou)",
     meta:"survit à la macération sévère" },
-  { k:"infarctusMed", f2:"infarctus_medullaire", g:"Infection" },
-  { k:"infiltrat", f2:"inflammation", g:"Infection",      l:"Infiltrat inflammatoire interstitiel" },
+  { k:"infarctusMed", fv:"FOETO:PF.REN-VAS-003", g:"Infection" },
+  { k:"infiltrat", fv:"FOETO:PF.REN-INF-001", g:"Infection",      l:"Infiltrat inflammatoire interstitiel" },
   { k:"microAbces", g:"Infection",     l:"Micro-abcès, polynucléaires dans les tubes" },
   { k:"colonies", g:"Infection",       l:"Colonies bactériennes (Gram tissulaire)" },
   { k:"noduleBlast", g:"Prolifération",    l:"Nodule blastémateux expansif, à limites nettes" },
   { k:"triphasique", g:"Prolifération",    l:"Contingent triphasique (blastème, épithélium, stroma)" },
   { k:"resteNephro", g:"Prolifération",    l:"Reste néphrogénique — nodule persistant sans expansion" },
   { k:"mitoses", g:"Prolifération",        l:"Mitoses nombreuses" },
-  { k:"uretereDilate", f2:"voies_urinaires_anormales", g:"Contexte hors lame — macro, foie, clinique",  l:"Uretère ou bassinet dilaté en amont" },
+  { k:"uretereDilate", fv:"FOETO:PF.REN-MAL-073", g:"Contexte hors lame — macro, foie, clinique",  l:"Uretère ou bassinet dilaté en amont" },
   { k:"reinsVolumineux", hpo:"HP:0000105", g:"Contexte hors lame — macro, foie, clinique", l:"Reins volumineux, contour conservé" },
-  { k:"reinsPetits", f2:"reins_petits_conserves", g:"Contexte hors lame — macro, foie, clinique",    l:"Reins de petite taille, architecture conservée" },
-  { k:"reinsIrreguliers", f2:"reins_petits_irreguliers", g:"Contexte hors lame — macro, foie, clinique" },
-  { k:"reinsLobules", f2:"reins_volumineux_lobules", g:"Contexte hors lame — macro, foie, clinique" },
+  { k:"reinsPetits", fv:"FOETO:PF.REN-MAL-066", g:"Contexte hors lame — macro, foie, clinique",    l:"Reins de petite taille, architecture conservée" },
+  { k:"reinsIrreguliers", fv:"FOETO:PF.REN-MAL-067", g:"Contexte hors lame — macro, foie, clinique" },
+  { k:"reinsLobules", fv:"FOETO:PF.REN-MAL-068", g:"Contexte hors lame — macro, foie, clinique" },
   { k:"poidsAugmente", g:"Contexte hors lame — macro, foie, clinique",  l:"Reins de poids augmenté" },
-  { k:"plaqueDuctale", f2:"plaque_ductale", g:"Contexte hors lame — macro, foie, clinique",  l:"Plaque ductale sur le fragment de foie" },
+  { k:"plaqueDuctale", fv:"FOETO:PF.REN-MAL-065", g:"Contexte hors lame — macro, foie, clinique",  l:"Plaque ductale sur le fragment de foie" },
   { k:"anomAssociees", g:"Contexte hors lame — macro, foie, clinique",  l:"Anomalies extrarénales associées (polydactylie, encéphalocèle, foie)" },
-  { k:"encephalocele", f2:"encephalocele", g:"Contexte hors lame — macro, foie, clinique" },
-  { k:"voute", f2:"voute_ossification", g:"Contexte hors lame — macro, foie, clinique",          l:"Retard d'ossification de la voûte crânienne", meta:"constant dans la DTR" },
-  { k:"exposition", f2:"exposition_medicamenteuse", g:"Contexte hors lame — macro, foie, clinique",     l:"Exposition maternelle ARA2 / IEC / AINS documentée" },
+  { k:"encephalocele", fv:"FOETO:PF.REN-MAL-058", g:"Contexte hors lame — macro, foie, clinique" },
+  { k:"voute", fv:"FOETO:PF.REN-MAL-074", g:"Contexte hors lame — macro, foie, clinique",          l:"Retard d'ossification de la voûte crânienne", meta:"constant dans la DTR" },
+  { k:"exposition", fv:"FOETO:PF.REN-MAL-059", g:"Contexte hors lame — macro, foie, clinique",     l:"Exposition maternelle ARA2 / IEC / AINS documentée" },
   { k:"syndromique", g:"Contexte hors lame — macro, foie, clinique",    l:"Contexte syndromique (Beckwith-Wiedemann, diabète maternel)" }
 ];
 
@@ -349,7 +352,7 @@ var DIAGS = [
     stop:" — un tube primitif à collerette EXCLUT le Meckel : c'est un critère d'exclusion, pas une " +
          "nuance. Ne pas nommer un syndrome sur le rein seul, sans l'examen fœtal complet." },
 
-  { k:"hypoplasie", l:"Hypoplasie rénale", f2:"hypoplasie", cle:"crgBas", min:2,
+  { k:"hypoplasie", l:"Hypoplasie rénale", fv:"FOETO:PF.REN-MAL-030", cle:"crgBas", min:2,
     signes:["crgBas","reinsPetits","nephronsReduits"],
     stop:" — ne jamais écrire « hypoplasie oligoméganéphronique » sur un fœtus : l'hypertrophie " +
          "compensatrice qui la définit est postnatale. Un CRG bas peut aussi ne dire que : fœtus plus " +
@@ -360,7 +363,7 @@ var DIAGS = [
     stop:" — le corpus décrit jusqu'à 16 rangées à 29,5 SA : au-dessus du maximum théorique, l'excès " +
          "se constate, il ne se conclut pas seul." },
 
-  { k:"dtr", l:"Dysplasie tubulaire rénale (DTR) et ses phénocopies", f2:"dtr", cle:"tcpRarefies", min:2,
+  { k:"dtr", l:"Dysplasie tubulaire rénale (DTR) et ses phénocopies", fv:"FOETO:PF.REN-DYS-001", cle:"tcpRarefies", min:2,
     signes:["tcpRarefies","glomRetractes","arteriolesEp","renineAbsente","nephronsSuperf","voute","exposition"],
     stop:" — l'image est une CONVERGENCE : DTR génétique, blocage du système rénine-angiotensine, " +
          "AINS donnent le même rein. Sans l'anamnèse médicamenteuse, écrire la lésion, pas la cause. " +
@@ -558,18 +561,17 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 
   /* v3 : la section Termes FOETO est fondue dans les signes */
   chk("v3 : plus de section Termes FOETO", $("secFoeto").hidden && !!$("secSignes").querySelector("#rqFoeto"));
-  chk("v3 : terme maladie sur l'association", par(DIAGS, "dtr").foeto[0] === "FOETO2:PF.REN-DIA-dtr");
+  chk("v3 : terme maladie sur l'association", par(DIAGS, "dtr").foeto[0] === "FOETO:PF.REN-DYS-001");
   set("rqFoeto", "Tamm");
-  $("sgFoeto").querySelector('[data-pick="FOETO2:PF.REN-CON-tamm_horsfall"]').click();
-  chk("v3 : un terme porté par un signe pose le signe", E.signes.tammHorsfall === POS && !E.foeto["FOETO2:PF.REN-CON-tamm_horsfall"]);
+  $("sgFoeto").querySelector('[data-pick="FOETO:PF.REN-MAL-015"]').click();
+  chk("v3 : un terme porté par un signe pose le signe", E.signes.tammHorsfall === POS && !E.foeto["FOETO:PF.REN-MAL-015"]);
   chk("v3.2.1 : comment compter au survol", /RANGÉES/.test($("m_crg").parentNode.querySelector("label").title) &&
       /25 SA/.test(document.querySelector('#mesDefs [data-k="t156"]').title));
-  chk("v3.2 : la NTA tient sur les cylindres", par(DIAGS, "nta").cle === "cylindres" && !!par(SIGNES, "cylindres").foeto2);
+  chk("v3.2 : la NTA tient sur les cylindres", par(DIAGS, "nta").cle === "cylindres" && /^FOETO:/.test(par(SIGNES, "cylindres").foeto));
   chk("v3.2 : un signe hors fiche est marqué", par(SIGNES, "regeneration").horsFiche === true && !par(SIGNES, "cylindres").horsFiche);
-  chk("v3.2.4 : HPO venu de la base", par(SIGNES, "kysteSC").hpo === "HP:0000803");
-  chk("v3.1 : libellé venu de FOETO v2", par(SIGNES, "kysteSC").l === "Kystes sous-capsulaires corticaux");
-  /* seules les correspondances v1 EXACTES suivent : MAL-036 est partielle (fiche § 10 C) */
-  chk("v3.1 : codes v1 exacts seulement", codesDe(par(SIGNES, "kystesNoyau")).indexOf("FOETO:PF.REN-MAL-003") > 0 &&
-      codesDe(par(SIGNES, "kysteSC")).indexOf("FOETO:PF.REN-MAL-036") < 0);
+  chk("v3.2.4 : HPO arbitré venu de la base", par(SIGNES, "kysteSC").hpo === "HP:0000803");
+  chk("v3.1 : libellé venu de FOETO", par(SIGNES, "kysteSC").l === "Kystes sous-capsulaires corticaux");
+  /* le code exporté est l'id FOETO du terme tagué verbatim */
+  chk("v3.3 : code FOETO du terme verbatim", codesDe(par(SIGNES, "kystesNoyau"))[0] === "FOETO:PF.REN-MAL-003");
   ote("tammHorsfall");
 }

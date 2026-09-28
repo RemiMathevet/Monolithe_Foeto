@@ -30,7 +30,6 @@ from pathlib import Path
 ICI = Path(__file__).parent
 FRAGMENTS = ICI / "grilles"
 DB = Path("/home/mathevet/Bureau/foeto_base/syndromes_foetaux.db")
-DB2 = Path("/home/mathevet/Bureau/foeto_base/foeto_v2.db")   # FOETO v2, bâtie depuis les fiches
 
 
 def bloc_foeto(organe):
@@ -575,7 +574,7 @@ function foetoLabel(id){
 /* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
 function foetoAjouter(id){
   /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
-  var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id || x.foeto2 === id; })[0];
+  var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
   if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
@@ -623,22 +622,21 @@ function associations(){
 function nomSigne(k){ var s = par(SIGNES, k); return s ? s.l : k; }
 /* Codes portés par un signe (FOETO, HPO) : ils partent avec le signe PRÉSENT,
    jamais avec un absent ni un non regardé. */
-function codesDe(x){ return [x.foeto2].concat(x.v1 || [], [x.foeto, x.hpo]).filter(Boolean); }
+function codesDe(x){ return [x.foeto, x.hpo].filter(Boolean); }
 function codesPresents(){
   return SIGNES.filter(function(x){ return E.signes[x.k] === POS && codesDe(x).length; })
-               .map(function(x){ return { k:x.k, l:x.l, foeto2:x.foeto2 || null,
-                 foeto:[].concat(x.v1 || [], [x.foeto]).filter(Boolean).join(" ") || null, hpo:x.hpo || null }; });
+               .map(function(x){ return { k:x.k, l:x.l, foeto:x.foeto || null, hpo:x.hpo || null }; });
 }
-/* Grille branchée sur FOETO v2 : le libellé et les codes viennent de la base
-   (fiche → foeto_v2.db), les codes v1 exacts suivent pour l'akinator. */
-function resoudreF2(){
-  if (!FOETO2) return;
+/* Grille branchée sur FOETO : un signe porte fv (terme tagué « verbatim ») ; son
+   libellé et son HPO arbitré viennent de la base, le code exporté est l'id FOETO. */
+function resoudreFV(){
+  if (!FOETOV) return;
   SIGNES.forEach(function(x){
-    var s = x.f2 && FOETO2[x.f2];
-    if (s){ x.l = s.l; x.foeto2 = s.id; x.v1 = s.v1; if (s.hpo) x.hpo = s.hpo; }   // HPO complète, depuis la base
-    else x.horsFiche = true;   // aucun signe de fiche derrière : non sourcé par la biblio
+    var s = x.fv && FOETOV[x.fv];
+    if (s){ x.l = s.l; x.foeto = x.fv; if (s.hpo) x.hpo = s.hpo; }
+    else x.horsFiche = true;   // aucun terme de fiche derrière : non sourcé par la biblio
   });
-  DIAGS.forEach(function(d){ if (d.f2 && FOETO2[d.f2]) d.foeto = [FOETO2[d.f2].id]; });
+  DIAGS.forEach(function(d){ if (d.fv && FOETOV[d.fv]) d.foeto = [d.fv]; });
 }
 
 /* ── Mode présence : rétention en liste, signes en paragraphes ─────────────── */
@@ -929,7 +927,7 @@ function composer(){
   if (cp.length){
     L.push("");
     L.push("CODES DES SIGNES PRÉSENTS");
-    cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto2, c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
+    cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
   }
 
   var fo = Object.keys(E.foeto);
@@ -1294,7 +1292,7 @@ async function diagnostic(){
 (async function(){
   $("ver").textContent = "v" + VERSION;
   E = neuf();
-  resoudreF2(); batir(); majSa(); peindre();
+  resoudreFV(); batir(); majSa(); peindre();
   try { db = await openDB(); }
   catch(e){
     var h = $("dossierHint");
@@ -1446,8 +1444,7 @@ async function autotest(){
         crTient(sc.l + " [" + codesDe(sc).join(" ") + "]"));
     clic("les", sc.k, POS);
     chk("codes : lisibles (FOETO:/HP:)", SIGNES.every(function(x){
-      return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)) &&
-             (!x.foeto2 || /^FOETO2:/.test(x.foeto2)) && (x.v1 || []).every(function(v){ return /^FOETO:/.test(v); }); }));
+      return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)); }));
   }
 
   /* Signes et associations */
@@ -1571,45 +1568,49 @@ async function autotest(){
 </html>
 """
 
-def bloc_foeto2(nom, frag):
-    """Grille branchée sur FOETO v2 (un signe porte f2:"clé") : var FOETO2 =
-    {clé: {id, l, t, v1:[ids v1 exacts]}} pour l'organe. Arrêt si une clé est
-    inconnue ; avertit des constats de la fiche absents de la grille et des
-    signes de grille sans signe de fiche."""
-    cles = re.findall(r'\bf2:"([^"]+)"', frag)
-    if not cles:
-        return "var FOETO2 = null;"
-    if not DB2.exists():
-        raise SystemExit("grilles/%s.js est branchée sur FOETO v2 mais %s manque" % (nom, DB2))
-    organe = nom.split(".")[0]
-    c = sqlite3.connect("file:%s?mode=ro" % DB2, uri=True)
+def bloc_foeto_verbatim(nom, frag):
+    """Grille branchée sur FOETO (V1 patchée depuis les fiches) : un signe porte
+    fv:"FOETO:…", un terme tagué « verbatim ». var FOETOV = {id: {l, hpo}} :
+    libellé de FOETO et code HPO arbitré (foeto_hpo_verifie, pas foeto_hpo qui mêle
+    d'anciens liens non vérifiés). Arrêt si un id est absent ou non tagué ; avertit
+    des termes de la fiche absents de la grille et des signes sans terme de fiche."""
+    ids = re.findall(r'\bfv:"(FOETO:[^"]+)"', frag)
+    if not ids:
+        return "var FOETOV = null;"
+    c = sqlite3.connect("file:%s?mode=ro" % DB, uri=True)
+    tag = {r[0] for r in c.execute("select term_id from foeto_tags where tag = 'verbatim'")}
     base = {}
-    hpo_col = any(r[1] == "hpo" for r in c.execute("pragma table_info(signes)"))
-    for i, k, l, t, h in c.execute("select id, k, label_fr, type, %s from signes where organe = ?"
-                                   % ("hpo" if hpo_col else "null"), (organe,)):
-        v1 = [r[0] for r in c.execute("select v1_id from correspondance_v1 where v2_id = ? and qualite = 'exacte' "
-                                      "order by v1_id", (i,))]
-        base[k] = {"id": i, "l": l, "t": t, "v1": v1, "hpo": h}
-    inconnues = sorted(set(cles) - set(base))
-    if inconnues:
-        raise SystemExit("grilles/%s.js : clés absentes de FOETO v2 : %s" % (nom, ", ".join(inconnues)))
-    absents = [k for k, x in base.items() if x["t"] == "CON" and k not in cles]
+    for i in set(ids):
+        r = c.execute("select label_fr from foeto_terms where id = ?", (i,)).fetchone()
+        if not r or i not in tag:
+            raise SystemExit("grilles/%s.js : %s %s" % (nom, i, "absent de FOETO" if not r else "non tagué verbatim"))
+        h = c.execute("select hpo_id from foeto_hpo_verifie where term_id = ? order by hpo_id", (i,)).fetchone()
+        base[i] = {"l": r[0], "hpo": h[0] if h else None}
+    fiche = "%%fiche_%s.md%%" % nom.split(".")[0]
+    # seuls les CONSTATS de la fiche sont attendus comme signes (un diagnostic se lit
+    # dans les associations) : le type d'origine est dans foeto_v2_import
+    absents = [i for (i,) in c.execute(
+        "select t.id from foeto_terms t join foeto_tags g on g.term_id = t.id and g.tag = 'verbatim' "
+        "join foeto_v2_import m on m.v1_id = t.id and m.v2_id like '%-CON-%' where t.triage_fiche like ?",
+        (fiche,)) if i not in base]
     bloc = frag.split("var SIGNES", 1)[-1].split("];", 1)[0]
-    sans = re.findall(r'\{ k:"(\w+)",(?![^\n]*\bf2:)', bloc)
-    print("  FOETO v2 : %d signes branchés · %d constats de la fiche absents de la grille · "
-          "%d signes de grille sans signe de fiche" % (len(set(cles)), len(absents), len(sans)))
+    sans = re.findall(r'\{ k:"(\w+)",(?![^\n]*\bfv:)', bloc)
+    print("  FOETO (verbatim) : %d signes branchés · %d termes de la fiche absents de la grille · "
+          "%d signes de grille sans terme de fiche" % (len(base), len(absents), len(sans)))
     if absents:
         print("    fiche, pas grille : " + ", ".join(absents))
     if sans:
         print("    grille, pas fiche : " + ", ".join(sans))
-    return "var FOETO2 = " + json.dumps(base, ensure_ascii=False, separators=(",", ":")) + ";"
+    return "var FOETOV = " + json.dumps(base, ensure_ascii=False, separators=(",", ":")) + ";"
 
 
-def bloc_foeto_v2_recherche(organe):
-    """Recherche « autre terme » d'une grille branchée : constats et normaux de la fiche."""
-    c = sqlite3.connect("file:%s?mode=ro" % DB2, uri=True)
+def bloc_foeto_verbatim_recherche(organe):
+    """Recherche « autre terme » d'une grille branchée : termes tagués verbatim de la fiche."""
+    c = sqlite3.connect("file:%s?mode=ro" % DB, uri=True)
     formes = {i: [l] for i, l in c.execute(
-        "select id, label_fr from signes where organe = ? and type in ('CON','NOR') order by label_fr", (organe,))}
+        "select t.id, t.label_fr from foeto_terms t join foeto_tags g on g.term_id = t.id and g.tag = 'verbatim' "
+        "where t.triage_fiche like ? and t.axis in ('pathologie', 'architecture') order by t.label_fr",
+        ("%%fiche_%s.md%%" % organe,))}
     return "var FOETO = " + json.dumps({"sections": [], "formes": formes}, ensure_ascii=False,
                                        separators=(",", ":")) + ";"
 
@@ -1626,8 +1627,8 @@ def controler_codes(nom, frag):
     inconnus = sorted(ecrits - connus)
     if inconnus:
         raise SystemExit("grilles/%s.js : codes absents de foeto_terms : %s" % (nom, ", ".join(inconnus)))
-    if "FOETO_DANS_SIGNES = true" not in frag or 'f2:"' in frag:
-        return   # branchée sur v2 : la couverture se lit dans foeto_v2 (bloc_foeto2)
+    if "FOETO_DANS_SIGNES = true" not in frag or 'fv:"' in frag:
+        return   # branchée sur les termes verbatim : la couverture se lit dans bloc_foeto_verbatim
     tsv = FRAGMENTS / (nom + ".codes_a_valider.tsv")
     ecrits |= set(re.findall(r"FOETO:[\w.-]+", tsv.read_text(encoding="utf-8"))) if tsv.exists() else set()
     lesions = c.execute("select id, label_fr from foeto_terms where triage_fiche like ? and triage_verdict = 'LESION'",
@@ -1659,9 +1660,9 @@ def fabriquer(nom):
     for k, v in vals.items():
         page = page.replace("{{%s}}" % k, v)
     page = page.replace("{{ORGANE_JS}}", frag.rstrip())
-    f2 = 'f2:"' in frag
-    page = page.replace("{{FOETO_JS}}", (bloc_foeto_v2_recherche(organe) if f2 else bloc_foeto(organe)) +
-                        "\n" + bloc_foeto2(nom, frag))
+    fv = 'fv:"' in frag
+    page = page.replace("{{FOETO_JS}}", (bloc_foeto_verbatim_recherche(organe) if fv else bloc_foeto(organe)) +
+                        "\n" + bloc_foeto_verbatim(nom, frag))
     controler_codes(nom, frag)
 
     reste = re.findall(r"\{\{(\w+)\}\}", page)
