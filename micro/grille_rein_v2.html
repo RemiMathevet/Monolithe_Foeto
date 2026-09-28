@@ -794,6 +794,7 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
 var FOETO = {"sections":[{"t":"5.1 Dysplasie rénale","termes":[{"id":"FOETO:PF.REN-MAL-010","l":"Différenciation myofibroblastique du blastème"},{"id":"FOETO:PF.REN-MAL-015","l":"Dépôts de protéine de Tamm-Horsfall"},{"id":"FOETO:PF.REN-MAL-027","l":"Hypodysplasie rénale"},{"id":"FOETO:PF.REN-MAL-047","l":"Réduction néphronique"}]},{"t":"5.11 Infection rénale","termes":[{"id":"FOETO:PF.REN-MAL-031","l":"Inclusions nucléaires à cytomégalovirus dans les tubules proximaux"}]},{"t":"5.2 Séquence d'obstruction basse — la dysplasie de l'uropathie","termes":[{"id":"FOETO:PF.REN-MAL-003","l":"Agglomérat multikystique sur noyau fibreux dense"},{"id":"FOETO:PF.REN-MAL-007","l":"Canaux collecteurs dilatés entourés de tissu conjonctif dense"},{"id":"FOETO:PF.REN-MAL-014","l":"Dysplasie médullaire rénale"},{"id":"FOETO:PF.REN-MAL-018","l":"Fibrose autour des calices et des canaux collecteurs médullaires"},{"id":"FOETO:PF.REN-MAL-028","l":"Hypoplasie corticomédullaire"},{"id":"FOETO:PF.REN-MAL-036","l":"Microkystes sous-capsulaires corticaux"},{"id":"FOETO:PF.REN-MAL-044","l":"Néphrons dysmorphiques résiduels"},{"id":"FOETO:PF.REN-MAL-045","l":"Papille aplatie et fibreuse"},{"id":"FOETO:PF.REN-MAL-046","l":"Rein multikystique"}]},{"t":"5.3 Polykystoses — PKRA vs PKDA, la distinction **est** morphologique sur la lame","termes":[{"id":"FOETO:PF.REN-MAL-033","l":"Kystes dérivés des canaux collecteurs"},{"id":"FOETO:PF.REN-MAL-034","l":"Kystes glomérulaires"},{"id":"FOETO:PF.REN-MAL-054","l":"Œdème fibro-interstitiel périkystique"}]},{"t":"5.4 Ciliopathies — Meckel et Bardet-Biedl","termes":[{"id":"FOETO:PF.REN-MAL-008","l":"Canaux collecteurs médullaires normaux non dilatés au sein de kystes"},{"id":"FOETO:PF.REN-MAL-032","l":"Kystes cortico-médullaires diffus"},{"id":"FOETO:PF.REN-MAL-035","l":"Kystes médullaires"},{"id":"FOETO:PF.REN-MAL-038","l":"Mésenchyme intercystique aplati quasi acellulaire"},{"id":"FOETO:PF.REN-MAL-040","l":"Mésenchyme lâche interkystique"}]},{"t":"5.5 Hypoplasie rénale et hypoplasie oligoméganéphronique (HOM)","termes":[{"id":"FOETO:PF.REN-MAL-026","l":"Hypertrophie glomérulaire compensatrice"},{"id":"FOETO:PF.REN-MAL-029","l":"Hypoplasie oligoméganéphronique"},{"id":"FOETO:PF.REN-MAL-030","l":"Hypoplasie rénale"}]},{"t":"5.6 Hyperplasie rénale et excès de néphrons","termes":[{"id":"FOETO:PF.REN-MAL-043","l":"Néphroblastomatose"}]},{"t":"5.7 Dysgénésie tubulaire rénale (DTR / RTD)","termes":[{"id":"FOETO:PF.REN-MAL-001","l":"Absence d'expression rénale de la rénine"},{"id":"FOETO:PF.REN-MAL-006","l":"Artérioles à paroi épaissie"},{"id":"FOETO:PF.REN-DYS-001","l":"Dysgenèse tubulaire rénale"},{"id":"FOETO:PF.REN-MAL-025","l":"Hyperexpression rénale de la rénine"}]},{"t":"5.8 Phénocopies toxiques de la DTR — **le piège de fond de cette fiche**","termes":[{"id":"FOETO:PF.REN-MAL-005","l":"Anomalies de néphrogénèse superficielle induites"},{"id":"FOETO:PF.REN-MAL-021","l":"Glomérules rétractés"},{"id":"FOETO:PF.REN-MAL-022","l":"Glomérules rétractés ischémiques"},{"id":"FOETO:PF.REN-MAL-049","l":"Tubes proximaux dédifférenciés"},{"id":"FOETO:PF.REN-MAL-050","l":"Tubules proximaux dédifférenciés"}]}],"formes":{"FOETO:PF.REN-MAL-002":["Accumulation mésangiale de matériel fibrillaire PAS-positif","Mesangial PAS-positive fibrillary material accumulation","(hors fiche)"],"FOETO:PF.REN-MAL-004":["Anomalie de la membrane basale tubulaire","Tubular basement membrane abnormality","(hors fiche)"],"FOETO:PF.REN-VAS-001":["Compaction glomérulaire corticale","Cortical glomerular crowding","(hors fiche)"],"FOETO:PF.REN-MAL-009":["Cylindres protéiques oblitérant les lumières tubulaires","Protein casts obliterating tubular lumina","(hors fiche)"],"FOETO:PF.REN-MAL-011":["Dilatation microkystique des tubules proximaux","Microcystic dilatation of proximal tubules","(hors fiche)"],"FOETO:PF.REN-MAL-012":["Dysplasie kystique cortico-médullaire massive","Massive corticomedullary cystic dysplasia","(hors fiche)"],"FOETO:PF.REN-MAL-013":["Dysplasie médullaire kystique","Cystic medullary dysplasia","(hors fiche)"],"FOETO:PF.REN-MAL-017":["Désorientation des tubes collecteurs","Collecting duct disorientation","(hors fiche)"],"FOETO:PF.REN-MAL-019":["Floculus glomérulaire rudimentaire dans kyste","Rudimentary glomerular tuft within cyst","(hors fiche)"],"FOETO:PF.REN-MAL-020":["Glomérules minuscules à floculus scléreux solidifié","Miniature glomeruli with solidified sclerotic tuft","(hors fiche)"],"FOETO:PF.REN-MAL-023":["Glomérulomégalie","Glomerulomegaly","(hors fiche)"],"FOETO:PF.REN-MAL-024":["Hypercellularité mésangiale glomérulaire","Glomerular mesangial hypercellularity","(hors fiche)"],"FOETO:PF.REN-MAL-037":["Microvacuolisation tubulaire","Tubular microvacuolization","(hors fiche)"],"FOETO:PF.REN-MAL-041":["Néphrite tubulo-interstitielle chronique avec atrophie tubulaire","Chronic tubulointerstitial nephritis with tubular atrophy","(hors fiche)"],"FOETO:PF.REN-MAL-042":["Néphrite tubulo-interstitielle chronique fœtale","Fetal chronic tubulointerstitial nephritis","(hors fiche)"],"FOETO:PF.REN-MAL-048":["Sclérose mésangiale diffuse","Diffuse mesangial sclerosis","(hors fiche)"],"FOETO:PF.REN-MAL-051":["Zone néphrogénique persistante après 36 SA","Persistent nephrogenic zone after 36 weeks","(hors fiche)"],"FOETO:PF.REN-MAL-052":["Épithélium kystique aplati","Flattened cystic epithelium","(hors fiche)"],"FOETO:PF.REN-MAL-053":["Épithélium kystique éosinophile stratifié","Stratified eosinophilic cystic epithelium","(hors fiche)"],"FOETO:PF.REN-MAL-010":["Différenciation myofibroblastique du blastème","Myofibroblastic differentiation of blastema"],"FOETO:PF.REN-MAL-015":["Dépôts de protéine de Tamm-Horsfall","Tamm-Horsfall protein deposits"],"FOETO:PF.REN-MAL-027":["Hypodysplasie rénale","Renal hypodysplasia"],"FOETO:PF.REN-MAL-047":["Réduction néphronique","Nephron deficit / reduced nephron number"],"FOETO:PF.REN-MAL-031":["Inclusions nucléaires à cytomégalovirus dans les tubules proximaux","Cytomegalovirus nuclear inclusions in proximal tubules"],"FOETO:PF.REN-MAL-003":["Agglomérat multikystique sur noyau fibreux dense","Multicystic kidney with dense fibrous core"],"FOETO:PF.REN-MAL-007":["Canaux collecteurs dilatés entourés de tissu conjonctif dense","Dilated collecting ducts surrounded by dense connective tissue"],"FOETO:PF.REN-MAL-014":["Dysplasie médullaire rénale","Renal medullary dysplasia"],"FOETO:PF.REN-MAL-018":["Fibrose autour des calices et des canaux collecteurs médullaires","Pericalyceal and periductal medullary fibrosis"],"FOETO:PF.REN-MAL-028":["Hypoplasie corticomédullaire","Corticomedullary hypoplasia"],"FOETO:PF.REN-MAL-036":["Microkystes sous-capsulaires corticaux","Subcapsular cortical microcysts"],"FOETO:PF.REN-MAL-044":["Néphrons dysmorphiques résiduels","Dysmorphic residual nephrons"],"FOETO:PF.REN-MAL-045":["Papille aplatie et fibreuse","Flattened fibrotic renal papilla"],"FOETO:PF.REN-MAL-046":["Rein multikystique","Multicystic dysplastic kidney"],"FOETO:PF.REN-MAL-033":["Kystes dérivés des canaux collecteurs","Collecting duct-derived cysts"],"FOETO:PF.REN-MAL-034":["Kystes glomérulaires","Glomerular cysts"],"FOETO:PF.REN-MAL-054":["Œdème fibro-interstitiel périkystique","Pericystic fibro-interstitial edema"],"FOETO:PF.REN-MAL-008":["Canaux collecteurs médullaires normaux non dilatés au sein de kystes","Non-dilated medullary collecting ducts amid cortical cysts"],"FOETO:PF.REN-MAL-032":["Kystes cortico-médullaires diffus","Diffuse corticomedullary cysts"],"FOETO:PF.REN-MAL-035":["Kystes médullaires","Medullary cysts"],"FOETO:PF.REN-MAL-038":["Mésenchyme intercystique aplati quasi acellulaire","Featureless intercystic mesenchyme"],"FOETO:PF.REN-MAL-040":["Mésenchyme lâche interkystique","Loose intercystic mesenchyme"],"FOETO:PF.REN-MAL-026":["Hypertrophie glomérulaire compensatrice","Compensatory glomerular hypertrophy"],"FOETO:PF.REN-MAL-029":["Hypoplasie oligoméganéphronique","Oligomeganephronia"],"FOETO:PF.REN-MAL-030":["Hypoplasie rénale","Renal hypoplasia"],"FOETO:PF.REN-MAL-043":["Néphroblastomatose","Nephroblastomatosis"],"FOETO:PF.REN-MAL-001":["Absence d'expression rénale de la rénine","Absent renal renin expression"],"FOETO:PF.REN-MAL-006":["Artérioles à paroi épaissie","Thick-walled arterioles"],"FOETO:PF.REN-DYS-001":["Dysgenèse tubulaire rénale","Renal tubular dysgenesis"],"FOETO:PF.REN-MAL-025":["Hyperexpression rénale de la rénine","Renal renin overexpression"],"FOETO:PF.REN-MAL-005":["Anomalies de néphrogénèse superficielle induites","Drug-induced superficial nephrogenesis abnormalities"],"FOETO:PF.REN-MAL-021":["Glomérules rétractés","Retracted glomeruli"],"FOETO:PF.REN-MAL-022":["Glomérules rétractés ischémiques","Ischemic retracted glomeruli"],"FOETO:PF.REN-MAL-049":["Tubes proximaux dédifférenciés","Dedifferentiated proximal tubules"],"FOETO:PF.REN-MAL-050":["Tubules proximaux dédifférenciés","Dedifferentiated proximal tubules"]}};
+var FOETO2 = null;
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
@@ -1010,7 +1011,7 @@ function foetoLabel(id){
 /* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
 function foetoAjouter(id){
   /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
-  var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
+  var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id || x.foeto2 === id; })[0];
   if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
@@ -1058,10 +1059,21 @@ function associations(){
 function nomSigne(k){ var s = par(SIGNES, k); return s ? s.l : k; }
 /* Codes portés par un signe (FOETO, HPO) : ils partent avec le signe PRÉSENT,
    jamais avec un absent ni un non regardé. */
-function codesDe(x){ return [x.foeto, x.hpo].filter(Boolean); }
+function codesDe(x){ return [x.foeto2].concat(x.v1 || [], [x.foeto, x.hpo]).filter(Boolean); }
 function codesPresents(){
   return SIGNES.filter(function(x){ return E.signes[x.k] === POS && codesDe(x).length; })
-               .map(function(x){ return { k:x.k, l:x.l, foeto:x.foeto || null, hpo:x.hpo || null }; });
+               .map(function(x){ return { k:x.k, l:x.l, foeto2:x.foeto2 || null,
+                 foeto:[].concat(x.v1 || [], [x.foeto]).filter(Boolean).join(" ") || null, hpo:x.hpo || null }; });
+}
+/* Grille branchée sur FOETO v2 : le libellé et les codes viennent de la base
+   (fiche → foeto_v2.db), les codes v1 exacts suivent pour l'akinator. */
+function resoudreF2(){
+  if (!FOETO2) return;
+  SIGNES.forEach(function(x){
+    var s = x.f2 && FOETO2[x.f2];
+    if (s){ x.l = s.l; x.foeto2 = s.id; x.v1 = s.v1; }
+  });
+  DIAGS.forEach(function(d){ if (d.f2 && FOETO2[d.f2]) d.foeto = [FOETO2[d.f2].id]; });
 }
 
 /* ── Mode présence : rétention en liste, signes en paragraphes ─────────────── */
@@ -1352,7 +1364,7 @@ function composer(){
   if (cp.length){
     L.push("");
     L.push("CODES DES SIGNES PRÉSENTS");
-    cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
+    cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto2, c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
   }
 
   var fo = Object.keys(E.foeto);
@@ -1717,7 +1729,7 @@ async function diagnostic(){
 (async function(){
   $("ver").textContent = "v" + VERSION;
   E = neuf();
-  batir(); majSa(); peindre();
+  resoudreF2(); batir(); majSa(); peindre();
   try { db = await openDB(); }
   catch(e){
     var h = $("dossierHint");
@@ -1869,7 +1881,8 @@ async function autotest(){
         crTient(sc.l + " [" + codesDe(sc).join(" ") + "]"));
     clic("les", sc.k, POS);
     chk("codes : lisibles (FOETO:/HP:)", SIGNES.every(function(x){
-      return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)); }));
+      return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)) &&
+             (!x.foeto2 || /^FOETO2:/.test(x.foeto2)) && (x.v1 || []).every(function(v){ return /^FOETO:/.test(v); }); }));
   }
 
   /* Signes et associations */

@@ -30,6 +30,7 @@ from pathlib import Path
 ICI = Path(__file__).parent
 FRAGMENTS = ICI / "grilles"
 DB = Path("/home/mathevet/Bureau/foeto_base/syndromes_foetaux.db")
+DB2 = Path("/home/mathevet/Bureau/foeto_base/foeto_v2.db")   # FOETO v2, bâtie depuis les fiches
 
 
 def bloc_foeto(organe):
@@ -568,7 +569,7 @@ function foetoLabel(id){
 /* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
 function foetoAjouter(id){
   /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
-  var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
+  var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id || x.foeto2 === id; })[0];
   if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
@@ -616,10 +617,21 @@ function associations(){
 function nomSigne(k){ var s = par(SIGNES, k); return s ? s.l : k; }
 /* Codes portés par un signe (FOETO, HPO) : ils partent avec le signe PRÉSENT,
    jamais avec un absent ni un non regardé. */
-function codesDe(x){ return [x.foeto, x.hpo].filter(Boolean); }
+function codesDe(x){ return [x.foeto2].concat(x.v1 || [], [x.foeto, x.hpo]).filter(Boolean); }
 function codesPresents(){
   return SIGNES.filter(function(x){ return E.signes[x.k] === POS && codesDe(x).length; })
-               .map(function(x){ return { k:x.k, l:x.l, foeto:x.foeto || null, hpo:x.hpo || null }; });
+               .map(function(x){ return { k:x.k, l:x.l, foeto2:x.foeto2 || null,
+                 foeto:[].concat(x.v1 || [], [x.foeto]).filter(Boolean).join(" ") || null, hpo:x.hpo || null }; });
+}
+/* Grille branchée sur FOETO v2 : le libellé et les codes viennent de la base
+   (fiche → foeto_v2.db), les codes v1 exacts suivent pour l'akinator. */
+function resoudreF2(){
+  if (!FOETO2) return;
+  SIGNES.forEach(function(x){
+    var s = x.f2 && FOETO2[x.f2];
+    if (s){ x.l = s.l; x.foeto2 = s.id; x.v1 = s.v1; }
+  });
+  DIAGS.forEach(function(d){ if (d.f2 && FOETO2[d.f2]) d.foeto = [FOETO2[d.f2].id]; });
 }
 
 /* ── Mode présence : rétention en liste, signes en paragraphes ─────────────── */
@@ -910,7 +922,7 @@ function composer(){
   if (cp.length){
     L.push("");
     L.push("CODES DES SIGNES PRÉSENTS");
-    cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
+    cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto2, c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
   }
 
   var fo = Object.keys(E.foeto);
@@ -1275,7 +1287,7 @@ async function diagnostic(){
 (async function(){
   $("ver").textContent = "v" + VERSION;
   E = neuf();
-  batir(); majSa(); peindre();
+  resoudreF2(); batir(); majSa(); peindre();
   try { db = await openDB(); }
   catch(e){
     var h = $("dossierHint");
@@ -1427,7 +1439,8 @@ async function autotest(){
         crTient(sc.l + " [" + codesDe(sc).join(" ") + "]"));
     clic("les", sc.k, POS);
     chk("codes : lisibles (FOETO:/HP:)", SIGNES.every(function(x){
-      return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)); }));
+      return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)) &&
+             (!x.foeto2 || /^FOETO2:/.test(x.foeto2)) && (x.v1 || []).every(function(v){ return /^FOETO:/.test(v); }); }));
   }
 
   /* Signes et associations */
@@ -1551,6 +1564,47 @@ async function autotest(){
 </html>
 """
 
+def bloc_foeto2(nom, frag):
+    """Grille branchée sur FOETO v2 (un signe porte f2:"clé") : var FOETO2 =
+    {clé: {id, l, t, v1:[ids v1 exacts]}} pour l'organe. Arrêt si une clé est
+    inconnue ; avertit des constats de la fiche absents de la grille et des
+    signes de grille sans signe de fiche."""
+    cles = re.findall(r'\bf2:"([^"]+)"', frag)
+    if not cles:
+        return "var FOETO2 = null;"
+    if not DB2.exists():
+        raise SystemExit("grilles/%s.js est branchée sur FOETO v2 mais %s manque" % (nom, DB2))
+    organe = nom.split(".")[0]
+    c = sqlite3.connect("file:%s?mode=ro" % DB2, uri=True)
+    base = {}
+    for i, k, l, t in c.execute("select id, k, label_fr, type from signes where organe = ?", (organe,)):
+        v1 = [r[0] for r in c.execute("select v1_id from correspondance_v1 where v2_id = ? and qualite = 'exacte' "
+                                      "order by v1_id", (i,))]
+        base[k] = {"id": i, "l": l, "t": t, "v1": v1}
+    inconnues = sorted(set(cles) - set(base))
+    if inconnues:
+        raise SystemExit("grilles/%s.js : clés absentes de FOETO v2 : %s" % (nom, ", ".join(inconnues)))
+    absents = [k for k, x in base.items() if x["t"] == "CON" and k not in cles]
+    bloc = frag.split("var SIGNES", 1)[-1].split("];", 1)[0]
+    sans = re.findall(r'\{ k:"(\w+)",(?![^\n]*\bf2:)', bloc)
+    print("  FOETO v2 : %d signes branchés · %d constats de la fiche absents de la grille · "
+          "%d signes de grille sans signe de fiche" % (len(set(cles)), len(absents), len(sans)))
+    if absents:
+        print("    fiche, pas grille : " + ", ".join(absents))
+    if sans:
+        print("    grille, pas fiche : " + ", ".join(sans))
+    return "var FOETO2 = " + json.dumps(base, ensure_ascii=False, separators=(",", ":")) + ";"
+
+
+def bloc_foeto_v2_recherche(organe):
+    """Recherche « autre terme » d'une grille branchée : constats et normaux de la fiche."""
+    c = sqlite3.connect("file:%s?mode=ro" % DB2, uri=True)
+    formes = {i: [l] for i, l in c.execute(
+        "select id, label_fr from signes where organe = ? and type in ('CON','NOR') order by label_fr", (organe,))}
+    return "var FOETO = " + json.dumps({"sections": [], "formes": formes}, ensure_ascii=False,
+                                       separators=(",", ":")) + ";"
+
+
 def controler_codes(nom, frag):
     """Les codes écrits dans le fragment doivent exister dans foeto_terms (sinon
     arrêt) ; en fusion, chaque terme LESION de la fiche doit être porté par un
@@ -1563,8 +1617,8 @@ def controler_codes(nom, frag):
     inconnus = sorted(ecrits - connus)
     if inconnus:
         raise SystemExit("grilles/%s.js : codes absents de foeto_terms : %s" % (nom, ", ".join(inconnus)))
-    if "FOETO_DANS_SIGNES = true" not in frag:
-        return
+    if "FOETO_DANS_SIGNES = true" not in frag or 'f2:"' in frag:
+        return   # branchée sur v2 : la couverture se lit dans foeto_v2 (bloc_foeto2)
     tsv = FRAGMENTS / (nom + ".codes_a_valider.tsv")
     ecrits |= set(re.findall(r"FOETO:[\w.-]+", tsv.read_text(encoding="utf-8"))) if tsv.exists() else set()
     lesions = c.execute("select id, label_fr from foeto_terms where triage_fiche like ? and triage_verdict = 'LESION'",
@@ -1596,7 +1650,9 @@ def fabriquer(nom):
     for k, v in vals.items():
         page = page.replace("{{%s}}" % k, v)
     page = page.replace("{{ORGANE_JS}}", frag.rstrip())
-    page = page.replace("{{FOETO_JS}}", bloc_foeto(organe))
+    f2 = 'f2:"' in frag
+    page = page.replace("{{FOETO_JS}}", (bloc_foeto_v2_recherche(organe) if f2 else bloc_foeto(organe)) +
+                        "\n" + bloc_foeto2(nom, frag))
     controler_codes(nom, frag)
 
     reste = re.findall(r"\{\{(\w+)\}\}", page)

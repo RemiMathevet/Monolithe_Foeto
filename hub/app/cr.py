@@ -270,7 +270,8 @@ def _grille(module, d):
                       for a, b in RE_FOETO.findall(_bloc(cr, "TERMES FOETO"))],
             "libre": (g.get("libre") or "").strip(),
             # Grilles 0.3.0 : les codes FOETO/HPO des signes présents, par libellé.
-            "codes": {c.get("l"): [x for x in (c.get("foeto"), c.get("hpo")) if x]
+            "codes": {c.get("l"): [y for x in (c.get("foeto2"), c.get("foeto"), c.get("hpo")) if x
+                                   for y in x.split()]
                       for c in d.get("codes") or [] if c.get("l")}}
 
 
