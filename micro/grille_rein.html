@@ -900,14 +900,19 @@ function batir(){
   $("stades").innerHTML = STADES.map(function(s){ return chip("stade", s.k, s.l); }).join("");
 
   if (MESURE){
-    var h = '<div class="sousTitre">' + esc(MESURE.titre) + '</div>';
+    // ponytail: aide au survol (title) — pas de bulle maison
+    var aide = function(t){ return t ? ' title="' + esc(t) + '" style="cursor:help"' : ""; };
+    var h = '<div class="sousTitre"' + aide(MESURE.aide) + '>' + esc(MESURE.titre) + (MESURE.aide ? " ⓘ" : "") + '</div>';
     h += '<div class="chips" id="mesDefs">' +
-         MESURE.defs.map(function(d){ return chip("mdef", d.k, d.l, MESURE.defLabel); }).join("") + '</div>';
+         MESURE.defs.map(function(d){
+           return chip("mdef", d.k, d.l, MESURE.defLabel).replace("<button ", "<button" + aide(d.aide) + " ");
+         }).join("") + '</div>';
     if (MESURE.opts && MESURE.opts.length)
       h += '<div class="chips" id="mesOpts" style="margin-top:6px">' +
            MESURE.opts.map(function(o){ return chip("mopt", o.k, o.l, MESURE.optLabel); }).join("") + '</div>';
     h += '<div class="row" style="margin-top:9px">' + MESURE.champs.map(function(c){
-      return '<div class="field"><label for="m_' + c.id + '">' + esc(c.label) + '</label>' +
+      return '<div class="field"><label for="m_' + c.id + '"' + aide(MESURE.aide) + '>' + esc(c.label) +
+             (MESURE.aide ? " ⓘ" : "") + '</label>' +
              '<input type="number" id="m_' + c.id + '" min="' + c.min + '" max="' + c.max +
              '" step="' + c.step + '" inputmode="decimal" placeholder="—"></div>';
     }).join("") + '</div>';
@@ -988,6 +993,7 @@ function ligneSigne(x){
     return '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
       (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
       (codesDe(x).length ? '<span class="meta">' + esc(codesDe(x).join(" · ")) + '</span>' : "") +
+      (x.horsFiche ? '<span class="meta">hors fiche — non sourcé par la biblio</span>' : "") +
       (oblig ? '<span class="meta">négatif à énoncer : répondre présent ou absent</span>' : "") +
       '</div>' +
       '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="' + NEG + '">' +
@@ -1067,6 +1073,7 @@ function resoudreF2(){
   SIGNES.forEach(function(x){
     var s = x.f2 && FOETO2[x.f2];
     if (s){ x.l = s.l; x.foeto2 = s.id; x.v1 = s.v1; }
+    else x.horsFiche = true;   // aucun signe de fiche derrière : non sourcé par la biblio
   });
   DIAGS.forEach(function(d){ if (d.f2 && FOETO2[d.f2]) d.foeto = [FOETO2[d.f2].id]; });
 }
