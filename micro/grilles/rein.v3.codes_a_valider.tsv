@@ -1,0 +1,16 @@
+signe ou association	libellé	code proposé	libellé du code	pourquoi ce n'est pas net
+resteNephro	Reste néphrogénique — nodule persistant sans expansion	FOETO:PF.REN-MAL-043	Néphroblastomatose	un reste isolé ≠ néphroblastomatose (restes multiples/diffus) ; candidat pour l'association « nephroblastome »
+glomRetractes	Glomérules rétractés, serrés	FOETO:PF.REN-MAL-022	Glomérules rétractés ischémiques	le terme ajoute la cause (ischémie)
+tcpDediff	Tubes proximaux dédifférenciés	FOETO:PF.REN-MAL-050	Tubules proximaux dédifférenciés	doublon de PF.REN-MAL-049 en base (Soffoet / Keeling non fusionnés) : fusionner dans foeto_terms
+association dysplasie	Dysplasie rénale	FOETO:PF.REN-MAL-027	Hypodysplasie rénale	hypodysplasie = hypoplasie + dysplasie
+association obstruction	Obstruction des voies urinaires	FOETO:PF.REN-MAL-046	Rein multikystique	une forme de l'obstruction, pas l'association
+association obstruction	Obstruction des voies urinaires	FOETO:PF.REN-MAL-014	Dysplasie médullaire rénale	lésion de l'uropathie, pas l'obstruction elle-même
+association hypoplasie	Hypoplasie rénale	FOETO:PF.REN-MAL-028	Hypoplasie corticomédullaire	sous-forme obstructive (fiche §5.2)
+association hypoplasie	Hypoplasie rénale	FOETO:PF.REN-MAL-029	Hypoplasie oligoméganéphronique	EXCLU : la fiche interdit ce nom sur un fœtus (hypertrophie compensatrice postnatale)
+association dtr	DTR et ses phénocopies	FOETO:PF.REN-MAL-005	Anomalies de néphrogénèse superficielle induites	phénocopie toxique, pas la DTR
+uretereDilate	Uretère ou bassinet dilaté en amont	HP:0000072 / HP:0000126	Hydroureter / Hydronephrosis	le signe réunit deux constats : le scinder ?
+kystesNoyau	Amas de kystes translucides centrés sur un noyau fibreux dense	HP:0000003	Multicystic kidney dysplasia	HPO nomme la dysplasie, pas l'aspect
+kystesDiffus	Kystes corticaux ET médullaires diffus	HP:0005562	Multiple renal cysts	moins précis que le signe
+kystesInegaux	Kystes de taille inégale, sans systématisation	HP:0005562	Multiple renal cysts	moins précis que le signe
+desorganisation	Désorganisation architecturale, perte du gradient cortico-médullaire	HP:0000110	Renal dysplasia	HPO nomme la maladie, le signe décrit
+voute	Retard d'ossification de la voûte crânienne	—	aucun HPO trouvé par « ossification of the skull » / « calvaria »	à chercher à la main

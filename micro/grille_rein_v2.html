@@ -314,7 +314,7 @@ var ORGANE  = "rein";
 var TITRE   = "rein et voies urinaires hautes";
 var SOURCE  = "fiche_rein.md";
 var MODULE  = "grille_rein";
-var VERSION = "2.0.0";
+var VERSION = "2.0.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 /* Paragraphes sans étendue : le contexte hors lame n'est pas une lésion qui s'étend. */
@@ -363,20 +363,25 @@ var PRELEV = [
 ];
 
 /* ── 02 · Rétention ───────────────────────────────────────────────────────── */
-/* Modificateurs communs, énoncés par [ernst, ch. 37] sur la série des délais. */
+/* Modificateurs communs, énoncés par [ernst, ch. 37] sur la série des délais.
+   Chaque ligne est une PERTE de basophilie nucléaire (Genest ; keeling Table 15.6).
+   h ordonne les critères ; pour « toutes les cellules du rein » (rang 10, délai
+   perdu à l'extraction) c'est un rang, pas un délai : il vient après la
+   persistance dans quelques tubules. */
 var MODIF = "délai accéléré par l'anasarque et par un intervalle délivrance-autopsie > 24 h, ralenti par un terme < 27 SA";
 
 var RETENTION = [
-  { k:"basoTubIso", l:"Basophilie des tubes, isolée", b:"≥ 4 h", d:"« Tubules — ≥ 4 h »", h:4, q:"bon",
+  { k:"basoTubIso", l:"Perte de basophilie nucléaire de cellules tubulaires corticales isolées", b:"≥ 4 h", d:"« Tubules — ≥ 4 h »", h:4, q:"bon",
     note:"l'attribution de cette ligne au rein est une RECONSTRUCTION : la colonne d'organe est amputée " +
          "à l'extraction de [ernst, ch. 37]", alerte:MODIF },
-  { k:"basoTubQq",  l:"Basophilie tubulaire étendue, parenchyme conservé", b:"≈ 2–4 semaines",
+  { k:"basoTubQq",  l:"Perte de basophilie nucléaire étendue, persistante dans quelques tubules", b:"≈ 2–4 semaines",
     d:"pratique du service", h:336, q:"moyen",
     note:"divergence frontale : « there is no fetal organ that provides a good estimate of the timing of " +
          "fetal death between 2 and 4 weeks » [ernst, ch. 37], alors que le service date précisément cette " +
          "fenêtre sur le rein — écrire laquelle des deux lectures on retient",
     alerte:MODIF },
-  { k:"basoRein",   l:"Rein basophile en totalité", b:"rang 10 de la série", d:"délai non sourcé", h:240, q:"moyen",
+  { k:"basoRein",   l:"Perte de basophilie nucléaire de toutes les cellules du rein", b:"rang 10 de la série",
+    d:"« All cells in the kidney » — délai non sourcé", h:700, q:"moyen",
     note:"le rein figure aux rangs 1 ET 10 de [keeling, ch. 15, Table 15.6] ; la colonne des délais a été " +
          "perdue à l'extraction — le rang est conservé, pas le chiffre" },
   { k:"necroseTub", l:"Nécrose tubulaire aiguë", b:"—", d:"non datable seule", h:0, q:"mauvais",
@@ -799,6 +804,8 @@ var FOETO = {"sections":[{"t":"5.1 Dysplasie rénale","termes":[{"id":"FOETO:PF.
    mesure consignée) au lieu de se cocher une seconde fois. Sans ETATS : l'ancien
    couple normal / anormal (0.2.0), inchangé. */
 var PRESENCE = typeof ETATS !== "undefined" && ETATS === "presence";
+/* opt-in (rein v3) : les termes FOETO vivent dans les signes, la section 07 disparaît */
+var FUSION = typeof FOETO_DANS_SIGNES !== "undefined" && FOETO_DANS_SIGNES === true;
 var POS = PRESENCE ? "present" : "anormal", NEG = PRESENCE ? "absent" : "normal";
 
 /* Base locale distincte en présence : un brouillon 0.2.0 (normal/anormal) relu
@@ -942,11 +949,23 @@ function batir(){
     return h + ligneSigne(x);
   }).join("");
 
-  $("foeto").innerHTML = FOETO.sections.map(function(s){
+  if (FUSION){
+    /* La recherche descend sous les signes, la section 07 se retire et les
+       sections se renumérotent ; les termes ajoutés par recherche s'y rangent. */
+    var ass = $("secSignes").querySelector(".sousTitre");
+    ass.insertAdjacentHTML("beforebegin", '<div class="sousTitre" style="margin-top:16px">Autre terme FOETO</div>');
+    ass.parentNode.insertBefore($("foetoRech"), ass);
+    ass.parentNode.insertBefore($("foeto"), ass);
+    $("foetoRech").hidden = false;
+    $("secFoeto").hidden = true;
+    var n = 0;
+    document.querySelectorAll("section:not([hidden]) h2 .n").forEach(function(e){
+      e.textContent = ("0" + (++n)).slice(-2); });
+  } else $("foeto").innerHTML = FOETO.sections.map(function(s){
     return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
            s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
   }).join("") || '<p class="note">Aucun terme FOETO rattaché à cette fiche.</p>';
-  if (FOETO.sections.length){
+  if (FOETO.sections.length && !FUSION){
     $("foetoPlus").hidden = false; $("foetoRech").hidden = false;
     $("foetoPlus").textContent = "▸ tous les termes attestés (" + nbFoeto() + ")";
   }
@@ -990,6 +1009,9 @@ function foetoLabel(id){
 }
 /* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
 function foetoAjouter(id){
+  /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
+  var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
+  if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
     if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
@@ -1163,6 +1185,7 @@ function peindreDiags(){
   }
   $("diags").innerHTML = A.map(function(a){
     return '<div class="item"><div class="head"><div class="lbl">' + esc(a.d.l) +
+      (a.d.foeto ? '<span class="meta">' + esc(a.d.foeto.join(" · ")) + ' — affiché, non exporté</span>' : "") +
       '<span class="meta">' + a.pris.length + "/" + a.d.signes.length + " signe(s), seuil " + seuil(a.d) +
       (a.muets.length ? " · " + a.muets.length + " non regardé(s)" : "") + '</span></div>' +
       '<span class="chip ' + (a.tenu ? "on" : "") + '" style="cursor:default">' +
@@ -1910,8 +1933,8 @@ async function autotest(){
   /* Contrôles propres à l'organe */
   await testsOrgane(chk, clic, set, crTient, pause);
 
-  /* Termes FOETO — seulement si la fiche en rattache */
-  if (FOETO.sections.length){
+  /* Termes FOETO — seulement si la fiche en rattache (en fusion, l'organe les teste) */
+  if (FOETO.sections.length && !FUSION){
     var f0 = FOETO.sections[0].termes[0].id;
     chk("FOETO : sections rendues", $("foeto").querySelectorAll(".sousTitre").length === FOETO.sections.length);
     clic("foeto", f0);

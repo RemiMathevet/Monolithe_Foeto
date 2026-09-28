@@ -362,6 +362,8 @@ var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
    mesure consignée) au lieu de se cocher une seconde fois. Sans ETATS : l'ancien
    couple normal / anormal (0.2.0), inchangé. */
 var PRESENCE = typeof ETATS !== "undefined" && ETATS === "presence";
+/* opt-in (rein v3) : les termes FOETO vivent dans les signes, la section 07 disparaît */
+var FUSION = typeof FOETO_DANS_SIGNES !== "undefined" && FOETO_DANS_SIGNES === true;
 var POS = PRESENCE ? "present" : "anormal", NEG = PRESENCE ? "absent" : "normal";
 
 /* Base locale distincte en présence : un brouillon 0.2.0 (normal/anormal) relu
@@ -505,11 +507,23 @@ function batir(){
     return h + ligneSigne(x);
   }).join("");
 
-  $("foeto").innerHTML = FOETO.sections.map(function(s){
+  if (FUSION){
+    /* La recherche descend sous les signes, la section 07 se retire et les
+       sections se renumérotent ; les termes ajoutés par recherche s'y rangent. */
+    var ass = $("secSignes").querySelector(".sousTitre");
+    ass.insertAdjacentHTML("beforebegin", '<div class="sousTitre" style="margin-top:16px">Autre terme FOETO</div>');
+    ass.parentNode.insertBefore($("foetoRech"), ass);
+    ass.parentNode.insertBefore($("foeto"), ass);
+    $("foetoRech").hidden = false;
+    $("secFoeto").hidden = true;
+    var n = 0;
+    document.querySelectorAll("section:not([hidden]) h2 .n").forEach(function(e){
+      e.textContent = ("0" + (++n)).slice(-2); });
+  } else $("foeto").innerHTML = FOETO.sections.map(function(s){
     return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
            s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
   }).join("") || '<p class="note">Aucun terme FOETO rattaché à cette fiche.</p>';
-  if (FOETO.sections.length){
+  if (FOETO.sections.length && !FUSION){
     $("foetoPlus").hidden = false; $("foetoRech").hidden = false;
     $("foetoPlus").textContent = "▸ tous les termes attestés (" + nbFoeto() + ")";
   }
@@ -553,6 +567,9 @@ function foetoLabel(id){
 }
 /* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
 function foetoAjouter(id){
+  /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
+  var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
+  if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
     if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
@@ -726,6 +743,7 @@ function peindreDiags(){
   }
   $("diags").innerHTML = A.map(function(a){
     return '<div class="item"><div class="head"><div class="lbl">' + esc(a.d.l) +
+      (a.d.foeto ? '<span class="meta">' + esc(a.d.foeto.join(" · ")) + ' — affiché, non exporté</span>' : "") +
       '<span class="meta">' + a.pris.length + "/" + a.d.signes.length + " signe(s), seuil " + seuil(a.d) +
       (a.muets.length ? " · " + a.muets.length + " non regardé(s)" : "") + '</span></div>' +
       '<span class="chip ' + (a.tenu ? "on" : "") + '" style="cursor:default">' +
@@ -1473,8 +1491,8 @@ async function autotest(){
   /* Contrôles propres à l'organe */
   await testsOrgane(chk, clic, set, crTient, pause);
 
-  /* Termes FOETO — seulement si la fiche en rattache */
-  if (FOETO.sections.length){
+  /* Termes FOETO — seulement si la fiche en rattache (en fusion, l'organe les teste) */
+  if (FOETO.sections.length && !FUSION){
     var f0 = FOETO.sections[0].termes[0].id;
     chk("FOETO : sections rendues", $("foeto").querySelectorAll(".sousTitre").length === FOETO.sections.length);
     clic("foeto", f0);
@@ -1533,6 +1551,29 @@ async function autotest(){
 </html>
 """
 
+def controler_codes(nom, frag):
+    """Les codes écrits dans le fragment doivent exister dans foeto_terms (sinon
+    arrêt) ; en fusion, chaque terme LESION de la fiche doit être porté par un
+    signe, une association ou le TSV d'arbitrage (sinon avertissement)."""
+    if not DB.exists():
+        return
+    c = sqlite3.connect("file:%s?mode=ro" % DB, uri=True)
+    ecrits = set(re.findall(r'"(FOETO:[^"]+)"', frag))
+    connus = {r[0] for r in c.execute("select id from foeto_terms")}
+    inconnus = sorted(ecrits - connus)
+    if inconnus:
+        raise SystemExit("grilles/%s.js : codes absents de foeto_terms : %s" % (nom, ", ".join(inconnus)))
+    if "FOETO_DANS_SIGNES = true" not in frag:
+        return
+    tsv = FRAGMENTS / (nom + ".codes_a_valider.tsv")
+    ecrits |= set(re.findall(r"FOETO:[\w.-]+", tsv.read_text(encoding="utf-8"))) if tsv.exists() else set()
+    lesions = c.execute("select id, label_fr from foeto_terms where triage_fiche like ? and triage_verdict = 'LESION'",
+                        ("%%fiche_%s.md%%" % nom.split(".")[0],)).fetchall()
+    for i, l in lesions:
+        if i not in ecrits:
+            print("  ! %s « %s » : terme LESION de la fiche porté nulle part" % (i, l))
+
+
 CONST = {k: re.compile(r'var %s\s*=\s*"([^"]+)"' % k) for k in ("ORGANE", "TITRE", "SOURCE")}
 
 
@@ -1556,6 +1597,7 @@ def fabriquer(nom):
         page = page.replace("{{%s}}" % k, v)
     page = page.replace("{{ORGANE_JS}}", frag.rstrip())
     page = page.replace("{{FOETO_JS}}", bloc_foeto(organe))
+    controler_codes(nom, frag)
 
     reste = re.findall(r"\{\{(\w+)\}\}", page)
     if reste:

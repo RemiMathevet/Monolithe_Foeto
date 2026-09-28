@@ -7,7 +7,7 @@ var ORGANE  = "rein";
 var TITRE   = "rein et voies urinaires hautes";
 var SOURCE  = "fiche_rein.md";
 var MODULE  = "grille_rein";
-var VERSION = "1.1.1";
+var VERSION = "1.1.2";
 var PAIR    = true;
 
 var TITRE_CR    = "REIN";
@@ -52,20 +52,25 @@ var PRELEV = [
 ];
 
 /* ── 02 · Rétention ───────────────────────────────────────────────────────── */
-/* Modificateurs communs, énoncés par [ernst, ch. 37] sur la série des délais. */
+/* Modificateurs communs, énoncés par [ernst, ch. 37] sur la série des délais.
+   Chaque ligne est une PERTE de basophilie nucléaire (Genest ; keeling Table 15.6).
+   h ordonne les critères ; pour « toutes les cellules du rein » (rang 10, délai
+   perdu à l'extraction) c'est un rang, pas un délai : il vient après la
+   persistance dans quelques tubules. */
 var MODIF = "délai accéléré par l'anasarque et par un intervalle délivrance-autopsie > 24 h, ralenti par un terme < 27 SA";
 
 var RETENTION = [
-  { k:"basoTubIso", l:"Basophilie des tubes, isolée", b:"≥ 4 h", d:"« Tubules — ≥ 4 h »", h:4, q:"bon",
+  { k:"basoTubIso", l:"Perte de basophilie nucléaire de cellules tubulaires corticales isolées", b:"≥ 4 h", d:"« Tubules — ≥ 4 h »", h:4, q:"bon",
     note:"l'attribution de cette ligne au rein est une RECONSTRUCTION : la colonne d'organe est amputée " +
          "à l'extraction de [ernst, ch. 37]", alerte:MODIF },
-  { k:"basoTubQq",  l:"Basophilie tubulaire étendue, parenchyme conservé", b:"≈ 2–4 semaines",
+  { k:"basoTubQq",  l:"Perte de basophilie nucléaire étendue, persistante dans quelques tubules", b:"≈ 2–4 semaines",
     d:"pratique du service", h:336, q:"moyen",
     note:"divergence frontale : « there is no fetal organ that provides a good estimate of the timing of " +
          "fetal death between 2 and 4 weeks » [ernst, ch. 37], alors que le service date précisément cette " +
          "fenêtre sur le rein — écrire laquelle des deux lectures on retient",
     alerte:MODIF },
-  { k:"basoRein",   l:"Rein basophile en totalité", b:"rang 10 de la série", d:"délai non sourcé", h:240, q:"moyen",
+  { k:"basoRein",   l:"Perte de basophilie nucléaire de toutes les cellules du rein", b:"rang 10 de la série",
+    d:"« All cells in the kidney » — délai non sourcé", h:700, q:"moyen",
     note:"le rein figure aux rangs 1 ET 10 de [keeling, ch. 15, Table 15.6] ; la colonne des délais a été " +
          "perdue à l'extraction — le rang est conservé, pas le chiffre" },
   { k:"necroseTub", l:"Nécrose tubulaire aiguë", b:"—", d:"non datable seule", h:0, q:"mauvais",
