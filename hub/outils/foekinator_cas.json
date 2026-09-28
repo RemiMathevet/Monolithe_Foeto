@@ -1,0 +1,23 @@
+[
+  {
+    "nom": "Meckel — signes FOETO de la fiche rein seuls (gradient kystique, mésenchyme inter-kystique, encéphalocèle occipitale, plaque ductale)",
+    "present": ["FOETO:PF.REN-NOR-013", "FOETO:PF.REN-MAL-038", "FOETO:PF.REN-MAL-058", "FOETO:PF.REN-MAL-065"],
+    "attendu": "ORPHA:564"
+  },
+  {
+    "nom": "Bardet-Biedl — kystes médullaires, collecteurs médullaires normaux, gradient kystique",
+    "present": ["FOETO:PF.REN-MAL-035", "FOETO:PF.REN-MAL-008", "FOETO:PF.REN-NOR-013"],
+    "attendu": "ORPHA:110"
+  },
+  {
+    "nom": "Meckel + tube primitif à collerette — la fiche : un tube primitif EXCLUT Meckel",
+    "present": ["FOETO:PF.REN-NOR-013", "FOETO:PF.REN-MAL-038", "FOETO:PF.REN-MAL-058", "FOETO:PF.REN-MAL-065",
+                "FOETO:PF.REN-MAL-072"],
+    "pas_en_tete": "ORPHA:564"
+  },
+  {
+    "nom": "Meckel — HPO seuls (encéphalocèle, polydactylie postaxiale, reins polykystiques, fibrose hépatique)",
+    "present": ["HP:0002084", "HP:0100259", "HP:0000113", "HP:0001395"],
+    "attendu": "ORPHA:564"
+  }
+]

@@ -85,7 +85,7 @@ hub/
   rejets/             ce qui n'est pas passé, avec un .txt qui dit pourquoi
   photos/26P0123/<module>/          les JPEG reconstitués
   photos/26P0123/<module>/vignettes/ les vignettes, si Pillow est installé
-  biblio/             le paquet data_hub en place (akinator, familles, fiches)
+  biblio/             le paquet data_hub en place (Foekinator, familles, fiches)
   archive/_biblio/    les paquets reçus, horodatés
   hub.sqlite          la base de travail
   index.json          l'index lu par dossiers.html, réécrit à chaque passage

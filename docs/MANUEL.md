@@ -146,7 +146,7 @@ nom de répertoire : lettres, chiffres, `. _ -`). Les onglets **Comptes
 rendus**, **Statistiques**, **Contrôle qualité** et **Sauvegarde** sont
 décrits dans [hub/README.md](../hub/README.md).
 
-## 8. Biblio — fiches, familles, akinator hors ligne
+## 8. Biblio — fiches, familles, Foekinator hors ligne
 
 1. Télécharger `data_hub_vN.zip` sur
    [data.pazuzu.uk/browse/scripts](https://data.pazuzu.uk/browse/scripts).
@@ -155,14 +155,14 @@ décrits dans [hub/README.md](../hub/README.md).
    archive et remplace le paquet précédent en entier.
 3. Quatre vues : **Fiches micro** (les fiches de lecture par organe, celles
    dont sortent les grilles), **Familles** (familles de syndromes fœtaux :
-   membres, signes cœur / partiels / discriminants, parenté), **Akinator**
+   membres, signes cœur / partiels / discriminants, parenté), **Foekinator**
    (diagnostic syndromique bayésien sur la matrice attestée par les livres +
    termes FOETO — saisir deux signes, répondre aux questions discriminantes),
    **Paquet** (version, sources, empreintes).
 
 ![Biblio — fiche](captures/11_biblio_fiche.png)
 
-![Biblio — akinator](captures/13_biblio_akinator.png)
+![Biblio — Foekinator](captures/13_biblio_akinator.png)
 
 Un nouveau paquet se dépose de la même façon ; la version affichée est celle
 du manifest.

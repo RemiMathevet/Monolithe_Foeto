@@ -1083,10 +1083,10 @@ function chargerPropositions(numero){
       esc(e.message) + "</p>";
   });
 }
-/* Pistes syndromiques : l'akinator hors ligne (paquet data_hub) nourri des
+/* Pistes syndromiques : le Foekinator hors ligne (paquet data_hub) nourri des
    codes HPO/FOETO cochés ci-dessus. Passif — aucun bouton, recalculé à chaque
    case — et consultatif : rien n'en entre dans le compte rendu. Signes
-   présents seuls ; l'akinator complet (absents, questions) reste dans Biblio. */
+   présents seuls ; le Foekinator complet (absents, questions) reste dans Biblio. */
 var AK_PRET = null;
 function moteurAk(){
   if (!AK_PRET) AK_PRET = new Promise(function(ok, ko){
@@ -1112,7 +1112,7 @@ function pistesAk(){
   }, []).filter(function(x){ return /^(HP|FOETO):/.test(x); });
   codes = codes.filter(function(c, i){ return codes.indexOf(c) === i; });
   box.hidden = false;
-  var tete = '<div class="groupe" style="margin-top:0">Pistes syndromiques — akinator ' +
+  var tete = '<div class="groupe" style="margin-top:0">Pistes syndromiques — Foekinator ' +
     '<span class="note">(aide à la réflexion, n\'entre pas dans le compte rendu)</span></div>';
   if (!codes.length){
     box.innerHTML = tete + '<p class="note" style="margin:0">Aucun code HPO ou FOETO coché.</p>';
@@ -1124,7 +1124,7 @@ function pistesAk(){
     var connus = codes.filter(function(c){ return Engine.hpoName(c) !== c; });
     if (!connus.length){
       box.innerHTML = tete + '<p class="note" style="margin:0">Aucun des ' + codes.length +
-        " code(s) coché(s) n'est dans la matrice de l'akinator.</p>";
+        " code(s) coché(s) n'est dans la matrice du Foekinator.</p>";
       return;
     }
     var r = Engine.posteriors(connus, [], true).slice(0, 5).filter(function(d){ return d.probability >= 0.01; });
@@ -1138,7 +1138,7 @@ function pistesAk(){
           (vus.length ? '<br><span class="note">' + esc(vus.join(" · ")) + "</span>" : "") + "</span></div>";
       }).join("") : '<p class="note" style="margin:0">Aucune piste au-dessus de 1 %.</p>');
   }).catch(function(e){
-    if ($("crPistes")) box.innerHTML = tete + '<p class="note" style="margin:0">Akinator indisponible : ' +
+    if ($("crPistes")) box.innerHTML = tete + '<p class="note" style="margin:0">Foekinator indisponible : ' +
       esc(e.message) + "</p>";
   });
 }
@@ -1950,7 +1950,7 @@ function pageBiblio(){
       $("panBiblio").innerHTML =
         '<div id="dropPaquet" class="drop">Déposer ici <b>data_hub_vN.zip</b>, ou cliquer sur « Déposer un paquet ».</div>' +
         '<p class="note">Le paquet est publié sur <a href="https://data.pazuzu.uk/browse/scripts" target="_blank" rel="noopener">data.pazuzu.uk</a> : ' +
-        'akinator (matrice des livres + termes FOETO), familles de syndromes fœtaux, fiches de lecture microscopique. ' +
+        'Foekinator (matrice des livres + termes FOETO), familles de syndromes fœtaux, fiches de lecture microscopique. ' +
         'Le hub vérifie le manifest et chaque empreinte, garde le zip en archive et sert le contenu hors ligne. ' +
         'Un paquet remplace le précédent en entier.</p>';
       zoneDepotPaquet($("dropPaquet"));
@@ -1962,7 +1962,7 @@ function pageBiblio(){
       [["fiches", "Fiches micro (" + (o.fiches || []).length + ")"],
        ["syndromes", "Syndromes (" + (src.syndromes || "—") + ")"],
        ["familles", "Familles (" + (src.familles || "—") + ")"],
-       ["akinator", "Akinator (" + ((src.akinator || {}).n_diseases || "—") + " maladies)"],
+       ["akinator", "Foekinator (" + ((src.akinator || {}).n_diseases || "—") + " maladies)"],
        ["paquet", "Paquet v" + o.version]]
       .map(function(x){ return '<button class="onglet' + (x[0] === BIBLIO.vue ? " on" : "") + '" data-vue="' + x[0] + '">' + esc(x[1]) + "</button>"; }).join("");
     vueBiblio(BIBLIO.vue);
@@ -1981,7 +1981,7 @@ function vueBiblio(v){
     var src = o.sources || {}, ak = src.akinator || {};
     pan.innerHTML = '<div class="grille" style="margin-bottom:16px">' +
       tuile("version", "v" + o.version + " · " + esc(o.date)) + tuile("fiches", src.fiches) +
-      tuile("familles", src.familles) + tuile("maladies (akinator)", ak.n_diseases) +
+      tuile("familles", src.familles) + tuile("maladies (Foekinator)", ak.n_diseases) +
       tuile("termes HPO", ak.n_hpo) + tuile("termes FOETO", ak.n_foeto) + "</div>" +
       '<p class="note">syndromes_foetaux.db du ' + esc(src["syndromes_foetaux.db"] || "—") +
       (src.fiches_lecture ? " · fiches_lecture " + esc(src.fiches_lecture) : "") + ". Matrice : " + esc(ak.prob_mode || "—") + ".</p>" +
@@ -2074,7 +2074,7 @@ function vueBiblio(v){
   if (v === "akinator"){
     pan.innerHTML = '<div id="akinator-app">' +
       '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">' +
-        '<div style="flex:1;min-width:200px"><b>Akinator</b> <span style="font-size:11px;opacity:.7">diagnostic syndromique bayésien, matrice des livres + FOETO</span></div>' +
+        '<div style="flex:1;min-width:200px"><b>Foekinator</b> <span style="font-size:11px;opacity:.7">diagnostic syndromique bayésien, matrice des livres + FOETO</span></div>' +
         '<div class="ctx-toggle" id="ctxToggle"><button class="active" data-ctx="" onclick="setContext(\'\')">Tous</button>' +
         '<button data-ctx="prenatal" onclick="setContext(\'prenatal\')">Prénatal</button><button data-ctx="postnatal" onclick="setContext(\'postnatal\')">Postnatal</button></div>' +
         '<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer"><input type="checkbox" id="hierToggle" checked onchange="state.useHierarchy=this.checked;updateRanking()"> Hiérarchie HPO</label>' +
