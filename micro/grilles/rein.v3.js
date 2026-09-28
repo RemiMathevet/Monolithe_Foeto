@@ -30,7 +30,7 @@ var ORGANE  = "rein";
 var TITRE   = "rein et voies urinaires hautes";
 var SOURCE  = "fiche_rein.md";
 var MODULE  = "grille_rein";
-var VERSION = "3.1.0";
+var VERSION = "3.1.2";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;   /* v3 : plus de section « Termes FOETO » */
@@ -83,20 +83,15 @@ var PRELEV = [
 /* Modificateurs communs, énoncés par [ernst, ch. 37] sur la série des délais.
    Chaque ligne est une PERTE de basophilie nucléaire (Genest ; keeling Table 15.6).
    h ordonne les critères ; pour « toutes les cellules du rein » (rang 10, délai
-   perdu à l'extraction) c'est un rang, pas un délai : il vient après la
-   persistance dans quelques tubules. */
+   perdu à l'extraction) c'est un rang, pas un délai. 3.1.2 : le palier du
+   service « persistante dans quelques tubules, 2–4 semaines » est retiré —
+   la pratique du service ne compte pas devant les livres. */
 var MODIF = "délai accéléré par l'anasarque et par un intervalle délivrance-autopsie > 24 h, ralenti par un terme < 27 SA";
 
 var RETENTION = [
   { k:"basoTubIso", l:"Perte de basophilie nucléaire de cellules tubulaires corticales isolées", b:"≥ 4 h", d:"« Tubules — ≥ 4 h »", h:4, q:"bon",
     note:"l'attribution de cette ligne au rein est une RECONSTRUCTION : la colonne d'organe est amputée " +
          "à l'extraction de [ernst, ch. 37]", alerte:MODIF },
-  { k:"basoTubQq",  l:"Perte de basophilie nucléaire étendue, persistante dans quelques tubules", b:"≈ 2–4 semaines",
-    d:"pratique du service", h:336, q:"moyen",
-    note:"divergence frontale : « there is no fetal organ that provides a good estimate of the timing of " +
-         "fetal death between 2 and 4 weeks » [ernst, ch. 37], alors que le service date précisément cette " +
-         "fenêtre sur le rein — écrire laquelle des deux lectures on retient",
-    alerte:MODIF },
   { k:"basoRein",   l:"Perte de basophilie nucléaire de toutes les cellules du rein", b:"rang 10 de la série",
     d:"« All cells in the kidney » — délai non sourcé", h:700, q:"moyen",
     note:"le rein figure aux rangs 1 ET 10 de [keeling, ch. 15, Table 15.6] ; la colonne des délais a été " +
@@ -289,7 +284,7 @@ var SIGNES = [
   { k:"plaqueDuctale", f2:"plaque_ductale", hpo:"HP:0006563", g:"Contexte hors lame — macro, foie, clinique",  l:"Plaque ductale sur le fragment de foie" },
   { k:"anomAssociees", g:"Contexte hors lame — macro, foie, clinique",  l:"Anomalies extrarénales associées (polydactylie, encéphalocèle, foie)" },
   { k:"voute", f2:"voute_ossification", g:"Contexte hors lame — macro, foie, clinique",          l:"Retard d'ossification de la voûte crânienne", meta:"constant dans la DTR" },
-  { k:"exposition", g:"Contexte hors lame — macro, foie, clinique",     l:"Exposition maternelle ARA2 / IEC / AINS documentée" },
+  { k:"exposition", f2:"exposition_medicamenteuse", g:"Contexte hors lame — macro, foie, clinique",     l:"Exposition maternelle ARA2 / IEC / AINS documentée" },
   { k:"syndromique", g:"Contexte hors lame — macro, foie, clinique",    l:"Contexte syndromique (Beckwith-Wiedemann, diabète maternel)" }
 ];
 
@@ -485,7 +480,8 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 
   /* Divergences portées, jamais arbitrées */
   chk("rétention : attribution reconstruite", par(RETENTION, "basoTubIso").note.indexOf("RECONSTRUCTION") >= 0);
-  chk("rétention : divergence 2–4 semaines", par(RETENTION, "basoTubQq").note.indexOf("divergence frontale") >= 0);
+  /* la pratique du service ne compte pas devant les livres : pas de palier 2–4 semaines */
+  chk("rétention : pas de palier de service", !par(RETENTION, "basoTubQq"));
   chk("sclérose : deux planchers",  par(DIAGS, "glomSclerose").stop.indexOf("1–2 %") >= 0 &&
       par(DIAGS, "glomSclerose").stop.indexOf("< 1 %") >= 0);
   chk("dysplasie : cartilage non réfutant", par(DIAGS, "dysplasie").stop.indexOf("n'exclut pas") >= 0);
@@ -534,7 +530,9 @@ async function testsOrgane(chk, clic, set, crTient, pause){
   set("rqFoeto", "Tamm");
   $("sgFoeto").querySelector('[data-pick="FOETO2:PF.REN-CON-tamm_horsfall"]').click();
   chk("v3 : un terme porté par un signe pose le signe", E.signes.tammHorsfall === POS && !E.foeto["FOETO2:PF.REN-CON-tamm_horsfall"]);
-  chk("v3.1 : libellé et codes venus de FOETO v2", par(SIGNES, "kysteSC").l === "Kystes sous-capsulaires corticaux" &&
-      codesDe(par(SIGNES, "kysteSC")).indexOf("FOETO:PF.REN-MAL-036") > 0);
+  chk("v3.1 : libellé venu de FOETO v2", par(SIGNES, "kysteSC").l === "Kystes sous-capsulaires corticaux");
+  /* seules les correspondances v1 EXACTES suivent : MAL-036 est partielle (fiche § 10 C) */
+  chk("v3.1 : codes v1 exacts seulement", codesDe(par(SIGNES, "kystesNoyau")).indexOf("FOETO:PF.REN-MAL-003") > 0 &&
+      codesDe(par(SIGNES, "kysteSC")).indexOf("FOETO:PF.REN-MAL-036") < 0);
   ote("tammHorsfall");
 }
