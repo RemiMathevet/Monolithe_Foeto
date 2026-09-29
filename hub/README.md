@@ -273,6 +273,23 @@ vérifie que chaque partie est bien arrivée dans le texte. Un gabarit ne se
 relit pas : Jinja rend une clé de contexte mal tapée par du vide, sans rien
 dire.
 
+### Gabarits de Luminarium
+
+Un gabarit écrit pour Lumi (`templates/cr/*.jinja2` de Luminarium) tourne ici
+sans retouche : `app/cr_lumi.py` sert, en plus du contexte du hub, les
+variables de Lumi (`case`, `numero`, `terme_sa`, `morpho`, `calc_bio`,
+`ouverture`, `maceration`, `rad_*`, `np_*`, `cordon`, `zscore`…) remplies depuis
+les saisies d'ici, ses aides (`_ds`, `split_*`, `table_*`, `_plaque`…) et sa
+fonction `t()`. Les noms de la base suivent ceux de Lumi (`terme_j`,
+`grade_maceration`…). Rien n'est lu dans la base de Lumi. Un gabarit Lumi se
+reconnaît à ses variables et se rend avec les réglages de Lumi (pas de
+`trim_blocks`) ; `{# jinja: lumi #}` ou `{# jinja: hub #}` en tête tranche.
+
+    python3 hub/outils/verifier_lumi.py [dossier_des_gabarits_lumi]
+
+rend chaque gabarit de Lumi et liste ce qui manque : ce qui reste, ce sont des
+champs que les modules d'ici ne saisissent pas (caryotype, gonades, valves…).
+
 ### Vérifier les tables des modules
 
 Chaque module de salle embarque sa propre copie des référentiels — il le faut

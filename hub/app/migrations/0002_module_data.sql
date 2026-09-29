@@ -61,7 +61,7 @@ SELECT
     d.numero,
     d.statut,
     d.terme_sa,
-    d.terme_jours,
+    d.terme_j,
     d.sexe,
     d.type_issue,
     d.date_reception,

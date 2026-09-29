@@ -108,7 +108,7 @@
      rien écraser. Les champs s'appellent terme_sa / terme_j (radio,
      biométrie) ou sa / saj (autopsie, neuropath, grilles, étui). */
   function termeDuHub(d) {
-    var sa = d.terme_sa, j = d.terme_jours;
+    var sa = d.terme_sa, j = d.terme_j;
     if (sa == null) (d.saisies || []).some(function (s) {
       var x = s.donnees || {};
       var t = x.terme && typeof x.terme === "object" ? x.terme : null;

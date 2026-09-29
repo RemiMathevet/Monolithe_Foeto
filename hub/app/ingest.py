@@ -306,7 +306,7 @@ def adapt_administratif(cx, sid, dossier, d):
         ins(cx, "admin_coherence", saisie_id=sid, dossier=dossier, message=txt(m))
 
     # Le module administratif renseigne la fiche de synthèse du dossier.
-    cx.execute("""UPDATE dossiers SET terme_sa=?, terme_jours=?, sexe=?, type_issue=?,
+    cx.execute("""UPDATE dossiers SET terme_sa=?, terme_j=?, sexe=?, type_issue=?,
                          date_reception=?, date_examen=?, indication=?
                    WHERE numero=?""",
                (entier(issue.get("terme_sa")), entier(issue.get("terme_j")),
@@ -345,7 +345,7 @@ def adapt_examen_clinique(cx, sid, dossier, d):
     r = d.get("retention")
     if r:                                   # 0.3.0 : Maroun (fait foi) + palier de Genest
         ins(cx, "examen_clinique_retention", saisie_id=sid, dossier=dossier,
-            maroun=entier(r.get("maroun")), genest=txt(r.get("genest")),
+            grade_maceration=entier(r.get("maroun")), genest=txt(r.get("genest")),
             genest_h=entier(r.get("genest_h")))
 
 
@@ -354,7 +354,7 @@ def adapt_examen_clinique(cx, sid, dossier, d):
 def adapt_biometrie_clinique(cx, sid, dossier, d):
     t = d.get("terme") or {}
     ins(cx, "biometrie_clinique", saisie_id=sid, dossier=dossier,
-        terme_sa=entier(t.get("sa")), terme_jours=entier(t.get("jours")),
+        terme_sa=entier(t.get("sa")), terme_j=entier(t.get("jours")),
         sexe=txt(d.get("sexe")))
     for cle, v in (d.get("mesures") or {}).items():
         ins(cx, "biometrie_clinique_mesures",
@@ -372,7 +372,7 @@ def adapt_radio(cx, sid, dossier, d):
     bio = d.get("biometries") or {}
     sc = d.get("scores_staturaux") or {}
     ins(cx, "radio", saisie_id=sid, dossier=dossier,
-        terme_sa=entier(t.get("sa")), terme_jours=entier(t.get("jours")),
+        terme_sa=entier(t.get("sa")), terme_j=entier(t.get("jours")),
         aspect_general=txt(sq.get("aspect_general")),
         cotes_droite=entier(cotes.get("droite")), cotes_gauche=entier(cotes.get("gauche")),
         thorax_forme=txt(sq.get("thorax_forme")),
@@ -415,7 +415,7 @@ def _champ_commun(c):
 def adapt_autopsie(cx, sid, dossier, d):
     ins(cx, "autopsie", saisie_id=sid, dossier=dossier,
         ouverture_at=txt(d.get("ouverture_at")),
-        terme_sa=entier(d.get("terme_sa")), terme_jours=entier(d.get("terme_jours")),
+        terme_sa=entier(d.get("terme_sa")), terme_j=entier(d.get("terme_jours")),
         maceration_maroun=entier(d.get("maceration_maroun")),
         trame_attendue=entier(d.get("trame_attendue")),
         champs_renseignes=0)
@@ -448,7 +448,7 @@ def adapt_autopsie(cx, sid, dossier, d):
 
 def adapt_neuropath(cx, sid, dossier, d):
     ins(cx, "neuropath", saisie_id=sid, dossier=dossier,
-        terme_sa=entier(d.get("terme_sa")), terme_jours=entier(d.get("terme_jours")),
+        terme_sa=entier(d.get("terme_sa")), terme_j=entier(d.get("terme_jours")),
         trame_attendue=entier(d.get("trame_attendue")), champs_renseignes=0)
     rang = faits = 0
     for e in d.get("etapes") or []:

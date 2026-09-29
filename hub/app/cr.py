@@ -31,6 +31,7 @@ import re
 from pathlib import Path
 
 import biometrie
+import cr_lumi
 
 ICI = Path(__file__).resolve().parent
 GABARITS = ICI / "gabarits"
@@ -373,7 +374,7 @@ def contexte(cx, numero, refs: biometrie.References, modules_attendus):
     # redonnent et peuvent diverger — on le dit plutôt que de choisir seul.
     issue = admin.get("issue") or {}
     sa = issue.get("terme_sa") if issue.get("terme_sa") is not None else d.get("terme_sa")
-    j = issue.get("terme_j") if issue.get("terme_j") is not None else d.get("terme_jours")
+    j = issue.get("terme_j") if issue.get("terme_j") is not None else d.get("terme_j")
     termes_vus = {}
     for nom, doc in (("autopsie", aut), ("neuropath", neu), ("micro", mic)):
         if doc.get("terme_sa") is not None:
@@ -512,6 +513,8 @@ def contexte(cx, numero, refs: biometrie.References, modules_attendus):
                        "erreurs": refs.erreurs},
         "cliches": photos,
     }
+    # Les noms de Lumi, pour que ses gabarits tournent ici tels quels (cr_lumi.py).
+    ctx.update(cr_lumi.contexte_lumi(ctx, clin, aut, neu, plac))
     # Sans validation (aperçu, appel direct), tout ce qui est proposé est retenu.
     ctx["propositions"] = propositions(ctx)
     ctx["retenues"], ctx["ecartees"] = ctx["propositions"], []
@@ -590,7 +593,19 @@ def format_de(texte):
     return "html" if m and m.group(1) == "html" else "texte"
 
 
-def environnement(html=False):
+# Un gabarit écrit pour Lumi se reconnaît à ses variables (cr_lumi.py) : on le
+# rend avec les réglages de Lumi (ni trim_blocks ni lstrip_blocks), sinon ses
+# sauts de ligne disparaissent. {# jinja: lumi #} ou {# jinja: hub #} tranche.
+LUMI_MARQUEURS = re.compile(r"\b(case\.|numero\b|calc_bio|calc_org|all_anomalies|split_\w+\(|_ds\(|"
+                            r"_morpho\(|maceration\.maroun_score|np_\w+|rad_\w+|t\('cr\.)")
+
+
+def style_lumi(texte):
+    m = re.search(r"\{#\s*jinja:\s*(\w+)\s*#\}", (texte or "")[:600])
+    return m.group(1) == "lumi" if m else bool(LUMI_MARQUEURS.search(texte or ""))
+
+
+def environnement(html=False, lumi=False):
     if not JINJA:
         raise RuntimeError("Jinja2 est absent — il vient avec Flask : pip install flask")
     # Bac à sable et non Environment : la page Comptes rendus laisse écrire
@@ -599,7 +614,7 @@ def environnement(html=False):
     # (`{{ cycler.__init__.__globals__.os }}`). Le bac à sable interdit ces
     # accès ; les filtres et globals déclarés ci-dessous restent disponibles.
     env = SandboxedEnvironment(loader=FileSystemLoader(str(GABARITS)),
-                               trim_blocks=True, lstrip_blocks=True,
+                               trim_blocks=not lumi, lstrip_blocks=not lumi,
                                keep_trailing_newline=True, autoescape=html)
     env.filters.update(fr=fr, dtc=dtc, zt=zt, ds3=ds3, valeur=valeur_champ, phrase=phrase)
     env.globals.update(rempli=rempli, date_variable=date_variable)
@@ -637,7 +652,7 @@ def apercu(cx, numero, texte, refs, modules_attendus):
     """
     ctx = contexte(cx, numero, refs, modules_attendus)
     fmt = format_de(texte)
-    rendu = environnement(fmt == "html").from_string(texte).render(**ctx)
+    rendu = environnement(fmt == "html", style_lumi(texte)).from_string(texte).render(**ctx)
     return re.sub(r"\n{3,}", "\n\n", rendu).strip() + "\n", fmt
 
 
@@ -698,7 +713,7 @@ def rendre(cx, numero, gabarit, refs, modules_attendus, operateur=None, ecartees
     ctx["retenues"] = [p for p in ctx["propositions"] if p["id"] not in ecartees]
     ctx["ecartees"] = [p for p in ctx["propositions"] if p["id"] in ecartees]
     fmt = dispo[gabarit]["format"]
-    texte = environnement(fmt == "html").get_template(gabarit + ".jinja2").render(**ctx)
+    texte = environnement(fmt == "html", style_lumi(source(gabarit))).get_template(gabarit + ".jinja2").render(**ctx)
     texte = re.sub(r"\n{3,}", "\n\n", texte).strip() + "\n"
     cur = cx.execute("""INSERT INTO comptes_rendus
                           (dossier, gabarit, gabarit_version, texte, operateur, format, ecartees)

@@ -11,7 +11,7 @@
 CREATE TABLE IF NOT EXISTS examen_clinique_retention (
     saisie_id  INTEGER PRIMARY KEY REFERENCES saisies(id) ON DELETE CASCADE,
     dossier    TEXT NOT NULL,
-    maroun     INTEGER,        -- 0-3
+    grade_maceration INTEGER,  -- Maroun 0-3 (nom BaMaRa, repris par Lumi)
     genest     TEXT,           -- aucun | 6h | 12h | 18h | 24h | 2sem
     genest_h   INTEGER         -- borne basse en heures (2 semaines = 336)
 );

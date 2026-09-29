@@ -530,7 +530,7 @@ var INDEX = null, COURANT = null, ONGLET = "dossier", STATUT = "";
 /* ── Mise en forme ────────────────────────────────────────────────────────── */
 function terme(d){
   if (d.terme_sa == null) return "—";
-  return d.terme_sa + " SA" + (d.terme_jours ? " + " + d.terme_jours + " j" : "");
+  return d.terme_sa + " SA" + (d.terme_j ? " + " + d.terme_j + " j" : "");
 }
 function dateCourte(s){
   if (!s) return "—";
@@ -1283,11 +1283,11 @@ function rendreCourante(id){
 /* ── Export CSV de la liste filtrée ───────────────────────────────────────── */
 $("btnCsv").onclick = function(){
   var l = filtres();
-  var lignes = [["dossier","statut","terme_sa","terme_jours","sexe","issue",
+  var lignes = [["dossier","statut","terme_sa","terme_j","sexe","issue",
                  "date_reception","date_examen","modules","cliches","indication",
                  "remarques","derniere_reprise"].join(";")];
   l.forEach(function(d){
-    lignes.push([d.numero, d.statut, d.terme_sa, d.terme_jours, d.sexe, d.type_issue,
+    lignes.push([d.numero, d.statut, d.terme_sa, d.terme_j, d.sexe, d.type_issue,
                  d.date_reception, d.date_examen, modulesDe(d).join("|"), d.cliches,
                  (d.indication || "").replace(/[;\r\n]/g, " "),
                  (d.remarques || "").replace(/[;\r\n]/g, " "), d.derniere_ingestion]
@@ -2302,7 +2302,7 @@ if (/[?&]selftest=1/.test(location.search)){
       modules: {administratif:{module:"administratif"}, radio:{module:"radio"},
                 autopsie:{module:"autopsie"}},
       dossiers: [{
-        numero:"26P0123", statut:"en_cours", terme_sa:24, terme_jours:3, sexe:"M",
+        numero:"26P0123", statut:"en_cours", terme_sa:24, terme_j:3, sexe:"M",
         type_issue:"IMG", date_reception:"2026-01-02", date_examen:"2026-01-03",
         indication:"Contrôle", remarques:"à relire", cliches:1,
         derniere_ingestion:"2026-01-04 10:00",

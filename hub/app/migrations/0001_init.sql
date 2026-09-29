@@ -51,7 +51,7 @@ CREATE TABLE dossiers (
     statut          TEXT NOT NULL DEFAULT 'ouvert'
                     CHECK (statut IN ('ouvert','en_cours','complet','clos')),
     terme_sa        INTEGER,
-    terme_jours     INTEGER,
+    terme_j     INTEGER,
     sexe            TEXT,
     type_issue      TEXT,
     date_reception  TEXT,                                     -- AAAA-MM-JJ
@@ -325,7 +325,7 @@ CREATE TABLE biometrie_clinique (
     saisie_id   INTEGER PRIMARY KEY REFERENCES saisies(id) ON DELETE CASCADE,
     dossier     TEXT NOT NULL REFERENCES dossiers(numero) ON DELETE CASCADE,
     terme_sa    INTEGER,
-    terme_jours INTEGER,
+    terme_j INTEGER,
     sexe        TEXT
 );
 
@@ -349,7 +349,7 @@ CREATE TABLE radio (
     saisie_id           INTEGER PRIMARY KEY REFERENCES saisies(id) ON DELETE CASCADE,
     dossier             TEXT NOT NULL REFERENCES dossiers(numero) ON DELETE CASCADE,
     terme_sa            INTEGER,
-    terme_jours         INTEGER,
+    terme_j         INTEGER,
     aspect_general      TEXT,
     cotes_droite        INTEGER,
     cotes_gauche        INTEGER,
@@ -412,7 +412,7 @@ CREATE TABLE autopsie (
     dossier           TEXT NOT NULL REFERENCES dossiers(numero) ON DELETE CASCADE,
     ouverture_at      TEXT,                                   -- horodatage du cliché d'ouverture
     terme_sa          INTEGER,
-    terme_jours       INTEGER,
+    terme_j       INTEGER,
     maceration_maroun INTEGER,
     trame_attendue    INTEGER,
     champs_renseignes INTEGER
@@ -468,7 +468,7 @@ CREATE TABLE neuropath (
     saisie_id         INTEGER PRIMARY KEY REFERENCES saisies(id) ON DELETE CASCADE,
     dossier           TEXT NOT NULL REFERENCES dossiers(numero) ON DELETE CASCADE,
     terme_sa          INTEGER,
-    terme_jours       INTEGER,
+    terme_j       INTEGER,
     trame_attendue    INTEGER,
     champs_renseignes INTEGER
 );
@@ -526,7 +526,7 @@ SELECT
     d.numero,
     d.statut,
     d.terme_sa,
-    d.terme_jours,
+    d.terme_j,
     d.sexe,
     d.type_issue,
     d.date_reception,
