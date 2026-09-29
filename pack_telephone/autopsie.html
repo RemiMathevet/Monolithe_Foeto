@@ -202,15 +202,14 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
     <div class="field">
       <label for="maroun">Macération — grade de Maroun</label>
       <select id="maroun">
-        <option value="0">0 — aucune</option>
-        <option value="1">1 — desquamation focale</option>
-        <option value="2">2 — desquamation étendue</option>
-        <option value="3">3 — macération marquée</option>
-        <option value="4">4 — macération majeure</option>
+        <option value="0">0 — non macéré</option>
+        <option value="1">1 — légère : bulles ou desquamation des extrémités, ou de petites zones de la face ou du tronc</option>
+        <option value="2">2 — modérée : desquamation étendue, peau et ombilic rougeâtres</option>
+        <option value="3">3 — marquée : peau brune, tan ou jaunâtre, os du crâne chevauchants, articulations laxes et/ou momification</option>
       </select>
     </div>
   </div>
-  <p class="note" id="ctxHint">Le terme conditionne les z-scores de masses ; le grade de Maroun choisit la strate de Maroun.</p>
+  <p class="note" id="ctxHint">Le terme conditionne les z-scores de masses ; le grade de Maroun (Maroun &amp; Graem 2005, 0-3) choisit la strate de leurs tables. Le hub retient celui de l'examen clinique s'il est saisi.</p>
   <p class="note" id="ouvHint">Ouverture non horodatée — le cliché « Ouverture » date l'acte.</p>
 </section>
 
@@ -264,7 +263,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 
 var MODULE = "autopsie";
 var SCHEMA = "0.2.0";   /* 0.2.0 : chips codées HPO (hpo), vu_normal par champ */
-var VERSION = "2.0.13";   /* version du document ; à incrémenter à chaque diffusion */
+var VERSION = "2.1.0";   /* version du document ; à incrémenter à chaque diffusion */
 var DB_NAME = "foeto-autopsie", DB_VER = 1, db = null;
 
 /* ── Référentiels de masses (recopiés de references.js) ─────────────────── */
@@ -1416,7 +1415,8 @@ async function autotest(){
 
   /* Référentiels */
   chk("clé Guihard-Costa",        getGCKey(24) === "23-24" && getGCKey(41) === "41-42" && getGCKey(50) === null);
-  chk("strate de Maroun",         getMarounGrade(0) === "01" && getMarounGrade(2) === "2" && getMarounGrade(4) === "3");
+  chk("strate de Maroun",         getMarounGrade(0) === "01" && getMarounGrade(2) === "2" && getMarounGrade(3) === "3");
+  chk("grades de Maroun 0-3",      $("maroun").options.length === 4);
   chk("strate de Maroun 0-1/2-3", getMarounGrade23(1) === "01" && getMarounGrade23(3) === "23");
   chk("z centré à 0",             zscore(10, 10, 2) === 0);
   chk("z avec sd nul",            zscore(10, 10, 0) === null);

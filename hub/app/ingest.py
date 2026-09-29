@@ -342,6 +342,16 @@ def adapt_examen_clinique(cx, sid, dossier, d):
     ins(cx, "examen_clinique", saisie_id=sid, dossier=dossier,
         trame_attendue=entier(d.get("trame_attendue")),
         items_renseignes=n_faits, items_anormaux=n_anormaux)
+    r = d.get("retention")
+    if r:                                   # 0.3.0 : bloc rétention (Genest III, Maroun)
+        ins(cx, "examen_clinique_retention", saisie_id=sid, dossier=dossier,
+            maroun=entier(r.get("maroun")), maroun_propose=entier(r.get("maroun_propose")),
+            maroun_force=1 if r.get("maroun_force") else 0,
+            genest_borne=txt(r.get("genest_borne")), genest_borne_h=entier(r.get("genest_borne_h")),
+            genest_isole=1 if r.get("genest_isole") else 0,
+            genest_signes=",".join(r.get("genest_signes") or []) or None)
+        for c in (r.get("constats") or []) + ["zone:" + z for z in r.get("zones") or []]:
+            ins(cx, "examen_clinique_retention_constats", saisie_id=sid, dossier=dossier, constat=c)
 
 
 # ── biometrie_clinique 0.1.0 ─────────────────────────────────────────────────
@@ -569,6 +579,7 @@ ADAPTATEURS = {
     # grilles, micro.html multi-organes et macro placenta à plat.
     ("examen_clinique",    "0.2.0"): (4, adapt_examen_clinique),
     ("examen_clinique",    "0.2.1"): (4, adapt_examen_clinique),
+    ("examen_clinique",    "0.3.0"): (6, adapt_examen_clinique),   # 0006 : rétention
     ("autopsie",           "0.2.0"): (4, adapt_autopsie),
     ("micro",              "0.2.0"): (4, adapt_plat),
     ("macro_placenta",     "0.2.0"): (4, adapt_plat),

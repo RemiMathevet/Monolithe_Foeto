@@ -400,7 +400,12 @@ def contexte(cx, numero, refs: biometrie.References, modules_attendus):
                 masses[c["id"]] = c["total"]
                 z_module[c["id"]] = c.get("zscores") or {}
     mesures = {k: v for k, v in (bio.get("mesures") or {}).items() if v is not None}
-    z = biometrie.calculer(refs, sa, aut.get("maceration_maroun"), masses, mesures)
+    # Le grade de Maroun vient du bloc rétention de l'examen clinique (critères de
+    # l'article) ; celui de l'autopsie n'est qu'un repli pour les saisies anciennes.
+    maceration = (clin.get("retention") or {}).get("maroun")
+    if maceration is None:
+        maceration = aut.get("maceration_maroun")
+    z = biometrie.calculer(refs, sa, maceration, masses, mesures)
     divergences = biometrie.comparer(z, z_module)
     # Quand le terme d'ici n'est pas celui qu'avait le module, tous les z
     # diffèrent et la liste ne dit plus rien. On nomme la cause une fois.
@@ -483,13 +488,14 @@ def contexte(cx, numero, refs: biometrie.References, modules_attendus):
         "prenatal": admin.get("prenatal") or {},
         "coherence": admin.get("coherence") or [],
         "clinique": {"etages": clin.get("etages") or [], "anormaux": anormaux,
+                     "retention": clin.get("retention"),
                      "faits": sum(1 for e in clin.get("etages") or []
                                   for i in e.get("items") or [] if i.get("etat")),
                      "total": sum(len(e.get("items") or []) for e in clin.get("etages") or [])},
         "biometrie": {"mesures": mesures, "lignes": lignes_bio, "sexe": bio.get("sexe")},
         "radio": rad,
         "autopsie": {"etapes": _trame(aut), "masses": lignes_masses,
-                     "maceration": aut.get("maceration_maroun"),
+                     "maceration": maceration,
                      "ouverture_at": aut.get("ouverture_at")},
         "placenta": _placenta(plac),
         "micro": _micro(mic),
