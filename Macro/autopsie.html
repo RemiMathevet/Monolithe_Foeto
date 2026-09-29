@@ -200,7 +200,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
       <input type="text" id="saj" class="mono" inputmode="numeric" placeholder="3" autocomplete="off">
     </div>
     <div class="field">
-      <label for="maroun">Macération — grade de Maroun</label>
+      <label for="maroun">Macération — grade de Maroun (informatif)</label>
       <select id="maroun">
         <option value="0">0 — non macéré</option>
         <option value="1">1 — légère : bulles ou desquamation des extrémités, ou de petites zones de la face ou du tronc</option>
@@ -209,7 +209,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
       </select>
     </div>
   </div>
-  <p class="note" id="ctxHint">Le terme conditionne les z-scores de masses ; le grade de Maroun (Maroun &amp; Graem 2005, 0-3) choisit la strate de leurs tables. Le hub retient celui de l'examen clinique s'il est saisi.</p>
+  <p class="note" id="ctxHint">Le terme conditionne les z-scores de masses ; le grade de Maroun (Maroun &amp; Graem 2005, 0-3) choisit la strate de leurs tables. Informatif ici, pour les DS de ce module : le grade qui fait foi est celui de l'examen clinique.</p>
   <p class="note" id="ouvHint">Ouverture non horodatée — le cliché « Ouverture » date l'acte.</p>
 </section>
 
@@ -263,7 +263,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 
 var MODULE = "autopsie";
 var SCHEMA = "0.2.0";   /* 0.2.0 : chips codées HPO (hpo), vu_normal par champ */
-var VERSION = "2.1.0";   /* version du document ; à incrémenter à chaque diffusion */
+var VERSION = "2.1.1";   /* version du document ; à incrémenter à chaque diffusion */
 var DB_NAME = "foeto-autopsie", DB_VER = 1, db = null;
 
 /* ── Référentiels de masses (recopiés de references.js) ─────────────────── */

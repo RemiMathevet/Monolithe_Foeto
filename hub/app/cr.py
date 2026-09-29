@@ -400,8 +400,8 @@ def contexte(cx, numero, refs: biometrie.References, modules_attendus):
                 masses[c["id"]] = c["total"]
                 z_module[c["id"]] = c.get("zscores") or {}
     mesures = {k: v for k, v in (bio.get("mesures") or {}).items() if v is not None}
-    # Le grade de Maroun vient du bloc rétention de l'examen clinique (critères de
-    # l'article) ; celui de l'autopsie n'est qu'un repli pour les saisies anciennes.
+    # Le grade de Maroun de l'examen clinique fait foi ; celui de l'autopsie,
+    # informatif, ne sert aux DS que si l'examen n'a pas de grade.
     maceration = (clin.get("retention") or {}).get("maroun")
     if maceration is None:
         maceration = aut.get("maceration_maroun")

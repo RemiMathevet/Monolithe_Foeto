@@ -704,9 +704,9 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
                                " FROM d GROUP BY cle ORDER BY n DESC"),
                 "terme": tranches,
                 "maceration": compte("""
-                    SELECT 'grade ' || COALESCE(a.maceration_maroun, '?') AS cle,
+                    SELECT 'grade ' || COALESCE(a.maroun, '?') AS cle,
                            COUNT(*) n
-                    FROM autopsie a JOIN saisies s ON s.id = a.saisie_id AND s.courant=1
+                    FROM examen_clinique_retention a JOIN saisies s ON s.id = a.saisie_id AND s.courant=1
                     JOIN d ON d.numero = s.dossier
                     GROUP BY cle ORDER BY cle"""),
                 "provenance": compte("SELECT provenance AS cle, COUNT(*) n FROM saisies"

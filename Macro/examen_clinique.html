@@ -235,7 +235,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 
 var MODULE = "examen_clinique";
 var SCHEMA = "0.3.0";   /* 0.2.0 : anomalies codées HPO, vu_normal par item · 0.2.1 : position du corps sur chaque cliché · 0.3.0 : bloc retention (Genest III, Maroun) */
-var VERSION = "2.2.0";   /* version du document ; à incrémenter à chaque diffusion */
+var VERSION = "2.2.1";   /* version du document ; à incrémenter à chaque diffusion */
 var DB_NAME = "foeto-examen-clinique", DB_VER = 1, db = null;
 
 /* ── Étages ─────────────────────────────────────────────────────────────────
@@ -315,70 +315,27 @@ var POSITIONS = [
     photos:[ {k:"p_ventre_gen", l:"Dos", e:"general"} ] }
 ];
 /* ── Rétention — avant l'aspect général ─────────────────────────────────────
-   Constats externes, puis deux lectures. Genest III (Obstet Gynecol 1992;80:593) :
-   huit signes, chacun une borne basse d'intervalle mort–naissance ; règle des deux
-   signes — un signe isolé ne date rien. Maroun & Graem (Pediatr Dev Pathol
-   2005;8:204) : grade 0-3 qui choisit la strate de leurs tables de masses.
-   Source : fiches_lecture/_genest_tables.md et l'article de Maroun. */
-var ZONES_GENEST = ["Scalp","Face","Cou","Thorax","Abdomen","Dos","Bras","Main","Jambe","Pied","Scrotum"];
-var CONSTATS_RET = [
-  {k:"bulles",       l:"Bulles / décollement épidermique"},
-  {k:"desq_1cm",     l:"Desquamation ≥ 1 cm"},
-  {k:"desq_5pct",    l:"Desquamation ≥ 5 % de la surface"},
-  {k:"desq_modsev",  l:"Desquamation modérée ou sévère"},
-  {k:"peau_rouge",   l:"Peau rougeâtre"},
-  {k:"cordon_rouge", l:"Cordon / ombilic rougeâtre"},
-  {k:"cordon_brun",  l:"Cordon brun"},
-  {k:"peau_brune",   l:"Peau brune ou tan"},
-  {k:"peau_jaune",   l:"Peau jaunâtre"},
-  {k:"os_chevauch",  l:"Chevauchement des os du crâne"},
-  {k:"artic_laxes",  l:"Articulations laxes"},
-  {k:"momification", l:"Momification"}
-];
-/* Genest III, table d'apprentissage : [id, libellé, borne en heures, borne lisible] */
-var GENEST = [
-  ["desq_1cm",   "Desquamation ≥ 1 cm",                   6,   "≥ 6 h"],
-  ["cordon",     "Décoloration du cordon (brun ou rouge)", 6,   "≥ 6 h"],
-  ["desq_fda",   "Desquamation face, dos ou abdomen",     12,  "≥ 12 h"],
-  ["desq_5pct",  "Desquamation ≥ 5 % de la surface",      18,  "≥ 18 h"],
-  ["desq_2zones","Desquamation ≥ 2 zones sur 11",         18,  "≥ 18 h"],
-  ["peau_brune", "Peau brune ou tan",                     24,  "≥ 24 h"],
-  ["desq_modsev","Desquamation modérée ou sévère",        24,  "≥ 24 h"],
-  ["momification","Momification",                         336, "≥ 2 semaines"]
-];
-/* Maroun & Graem 2005, Methods — définitions citées telles quelles */
+   Deux listes. Maroun & Graem (Pediatr Dev Pathol 2005;8:204) : grade 0-3,
+   définitions de l'article ; c'est CE grade qui fait foi pour la macération (celui
+   de l'autopsie n'est qu'informatif pour ses DS). Genest III (Obstet Gynecol
+   1992;80:593) : borne basse de l'intervalle mort–naissance, un palier par ligne
+   de sa table des signes externes. Source : fiches_lecture/_genest_tables.md. */
 var MAROUN = [
   "0 — non macéré",
-  "1 — légère : « bullae or skin slipping on extremities or small parts of the face or trunk »",
-  "2 — modérée : « extensive skin slipping and reddish discoloration of the skin and umbilicus »",
-  "3 — marquée : « brownish, tan, or yellowish skin discoloration, overlapping cranial bones, loose joints, and/or mummification »"
+  "1 — légère : bulles ou desquamation des extrémités, ou de petites zones de la face ou du tronc",
+  "2 — modérée : desquamation étendue, peau et ombilic rougeâtres",
+  "3 — marquée : peau brune, tan ou jaunâtre, os du crâne chevauchants, articulations laxes et/ou momification"
 ];
-
-/* Calcul pur : constats {k:bool}, zones [libellés] → lecture Genest + grade Maroun proposé */
-function lireRetention(c, zones){
-  var z = zones || [];
-  var vus = {
-    desq_1cm: !!c.desq_1cm, cordon: !!(c.cordon_rouge || c.cordon_brun),
-    desq_fda: z.some(function(x){ return x === "Face" || x === "Dos" || x === "Abdomen"; }),
-    desq_5pct: !!c.desq_5pct, desq_2zones: z.length >= 2,
-    peau_brune: !!c.peau_brune, desq_modsev: !!c.desq_modsev, momification: !!c.momification
-  };
-  var signes = GENEST.filter(function(g){ return vus[g[0]]; });
-  var borne = null;
-  if (signes.length >= 2) borne = signes.reduce(function(a, g){ return g[2] > a[2] ? g : a; });
-  var etendue = c.desq_5pct || c.desq_modsev || z.length >= 2;
-  var desq = etendue || c.bulles || c.desq_1cm || z.length > 0;
-  var mg = (c.peau_brune || c.peau_jaune || c.os_chevauch || c.artic_laxes || c.momification) ? 3
-         : (etendue && (c.peau_rouge || c.cordon_rouge)) ? 2
-         : (desq || c.peau_rouge || c.cordon_rouge) ? 1 : 0;
-  return {
-    genest_signes: signes.map(function(g){ return g[0]; }),
-    genest_borne: borne ? borne[3] : null,
-    genest_borne_h: borne ? borne[2] : null,
-    genest_isole: signes.length === 1,
-    maroun_propose: mg
-  };
-}
+/* [clé, heures, libellé] — paliers de Genest III */
+var GENEST = [
+  ["aucun",  0,   "aucun signe externe de rétention"],
+  ["6h",     6,   "≥ 6 h — desquamation ≥ 1 cm, ou cordon brun ou rouge"],
+  ["12h",    12,  "≥ 12 h — desquamation de la face, du dos ou de l'abdomen"],
+  ["18h",    18,  "≥ 18 h — desquamation ≥ 5 % de la surface, ou ≥ 2 zones sur 11"],
+  ["24h",    24,  "≥ 24 h — peau brune ou tan, desquamation modérée ou sévère"],
+  ["2sem",   336, "≥ 2 semaines — momification"]
+];
+function genestDe(k){ return GENEST.filter(function(g){ return g[0] === k; })[0] || null; }
 
 var N_TRAME = POSITIONS.reduce(function(a, p){ return a + p.photos.length; }, 0);
 var N_ITEMS = ETAGES.reduce(function(a, e){ return a + e.items.length; }, 0);
@@ -562,60 +519,27 @@ function rechercher(id, q){
 
 function retentionHTML(){
   return '<div class="sousTitre">Rétention — avant l\'aspect général</div>' +
-    '<div class="chips" id="ret_constats">' + CONSTATS_RET.map(function(x){
-      return '<button type="button" class="chip" aria-pressed="false" data-ret="' + x.k + '">' + esc(x.l) + '</button>';
-    }).join("") + '</div>' +
-    '<label style="margin-top:10px">Zones desquamées (Genest : 11 zones)</label>' +
-    '<div class="chips" id="ret_zones">' + ZONES_GENEST.map(function(zn){
-      return '<button type="button" class="chip" aria-pressed="false" data-zone="' + esc(zn) + '">' + esc(zn) + '</button>';
-    }).join("") + '</div>' +
-    '<div class="hint" id="ret_genest">—</div>' +
-    '<label for="ret_maroun" style="margin-top:10px">Grade de Maroun (strate des tables de masses)</label>' +
-    '<select id="ret_maroun"><option value="">proposé : —</option>' +
+    '<div class="row">' +
+    '<div class="field"><label for="ret_maroun">Macération — grade de Maroun (fait foi)</label>' +
+    '<select id="ret_maroun"><option value="">—</option>' +
       MAROUN.map(function(t, g){ return '<option value="' + g + '">' + esc(t) + '</option>'; }).join("") +
-    '</select>' +
-    '<div class="hint" id="ret_maroun_hint"></div>';
-}
-function retConstats(){
-  var c = {};
-  Array.prototype.forEach.call($("ret_constats").children, function(b){ c[b.dataset.ret] = b.getAttribute("aria-pressed") === "true"; });
-  return c;
-}
-function retZones(){
-  return Array.prototype.filter.call($("ret_zones").children, function(b){ return b.getAttribute("aria-pressed") === "true"; })
-    .map(function(b){ return b.dataset.zone; });
-}
-function hydropique(){ return chipsDe("aspect_general").indexOf("Hydropique") >= 0; }
-function majRetention(){
-  var r = lireRetention(retConstats(), retZones());
-  var t = r.genest_borne ? "Genest III : rétention " + r.genest_borne + " (" + r.genest_signes.length + " signes)"
-        : r.genest_isole ? "Genest III : un signe isolé — ne date rien (règle des deux signes)"
-        : "Genest III : aucun signe externe de rétention";
-  if (hydropique() && r.genest_signes.length) t += " · anasarque : le délai est surestimé";
-  $("ret_genest").textContent = t;
-  $("ret_genest").className = "hint" + (r.genest_isole ? " warn" : "");
-  $("ret_maroun").options[0].textContent = "proposé : " + MAROUN[r.maroun_propose];
-  var choisi = $("ret_maroun").value;
-  $("ret_maroun_hint").textContent = choisi !== "" && +choisi !== r.maroun_propose
-    ? "Grade retenu différent du grade proposé (" + r.maroun_propose + ")." : "";
-  $("ret_maroun_hint").className = "hint" + (choisi !== "" && +choisi !== r.maroun_propose ? " warn" : "");
-  return r;
+    '</select></div>' +
+    '<div class="field"><label for="ret_genest">Rétention — Genest</label>' +
+    '<select id="ret_genest"><option value="">—</option>' +
+      GENEST.map(function(g){ return '<option value="' + g[0] + '">' + esc(g[2]) + '</option>'; }).join("") +
+    '</select></div>' +
+    '</div>' +
+    '<div class="hint">Genest : retenir le palier le plus haut atteint par au moins deux signes — un signe isolé, surtout de couleur, ne date rien. L\'anasarque fait surestimer le délai.</div>';
 }
 function collecterRetention(){
-  var r = majRetention(), c = retConstats(), ch = $("ret_maroun").value;
-  r.constats = Object.keys(c).filter(function(k){ return c[k]; });
-  r.zones = retZones();
-  r.maroun_force = ch !== "";
-  r.maroun = ch !== "" ? +ch : r.maroun_propose;
-  return r;
+  var m = $("ret_maroun").value, g = genestDe($("ret_genest").value);
+  return { maroun: m === "" ? null : +m,
+           genest: g ? g[0] : null, genest_h: g ? g[1] : null, genest_libelle: g ? g[2] : null };
 }
 function poserRetention(o){
   o = o || {};
-  var c = o.constats || [], z = o.zones || [];
-  Array.prototype.forEach.call($("ret_constats").children, function(b){ b.setAttribute("aria-pressed", c.indexOf(b.dataset.ret) >= 0 ? "true" : "false"); });
-  Array.prototype.forEach.call($("ret_zones").children, function(b){ b.setAttribute("aria-pressed", z.indexOf(b.dataset.zone) >= 0 ? "true" : "false"); });
-  $("ret_maroun").value = o.maroun_force ? String(o.maroun) : "";
-  majRetention();
+  $("ret_maroun").value = o.maroun == null ? "" : String(o.maroun);
+  $("ret_genest").value = o.genest || "";
 }
 
 /* ── Verrou ───────────────────────────────────────────────────────────────── */
@@ -682,7 +606,6 @@ document.addEventListener("click", function(ev){
   var chip = t.closest(".chip");
   if (chip){
     chip.setAttribute("aria-pressed", chip.getAttribute("aria-pressed") === "true" ? "false" : "true");
-    majRetention();
     enregistrer();
     return;
   }
@@ -931,7 +854,6 @@ function appliquer(o){
   (o.cliches_libres || []).forEach(function(c){
     libres[c.key] = { l: c.label, etage: c.etage, item: c.item || null, position: c.position || null };
   });
-  majRetention();
   rendreCliches();
 }
 function vider(){
@@ -987,7 +909,8 @@ $("dossier").addEventListener("input", function(){
   majDossier();
 });
 $("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
-$("ret_maroun").addEventListener("change", function(){ majRetention(); enregistrer(); });
+$("ret_maroun").addEventListener("change", enregistrer);
+$("ret_genest").addEventListener("change", enregistrer);
 
 async function majDossier(){
   var v = $("dossier").value, ok_n = dossierOk(v), op = $("operateur").value.trim() !== "";
@@ -1200,15 +1123,8 @@ async function autotest(){
   chk("signes attestés yeux",     signesDe("yeux").signes.length > 50);
   chk("aucun RELATED embarqué",   !/RELATED/.test(JSON.stringify(SIGNES)));
   chk("macéré sorti de l'aspect général", itemDef("aspect_general").d.indexOf("Macéré") < 0 && chipsInit(itemDef("aspect_general")).every(function(c){ return c.l !== "Macéré" && c.l !== "Momifié"; }));
-  chk("Genest : aucun signe",       lireRetention({}, []).genest_borne === null && !lireRetention({}, []).genest_isole);
-  chk("Genest : signe isolé",       lireRetention({cordon_brun:true}, []).genest_isole && lireRetention({cordon_brun:true}, []).genest_borne === null);
-  chk("Genest : 2 zones dont face", lireRetention({}, ["Face","Main"]).genest_borne_h === 18);
-  chk("Genest : momification",      lireRetention({momification:true, desq_1cm:true}, []).genest_borne === "≥ 2 semaines");
-  chk("Maroun 0",                   lireRetention({}, []).maroun_propose === 0);
-  chk("Maroun 1 : bulles",          lireRetention({bulles:true}, []).maroun_propose === 1);
-  chk("Maroun 2 : étendue + rouge", lireRetention({desq_5pct:true, peau_rouge:true}, []).maroun_propose === 2);
-  chk("Maroun 1 : étendue sans rouge", lireRetention({desq_5pct:true}, []).maroun_propose === 1);
-  chk("Maroun 3 : os chevauchants", lireRetention({os_chevauch:true}, []).maroun_propose === 3);
+  chk("Maroun 0-3",                $("ret_maroun").options.length === 5);
+  chk("Genest : momification en dernier", GENEST[GENEST.length - 1][2].indexOf("momification") >= 0 && $("ret_genest").options.length === GENEST.length + 1);
   chk("anus a ses libellés",      itemDef("anus").ln === "Perméable" && itemDef("anus").la === "Imperforé");
   chk("télécanthus dans yeux",    itemDef("yeux").d.indexOf("Télécanthus") >= 0);
   chk("front bombé dans crâne",   itemDef("crane").d.indexOf("Front bombé") >= 0);
@@ -1241,18 +1157,15 @@ async function autotest(){
   chk("tally de l'étage",         $("tal_tete").textContent.indexOf("2/7") >= 0);
   chk("un anormal compté",        $("tal_tete").textContent.indexOf("1 anormal") >= 0);
 
-  clic($("ret_constats").querySelector('[data-ret="desq_1cm"]'));
-  clic($("ret_zones").querySelector('[data-zone="Dos"]'));
-  chk("bloc rétention lu",        $("ret_genest").textContent.indexOf("≥ 12 h") >= 0);
+  $("ret_maroun").value = "2"; $("ret_genest").value = "12h";
   var snap = collecter();
   var tete = snap.etages.filter(function(e){ return e.id === "tete"; })[0];
   var yeux = tete.items.filter(function(i){ return i.id === "yeux"; })[0];
-  chk("rétention exportée",       snap.retention.constats.join() === "desq_1cm" && snap.retention.zones.join() === "Dos" &&
-                                  snap.retention.genest_borne_h === 12 && snap.retention.maroun === 1 && !snap.retention.maroun_force);
-  $("ret_maroun").value = "2"; $("ret_maroun").dispatchEvent(new Event("change"));
-  chk("grade forcé exporté",      collecter().retention.maroun === 2 && collecter().retention.maroun_force);
+  chk("rétention exportée",       snap.retention.maroun === 2 && snap.retention.genest === "12h" && snap.retention.genest_h === 12);
+  poserRetention(null);
+  chk("rétention vidée",          collecterRetention().maroun === null && collecterRetention().genest === null);
   poserRetention(snap.retention);
-  chk("rétention relue",          $("ret_maroun").value === "" && retZones().join() === "Dos");
+  chk("rétention relue",          $("ret_maroun").value === "2" && $("ret_genest").value === "12h");
   chk("version dans le JSON",     snap.module_version === VERSION);
   chk("enveloppe conforme",       snap.schema_version === SCHEMA && snap.module === MODULE &&
                                   snap.dossier === "26P0123" && !!snap.exported_at);

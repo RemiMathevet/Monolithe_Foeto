@@ -215,14 +215,10 @@ def _mesures(cx, numero):
 
 
 def _maceration(cx, numero):
+    # Le grade de l'examen clinique fait foi ; celui de l'autopsie est informatif.
     r = cx.execute("""SELECT r.maroun m FROM examen_clinique_retention r
                       JOIN saisies s ON s.id = r.saisie_id AND s.courant = 1
                       WHERE r.dossier = ?""", (numero,)).fetchone()
-    if r and r["m"] is not None:        # bloc rétention de l'examen clinique d'abord
-        return r["m"]
-    r = cx.execute("""SELECT a.maceration_maroun m FROM autopsie a
-                      JOIN saisies s ON s.id = a.saisie_id AND s.courant = 1
-                      WHERE a.dossier = ?""", (numero,)).fetchone()
     return r["m"] if r else None
 
 

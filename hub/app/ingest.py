@@ -343,15 +343,10 @@ def adapt_examen_clinique(cx, sid, dossier, d):
         trame_attendue=entier(d.get("trame_attendue")),
         items_renseignes=n_faits, items_anormaux=n_anormaux)
     r = d.get("retention")
-    if r:                                   # 0.3.0 : bloc rétention (Genest III, Maroun)
+    if r:                                   # 0.3.0 : Maroun (fait foi) + palier de Genest
         ins(cx, "examen_clinique_retention", saisie_id=sid, dossier=dossier,
-            maroun=entier(r.get("maroun")), maroun_propose=entier(r.get("maroun_propose")),
-            maroun_force=1 if r.get("maroun_force") else 0,
-            genest_borne=txt(r.get("genest_borne")), genest_borne_h=entier(r.get("genest_borne_h")),
-            genest_isole=1 if r.get("genest_isole") else 0,
-            genest_signes=",".join(r.get("genest_signes") or []) or None)
-        for c in (r.get("constats") or []) + ["zone:" + z for z in r.get("zones") or []]:
-            ins(cx, "examen_clinique_retention_constats", saisie_id=sid, dossier=dossier, constat=c)
+            maroun=entier(r.get("maroun")), genest=txt(r.get("genest")),
+            genest_h=entier(r.get("genest_h")))
 
 
 # ── biometrie_clinique 0.1.0 ─────────────────────────────────────────────────
