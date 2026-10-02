@@ -182,7 +182,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 
 var MODULE = "administratif";
 var SCHEMA = "0.3.0";
-var VERSION = "2.1.1";   /* version du document ; à incrémenter à chaque diffusion */
+var VERSION = "2.2.0";   /* version du document ; à incrémenter à chaque diffusion */
 var DB_NAME = "foeto-administratif", DB_VER = 1, db = null;
 
 /* ── Dates partielles ─────────────────────────────────────────────────────────
@@ -305,6 +305,8 @@ var TRAME = [
   ]},
 
   { id:"circuit", titre:"Circuit du prélèvement", champs:[
+    { k:"date_naissance", l:"Date de naissance",     t:"dat",
+      hint:"Nés vivants seulement : donne l'âge au décès (J0–J4, J5–J28)." },
     { k:"date_deces",     l:"Date du décès",         t:"dat" },
     { k:"date_reception", l:"Date de réception",      t:"dat" },
     { k:"date_examen",    l:"Date de l'examen",       t:"dat" },

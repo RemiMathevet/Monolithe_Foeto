@@ -228,6 +228,7 @@ def adapt_administratif(cx, sid, dossier, d):
 
     ddn, ddn_p = date_precise(ident.get("ddn_mere"))
     dd, dd_p = date_precise(circ.get("date_deces"))
+    dn, dn_p = date_precise(circ.get("date_naissance"))
     dr, dr_p = date_precise(circ.get("date_reception"))
     de, de_p = date_precise(circ.get("date_examen"))
     ddg, ddg_p = date_precise(gro.get("ddg"))
@@ -240,6 +241,7 @@ def adapt_administratif(cx, sid, dossier, d):
         ipp_fetus=txt(ident.get("ipp_fetus")), ins=txt(ident.get("ins")),
         id_ext=txt(ident.get("id_ext")), opposition=bool01(ident.get("opposition")),
         date_deces=dd, date_deces_precision=dd_p,
+        date_naissance=dn, date_naissance_precision=dn_p,
         date_reception=dr, date_reception_precision=dr_p,
         date_examen=de, date_examen_precision=de_p,
         medecin=txt(circ.get("medecin")), medecin_rpps=txt(circ.get("medecin_rpps")),

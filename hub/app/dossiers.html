@@ -179,6 +179,9 @@ tr.gris td,li.gris{color:var(--ink-soft)}
 
 /* Une barre proportionnelle plutôt qu'un camembert : on y compare des
    longueurs, ce que l'œil fait bien, et ça reste lisible imprimé en noir. */
+table.perinatal{border-collapse:collapse;width:100%;font-size:13px}
+table.perinatal td,table.perinatal th{padding:4px 8px;border-bottom:1px solid var(--rule,#ccc);text-align:right;white-space:pre}
+table.perinatal td:first-child,table.perinatal th:first-child{text-align:left}
 .barres{display:grid;gap:5px}
 .barre{display:grid;grid-template-columns:minmax(130px,1fr) 3fr 46px;gap:9px;
        align-items:center;font-size:13.5px}
@@ -1636,6 +1639,20 @@ function telecharger(nom, texte, type){
 }
 
 /* ── Statistiques ────────────────────────────────────────────────────────── */
+/* Comptages périnataux (perinatal.py) : avec autopsie = module autopsie arrivé,
+   sans = examen externe seul. */
+function tablePerinatal(lignes){
+  if (!lignes || !lignes.length) return "";
+  return '<div class="bloc"><h3>Activité périnatale</h3><table class="perinatal">' +
+    "<tr><th></th><th>avec autopsie</th><th>examen externe seul</th><th>total</th></tr>" +
+    lignes.map(function(l){
+      return "<tr><td>" + esc(l.label) + "</td><td>" + l.avec + "</td><td>" + l.sans +
+             "</td><td><b>" + l.total + "</b></td></tr>";
+    }).join("") + "</table>" +
+    '<p class="note">Âge au décès = date du décès − date de naissance (J0 = jour de la naissance), ' +
+    "calculé seulement si les deux dates sont saisies au jour près dans le module administratif. " +
+    "Corps analysable = examen clinique ou autopsie arrivé, pas le placenta seul.</p></div>";
+}
 function pageStats(){
   $("panStats").innerHTML = vide("Comptage…");
   var du = $("statsDu").value, au = $("statsAu").value;
@@ -1660,6 +1677,7 @@ function pageStats(){
         "<div>" + barres(completude, "Dossiers par module") + barres(o.statut, "Statut") +
                   barres(o.sexe, "Sexe") + barres(o.provenance, "Modalité d'entrée") + "</div>" +
       "</div>" +
+      tablePerinatal(o.perinatal) +
       barres(o.mois, "Examens par mois") +
       '<p class="note">Ces chiffres décrivent la base de travail, pas l\'activité du ' +
       "service : un dossier repris deux fois n'y compte qu'une, un dossier jamais " +

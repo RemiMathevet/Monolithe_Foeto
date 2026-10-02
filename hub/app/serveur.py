@@ -55,6 +55,7 @@ import bamara as prep_bamara
 import biometrie
 import cr as compte_rendu
 import ingest
+import perinatal
 from ingest import (ADAPTATEURS, MODULES_FACULTATIFS, MODULES_MICRO,
                     ORDRE_MODULES, Refus, slot, arborescence, construire_index,
                     ecrire_index, ingerer, ingerer_fichier, ingerer_paquet, journal,
@@ -689,6 +690,24 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
                 FROM d
                 WHERE date_examen IS NOT NULL AND date_reception IS NOT NULL""")
             jours = sorted(int(x["j"]) for x in delais if x["j"] is not None)
+            jour = lambda v, p: v if p == "jour" else None
+            dossiers_p = []
+            for r in cx.execute("""
+                SELECT d.numero, d.type_issue, d.terme_sa,
+                       a.date_naissance, a.date_naissance_precision,
+                       a.date_deces, a.date_deces_precision,
+                       (SELECT m.valeur FROM biometrie_clinique_mesures m
+                          JOIN saisies s ON s.id = m.saisie_id AND s.courant = 1
+                         WHERE m.dossier = d.numero AND m.cle = 'masse') AS masse,
+                       (SELECT group_concat(module) FROM saisies
+                         WHERE dossier = d.numero AND courant = 1) AS modules
+                FROM d LEFT JOIN admin_dossier a ON a.dossier = d.numero
+                     AND a.saisie_id IN (SELECT id FROM saisies WHERE courant = 1)"""):
+                dossiers_p.append({"type_issue": r["type_issue"], "terme_sa": r["terme_sa"],
+                                   "masse": r["masse"],
+                                   "date_naissance": jour(r["date_naissance"], r["date_naissance_precision"]),
+                                   "date_deces": jour(r["date_deces"], r["date_deces_precision"]),
+                                   "modules": set((r["modules"] or "").split(","))})
             return jsonify({
                 "dossiers": cx.execute("SELECT COUNT(*) FROM d").fetchone()[0],
                 "saisies": cx.execute(
@@ -703,6 +722,7 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
                 "sexe": compte("SELECT COALESCE(sexe,'non saisi') AS cle, COUNT(*) n"
                                " FROM d GROUP BY cle ORDER BY n DESC"),
                 "terme": tranches,
+                "perinatal": perinatal.compter(dossiers_p),
                 "maceration": compte("""
                     SELECT 'grade ' || COALESCE(a.grade_maceration, '?') AS cle,
                            COUNT(*) n
