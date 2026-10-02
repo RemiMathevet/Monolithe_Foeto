@@ -40,9 +40,36 @@ BaMaRa. **`serveur.bat` à la racine** lance le serveur local
 (<http://127.0.0.1:5005>) et ouvre la page après quelques secondes ;
 `hub/app/ingest.py` fait la reprise seule, en bibliothèque standard.
 L'onglet **Biblio** du hub reprend le paquet `data_hub_vN.zip` publié par
-[data.pazuzu.uk](https://data.pazuzu.uk/browse/scripts) — akinator sur la
-matrice des livres, familles de syndromes fœtaux, fiches de lecture micro —
+[data.pazuzu.uk](https://data.pazuzu.uk/browse/scripts) — Foekinator
+(pistes syndromiques) sur la matrice des livres, familles de syndromes fœtaux, fiches de lecture micro —
 et le sert hors ligne. Tout est décrit dans [hub/README.md](hub/README.md).
+
+### BaMaRa — la déclaration à la Banque nationale de données Maladies rares
+
+Le hub prépare la déclaration BaMaRa de chaque dossier à partir de ce qui a
+déjà été saisi dans les modules : identité, circuit, issue de grossesse,
+terme, biométrie, grade de macération, termes HPO. Le document suit le modèle
+SDM-MR (blocs `identity`, `medicare`, `encounter`, `pregnancy_end`,
+`antenatal`, `condition`) avec les noms de champs de BaMaRa (`gender`,
+`term_week`, `grade_maceration`…). La base, elle, reprend les noms de
+FoetoPath Luminarium, si bien que les gabarits de compte rendu passent d'un
+logiciel à l'autre.
+
+L'onglet **BaMaRa** liste, dossier par dossier, ce qui manque avant l'envoi,
+en distinguant ce qui bloque de ce qui appauvrit seulement, et dit dans quel
+module aller le saisir. Un champ absent se rattrape ainsi dans le module, au
+lieu d'être découvert au moment de la saisie dans BaMaRa. Ce qui n'est
+collecté nulle part (le statut diagnostique) est signalé tel quel, jamais
+deviné.
+
+**Le hub n'envoie rien à BaMaRa.** Il produit un fichier par dossier
+déclarable ; un script Tampermonkey (`BAMARA/bamara_fichier.user.js`) remplit
+ensuite les pages de bamara.bndmr.fr à partir de ce fichier, et chaque
+dossier est relu et validé dans BaMaRa par la personne qui déclare. Le seul
+transfert de données nominatives est donc un fichier déplacé à la main. Les
+constantes de l'établissement (code de site, FINESS) vivent dans
+`bamara.json`, à côté de la base, jamais dans le dépôt. Détail de la marche à
+suivre : [hub/README.md](hub/README.md#bamara-par-fichier).
 
 `micro.html` s'ouvre sur une seule section vide qui propose les quatorze
 organes. On désigne celui de la lame en main : la section prend son nom et
