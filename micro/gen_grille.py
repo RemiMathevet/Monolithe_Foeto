@@ -224,6 +224,11 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
     <div class="sousTitre">Côté prélevé</div>
     <div class="chips" id="cote" style="margin-bottom:11px"></div>
   </div>
+  <div class="field" id="blocsBloc" hidden style="margin-bottom:11px">
+    <label for="blocs">Blocs lus</label>
+    <input type="text" id="blocs" class="mono" placeholder="10, 11 ou 3-5" autocomplete="off" spellcheck="false">
+    <div class="hint" id="blocsHint">Numéros des blocs de cet organe : rattachent la lecture aux lames (dossier_bloc_coupe).</div>
+  </div>
   <div class="chips" id="prelevement"></div>
   <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
 </section>
@@ -365,6 +370,22 @@ var PRESENCE = typeof ETATS !== "undefined" && ETATS === "presence";
 /* opt-in (rein v3) : les termes FOETO vivent dans les signes, la section 07 disparaît */
 var FUSION = typeof FOETO_DANS_SIGNES !== "undefined" && FOETO_DANS_SIGNES === true;
 var POS = PRESENCE ? "present" : "anormal", NEG = PRESENCE ? "absent" : "normal";
+/* opt-in (rein v3.4) : les blocs lus pour l'organe. L'export rattache alors la lecture
+   aux lames — organe de chaque lame, signes présents / absents par lame. */
+var BLOCS_LUS = typeof BLOCS !== "undefined" && BLOCS === true;
+
+/* « 10, 11 3-5 » -> { ok:[3,4,5,10,11], ko:[] } ; une plage de plus de 60 blocs est une faute de frappe */
+function lireBlocs(t){
+  var ok = {}, ko = [];
+  String(t || "").split(/[\s,;]+/).forEach(function(x){
+    if (!x) return;
+    var m = /^(\d+)(?:-(\d+))?$/.exec(x);
+    var a = m ? +m[1] : 0, b = m && m[2] ? +m[2] : a;
+    if (!m || a < 1 || b < a || b - a > 60){ ko.push(x); return; }
+    for (var i = a; i <= b; i++) ok[i] = true;
+  });
+  return { ok:Object.keys(ok).map(Number).sort(function(x, y){ return x - y; }), ko:ko };
+}
 
 /* Base locale distincte en présence : un brouillon 0.2.0 (normal/anormal) relu
    ici se lirait de travers. */
@@ -395,7 +416,7 @@ function champs(){ return MESURE ? MESURE.champs : []; }
 /* ── État ─────────────────────────────────────────────────────────────────── */
 var dossier = "", E = null;
 function neuf(){
-  var e = { cote:null, prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
+  var e = { cote:null, blocs:[], prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
             negatifs:{}, techniques:{}, foeto:{}, mesure:{ def:null, opt:null, v:{} }, libre:"",
             groupes:{}, etendue:{} };
   champs().forEach(function(c){ e.mesure.v[c.id] = null; });
@@ -424,6 +445,7 @@ function batir(){
     $("coteBloc").hidden = false;
     $("cote").innerHTML = COTES.map(function(c){ return chip("cote", c.k, c.l); }).join("");
   }
+  if (BLOCS_LUS) $("blocsBloc").hidden = false;
   /* Un critère de prélèvement peut porter un groupe g : ce qui qualifie la
      lecture d'un côté, les critères de coupe (grille macro fixée) de l'autre. */
   var pPrec = null;
@@ -873,6 +895,7 @@ function composer(){
 
   L.push("PRÉLÈVEMENT");
   L.push("  " + verdictPrelevement().txt);
+  if (BLOCS_LUS) L.push("  Blocs lus : " + (E.blocs.length ? E.blocs.join(", ") : "non déclarés") + ".");
 
   L.push("");
   L.push("RÉTENTION");
@@ -1054,6 +1077,12 @@ document.addEventListener("input", function(e){
   var id = e.target.id;
   if (id.indexOf("m_") === 0) E.mesure.v[id.slice(2)] = num(id);
   else if (id === "libre") E.libre = e.target.value;
+  else if (id === "blocs"){
+    var rb = lireBlocs(e.target.value);
+    E.blocs = rb.ok;
+    $("blocsHint").textContent = rb.ko.length ? "Non lu : " + rb.ko.join(" ") + " — un numéro, ou une plage 3-5."
+      : rb.ok.length ? rb.ok.length + " bloc(s) : " + rb.ok.join(", ") + "." : "Numéros des blocs de cet organe : rattachent la lecture aux lames (dossier_bloc_coupe).";
+  }
   else if (id === "sa") majSa();
   else return;
   peindre(); enregistrer();
@@ -1142,6 +1171,8 @@ function appliquer(o){
     if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')) foetoAjouter(id);
   });
   E.kcl = !!g.kcl; E.stade = g.stade || null; E.cote = g.cote || null;
+  E.blocs = Array.isArray(g.blocs) ? g.blocs : [];
+  if (BLOCS_LUS) $("blocs").value = E.blocs.join(", ");
   if (g.mesure){
     E.mesure.def = g.mesure.def || null;
     E.mesure.opt = g.mesure.opt || null;
@@ -1157,7 +1188,7 @@ function appliquer(o){
 }
 function vider(){
   E = neuf();
-  ["sa","libre"].forEach(function(id){ $(id).value = ""; });
+  ["sa","libre","blocs"].forEach(function(id){ $(id).value = ""; });
   champs().forEach(function(c){ $("m_" + c.id).value = ""; });
   majSa(); peindre();
 }
@@ -1503,6 +1534,13 @@ async function autotest(){
   chk("CR : non regardés dits", crTient(PRESENCE ? "Non regardés :" : "Non explorés :"));
   chk("CR : technique demandée", crTient(TECHNIQUES[0].l));
   chk("CR : remarque libre",   crTient("Bloc non parvenu."));
+  if (BLOCS_LUS){
+    set("blocs", "10, 3-5 x 4");
+    chk("blocs : plage et doublon lus", E.blocs.join() === "3,4,5,10");
+    chk("blocs : saisie non lue signalée", $("blocsHint").textContent.indexOf("Non lu : x") === 0);
+    chk("blocs : au CR",          crTient("Blocs lus : 3, 4, 5, 10."));
+    chk("blocs : plage absurde refusée", lireBlocs("1-500").ok.length === 0 && lireBlocs("0").ko[0] === "0");
+  } else chk("blocs : masqué sans BLOCS", $("blocsBloc").hidden && !crTient("Blocs lus"));
   chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
 
   /* Contrôles propres à l'organe */
@@ -1544,6 +1582,8 @@ async function autotest(){
   appliquer(relu);
   chk("IndexedDB restitue",    E.signes[l0.k] === POS &&
                                $("sa").value === String(snap.terme_sa));
+  if (BLOCS_LUS) chk("blocs : dans l'export et relus", snap.grille.blocs.join() === "3,4,5,10" &&
+                               E.blocs.join() === "3,4,5,10" && $("blocs").value === "3, 4, 5, 10");
 
   await tx("readwrite", function(s){ return s.delete("26P0123"); });
   vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();

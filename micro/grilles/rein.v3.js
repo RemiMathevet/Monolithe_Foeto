@@ -8,6 +8,11 @@
    et vont aux associations, affichés, jamais exportés d'office. La recherche
    « autre terme FOETO » reste en bas des signes pour le hors-fiche ; un terme
    déjà porté par un signe y pose le signe. Couverture vérifiée à la génération.
+   3.4.0 — §02 « Blocs lus » (BLOCS) : les blocs de l'organe entrent dans l'export
+   (grille.blocs), ce qui rattache la lecture aux lames — l'organe de chaque lame
+   et ses signes présents / absents servent d'étiquettes au classifieur d'organe
+   et aux sondes sur lame. Champ additif :
+   schéma inchangé, une saisie 3.3.0 se relit sans blocs.
    3.3.0 — branchée directement sur FOETO (V1 patchée depuis les fiches, termes
    tagués « verbatim ») : un signe porte fv (un id FOETO) ; libellé et HPO arbitré
    viennent de la base. Il n'y a plus de seconde base.
@@ -37,13 +42,14 @@ var ORGANE  = "rein";
 var TITRE   = "rein et voies urinaires hautes";
 var SOURCE  = "fiche_rein.md";
 var MODULE  = "grille_rein";
-var VERSION = "3.3.0";
+var VERSION = "3.4.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;   /* v3 : plus de section « Termes FOETO » */
 /* Paragraphes sans étendue : le contexte hors lame n'est pas une lésion qui s'étend. */
 var GROUPES_SANS_ETENDUE = ["Contexte hors lame — macro, foie, clinique"];
 var PAIR    = true;
+var BLOCS   = true;   /* 3.4.0 : blocs lus en §02 */
 
 var TITRE_CR    = "REIN";
 var STADE_TITRE = "État de la zone néphrogène";

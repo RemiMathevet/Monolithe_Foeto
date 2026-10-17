@@ -170,6 +170,11 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
     <div class="sousTitre">Côté prélevé</div>
     <div class="chips" id="cote" style="margin-bottom:11px"></div>
   </div>
+  <div class="field" id="blocsBloc" hidden style="margin-bottom:11px">
+    <label for="blocs">Blocs lus</label>
+    <input type="text" id="blocs" class="mono" placeholder="10, 11 ou 3-5" autocomplete="off" spellcheck="false">
+    <div class="hint" id="blocsHint">Numéros des blocs de cet organe : rattachent la lecture aux lames (dossier_bloc_coupe).</div>
+  </div>
   <div class="chips" id="prelevement"></div>
   <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
 </section>
@@ -304,6 +309,11 @@ var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
    et vont aux associations, affichés, jamais exportés d'office. La recherche
    « autre terme FOETO » reste en bas des signes pour le hors-fiche ; un terme
    déjà porté par un signe y pose le signe. Couverture vérifiée à la génération.
+   3.4.0 — §02 « Blocs lus » (BLOCS) : les blocs de l'organe entrent dans l'export
+   (grille.blocs), ce qui rattache la lecture aux lames — l'organe de chaque lame
+   et ses signes présents / absents servent d'étiquettes au classifieur d'organe
+   et aux sondes sur lame. Champ additif :
+   schéma inchangé, une saisie 3.3.0 se relit sans blocs.
    3.3.0 — branchée directement sur FOETO (V1 patchée depuis les fiches, termes
    tagués « verbatim ») : un signe porte fv (un id FOETO) ; libellé et HPO arbitré
    viennent de la base. Il n'y a plus de seconde base.
@@ -333,13 +343,14 @@ var ORGANE  = "rein";
 var TITRE   = "rein et voies urinaires hautes";
 var SOURCE  = "fiche_rein.md";
 var MODULE  = "grille_rein";
-var VERSION = "3.3.0";
+var VERSION = "3.4.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;   /* v3 : plus de section « Termes FOETO » */
 /* Paragraphes sans étendue : le contexte hors lame n'est pas une lésion qui s'étend. */
 var GROUPES_SANS_ETENDUE = ["Contexte hors lame — macro, foie, clinique"];
 var PAIR    = true;
+var BLOCS   = true;   /* 3.4.0 : blocs lus en §02 */
 
 var TITRE_CR    = "REIN";
 var STADE_TITRE = "État de la zone néphrogène";
@@ -874,7 +885,7 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
 var FOETO = {"sections":[],"formes":{"FOETO:PF.REN-MAL-055":["Absence de blastème"],"FOETO:PF.REN-MAL-003":["Agglomérat multikystique sur noyau fibreux dense"],"FOETO:PF.REN-MAL-069":["Anomalie majeure de l'expression de la rénine"],"FOETO:PF.REN-MAL-005":["Anomalies de néphrogénèse superficielle induites"],"FOETO:PF.REN-MAL-006":["Artérioles à paroi épaissie"],"FOETO:PF.REN-NOR-032":["Blastème en bande dense parallèle à la surface, néphrons sous-jacents matures"],"FOETO:PF.REN-MAL-007":["Canaux collecteurs dilatés entourés de tissu conjonctif dense"],"FOETO:PF.REN-MAL-008":["Canaux collecteurs médullaires normaux non dilatés au sein de kystes"],"FOETO:PF.REN-MAL-056":["Cortex mince et désorganisé"],"FOETO:PF.REN-MAL-057":["Cylindres hémoglobiniques ou cellulaires"],"FOETO:PF.REN-MAL-010":["Différenciation myofibroblastique du blastème"],"FOETO:PF.REN-DYS-001":["Dysgenèse tubulaire rénale"],"FOETO:PF.REN-MAL-085":["Dysplasie de l'uropathie obstructive"],"FOETO:PF.REN-MAL-076":["Dysplasie rénale"],"FOETO:PF.REN-MAL-015":["Dépôts de protéine de Tamm-Horsfall"],"FOETO:PF.REN-MAL-058":["Encéphalocèle occipitale"],"FOETO:PF.REN-MAL-059":["Exposition médicamenteuse maternelle (ARA2 / AINS)"],"FOETO:PF.REN-MAL-018":["Fibrose autour des calices et des canaux collecteurs médullaires"],"FOETO:PF.REN-MAL-078":["Fœtopathie aux antagonistes des récepteurs de l'angiotensine II"],"FOETO:PF.REN-MAL-077":["Fœtopathie aux inhibiteurs des prostaglandines (AINS)"],"FOETO:PF.REN-MAL-021":["Glomérules rétractés"],"FOETO:PF.REN-VAS-002":["Glomérules sclérotiques involutionnels"],"FOETO:PF.REN-MAL-079":["Hydronéphrose à cortex préservé"],"FOETO:PF.REN-MAL-025":["Hyperexpression rénale de la rénine"],"FOETO:PF.REN-MAL-080":["Hyperplasie rénale — excès de néphrons"],"FOETO:PF.REN-MAL-026":["Hypertrophie glomérulaire compensatrice"],"FOETO:PF.REN-MAL-029":["Hypoplasie oligoméganéphronique"],"FOETO:PF.REN-MAL-030":["Hypoplasie rénale"],"FOETO:PF.REN-MAL-031":["Inclusions nucléaires à cytomégalovirus dans les tubules proximaux"],"FOETO:PF.REN-VAS-003":["Infarctus hémorragique de la médullaire"],"FOETO:PF.REN-INF-002":["Infection congénitale à cytomégalovirus"],"FOETO:PF.REN-MAL-033":["Kystes dérivés des canaux collecteurs"],"FOETO:PF.REN-MAL-034":["Kystes glomérulaires"],"FOETO:PF.REN-MAL-061":["Kystes glomérulaires isolés"],"FOETO:PF.REN-MAL-035":["Kystes médullaires"],"FOETO:PF.REN-MAL-062":["Kystes sous-capsulaires corticaux"],"FOETO:PF.REN-MAL-065":["Malformation de la plaque ductale (foie)"],"FOETO:PF.REN-MAL-038":["Mésenchyme intercystique aplati quasi acellulaire"],"FOETO:PF.REN-VAS-004":["Nécrose tubulaire aiguë"],"FOETO:PF.REN-MAL-043":["Néphroblastomatose"],"FOETO:PF.REN-MAL-082":["Polykystose autosomique dominante (PKDA)"],"FOETO:PF.REN-MAL-083":["Polykystose autosomique récessive (PKRA)"],"FOETO:PF.REN-NOR-033":["Pourcentage de glomérules scléreux, rapporté au total compté"],"FOETO:PF.REN-NOR-034":["Poussière basophile intratubulaire"],"FOETO:PF.REN-MAL-063":["Rares microkystes tubulaires ou glomérulaires sur un rein de taille et d'architecture normales"],"FOETO:PF.REN-MAL-046":["Rein multikystique"],"FOETO:PF.REN-MAL-067":["Reins petits, de forme asymétrique et irrégulière"],"FOETO:PF.REN-MAL-066":["Reins petits, forme et architecture conservées"],"FOETO:PF.REN-MAL-068":["Reins volumineux à lobulation accentuée"],"FOETO:PF.REN-MAL-074":["Retard d'ossification de la voûte crânienne"],"FOETO:PF.REN-INF-001":["Réaction inflammatoire"],"FOETO:PF.REN-MAL-047":["Réduction néphronique"],"FOETO:PF.REN-NOR-035":["Sinus rénal dépourvu de graisse"],"FOETO:PF.REN-NOR-036":["Stades du néphron (vésicule rénale, corps en S) dans la zone néphrogène"],"FOETO:PF.REN-MAL-064":["Structures néphroniques rares, rétractées ou dilatées, dans un tissu interstitiel abondant"],"FOETO:PF.REN-MAL-084":["Syndrome RCAD"],"FOETO:PF.REN-MAL-075":["Syndrome de Bardet-Biedl"],"FOETO:PF.REN-MAL-081":["Syndrome de Meckel"],"FOETO:PF.REN-MAL-072":["Tube primitif : lumière bien visible, cellules cubiques régulières, anneaux mésenchymateux"],"FOETO:PF.REN-NOR-037":["Tubes contournés proximaux à cytoplasme éosinophile (CD10+)"],"FOETO:PF.REN-MAL-071":["Tubes modérément dilatés à collerette de cellules SMA+, dans la médullaire"],"FOETO:PF.REN-MAL-070":["Tubes proximaux absents ou raréfiés (CD10)"],"FOETO:PF.REN-MAL-049":["Tubes proximaux dédifférenciés"],"FOETO:PF.REN-MAL-073":["Voies urinaires hautes dilatées ou anormales"],"FOETO:PF.REN-MAL-060":["Îlot de cartilage"],"FOETO:PF.REN-MAL-054":["Œdème fibro-interstitiel périkystique"]}};
-var FOETOV = {"FOETO:PF.REN-MAL-034":{"l":"Kystes glomérulaires","hpo":null},"FOETO:PF.REN-MAL-063":{"l":"Rares microkystes tubulaires ou glomérulaires sur un rein de taille et d'architecture normales","hpo":null},"FOETO:PF.REN-MAL-018":{"l":"Fibrose autour des calices et des canaux collecteurs médullaires","hpo":null},"FOETO:PF.REN-MAL-005":{"l":"Anomalies de néphrogénèse superficielle induites","hpo":null},"FOETO:PF.REN-NOR-001":{"l":"Anse de Henle rare ou absente","hpo":null},"FOETO:PF.REN-INF-001":{"l":"Réaction inflammatoire","hpo":null},"FOETO:PF.REN-MAL-072":{"l":"Tube primitif : lumière bien visible, cellules cubiques régulières, anneaux mésenchymateux","hpo":null},"FOETO:PF.REN-NOR-017":{"l":"Kystes radiaux orientés","hpo":null},"FOETO:PF.REN-MAL-068":{"l":"Reins volumineux à lobulation accentuée","hpo":null},"FOETO:PF.REN-MAL-049":{"l":"Tubes proximaux dédifférenciés","hpo":null},"FOETO:PF.REN-MAL-056":{"l":"Cortex mince et désorganisé","hpo":null},"FOETO:PF.REN-MAL-054":{"l":"Œdème fibro-interstitiel périkystique","hpo":null},"FOETO:PF.REN-DYS-001":{"l":"Dysgenèse tubulaire rénale","hpo":"HP:0008660"},"FOETO:PF.REN-MAL-008":{"l":"Canaux collecteurs médullaires normaux non dilatés au sein de kystes","hpo":null},"FOETO:PF.REN-MAL-010":{"l":"Différenciation myofibroblastique du blastème","hpo":null},"FOETO:PF.REN-MAL-060":{"l":"Îlot de cartilage","hpo":null},"FOETO:PF.REN-MAL-061":{"l":"Kystes glomérulaires isolés","hpo":null},"FOETO:PF.REN-MAL-007":{"l":"Canaux collecteurs dilatés entourés de tissu conjonctif dense","hpo":null},"FOETO:PF.REN-MAL-006":{"l":"Artérioles à paroi épaissie","hpo":null},"FOETO:PF.REN-MAL-073":{"l":"Voies urinaires hautes dilatées ou anormales","hpo":null},"FOETO:PF.REN-MAL-067":{"l":"Reins petits, de forme asymétrique et irrégulière","hpo":null},"FOETO:PF.REN-MAL-059":{"l":"Exposition médicamenteuse maternelle (ARA2 / AINS)","hpo":null},"FOETO:PF.REN-MAL-025":{"l":"Hyperexpression rénale de la rénine","hpo":null},"FOETO:PF.REN-MAL-003":{"l":"Agglomérat multikystique sur noyau fibreux dense","hpo":null},"FOETO:PF.REN-MAL-066":{"l":"Reins petits, forme et architecture conservées","hpo":"HP:0000089"},"FOETO:PF.REN-MAL-074":{"l":"Retard d'ossification de la voûte crânienne","hpo":"HP:0004331"},"FOETO:PF.REN-MAL-057":{"l":"Cylindres hémoglobiniques ou cellulaires","hpo":null},"FOETO:PF.REN-NOR-032":{"l":"Blastème en bande dense parallèle à la surface, néphrons sous-jacents matures","hpo":null},"FOETO:PF.REN-MAL-065":{"l":"Malformation de la plaque ductale (foie)","hpo":"HP:0006563"},"FOETO:PF.REN-MAL-071":{"l":"Tubes modérément dilatés à collerette de cellules SMA+, dans la médullaire","hpo":null},"FOETO:PF.REN-NOR-020":{"l":"Nombre augmenté de générations glomérulaires","hpo":null},"FOETO:PF.REN-MAL-030":{"l":"Hypoplasie rénale","hpo":"HP:0000089"},"FOETO:PF.REN-MAL-070":{"l":"Tubes proximaux absents ou raréfiés (CD10)","hpo":null},"FOETO:PF.REN-VAS-003":{"l":"Infarctus hémorragique de la médullaire","hpo":null},"FOETO:PF.REN-MAL-015":{"l":"Dépôts de protéine de Tamm-Horsfall","hpo":null},"FOETO:PF.REN-MAL-069":{"l":"Anomalie majeure de l'expression de la rénine","hpo":null},"FOETO:PF.REN-MAL-035":{"l":"Kystes médullaires","hpo":null},"FOETO:PF.REN-MAL-064":{"l":"Structures néphroniques rares, rétractées ou dilatées, dans un tissu interstitiel abondant","hpo":null},"FOETO:PF.REN-MAL-058":{"l":"Encéphalocèle occipitale","hpo":null},"FOETO:PF.REN-MAL-047":{"l":"Réduction néphronique","hpo":null},"FOETO:PF.REN-MAL-016":{"l":"Désorganisation architecturale cortico-médullaire","hpo":null},"FOETO:PF.REN-MAL-062":{"l":"Kystes sous-capsulaires corticaux","hpo":"HP:0000803"},"FOETO:PF.REN-NOR-013":{"l":"Gradient de volume kystique cortex-médullaire","hpo":null},"FOETO:PF.REN-MAL-033":{"l":"Kystes dérivés des canaux collecteurs","hpo":null},"FOETO:PF.REN-MAL-038":{"l":"Mésenchyme intercystique aplati quasi acellulaire","hpo":null},"FOETO:PF.REN-NOR-006":{"l":"Calices dilatés avec aplatissement des papilles","hpo":null},"FOETO:PF.REN-MAL-021":{"l":"Glomérules rétractés","hpo":null},"FOETO:PF.REN-MAL-026":{"l":"Hypertrophie glomérulaire compensatrice","hpo":null},"FOETO:PF.REN-MAL-031":{"l":"Inclusions nucléaires à cytomégalovirus dans les tubules proximaux","hpo":null},"FOETO:PF.REN-MAL-055":{"l":"Absence de blastème","hpo":null}};
+var FOETOV = {"FOETO:PF.REN-NOR-032":{"l":"Blastème en bande dense parallèle à la surface, néphrons sous-jacents matures","hpo":null},"FOETO:PF.REN-DYS-001":{"l":"Dysgenèse tubulaire rénale","hpo":"HP:0008660"},"FOETO:PF.REN-MAL-057":{"l":"Cylindres hémoglobiniques ou cellulaires","hpo":null},"FOETO:PF.REN-VAS-003":{"l":"Infarctus hémorragique de la médullaire","hpo":null},"FOETO:PF.REN-MAL-008":{"l":"Canaux collecteurs médullaires normaux non dilatés au sein de kystes","hpo":null},"FOETO:PF.REN-MAL-021":{"l":"Glomérules rétractés","hpo":null},"FOETO:PF.REN-MAL-030":{"l":"Hypoplasie rénale","hpo":"HP:0000089"},"FOETO:PF.REN-MAL-034":{"l":"Kystes glomérulaires","hpo":null},"FOETO:PF.REN-MAL-068":{"l":"Reins volumineux à lobulation accentuée","hpo":null},"FOETO:PF.REN-MAL-026":{"l":"Hypertrophie glomérulaire compensatrice","hpo":null},"FOETO:PF.REN-NOR-020":{"l":"Nombre augmenté de générations glomérulaires","hpo":null},"FOETO:PF.REN-MAL-067":{"l":"Reins petits, de forme asymétrique et irrégulière","hpo":null},"FOETO:PF.REN-MAL-074":{"l":"Retard d'ossification de la voûte crânienne","hpo":"HP:0004331"},"FOETO:PF.REN-MAL-003":{"l":"Agglomérat multikystique sur noyau fibreux dense","hpo":null},"FOETO:PF.REN-NOR-017":{"l":"Kystes radiaux orientés","hpo":null},"FOETO:PF.REN-MAL-035":{"l":"Kystes médullaires","hpo":null},"FOETO:PF.REN-MAL-055":{"l":"Absence de blastème","hpo":null},"FOETO:PF.REN-MAL-054":{"l":"Œdème fibro-interstitiel périkystique","hpo":null},"FOETO:PF.REN-MAL-033":{"l":"Kystes dérivés des canaux collecteurs","hpo":null},"FOETO:PF.REN-MAL-016":{"l":"Désorganisation architecturale cortico-médullaire","hpo":null},"FOETO:PF.REN-MAL-070":{"l":"Tubes proximaux absents ou raréfiés (CD10)","hpo":null},"FOETO:PF.REN-MAL-060":{"l":"Îlot de cartilage","hpo":null},"FOETO:PF.REN-MAL-061":{"l":"Kystes glomérulaires isolés","hpo":null},"FOETO:PF.REN-NOR-001":{"l":"Anse de Henle rare ou absente","hpo":null},"FOETO:PF.REN-MAL-072":{"l":"Tube primitif : lumière bien visible, cellules cubiques régulières, anneaux mésenchymateux","hpo":null},"FOETO:PF.REN-MAL-073":{"l":"Voies urinaires hautes dilatées ou anormales","hpo":null},"FOETO:PF.REN-MAL-056":{"l":"Cortex mince et désorganisé","hpo":null},"FOETO:PF.REN-NOR-013":{"l":"Gradient de volume kystique cortex-médullaire","hpo":null},"FOETO:PF.REN-MAL-038":{"l":"Mésenchyme intercystique aplati quasi acellulaire","hpo":null},"FOETO:PF.REN-MAL-006":{"l":"Artérioles à paroi épaissie","hpo":null},"FOETO:PF.REN-MAL-049":{"l":"Tubes proximaux dédifférenciés","hpo":null},"FOETO:PF.REN-MAL-031":{"l":"Inclusions nucléaires à cytomégalovirus dans les tubules proximaux","hpo":null},"FOETO:PF.REN-MAL-071":{"l":"Tubes modérément dilatés à collerette de cellules SMA+, dans la médullaire","hpo":null},"FOETO:PF.REN-MAL-063":{"l":"Rares microkystes tubulaires ou glomérulaires sur un rein de taille et d'architecture normales","hpo":null},"FOETO:PF.REN-MAL-066":{"l":"Reins petits, forme et architecture conservées","hpo":"HP:0000089"},"FOETO:PF.REN-MAL-065":{"l":"Malformation de la plaque ductale (foie)","hpo":"HP:0006563"},"FOETO:PF.REN-MAL-018":{"l":"Fibrose autour des calices et des canaux collecteurs médullaires","hpo":null},"FOETO:PF.REN-MAL-010":{"l":"Différenciation myofibroblastique du blastème","hpo":null},"FOETO:PF.REN-MAL-062":{"l":"Kystes sous-capsulaires corticaux","hpo":"HP:0000803"},"FOETO:PF.REN-MAL-064":{"l":"Structures néphroniques rares, rétractées ou dilatées, dans un tissu interstitiel abondant","hpo":null},"FOETO:PF.REN-MAL-059":{"l":"Exposition médicamenteuse maternelle (ARA2 / AINS)","hpo":null},"FOETO:PF.REN-MAL-069":{"l":"Anomalie majeure de l'expression de la rénine","hpo":null},"FOETO:PF.REN-MAL-005":{"l":"Anomalies de néphrogénèse superficielle induites","hpo":null},"FOETO:PF.REN-MAL-025":{"l":"Hyperexpression rénale de la rénine","hpo":null},"FOETO:PF.REN-MAL-047":{"l":"Réduction néphronique","hpo":null},"FOETO:PF.REN-MAL-015":{"l":"Dépôts de protéine de Tamm-Horsfall","hpo":null},"FOETO:PF.REN-MAL-058":{"l":"Encéphalocèle occipitale","hpo":null},"FOETO:PF.REN-MAL-007":{"l":"Canaux collecteurs dilatés entourés de tissu conjonctif dense","hpo":null},"FOETO:PF.REN-INF-001":{"l":"Réaction inflammatoire","hpo":null},"FOETO:PF.REN-NOR-006":{"l":"Calices dilatés avec aplatissement des papilles","hpo":null}};
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
@@ -888,6 +899,22 @@ var PRESENCE = typeof ETATS !== "undefined" && ETATS === "presence";
 /* opt-in (rein v3) : les termes FOETO vivent dans les signes, la section 07 disparaît */
 var FUSION = typeof FOETO_DANS_SIGNES !== "undefined" && FOETO_DANS_SIGNES === true;
 var POS = PRESENCE ? "present" : "anormal", NEG = PRESENCE ? "absent" : "normal";
+/* opt-in (rein v3.4) : les blocs lus pour l'organe. L'export rattache alors la lecture
+   aux lames — organe de chaque lame, signes présents / absents par lame. */
+var BLOCS_LUS = typeof BLOCS !== "undefined" && BLOCS === true;
+
+/* « 10, 11 3-5 » -> { ok:[3,4,5,10,11], ko:[] } ; une plage de plus de 60 blocs est une faute de frappe */
+function lireBlocs(t){
+  var ok = {}, ko = [];
+  String(t || "").split(/[\s,;]+/).forEach(function(x){
+    if (!x) return;
+    var m = /^(\d+)(?:-(\d+))?$/.exec(x);
+    var a = m ? +m[1] : 0, b = m && m[2] ? +m[2] : a;
+    if (!m || a < 1 || b < a || b - a > 60){ ko.push(x); return; }
+    for (var i = a; i <= b; i++) ok[i] = true;
+  });
+  return { ok:Object.keys(ok).map(Number).sort(function(x, y){ return x - y; }), ko:ko };
+}
 
 /* Base locale distincte en présence : un brouillon 0.2.0 (normal/anormal) relu
    ici se lirait de travers. */
@@ -918,7 +945,7 @@ function champs(){ return MESURE ? MESURE.champs : []; }
 /* ── État ─────────────────────────────────────────────────────────────────── */
 var dossier = "", E = null;
 function neuf(){
-  var e = { cote:null, prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
+  var e = { cote:null, blocs:[], prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
             negatifs:{}, techniques:{}, foeto:{}, mesure:{ def:null, opt:null, v:{} }, libre:"",
             groupes:{}, etendue:{} };
   champs().forEach(function(c){ e.mesure.v[c.id] = null; });
@@ -947,6 +974,7 @@ function batir(){
     $("coteBloc").hidden = false;
     $("cote").innerHTML = COTES.map(function(c){ return chip("cote", c.k, c.l); }).join("");
   }
+  if (BLOCS_LUS) $("blocsBloc").hidden = false;
   /* Un critère de prélèvement peut porter un groupe g : ce qui qualifie la
      lecture d'un côté, les critères de coupe (grille macro fixée) de l'autre. */
   var pPrec = null;
@@ -1396,6 +1424,7 @@ function composer(){
 
   L.push("PRÉLÈVEMENT");
   L.push("  " + verdictPrelevement().txt);
+  if (BLOCS_LUS) L.push("  Blocs lus : " + (E.blocs.length ? E.blocs.join(", ") : "non déclarés") + ".");
 
   L.push("");
   L.push("RÉTENTION");
@@ -1577,6 +1606,12 @@ document.addEventListener("input", function(e){
   var id = e.target.id;
   if (id.indexOf("m_") === 0) E.mesure.v[id.slice(2)] = num(id);
   else if (id === "libre") E.libre = e.target.value;
+  else if (id === "blocs"){
+    var rb = lireBlocs(e.target.value);
+    E.blocs = rb.ok;
+    $("blocsHint").textContent = rb.ko.length ? "Non lu : " + rb.ko.join(" ") + " — un numéro, ou une plage 3-5."
+      : rb.ok.length ? rb.ok.length + " bloc(s) : " + rb.ok.join(", ") + "." : "Numéros des blocs de cet organe : rattachent la lecture aux lames (dossier_bloc_coupe).";
+  }
   else if (id === "sa") majSa();
   else return;
   peindre(); enregistrer();
@@ -1665,6 +1700,8 @@ function appliquer(o){
     if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')) foetoAjouter(id);
   });
   E.kcl = !!g.kcl; E.stade = g.stade || null; E.cote = g.cote || null;
+  E.blocs = Array.isArray(g.blocs) ? g.blocs : [];
+  if (BLOCS_LUS) $("blocs").value = E.blocs.join(", ");
   if (g.mesure){
     E.mesure.def = g.mesure.def || null;
     E.mesure.opt = g.mesure.opt || null;
@@ -1680,7 +1717,7 @@ function appliquer(o){
 }
 function vider(){
   E = neuf();
-  ["sa","libre"].forEach(function(id){ $(id).value = ""; });
+  ["sa","libre","blocs"].forEach(function(id){ $(id).value = ""; });
   champs().forEach(function(c){ $("m_" + c.id).value = ""; });
   majSa(); peindre();
 }
@@ -2026,6 +2063,13 @@ async function autotest(){
   chk("CR : non regardés dits", crTient(PRESENCE ? "Non regardés :" : "Non explorés :"));
   chk("CR : technique demandée", crTient(TECHNIQUES[0].l));
   chk("CR : remarque libre",   crTient("Bloc non parvenu."));
+  if (BLOCS_LUS){
+    set("blocs", "10, 3-5 x 4");
+    chk("blocs : plage et doublon lus", E.blocs.join() === "3,4,5,10");
+    chk("blocs : saisie non lue signalée", $("blocsHint").textContent.indexOf("Non lu : x") === 0);
+    chk("blocs : au CR",          crTient("Blocs lus : 3, 4, 5, 10."));
+    chk("blocs : plage absurde refusée", lireBlocs("1-500").ok.length === 0 && lireBlocs("0").ko[0] === "0");
+  } else chk("blocs : masqué sans BLOCS", $("blocsBloc").hidden && !crTient("Blocs lus"));
   chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
 
   /* Contrôles propres à l'organe */
@@ -2067,6 +2111,8 @@ async function autotest(){
   appliquer(relu);
   chk("IndexedDB restitue",    E.signes[l0.k] === POS &&
                                $("sa").value === String(snap.terme_sa));
+  if (BLOCS_LUS) chk("blocs : dans l'export et relus", snap.grille.blocs.join() === "3,4,5,10" &&
+                               E.blocs.join() === "3,4,5,10" && $("blocs").value === "3, 4, 5, 10");
 
   await tx("readwrite", function(s){ return s.delete("26P0123"); });
   vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
