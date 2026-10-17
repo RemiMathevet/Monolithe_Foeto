@@ -578,6 +578,7 @@ function ligneSigne(x){
       (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
       (codesDe(x).length ? '<span class="meta">' + esc(codesDe(x).join(" · ")) + '</span>' : "") +
       (x.horsFiche ? '<span class="meta">hors fiche — non sourcé par la biblio</span>' : "") +
+      (x.fiche && !x.foeto ? '<span class="meta">dans la fiche ' + esc(x.fiche) + ', sans terme FOETO</span>' : "") +
       (oblig ? '<span class="meta">négatif à énoncer : répondre présent ou absent</span>' : "") +
       '</div>' +
       '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="' + NEG + '">' +
@@ -656,7 +657,8 @@ function resoudreFV(){
   SIGNES.forEach(function(x){
     var s = x.fv && FOETOV[x.fv];
     if (s){ x.l = s.l; x.foeto = x.fv; if (s.hpo) x.hpo = s.hpo; }
-    else x.horsFiche = true;   // aucun terme de fiche derrière : non sourcé par la biblio
+    else if (!x.fiche) x.horsFiche = true;   // aucun terme de fiche derrière : non sourcé par la biblio
+    /* fiche:"[keeling]" : constat sourcé dans la fiche que FOETO ne porte pas (encore) en terme */
   });
   DIAGS.forEach(function(d){ if (d.fv && FOETOV[d.fv]) d.foeto = [d.fv]; });
 }
