@@ -18,6 +18,19 @@
    · compte radial et rapport de poids sont des observations : ils s'entrent sans
      définition ni terme, et se situent ensuite (la v1 bloquait en rouge un compte
      sans définition).
+   2.1.0 — ordre de lecture (LECTURE), comme rein 3.5.0 : cadres du poumon
+   (CADRES), signes du faible au fort grossissement (mag, [expérience], à valider
+   à l'usage), variantes normales dans le cadre qu'elles miment et en parenthèse
+   au CR, contexte hors lame avant la rétention, associations en tête de la
+   synthèse. Aucun signe ni attribut retranché. Après l'avis Fable 5.2 (points
+   retenus par Rémi) : ordre Architecture → Kystes → Contenu → Inflammation →
+   Vaisseaux ; séquestration — absence de communication, artère systémique,
+   plèvre propre — passée hors lame (constats de dissection) ; cadre à part
+   Poumon ventilé — né vivant (membranes hyalines, bleues, PAS, nécrose
+   bronchiolaire, membranophages, pneumocytes régénératifs, surfactant), hors
+   périmètre du mort in utero ; matériel PAS+ = après technique ; des bouchons
+   de squames font tomber le négatif « squames ». Larynx-trachée reste un
+   prélèvement distinct : pas de cadre ici.
    Fond : ~/Bureau/fiches_lecture/fiche_poumon.md (§1 à §9).
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
@@ -25,13 +38,13 @@ var ORGANE  = "poumon";
 var TITRE   = "poumon";
 var SOURCE  = "fiche_poumon.md";
 var MODULE  = "grille_poumon";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
-var GROUPES_SANS_ETENDUE = ["Contexte hors lame — macro, clinique"];
 var PAIR    = true;
 var BLOCS   = true;
+var LECTURE = true;   /* 2.1.0 : cadres (CADRES), grossissement (mag), variantes dans leur cadre */
 
 var TITRE_CR    = "POUMONS";
 var STADE_TITRE = "Stade de maturation";
@@ -50,8 +63,10 @@ var TECH_NOTE = "Les pointillés sont des propositions déduites des clics, jama
 var PRELEV = [
   { k:"plevre", g:"Qualifie la lecture", l:"Plèvre ou septum interlobulaire sur le bloc", grave:true,
     manque:"sans plèvre ni septum sur le bloc, AUCUN compte radial n'est recevable — la ligne de comptage n'a pas de point d'arrivée" },
-  { k:"trachee", g:"Qualifie la lecture", l:"Larynx et trachée en 3–4 blocs transversaux",
-    manque:"sans larynx ni trachée, on perd le critère de datation le plus spécifique de l'organe (chondrocytes trachéaux, spéc. 1,000 · VPP 1,000)" },
+  /* 2.1.0 : larynx-trachée est un prélèvement à part (liste habituelle des CR et du viewer) :
+     la grille poumon ne le lit pas, elle dit seulement si ses blocs ont été lus pour la rétention. */
+  { k:"trachee", g:"Qualifie la lecture", l:"Blocs larynx-trachée lus (prélèvement distinct)",
+    manque:"sans les blocs larynx-trachée, on perd le critère de datation le plus spécifique de l'organe (chondrocytes trachéaux, spéc. 1,000 · VPP 1,000)" },
   { k:"faisceau", g:"Qualifie la lecture", l:"Faisceau broncho-vasculaire présent" },
   { k:"lateralite", g:"Qualifie la lecture", l:"Droit et gauche sur blocs séparés, latéralité notée" },
   { k:"lobes",  g:"Critères de coupe — iront à la grille macro fixée", l:"Un bloc par lobe principal (5)" },
@@ -65,7 +80,7 @@ var PRELEV = [
 var RETENTION = [
   { k:"basoBronche", l:"Perte de basophilie de l'épithélium bronchique", h:96, b:"≥ 96 h", q:"bon", d:"spéc. 0,973" },
   { k:"chondroTrachee", l:"Perte de basophilie des chondrocytes trachéaux", h:168, b:"≥ 1 semaine", q:"bon",
-    d:"spéc. 1,000 · VPP 1,000", note:"lisible seulement si larynx et trachée sont prélevés (§02)" },
+    d:"spéc. 1,000 · VPP 1,000", note:"se lit sur les blocs larynx-trachée, prélèvement distinct (§02)" },
   { k:"paroiAlv", l:"Perte de basophilie de la paroi alvéolaire", h:336, b:"≥ 2 semaines", q:"moyen", d:"spéc. 0,949",
     alerte:"fenêtre 2–4 semaines : ernst tient qu'aucun organe fœtal ne l'estime bien, la fiche réconcilie par une lecture, pas par une source" },
   { k:"detachMuq", l:"Détachement de l'épithélium muqueux bronchique", h:18, b:"≥ 18 h", q:"mauvais",
@@ -157,18 +172,28 @@ function verdictMesure(){
 
 /* ── 05 · Variantes normales ──────────────────────────────────────────────── */
 var VARIANTES = [
-  { k:"caryo",   l:"Matériel caryorrhectique abondant" },
-  { k:"squames", l:"Quelques squames éparses" },
-  { k:"repli",   l:"Repliement de l'épithélium des voies aériennes" },
-  { k:"asym",    l:"Asymétrie droite/gauche de maturation" },
-  { k:"anneaux", l:"Demi-anneaux trachéaux" },
-  { k:"media",   l:"Média artériolaire fœtale épaisse" },
-  { k:"veinesSepta", l:"Veines dans les septa interlobulaires, artères avec les bronches" },
-  { k:"surfactant",  l:"Masses éosinophiles amorphes distales : résidu d'instillation de surfactant" },
-  { k:"artefacts",   l:"Blue blobs, mulberries, yellow starbursts (macération)" },
-  { k:"detachBronchiol", l:"Détachement de l'épithélium bronchiolaire (macération)" },
-  { k:"epanchement", l:"Épanchement pleural de macération" },
-  { k:"poussiere",   l:"Poussière basophile autour des viscères" }
+  { k:"caryo", g:"Inflammation et infection",   l:"Matériel caryorrhectique abondant" },
+  { k:"squames", g:"Contenu des espaces aériens", l:"Quelques squames éparses" },
+  { k:"repli", g:"Architecture et lobule",   l:"Repliement de l'épithélium des voies aériennes" },
+  { k:"asym", g:"Architecture et lobule",    l:"Asymétrie droite/gauche de maturation" },
+  { k:"anneaux", g:"Architecture et lobule", l:"Demi-anneaux trachéaux" },
+  { k:"media", g:"Vaisseaux",   l:"Média artériolaire fœtale épaisse" },
+  { k:"veinesSepta", g:"Vaisseaux", l:"Veines dans les septa interlobulaires, artères avec les bronches" },
+  { k:"surfactant", g:"Poumon ventilé — né vivant",  l:"Masses éosinophiles amorphes distales : résidu d'instillation de surfactant" },
+  { k:"artefacts", g:"Contenu des espaces aériens",   l:"Blue blobs, mulberries, yellow starbursts (macération)" },
+  { k:"detachBronchiol", g:"Contenu des espaces aériens", l:"Détachement de l'épithélium bronchiolaire (macération)" },
+  { k:"epanchement", g:"Contexte hors lame — macro, clinique", l:"Épanchement pleural de macération" },
+  { k:"poussiere", g:"Inflammation et infection",   l:"Poussière basophile autour des viscères" }
+];
+
+var CADRES = [
+  { g:"Contexte hors lame — macro, clinique", hors:true },
+  { g:"Architecture et lobule", sur:"Développement" },
+  { g:"Kystes et malformations", sur:"Développement" },
+  { g:"Contenu des espaces aériens", sur:"Lésions acquises" },
+  { g:"Inflammation et infection", sur:"Lésions acquises" },
+  { g:"Vaisseaux" },
+  { g:"Poumon ventilé — né vivant", sur:"Hors périmètre du mort in utero" }
 ];
 
 /* ── 06 · Signes ──────────────────────────────────────────────────────────────
@@ -176,66 +201,67 @@ var VARIANTES = [
    noms se lisent en dessous, dans DIAGS, par association des signes cochés.
    Un signe branché (fv) prend son libellé et son HPO dans FOETO. */
 var SIGNES = [
-  { k:"divisionsReduites", fv:"FOETO:PF.POU-MAL-048", g:"Développement", meta:"atteinte avant la 16e semaine" },
-  { k:"emphyseme",         fv:"FOETO:PF.POU-MAL-015", g:"Développement" },
-
-  { k:"muscuIntra", fv:"FOETO:PF.POU-VAS-001", g:"Vaisseaux",
-    meta:"ce qui compte est le NIVEAU atteint (bronchiole respiratoire, parois sacculaires ou alvéolaires), pas l'épaisseur" },
-  { k:"epaississementMedial", fv:"FOETO:PF.POU-MAL-059", g:"Vaisseaux" },
-  { k:"malalignVeines",  fv:"FOETO:PF.POU-VAS-005", g:"Vaisseaux" },
-  { k:"capillairesRares", fv:"FOETO:PF.POU-VAS-003", g:"Vaisseaux" },
-  { k:"densiteVasc",     fv:"FOETO:PF.POU-VAS-004", g:"Vaisseaux" },
-  { k:"lymphangiectasie", fv:"FOETO:PF.POU-MAL-025", g:"Vaisseaux" },
-  { k:"cerveauEmbolise", fv:"FOETO:PF.POU-MAL-085", g:"Vaisseaux", meta:"GFAP ou CD56" },
-
-  { k:"sacsBronchiques", fv:"FOETO:PF.POU-MAL-077", g:"Kystes et malformations", meta:"Stocker type 0" },
-  { k:"kystesGrands",    fv:"FOETO:PF.POU-MAL-063", g:"Kystes et malformations", meta:"Stocker type 1" },
-  { k:"kystesPetits",    fv:"FOETO:PF.POU-MAL-065", g:"Kystes et malformations", meta:"Stocker type 2" },
-  { k:"kystesInfra5",    fv:"FOETO:PF.POU-MAL-064", g:"Kystes et malformations", meta:"Stocker type 3" },
-  { k:"kystesPneumocytes", fv:"FOETO:PF.POU-MAL-066", g:"Kystes et malformations", meta:"Stocker type 4 — chercher un composant solide" },
-  { k:"mucigene",        fv:"FOETO:PF.POU-MAL-052", g:"Kystes et malformations" },
-  { k:"fibresStriees",   fv:"FOETO:PF.POU-MAL-060", g:"Kystes et malformations" },
-  { k:"cartilageKyste",  fv:"FOETO:PF.POU-MAL-058", g:"Kystes et malformations" },
-  { k:"glandesKyste",    fv:"FOETO:PF.POU-MAL-061", g:"Kystes et malformations" },
-  { k:"sansCommunication", fv:"FOETO:PF.POU-MAL-055", g:"Kystes et malformations" },
-  { k:"artereSystemique", fv:"FOETO:PF.POU-VAS-002", g:"Kystes et malformations" },
-  { k:"plevrePropre",    fv:"FOETO:PF.POU-MAL-072", g:"Kystes et malformations" },
-  { k:"retentionMucus",  fv:"FOETO:PF.POU-MAL-076", g:"Kystes et malformations" },
-  { k:"parenchymeIntercale", fv:"FOETO:PF.POU-INF-018", g:"Kystes et malformations" },
-
-  { k:"reacInterst",    fv:"FOETO:PF.POU-INF-019", g:"Infection et inflammation",
-    meta:"le critère qui prouve ou exclut la pneumopathie" },
-  { k:"agregatsLympho", fv:"FOETO:PF.POU-MAL-002", g:"Infection et inflammation" },
-  { k:"pnnLumiere",     fv:"FOETO:PF.POU-INF-015", g:"Infection et inflammation",
-    meta:"dans la lumière SEULE, ne fait pas une pneumopathie ; le matériel caryorrhectique les mime" },
-  { k:"membranesBleues", fv:"FOETO:PF.POU-MAL-068", g:"Infection et inflammation" },
-  { k:"hyphes", fiche:"[keeling]", g:"Infection et inflammation", l:"Hyphes dans une bronchopneumonie floride" },
-  { k:"abcesGranulo",   fv:"FOETO:PF.POU-INF-016", g:"Infection et inflammation" },
-  { k:"onion",          fv:"FOETO:PF.POU-INF-017", g:"Infection et inflammation" },
-  { k:"inclusions",     fv:"FOETO:PF.POU-INF-005", g:"Infection et inflammation",
-    meta:"gardent leur valeur sous macération" },
-  { k:"necroseBland",   fv:"FOETO:PF.POU-VAS-006", g:"Infection et inflammation" },
-
-  { k:"squamesNombreuses", fv:"FOETO:PF.POU-CLA-002", g:"Aspiration",
-    meta:"le critère est quantitatif : quelques squames éparses sont normales" },
-  { k:"bouchonsSquames", fv:"FOETO:PF.POU-MAL-057", g:"Aspiration" },
-  { k:"meconiumAlv",     fv:"FOETO:PF.POU-MAL-012", g:"Aspiration" },
-
-  { k:"membranesHyalines", fv:"FOETO:PF.POU-MAL-069", g:"Membranes hyalines et matériel intra-alvéolaire" },
-  { k:"necroseBronchiol", fv:"FOETO:PF.POU-INF-006", g:"Membranes hyalines et matériel intra-alvéolaire",
-    meta:"signe le plus précoce" },
-  { k:"membranophages",  fv:"FOETO:PF.POU-MAL-027", g:"Membranes hyalines et matériel intra-alvéolaire" },
-  { k:"pneumocytesRegen", fiche:"[keeling]", g:"Membranes hyalines et matériel intra-alvéolaire",
-    l:"Pneumocytes de type II régénératifs recouvrant les membranes" },
-  { k:"materielPAS",     fv:"FOETO:PF.POU-MAL-067", g:"Membranes hyalines et matériel intra-alvéolaire" },
-
+  /* — Contexte hors lame — macro, clinique — */
   { k:"poumonsPetits",   fv:"FOETO:PF.POU-MAL-074", g:"Contexte hors lame — macro, clinique" },
   { k:"poumonsCoeur",    fv:"FOETO:PF.POU-MAL-073", g:"Contexte hors lame — macro, clinique" },
   { k:"poumonsVolumineux", fv:"FOETO:PF.POU-MAL-075", g:"Contexte hors lame — macro, clinique" },
   { k:"anomalieLobation", fv:"FOETO:PF.POU-MAL-056", g:"Contexte hors lame — macro, clinique" },
   { k:"obstructionLaryngee", fv:"FOETO:PF.POU-MAL-070", g:"Contexte hors lame — macro, clinique" },
   { k:"oligoamnios",     fv:"FOETO:PF.POU-MAL-071", g:"Contexte hors lame — macro, clinique" },
-  { k:"hernieDiaph",     fv:"FOETO:PF.POU-MAL-062", g:"Contexte hors lame — macro, clinique" }
+  { k:"hernieDiaph",     fv:"FOETO:PF.POU-MAL-062", g:"Contexte hors lame — macro, clinique" },
+  { k:"sansCommunication", fv:"FOETO:PF.POU-MAL-055", g:"Contexte hors lame — macro, clinique" },
+  { k:"artereSystemique", fv:"FOETO:PF.POU-VAS-002", g:"Contexte hors lame — macro, clinique" },
+  { k:"plevrePropre",    fv:"FOETO:PF.POU-MAL-072", g:"Contexte hors lame — macro, clinique" },
+  /* — Architecture et lobule — */
+  { k:"divisionsReduites", fv:"FOETO:PF.POU-MAL-048", g:"Architecture et lobule", mag:"faible", meta:"atteinte avant la 16e semaine" },
+  { k:"emphyseme",         fv:"FOETO:PF.POU-MAL-015", g:"Architecture et lobule", mag:"faible" },
+  /* — Kystes et malformations — */
+  { k:"kystesGrands",    fv:"FOETO:PF.POU-MAL-063", g:"Kystes et malformations", mag:"faible", meta:"Stocker type 1" },
+  { k:"kystesPetits",    fv:"FOETO:PF.POU-MAL-065", g:"Kystes et malformations", mag:"faible", meta:"Stocker type 2" },
+  { k:"kystesInfra5",    fv:"FOETO:PF.POU-MAL-064", g:"Kystes et malformations", mag:"faible", meta:"Stocker type 3" },
+  { k:"cartilageKyste",  fv:"FOETO:PF.POU-MAL-058", g:"Kystes et malformations", mag:"faible" },
+  { k:"retentionMucus",  fv:"FOETO:PF.POU-MAL-076", g:"Kystes et malformations", mag:"faible" },
+  { k:"parenchymeIntercale", fv:"FOETO:PF.POU-INF-018", g:"Kystes et malformations", mag:"faible" },
+  { k:"sacsBronchiques", fv:"FOETO:PF.POU-MAL-077", g:"Kystes et malformations", mag:"moyen", meta:"Stocker type 0" },
+  { k:"kystesPneumocytes", fv:"FOETO:PF.POU-MAL-066", g:"Kystes et malformations", mag:"moyen", meta:"Stocker type 4 — chercher un composant solide" },
+  { k:"mucigene",        fv:"FOETO:PF.POU-MAL-052", g:"Kystes et malformations", mag:"moyen" },
+  { k:"fibresStriees",   fv:"FOETO:PF.POU-MAL-060", g:"Kystes et malformations", mag:"moyen" },
+  { k:"glandesKyste",    fv:"FOETO:PF.POU-MAL-061", g:"Kystes et malformations", mag:"moyen" },
+  /* — Contenu des espaces aériens — */
+  { k:"bouchonsSquames", fv:"FOETO:PF.POU-MAL-057", g:"Contenu des espaces aériens", mag:"faible" },
+  { k:"squamesNombreuses", fv:"FOETO:PF.POU-CLA-002", g:"Contenu des espaces aériens", mag:"moyen",
+    meta:"le critère est quantitatif : quelques squames éparses sont normales" },
+  { k:"meconiumAlv",     fv:"FOETO:PF.POU-MAL-012", g:"Contenu des espaces aériens", mag:"moyen" },
+  /* — Inflammation et infection — */
+  { k:"agregatsLympho", fv:"FOETO:PF.POU-MAL-002", g:"Inflammation et infection", mag:"faible" },
+  { k:"necroseBland",   fv:"FOETO:PF.POU-VAS-006", g:"Inflammation et infection", mag:"faible" },
+  { k:"reacInterst",    fv:"FOETO:PF.POU-INF-019", g:"Inflammation et infection", mag:"moyen",
+    meta:"le critère qui prouve ou exclut la pneumopathie" },
+  { k:"pnnLumiere",     fv:"FOETO:PF.POU-INF-015", g:"Inflammation et infection", mag:"moyen",
+    meta:"dans la lumière SEULE, ne fait pas une pneumopathie ; le matériel caryorrhectique les mime" },
+  { k:"abcesGranulo",   fv:"FOETO:PF.POU-INF-016", g:"Inflammation et infection", mag:"moyen" },
+  { k:"onion",          fv:"FOETO:PF.POU-INF-017", g:"Inflammation et infection", mag:"moyen" },
+  { k:"hyphes", fiche:"[keeling]", g:"Inflammation et infection", mag:"fort", l:"Hyphes dans une bronchopneumonie floride" },
+  { k:"inclusions",     fv:"FOETO:PF.POU-INF-005", g:"Inflammation et infection", mag:"fort",
+    meta:"gardent leur valeur sous macération" },
+  /* — Vaisseaux — */
+  { k:"lymphangiectasie", fv:"FOETO:PF.POU-MAL-025", g:"Vaisseaux", mag:"faible" },
+  { k:"muscuIntra", fv:"FOETO:PF.POU-VAS-001", g:"Vaisseaux", mag:"moyen",
+    meta:"ce qui compte est le NIVEAU atteint (bronchiole respiratoire, parois sacculaires ou alvéolaires), pas l'épaisseur" },
+  { k:"epaississementMedial", fv:"FOETO:PF.POU-MAL-059", g:"Vaisseaux", mag:"moyen" },
+  { k:"malalignVeines",  fv:"FOETO:PF.POU-VAS-005", g:"Vaisseaux", mag:"moyen" },
+  { k:"densiteVasc",     fv:"FOETO:PF.POU-VAS-004", g:"Vaisseaux", mag:"moyen" },
+  { k:"cerveauEmbolise", fv:"FOETO:PF.POU-MAL-085", g:"Vaisseaux", mag:"moyen", meta:"GFAP ou CD56" },
+  { k:"capillairesRares", fv:"FOETO:PF.POU-VAS-003", g:"Vaisseaux", mag:"fort" },
+  /* — Poumon ventilé — né vivant — */
+  { k:"membranesBleues", fv:"FOETO:PF.POU-MAL-068", g:"Poumon ventilé — né vivant", mag:"moyen" },
+  { k:"membranesHyalines", fv:"FOETO:PF.POU-MAL-069", g:"Poumon ventilé — né vivant", mag:"moyen" },
+  { k:"necroseBronchiol", fv:"FOETO:PF.POU-INF-006", g:"Poumon ventilé — né vivant", mag:"fort",
+    meta:"signe le plus précoce" },
+  { k:"membranophages",  fv:"FOETO:PF.POU-MAL-027", g:"Poumon ventilé — né vivant", mag:"fort" },
+  { k:"pneumocytesRegen", fiche:"[keeling]", g:"Poumon ventilé — né vivant", mag:"fort",
+    l:"Pneumocytes de type II régénératifs recouvrant les membranes" },
+  { k:"materielPAS",     fv:"FOETO:PF.POU-MAL-067", g:"Poumon ventilé — né vivant", mag:"technique" }
 ];
 
 /* ── 06 bis · Associations — affichées, jamais cochées ────────────────────── */
@@ -320,9 +346,10 @@ var NEGATIFS = [
   { k:"squames", l:"Absence de squames en excès et de méconium intra-alvéolaire",
     p:"le critère est quantitatif : dire squames sans dire en excès ou non ne dit rien",
     ko:"squames en excès ou méconium intra-alvéolaire PRÉSENTS",
+    /* 2.1.0 : des bouchons de squames présents font tomber le négatif (avis Fable) */
     auto:function(){
-      var a = E.signes.squamesNombreuses, b = E.signes.meconiumAlv;
-      return a === POS || b === POS ? false : a === NEG && b === NEG ? true : null; } },
+      var a = E.signes.squamesNombreuses, b = E.signes.meconiumAlv, c = E.signes.bouchonsSquames;
+      return a === POS || b === POS || c === POS ? false : a === NEG && b === NEG ? true : null; } },
   { k:"lobation", signe:"anomalieLobation", l:"Absence d'anomalie de la lobation",
     p:"20 des 22 cas résiduels s'associaient à une malformation cardiaque — ce négatif conditionne un AUTRE organe",
     ko:"anomalie de la lobation PRÉSENTE — regarder le cœur" }
@@ -351,7 +378,7 @@ function suggerer(){
   if (vu("malalignVeines", "capillairesRares", "densiteVasc", "epaississementMedial")){ s.cd34 = 1; s.evg = 1; }
   if (vu("sansCommunication", "artereSystemique", "plevrePropre")) s.elastique = 1;
   if (vu("muscuIntra")) s.orceine = 1;
-  if (vu("membranesHyalines", "materielPAS")) s.pas = 1;
+  if (vu("membranesHyalines")) s.pas = 1;   /* PAS+ déclaré = PAS déjà fait */
   if (vu("materielPAS")) s.sp = 1;
   if (vu("poumonsPetits", "divisionsReduites")) s.insuf = 1;
   if (vu("lymphangiectasie")) s.d240 = 1;
@@ -410,6 +437,9 @@ async function testsOrgane(chk, clic, set, crTient, pause){
   /* Squames : négatif calculé sur deux signes */
   pose("squamesNombreuses", NEG); pose("meconiumAlv", NEG);
   chk("squames et méconium absents → négatif énoncé", etatNegatif(par(NEGATIFS, "squames")) === "ok");
+  pose("bouchonsSquames", POS);
+  chk("bouchons de squames présents → négatif tombé", etatNegatif(par(NEGATIFS, "squames")) === "ko");
+  ote("bouchonsSquames");
   pose("meconiumAlv", POS);
   chk("méconium présent → négatif tombé", etatNegatif(par(NEGATIFS, "squames")) === "ko");
   ote("squamesNombreuses"); ote("meconiumAlv");

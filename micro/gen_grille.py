@@ -153,6 +153,14 @@ textarea{resize:vertical;min-height:60px;font-size:15px}
 .sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
   color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
 .sousTitre:first-child{margin-top:0}
+/* LECTURE : blocs de sections, badge de grossissement, variantes dans leur cadre */
+.bloc{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--drape);margin:24px 0 8px}
+.mag{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-soft);
+  border:1px solid var(--rule);border-radius:2px;padding:0 4px;margin-right:6px;white-space:nowrap}
+.mag.fort,.mag.technique{color:var(--drape);border-color:var(--drape)}
+.varRow{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.varRow .chip{font-size:13px;min-height:32px;padding:5px 9px}
 
 .btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
   border:1px solid var(--ink);background:var(--card);color:var(--ink);
@@ -196,7 +204,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 </header>
 
 <!-- 01 — Dossier -->
-<section>
+<section id="secDossier">
   <h2><span class="n">01</span>Dossier</h2>
   <div class="row">
     <div class="field">
@@ -233,6 +241,13 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
   <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
 </section>
 
+<!-- Contexte hors lame — LECTURE seulement : macro, autre organe, clinique -->
+<section id="secContexte" class="off" hidden>
+  <h2><span class="n">··</span>Contexte hors lame<span class="tally" id="tContexte">—</span></h2>
+  <p class="note" style="margin-top:0">Ce qui ne se lit pas sur la lame mais pèse sur ce qu'on y cherche.</p>
+  <div id="contexte" style="margin-top:10px"></div>
+</section>
+
 <!-- 03 — Rétention -->
 <section id="secRetention" class="off">
   <h2><span class="n">03</span>Rétention<span class="tally" id="tRetention">—</span></h2>
@@ -263,8 +278,14 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
   <h2><span class="n">06</span>Signes<span class="tally" id="tSignes">—</span></h2>
   <p class="note" style="margin-top:0">On coche des signes, pas des diagnostics. Les associations en dessous se déduisent de ce qui est coché : elles s'affichent, elles ne se choisissent pas.</p>
   <div id="signes" style="margin-top:10px"></div>
-  <div class="sousTitre" style="margin-top:16px">Associations lues</div>
+  <div class="sousTitre" id="assTitre" style="margin-top:16px">Associations lues</div>
   <div id="diags"></div>
+</section>
+
+<!-- Associations — LECTURE seulement : sorties des Signes, en tête de la synthèse -->
+<section id="secAssoc" class="off" hidden>
+  <h2><span class="n">··</span>Associations lues</h2>
+  <p class="note" style="margin-top:0">Elles se déduisent des signes présents : elles s'affichent, elles ne se choisissent pas.</p>
 </section>
 
 <!-- 07 — Termes FOETO attestés par la fiche -->
@@ -373,6 +394,17 @@ var POS = PRESENCE ? "present" : "anormal", NEG = PRESENCE ? "absent" : "normal"
 /* opt-in (rein v3.4) : les blocs lus pour l'organe. L'export rattache alors la lecture
    aux lames — organe de chaque lame, signes présents / absents par lame. */
 var BLOCS_LUS = typeof BLOCS !== "undefined" && BLOCS === true;
+/* opt-in (rein 3.5, poumon 2.1) : la grille suit l'ordre de lecture de la lame.
+   Les paragraphes de signes sont les CADRES de l'organe (CADRES = [{g, sur?, hors?}],
+   dans l'ordre où on les lit) ; chaque signe porte son grossissement (mag) et se
+   range du faible au fort ; une variante normale vit dans le cadre qu'elle mime et
+   ne passe au CR qu'en parenthèse. Le cadre hors:true (macro, clinique) sort des
+   Signes vers « Contexte hors lame », avant la rétention ; les associations
+   ouvrent la synthèse. Le grossissement est un savoir de pratique [expérience]. */
+var LECT = typeof LECTURE !== "undefined" && LECTURE === true;
+var MAGS = [{ k:"faible", l:"faible gr." }, { k:"moyen", l:"moyen gr." },
+            { k:"fort", l:"fort gr." }, { k:"technique", l:"après technique" }];
+function magIdx(x){ for (var i = 0; i < MAGS.length; i++) if (MAGS[i].k === x.mag) return i; return -1; }
 
 /* « 10, 11 3-5 » -> { ok:[3,4,5,10,11], ko:[] } ; une plage de plus de 60 blocs est une faute de frappe */
 function lireBlocs(t){
@@ -426,7 +458,7 @@ function neuf(){
 /* Le stade attendu au terme saisi. Bornes reconstruites depuis la prose des
    sources : ce sont des repères, pas des seuils. */
 function stadeAttendu(sa){
-  if (sa == null || !isFinite(sa)) return null;
+  if (sa == null || !isFinite(sa) || !STADES.length) return null;
   for (var i = 0; i < STADES.length; i++) if (sa < STADES[i].max) return STADES[i];
   return STADES[STADES.length - 1];
 }
@@ -505,7 +537,8 @@ function batir(){
     $("vMesure").querySelector("b").textContent = MESURE.titre;
   }
 
-  $("variantes").innerHTML = VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
+  /* en lecture, les variantes vivent dans leur cadre (paragraphes de signes) */
+  $("variantes").innerHTML = LECT ? "" : VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
 
   /* Un signe peut porter un groupe g (placenta : cordon, membranes, parenchyme sous
      cordon, marge, systémique) : un sous-titre s'ouvre quand le groupe change.
@@ -513,21 +546,32 @@ function batir(){
      déplie ses signes et son étendue. */
   var gPrec = null;
   if (PRESENCE && groupes().length){
-    $("signes").innerHTML = groupes().map(function(g, i){
-      var sig = SIGNES.filter(function(x){ return x.g === g; });
-      return '<div class="item"><div class="head"><div class="lbl"><b>' + esc(g) + '</b>' +
+    /* LECTURE : le cadre hors lame part dans sa section ; un sur-titre (sur) coiffe les
+       cadres qui se suivent ; les variantes du cadre restent visibles, paragraphe replié. */
+    var html = { signes:"", contexte:"" }, sPrec = null;
+    groupes().forEach(function(g, i){
+      var sig = signesDe(g), c = LECT ? CADRES[i] : {}, ou = horsLame(g) ? "contexte" : "signes";
+      if (c.sur && c.sur !== sPrec) html[ou] += '<div class="sousTitre">' + esc(c.sur) + '</div>';
+      sPrec = c.sur || null;
+      html[ou] += '<div class="item"><div class="head"><div class="lbl"><b>' + esc(g) + '</b>' +
         '<span class="meta">' + sig.length + ' signe(s)' +
         (sig.some(function(x){ return NEGATIFS.some(function(n){ return n.signe === x.k; }); })
           ? " · porte un négatif à énoncer" : "") + '</span></div>' +
         '<button type="button" class="chip" data-act="grp" data-k="' + i + '" data-v="non">Non</button>' +
         '<button type="button" class="chip" data-act="grp" data-k="' + i + '" data-v="oui">Oui</button>' +
-        '</div><div class="unfold" id="grp_' + i + '" hidden>' +
+        '</div>' +
+        (LECT && variantesDe(g).length ? '<div class="varRow">' + variantesDe(g).map(function(v){
+            return chip("var", v.k, v.l, "variante normale"); }).join("") + '</div>' : "") +
+        '<div class="unfold" id="grp_' + i + '" hidden>' +
         (sansEtendue(g) ? "" : '<div class="chips" style="margin-bottom:6px">' + ETENDUES.map(function(e){
             return '<button type="button" class="chip" data-act="etendue" data-k="' + i + '" data-v="' + e + '">' +
                    '<span class="k">étendue</span>' + e + '</button>';
           }).join("") + '</div>') +
-        sig.map(ligneSigne).join("") + '</div></div>';
-    }).join("");
+        sig.filter(blocable).map(ligneSigne).join("") + '</div>' +
+        sig.filter(function(x){ return !blocable(x); }).map(ligneSigne).join("") + '</div>';
+    });
+    $("signes").innerHTML = html.signes;
+    $("contexte").innerHTML = html.contexte;
   } else $("signes").innerHTML = SIGNES.map(function(x){
     var h = "";
     if (x.g && x.g !== gPrec){ h = '<div class="sousTitre">' + esc(x.g) + '</div>'; gPrec = x.g; }
@@ -537,15 +581,12 @@ function batir(){
   if (FUSION){
     /* La recherche descend sous les signes, la section 07 se retire et les
        sections se renumérotent ; les termes ajoutés par recherche s'y rangent. */
-    var ass = $("secSignes").querySelector(".sousTitre");
+    var ass = $("assTitre");
     ass.insertAdjacentHTML("beforebegin", '<div class="sousTitre" style="margin-top:16px">Autre terme FOETO</div>');
     ass.parentNode.insertBefore($("foetoRech"), ass);
     ass.parentNode.insertBefore($("foeto"), ass);
     $("foetoRech").hidden = false;
     $("secFoeto").hidden = true;
-    var n = 0;
-    document.querySelectorAll("section:not([hidden]) h2 .n").forEach(function(e){
-      e.textContent = ("0" + (++n)).slice(-2); });
   } else $("foeto").innerHTML = FOETO.sections.map(function(s){
     return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
            s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
@@ -570,21 +611,54 @@ function batir(){
 
   $("techNote").textContent = TECH_NOTE;
   $("techniques").innerHTML = TECHNIQUES.map(function(t){ return chip("tech", t.k, t.l, t.q); }).join("");
+
+  /* Une grille sans rétention ni stades (cordon, membranes…) masque ces sections :
+     un tableau vide dit « sans objet ici », pas « non regardé ». */
+  if (!RETENTION.length) $("secRetention").hidden = true;
+  if (!STADES.length){ $("stTitre").hidden = true; $("vMaturation").hidden = true;
+                       if (!MESURE) $("secMaturation").hidden = true; }
+
+  /* LECTURE : sections dans l'ordre des dépendances — avant la lame, la lame se
+     lit-elle, lecture, synthèse, sortie. */
+  if (LECT){
+    $("secContexte").hidden = !groupes().some(horsLame);
+    $("secVariantes").hidden = true;
+    $("secAssoc").hidden = false;
+    $("secAssoc").appendChild($("diags"));
+    $("assTitre").hidden = true;
+    $("secSignes").querySelector(".note").textContent = "Un paragraphe par cadre, dans l'ordre de lecture ; " +
+      "dans chaque cadre, du faible au fort grossissement. On coche des signes, pas des diagnostics : " +
+      "les associations se lisent dans la synthèse.";
+    [[["secDossier"], "Avant la lame"], [["secRetention"], "La lame se lit-elle"],
+     [["secMaturation", "secSignes"], "Lecture"], [["secAssoc"], "Synthèse"], [["secCR"], "Sortie"]].forEach(function(b){
+      var s = b[0].map($).filter(function(e){ return !e.hidden; })[0];
+      if (s) s.insertAdjacentHTML("beforebegin", '<p class="bloc">' + b[1] + '</p>'); });
+  }
+  if (FUSION || LECT){
+    var n = 0;
+    document.querySelectorAll("section:not([hidden]) h2 .n").forEach(function(e){
+      e.textContent = ("0" + (++n)).slice(-2); });
+  }
 }
 
 function ligneSigne(x){
     var oblig = PRESENCE && NEGATIFS.some(function(n){ return n.signe === x.k; });
-    return '<div class="item"><div class="head"><div class="lbl">' + esc(x.l) +
+    return '<div class="item"><div class="head"><div class="lbl">' +
+      (LECT && x.mag ? '<span class="mag ' + x.mag + '">' + esc(MAGS[magIdx(x)].l) + '</span>' : "") + esc(x.l) +
       (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
       (codesDe(x).length ? '<span class="meta">' + esc(codesDe(x).join(" · ")) + '</span>' : "") +
       (x.horsFiche ? '<span class="meta">hors fiche — non sourcé par la biblio</span>' : "") +
       (x.fiche && !x.foeto ? '<span class="meta">dans la fiche ' + esc(x.fiche) + ', sans terme FOETO</span>' : "") +
       (oblig ? '<span class="meta">négatif à énoncer : répondre présent ou absent</span>' : "") +
+      (PRESENCE && !blocable(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
+        : "hors du « Non » en bloc : " + (x.mag === "technique" ? "se répond après la technique" : "polarité normale, à répondre seul")) +
+        '</span>' : "") +
       '</div>' +
+      (x.auto ? '<span class="chip" data-auto="' + x.k + '" style="cursor:default"></span>' :
       '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="' + NEG + '">' +
         (PRESENCE ? "Absent" : "Normal") + '</button>' +
       '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="' + POS + '">' +
-        (PRESENCE ? "Présent" : "Anormal") + '</button>' +
+        (PRESENCE ? "Présent" : "Anormal") + '</button>') +
       '</div></div>';
 }
 
@@ -684,21 +758,42 @@ function poserRetNiveau(v){
 }
 var ETENDUES = ["focale", "multifocale", "diffuse"];
 function groupes(){
+  if (LECT) return CADRES.map(function(c){ return c.g; });
   var g = [];
   SIGNES.forEach(function(x){ if (x.g && g.indexOf(x.g) < 0) g.push(x.g); });
   return g;
 }
+function horsLame(g){ return LECT && CADRES.some(function(c){ return c.g === g && c.hors; }); }
 function sansEtendue(g){
-  return typeof GROUPES_SANS_ETENDUE !== "undefined" && GROUPES_SANS_ETENDUE.indexOf(g) >= 0;
+  return horsLame(g) || typeof GROUPES_SANS_ETENDUE !== "undefined" && GROUPES_SANS_ETENDUE.indexOf(g) >= 0;
 }
-function signesDe(g){ return SIGNES.filter(function(x){ return x.g === g; }); }
+/* En lecture, du faible au fort grossissement ; le tri est stable, l'ordre du fragment départage. */
+function signesDe(g){
+  var s = SIGNES.filter(function(x){ return x.g === g; });
+  return LECT ? s.sort(function(a, b){ return magIdx(a) - magIdx(b); }) : s;
+}
+function variantesDe(g){ return VARIANTES.filter(function(v){ return v.g === g; }); }
+/* Le « Non » en bloc ne répond pas à la place du lecteur un signe qui demande une
+   technique (mag:"technique") ni un signe de polarité normale (bloc:false, ex.
+   « tubes collecteurs normaux » : absent y voudrait dire anormal). Ces signes restent
+   visibles, paragraphe replié, et se répondent un par un. */
+function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false; }
+/* Un signe peut se DÉDUIRE d'une donnée consignée (auto() → true / false / null) au lieu
+   de se cliquer : un « CRG bas » coché à la main pourrait contredire le compte saisi. */
+function deduire(){
+  SIGNES.forEach(function(x){
+    if (!x.auto) return;
+    var r = x.auto();
+    if (r === true) E.signes[x.k] = POS; else if (r === false) E.signes[x.k] = NEG; else delete E.signes[x.k];
+  });
+}
 /* Un paragraphe se lit : « non » (tous ses signes répondus absents), « oui »
    (au moins un présent, ou déplié à la main), sinon non regardé. */
 function etatGroupe(g){
   var s = signesDe(g);
   if (s.some(function(x){ return E.signes[x.k] === POS; })) return "oui";
   if (E.groupes[g] === "oui") return "oui";
-  if (E.groupes[g] === "non" && s.every(function(x){ return E.signes[x.k] === NEG; })) return "non";
+  if (E.groupes[g] === "non" && s.filter(blocable).every(function(x){ return E.signes[x.k] === NEG; })) return "non";
   return null;
 }
 
@@ -800,6 +895,12 @@ function peindreDiags(){
 }
 
 function peindre(){
+  deduire();
+  document.querySelectorAll("[data-auto]").forEach(function(b){
+    var v = E.signes[b.dataset.auto];
+    b.className = "chip" + (v === POS ? " no" : v === NEG ? " on" : "");
+    b.textContent = v === POS ? "présent (déduit)" : v === NEG ? "absent (déduit)" : "non déduit";
+  });
   if (PAIR) document.querySelectorAll("#cote .chip").forEach(function(b){
     b.className = "chip" + (E.cote === b.dataset.k ? " on" : "");
   });
@@ -823,10 +924,10 @@ function peindre(){
       b.className = "chip" + (E.mesure.opt === b.dataset.k ? " on" : "");
     });
   }
-  document.querySelectorAll("#variantes .chip").forEach(function(b){
+  document.querySelectorAll('[data-act="var"]').forEach(function(b){
     b.className = "chip" + (E.variantes[b.dataset.k] ? " on" : "");
   });
-  document.querySelectorAll('#signes [data-act="les"]').forEach(function(b){
+  document.querySelectorAll('[data-act="les"]').forEach(function(b){
     b.className = "chip" + (E.signes[b.dataset.k] === b.dataset.v
                             ? " " + classe("les", b.dataset.v) : "");
   });
@@ -869,7 +970,11 @@ function peindre(){
   tally("tRetention",   Object.keys(E.retention).length, RETENTION.length);
   tally("tMaturation",  (E.stade ? 1 : 0) + (MESURE && E.mesure.def ? 1 : 0), MESURE ? 2 : 1);
   tally("tVariantes",   Object.keys(E.variantes).length, VARIANTES.length);
-  if (PRESENCE && groupes().length) tally("tSignes", groupes().filter(etatGroupe).length, groupes().length);
+  if (PRESENCE && groupes().length){
+    var gl = groupes().filter(function(g){ return !horsLame(g); }), gh = groupes().filter(horsLame);
+    tally("tSignes", gl.filter(etatGroupe).length, gl.length);
+    if (gh.length) tally("tContexte", gh.filter(etatGroupe).length, gh.length);
+  }
   else tally("tSignes",     Object.keys(E.signes).length, SIGNES.length);
   tally("tFoeto",       Object.keys(E.foeto).length, nbFoeto());
   tally("tNegatifs",    PRESENCE ? NEGATIFS.filter(etatNegatif).length : Object.keys(E.negatifs).length,
@@ -887,6 +992,52 @@ function peindre(){
 }
 
 /* ── Compte rendu — la sortie du module, écrite par les clics ─────────────── */
+/* Par paragraphe : « non » en une ligne ; les présents avec leur étendue ; les
+   absents isolés ; un paragraphe entier non regardé se nomme d'un mot. En lecture,
+   les variantes normales vues suivent leur cadre entre parenthèses. */
+function lignesGroupes(gs){
+  var L = [];
+  function paren(g){
+    var v = LECT ? variantesDe(g).filter(function(x){ return E.variantes[x.k]; }) : [];
+    return v.length ? " (variante normale : " + v.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ")" : "";
+  }
+  var gNon = gs.filter(function(g){ return etatGroupe(g) === "non"; });
+  gNon.forEach(function(g){ L.push("  " + g + " : non" + paren(g) + "."); });
+  gs.forEach(function(g){
+    if (gNon.indexOf(g) >= 0) return;
+    signesDe(g).forEach(function(x){
+      if (E.signes[x.k] === POS) L.push("  " + g + (E.etendue[g] ? " (" + E.etendue[g] + ")" : "") + " · " + x.l + " — PRÉSENT");
+    });
+    if (paren(g)) L.push("  " + g + paren(g) + ".");
+  });
+  var dans = function(x){ return gs.indexOf(x.g) >= 0; };
+  var abs = SIGNES.filter(function(x){ return dans(x) && E.signes[x.k] === NEG && (gNon.indexOf(x.g) < 0 || !blocable(x)); });
+  if (abs.length) L.push("  Absents : " + abs.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  var gMuets = gs.filter(function(g){ return signesDe(g).every(function(x){ return !E.signes[x.k]; }); });
+  var sMuets = SIGNES.filter(function(x){ return dans(x) && !E.signes[x.k] && gMuets.indexOf(x.g) < 0; });
+  if (gMuets.length || sMuets.length)
+    L.push("  Non regardés : " + gMuets.map(function(g){ return g.toLowerCase(); })
+           .concat(sMuets.map(function(x){ return x.l.toLowerCase(); })).join(" · ") + ".");
+  return L;
+}
+/* Rédaction proposée (opt-in : un cadre porte crNon, un signe porte cr) : une phrase
+   par cadre répondu, dans l'ordre de lecture — crNon si le cadre est « Non », sinon
+   les phrases des signes présents (le libellé à défaut). Ce qui n'est pas répondu
+   n'est pas écrit : la rédaction ne dit que ce qui a été regardé. */
+var REDIGE = LECT && (CADRES.some(function(c){ return c.crNon; }) || SIGNES.some(function(x){ return x.cr; }));
+function phrase(t){ t = String(t).trim(); return t && !/[.!?…]$/.test(t) ? t + "." : t; }
+function redaction(){
+  var P = [];
+  groupes().forEach(function(g, i){
+    var vus = variantesDe(g).filter(function(v){ return E.variantes[v.k]; });
+    var paren = vus.length ? " (variante normale : " + vus.map(function(v){ return v.l.toLowerCase(); }).join(", ") + ")" : "";
+    if (etatGroupe(g) === "non"){ if (CADRES[i].crNon) P.push(phrase(CADRES[i].crNon.replace(/\.?$/, paren))); return; }
+    var pres = signesDe(g).filter(function(x){ return E.signes[x.k] === POS; });
+    if (pres.length) P.push(pres.map(function(x){ return phrase(x.cr || x.l); }).join(" ") +
+                            (E.etendue[g] ? " (" + E.etendue[g] + ")" : "") + paren);
+  });
+  return P;
+}
 function composer(){
   var sa = num("sa"), L = [];
   L.push(TITRE_CR + " — grille de lecture");
@@ -894,22 +1045,39 @@ function composer(){
          " · " + ($("operateur").value.trim() || "lecteur —") +
          (PAIR ? " · " + (E.cote ? par(COTES, E.cote).l : "côté non déclaré") : ""));
   L.push("");
+  if (REDIGE){
+    var R = redaction();
+    L.push("RÉDACTION PROPOSÉE");
+    L.push(R.length ? "  " + R.join("\n  ") : "  — aucun cadre répondu.");
+    L.push("");
+  }
 
   L.push("PRÉLÈVEMENT");
   L.push("  " + verdictPrelevement().txt);
   if (BLOCS_LUS) L.push("  Blocs lus : " + (E.blocs.length ? E.blocs.join(", ") : "non déclarés") + ".");
 
-  L.push("");
-  L.push("RÉTENTION");
-  L.push("  " + verdictRetention().txt);
+  var gHors = PRESENCE ? groupes().filter(horsLame) : [];
+  if (gHors.length){
+    L.push("");
+    L.push("CONTEXTE HORS LAME");
+    L.push.apply(L, lignesGroupes(gHors));
+  }
 
-  L.push("");
-  L.push("MATURATION");
-  L.push("  " + verdictMaturation().txt);
-  if (MESURE) L.push("  " + verdictMesure().txt);
+  if (RETENTION.length){
+    L.push("");
+    L.push("RÉTENTION");
+    L.push("  " + verdictRetention().txt);
+  }
+
+  if (STADES.length || MESURE){
+    L.push("");
+    L.push("MATURATION");
+    if (STADES.length) L.push("  " + verdictMaturation().txt);
+    if (MESURE) L.push("  " + verdictMesure().txt);
+  }
 
   var vus = VARIANTES.filter(function(v){ return E.variantes[v.k]; });
-  if (vus.length){
+  if (vus.length && !LECT){   /* en lecture : parenthèse dans le cadre, pas de rubrique */
     L.push("");
     L.push("VARIANTES NORMALES VUES ET ÉCARTÉES");
     L.push("  " + vus.map(function(v){ return v.l.toLowerCase(); }).join(" · "));
@@ -921,20 +1089,7 @@ function composer(){
   L.push("SIGNES");
   if (!anormales.length && !normales.length) L.push(PRESENCE ? "  aucun signe répondu." : "  aucun axe exploré.");
   if (PRESENCE && groupes().length){
-    /* Par paragraphe : « non » en une ligne ; les présents avec leur étendue ;
-       les absents isolés ; un paragraphe entier non regardé se nomme d'un mot. */
-    var gNon = groupes().filter(function(g){ return etatGroupe(g) === "non"; });
-    gNon.forEach(function(g){ L.push("  " + g + " : non."); });
-    anormales.forEach(function(x){
-      L.push("  " + x.g + (E.etendue[x.g] ? " (" + E.etendue[x.g] + ")" : "") + " · " + x.l + " — PRÉSENT");
-    });
-    var abs = normales.filter(function(x){ return gNon.indexOf(x.g) < 0; });
-    if (abs.length) L.push("  Absents : " + abs.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
-    var gMuets = groupes().filter(function(g){ return signesDe(g).every(function(x){ return !E.signes[x.k]; }); });
-    var sMuets = SIGNES.filter(function(x){ return !E.signes[x.k] && gMuets.indexOf(x.g) < 0; });
-    if (gMuets.length || sMuets.length)
-      L.push("  Non regardés : " + gMuets.map(function(g){ return g.toLowerCase(); })
-             .concat(sMuets.map(function(x){ return x.l.toLowerCase(); })).join(" · ") + ".");
+    L.push.apply(L, lignesGroupes(groupes().filter(function(g){ return !horsLame(g); })));
   } else {
   anormales.forEach(function(x){
     L.push("  " + (x.g ? x.g + " · " : "") + x.l + (PRESENCE ? " — PRÉSENT" : " — ANORMAL"));
@@ -1048,7 +1203,8 @@ document.addEventListener("change", function(ev){
    de présent (on ne l'efface pas en silence). Oui : déplie ; depuis « non », on
    repart de zéro. Un second clic sur l'état actif le lève. */
 function basculerGroupe(g, v){
-  var s = signesDe(g), pres = s.filter(function(x){ return E.signes[x.k] === POS; });
+  var pres = signesDe(g).filter(function(x){ return E.signes[x.k] === POS; });
+  var s = signesDe(g).filter(blocable);
   var actuel = etatGroupe(g);
   if (v === "non"){
     if (pres.length){ flash(pres.length + " signe(s) présent(s) dans « " + g + " » : les retirer avant de répondre non."); return; }
@@ -1129,7 +1285,7 @@ function getSaisie(d){ return tx("readonly",  function(s){ return s.get(d); }); 
 
 /* ── Verrou ───────────────────────────────────────────────────────────────── */
 function verrouiller(ouvert){
-  ["secPrelevement","secRetention","secMaturation","secVariantes","secSignes","secFoeto",
+  ["secPrelevement","secContexte","secRetention","secMaturation","secVariantes","secSignes","secAssoc","secFoeto",
    "secNegatifs","secTechniques","secCR","secSortie"].forEach(function(id){
     $(id).classList.toggle("off", !ouvert);
   });
@@ -1361,7 +1517,7 @@ async function autotest(){
     chk("clés uniques dans " + nom, new Set(t.map(function(x){ return x.k; })).size === t.length);
   });
   chk("stades ordonnés",      STADES.every(function(s, i){ return !i || s.max > STADES[i-1].max; }));
-  chk("dernier stade ouvert", STADES[STADES.length-1].max === 99);
+  chk("dernier stade ouvert", !STADES.length || STADES[STADES.length-1].max === 99);
   chk("sans terme, pas de stade", stadeAttendu(null) === null);
   chk("chaque association a son « ne pas conclure »",
       DIAGS.every(function(d){ return d.stop && d.signes.length >= 2; }));
@@ -1372,8 +1528,8 @@ async function autotest(){
   chk("seuil d'association atteignable",
       DIAGS.every(function(d){ return seuil(d) >= 1 && seuil(d) <= d.signes.length; }));
   chk("chaque négatif a son défaut", NEGATIFS.every(function(n){ return n.ko && n.p; }));
-  chk("une borne de rétention au moins est bonne",
-      RETENTION.some(function(r){ return r.q === "bon"; }));
+  chk("une borne de rétention au moins est bonne (ou pas de rétention)",
+      !RETENTION.length || RETENTION.some(function(r){ return r.q === "bon"; }));
 
   /* Verrou */
   chk("verrouillé au départ",  $("secSignes").classList.contains("off"));
@@ -1395,6 +1551,8 @@ async function autotest(){
   chk("chip retirée au 2e clic", !E.prelev[PRELEV[0].k]);
 
   /* Rétention — le fœticide prime sur toute borne */
+  if (!RETENTION.length) chk("sans rétention : section masquée, hors CR", $("secRetention").hidden && !crTient("RÉTENTION"));
+  else {
   var bon = RETENTION.filter(function(r){ return r.q === "bon"; })[0];
   /* En présence la rétention datable se choisit dans une liste ; sinon, un bouton. */
   function retPose(k){
@@ -1424,6 +1582,7 @@ async function autotest(){
     sel.value = ""; sel.dispatchEvent(new Event("change", {bubbles:true}));
     chk("rétention : liste remise à non regardée", Object.keys(E.retention).length === 0);
   }
+  }
 
   /* Côté — organe pair */
   if (PAIR){
@@ -1442,7 +1601,7 @@ async function autotest(){
   /* Paragraphes de signes (présence) : Non répond absent à tout le paragraphe,
      jamais par-dessus un présent ; Oui déplie. */
   if (PRESENCE && groupes().length){
-    var gA = groupes()[0], iA = 0, sA = signesDe(gA);
+    var gA = groupes()[0], iA = 0, sA = signesDe(gA).filter(blocable);
     chk("paragraphes : repliés au départ", $("grp_0").hidden && etatGroupe(gA) === null);
     clic("grp", iA, "non");
     chk("paragraphe non → signes absents", sA.every(function(x){ return E.signes[x.k] === NEG; }) &&
@@ -1468,7 +1627,9 @@ async function autotest(){
   }
 
   /* Codes des signes : ils partent avec le présent, pas avec l'absent */
-  var sc = SIGNES.filter(function(x){ return codesDe(x).length; })[0];
+  var sc = SIGNES.filter(function(x){ return codesDe(x).length && !x.auto; })[0];
+  chk("signes déduits : pas de bouton, un état lu", SIGNES.filter(function(x){ return x.auto; }).every(function(x){
+    return !document.querySelector('[data-act="les"][data-k="' + x.k + '"]') && !!document.querySelector('[data-auto="' + x.k + '"]'); }));
   if (sc){
     clic("les", sc.k, NEG);
     chk("codes : un absent n'exporte rien", !codesPresents().length && !crTient("CODES DES SIGNES PRÉSENTS"));
@@ -1545,6 +1706,65 @@ async function autotest(){
   } else chk("blocs : masqué sans BLOCS", $("blocsBloc").hidden && !crTient("Blocs lus"));
   chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
 
+  /* Ordre de lecture : cadres déclarés, grossissement, variantes dans leur cadre */
+  if (LECT){
+    var dansCadre = function(x){ return CADRES.some(function(c){ return c.g === x.g; }); };
+    chk("lecture : cadres uniques", new Set(groupes()).size === CADRES.length);
+    chk("lecture : chaque signe dans un cadre déclaré", SIGNES.every(dansCadre));
+    chk("lecture : aucun cadre vide", CADRES.every(function(c){ return signesDe(c.g).length; }));
+    chk("lecture : grossissement de chaque signe de lame déclaré", SIGNES.every(function(x){
+      return horsLame(x.g) ? !x.mag : magIdx(x) >= 0; }));
+    chk("lecture : chaque variante dans un cadre", VARIANTES.every(dansCadre));
+    chk("lecture : du faible au fort dans chaque cadre", groupes().every(function(g, i){
+      var m = Array.prototype.map.call(document.querySelectorAll('#grp_' + i + ' [data-act="les"][data-v="' + POS + '"]'),
+                                       function(b){ return magIdx(par(SIGNES, b.dataset.k)); });
+      return m.every(function(v, j){ return !j || v >= m[j - 1]; }); }));
+    chk("lecture : le hors-lame sort des signes", groupes().every(function(g, i){
+      return !!$(horsLame(g) ? "contexte" : "signes").querySelector("#grp_" + i); }));
+    chk("lecture : contexte avant la rétention", !groupes().some(horsLame) ||
+        ($("secContexte").compareDocumentPosition($("secRetention")) & 4) && !$("secContexte").hidden);
+    chk("lecture : associations en tête de synthèse", $("secAssoc").contains($("diags")) && $("secVariantes").hidden);
+    /* Le « Non » en bloc laisse non regardés les signes techniques et de polarité normale */
+    var hb = function(x){ return !blocable(x) && !x.auto; };
+    var gT = groupes().filter(function(g){ return signesDe(g).some(hb); })[0];
+    if (gT){
+      var iT = groupes().indexOf(gT), xT = signesDe(gT).filter(hb)[0];
+      /* le banc commun a pu laisser des signes posés dans ce cadre : on part d'un cadre vierge */
+      signesDe(gT).forEach(function(x){ if (!x.auto) delete E.signes[x.k]; }); delete E.groupes[gT]; peindre();
+      clic("grp", iT, "non");
+      chk("non en bloc : « " + xT.k + " » reste non regardé", !E.signes[xT.k] && etatGroupe(gT) === "non" &&
+          !$("grp_" + iT).contains(document.querySelector('[data-act="les"][data-k="' + xT.k + '"]')));
+      clic("les", xT.k, NEG);
+      chk("non en bloc : répondu seul, il passe au CR", crTient(xT.l.toLowerCase()) && etatGroupe(gT) === "non");
+      clic("les", xT.k, NEG);
+      clic("grp", iT, "non");
+    }
+    /* Rédaction proposée : la phrase du cadre « Non », celle du signe présent, rien sinon */
+    if (REDIGE){
+      var cN = CADRES.filter(function(c){ return c.crNon; })[0];
+      if (cN){
+        var iN = groupes().indexOf(cN.g);
+        signesDe(cN.g).forEach(function(x){ delete E.signes[x.k]; }); delete E.groupes[cN.g]; peindre();
+        chk("rédaction : cadre non répondu, rien d'écrit", !crTient(phrase(cN.crNon)));
+        clic("grp", iN, "non");
+        chk("rédaction : phrase du cadre « Non »", crTient("RÉDACTION PROPOSÉE") && crTient(phrase(cN.crNon)));
+        clic("grp", iN, "non");
+      }
+      var sR = SIGNES.filter(function(x){ return x.cr; })[0];
+      if (sR){
+        if (E.signes[sR.k]) clic("les", sR.k, E.signes[sR.k]);
+        clic("les", sR.k, POS);
+        chk("rédaction : phrase du signe présent", crTient(phrase(sR.cr)));
+        clic("les", sR.k, POS);
+      }
+    }
+    var v0 = VARIANTES[0];
+    clic("var", v0.k);
+    chk("variante : parenthèse dans son cadre, pas de rubrique",
+        crTient(v0.g + " (variante normale : " + v0.l.toLowerCase() + ")") && !crTient("VARIANTES NORMALES"));
+    clic("var", v0.k);
+  }
+
   /* Contrôles propres à l'organe */
   await testsOrgane(chk, clic, set, crTient, pause);
 
@@ -1583,7 +1803,7 @@ async function autotest(){
   var relu = await getSaisie("26P0123");
   appliquer(relu);
   chk("IndexedDB restitue",    E.signes[l0.k] === POS &&
-                               $("sa").value === String(snap.terme_sa));
+                               $("sa").value === (snap.terme_sa == null ? "" : String(snap.terme_sa)));
   if (BLOCS_LUS) chk("blocs : dans l'export et relus", snap.grille.blocs.join() === "3,4,5,10" &&
                                E.blocs.join() === "3,4,5,10" && $("blocs").value === "3, 4, 5, 10");
 
