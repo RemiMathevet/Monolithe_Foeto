@@ -1,12 +1,12 @@
 /* Grille de lecture — rein et voies urinaires hautes. VERSION 3 (3.0.0).
    Publiée à côté de la v1 (rein.js) et de la v2 (rein.v2.js) tant qu'elle n'a
    pas été validée à l'usage.
-   Ce que la v3 change par rapport à la v2 : la section « Termes FOETO » est
+   Ce que la v3 change par rapport à la v2 : la section “Termes FOETO” est
    fondue dans les signes. Sur les 35 termes LESION que foeto_terms rattache à
    la fiche, 10 étaient déjà portés par un signe ; 14 lésions deviennent des
    signes (16 termes : deux doublons de la base) ; 9 termes nomment une maladie
    et vont aux associations, affichés, jamais exportés d'office. La recherche
-   « autre terme FOETO » reste en bas des signes pour le hors-fiche ; un terme
+   “autre terme FOETO” reste en bas des signes pour le hors-fiche ; un terme
    déjà porté par un signe y pose le signe. Couverture vérifiée à la génération.
    3.5.0 — ordre de lecture (LECTURE) : les paragraphes de signes deviennent les
    cadres du rein (CADRES), lus du faible au fort grossissement ; chaque signe
@@ -39,7 +39,7 @@
    3.2.0 — les 13 constats sourcés de la fiche absents de la grille y entrent,
    reliés aux associations comme dans la fiche (la NTA prend les cylindres
    pour pivot, Genest). Les signes sans signe de fiche restent, marqués
-   « hors fiche » : non sourcés par la biblio, ou mal caractérisés.
+   “hors fiche” : non sourcés par la biblio, ou mal caractérisés.
    Fond : ~/Bureau/fiches_lecture/fiche_rein.md (§1 à §9).
    Ce qui change par rapport à rein.js (1.1.1), sans rien retrancher :
    · le bon couple au bon endroit : un signe est un CONSTAT, présent / absent /
@@ -61,7 +61,7 @@ var MODULE  = "grille_rein";
 var VERSION = "3.5.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
-var FOETO_DANS_SIGNES = true;   /* v3 : plus de section « Termes FOETO » */
+var FOETO_DANS_SIGNES = true;   /* v3 : plus de section “Termes FOETO” */
 var PAIR    = true;
 var BLOCS   = true;   /* 3.4.0 : blocs lus en §02 */
 var LECTURE = true;   /* 3.5.0 : cadres (CADRES), grossissement (mag), variantes dans leur cadre */
@@ -110,9 +110,9 @@ var PRELEV = [
 /* ── 02 · Rétention ───────────────────────────────────────────────────────── */
 /* Modificateurs communs, énoncés par [ernst, ch. 37] sur la série des délais.
    Chaque ligne est une PERTE de basophilie nucléaire (Genest ; keeling Table 15.6).
-   h ordonne les critères ; pour « toutes les cellules du rein » (rang 10, délai
+   h ordonne les critères ; pour “toutes les cellules du rein” (rang 10, délai
    perdu à l'extraction) c'est un rang, pas un délai. 3.1.2 : le palier du
-   service « persistante dans quelques tubules, 2–4 semaines » est retiré —
+   service “persistante dans quelques tubules, 2–4 semaines” est retiré —
    la pratique du service ne compte pas devant les livres. */
 var MODIF = "délai accéléré par l'anasarque et par un intervalle délivrance-autopsie > 24 h, ralenti par un terme < 27 SA";
 

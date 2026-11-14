@@ -778,6 +778,9 @@ function variantesDe(g){ return VARIANTES.filter(function(v){ return v.g === g; 
    « tubes collecteurs normaux » : absent y voudrait dire anormal). Ces signes restent
    visibles, paragraphe replié, et se répondent un par un. */
 function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false; }
+/* Un signe bloc:false présent (méconium dans la lumière, collecteurs normaux) s'écrit au
+   CR mais n'ouvre pas le paragraphe et ne bloque pas son « Non » : ce n'est pas une lésion. */
+function lesionPresente(x){ return E.signes[x.k] === POS && x.bloc !== false; }
 /* Un signe peut se DÉDUIRE d'une donnée consignée (auto() → true / false / null) au lieu
    de se cliquer : un « CRG bas » coché à la main pourrait contredire le compte saisi. */
 function deduire(){
@@ -791,7 +794,7 @@ function deduire(){
    (au moins un présent, ou déplié à la main), sinon non regardé. */
 function etatGroupe(g){
   var s = signesDe(g);
-  if (s.some(function(x){ return E.signes[x.k] === POS; })) return "oui";
+  if (s.some(lesionPresente)) return "oui";
   if (E.groupes[g] === "oui") return "oui";
   if (E.groupes[g] === "non" && s.filter(blocable).every(function(x){ return E.signes[x.k] === NEG; })) return "non";
   return null;
@@ -1004,11 +1007,11 @@ function lignesGroupes(gs){
   var gNon = gs.filter(function(g){ return etatGroupe(g) === "non"; });
   gNon.forEach(function(g){ L.push("  " + g + " : non" + paren(g) + "."); });
   gs.forEach(function(g){
-    if (gNon.indexOf(g) >= 0) return;
+    var non = gNon.indexOf(g) >= 0;   /* un cadre « non » ne peut porter qu'un bloc:false présent */
     signesDe(g).forEach(function(x){
-      if (E.signes[x.k] === POS) L.push("  " + g + (E.etendue[g] ? " (" + E.etendue[g] + ")" : "") + " · " + x.l + " — PRÉSENT");
+      if (E.signes[x.k] === POS) L.push("  " + g + (!non && E.etendue[g] ? " (" + E.etendue[g] + ")" : "") + " · " + x.l + " — PRÉSENT");
     });
-    if (paren(g)) L.push("  " + g + paren(g) + ".");
+    if (!non && paren(g)) L.push("  " + g + paren(g) + ".");
   });
   var dans = function(x){ return gs.indexOf(x.g) >= 0; };
   var abs = SIGNES.filter(function(x){ return dans(x) && E.signes[x.k] === NEG && (gNon.indexOf(x.g) < 0 || !blocable(x)); });
@@ -1203,10 +1206,12 @@ document.addEventListener("change", function(ev){
    de présent (on ne l'efface pas en silence). Oui : déplie ; depuis « non », on
    repart de zéro. Un second clic sur l'état actif le lève. */
 function basculerGroupe(g, v){
-  var pres = signesDe(g).filter(function(x){ return E.signes[x.k] === POS; });
+  var pres = signesDe(g).filter(lesionPresente);
   var s = signesDe(g).filter(blocable);
   var actuel = etatGroupe(g);
   if (v === "non"){
+    /* un cadre sans signe répondable en bloc ne passe pas « non » sans aucune réponse */
+    if (!s.length){ flash("« " + g + " » : aucun signe ne se répond en bloc — les répondre un par un."); return; }
     if (pres.length){ flash(pres.length + " signe(s) présent(s) dans « " + g + " » : les retirer avant de répondre non."); return; }
     if (actuel === "non"){ s.forEach(function(x){ delete E.signes[x.k]; }); delete E.groupes[g]; }
     else { s.forEach(function(x){ E.signes[x.k] = NEG; }); E.groupes[g] = "non"; delete E.etendue[g]; }
@@ -1738,6 +1743,18 @@ async function autotest(){
       chk("non en bloc : répondu seul, il passe au CR", crTient(xT.l.toLowerCase()) && etatGroupe(gT) === "non");
       clic("les", xT.k, NEG);
       clic("grp", iT, "non");
+    }
+    /* Un bloc:false présent (contenu normal) ne bloque pas le « Non » et reste écrit */
+    var xF = SIGNES.filter(function(x){ return x.bloc === false && !x.auto; })[0];
+    if (xF){
+      var gF = xF.g, iF = groupes().indexOf(gF);
+      signesDe(gF).forEach(function(x){ if (!x.auto) delete E.signes[x.k]; }); delete E.groupes[gF]; peindre();
+      clic("les", xF.k, POS);
+      clic("grp", iF, "non");
+      chk("bloc:false présent : le « Non » passe, le signe reste au CR", etatGroupe(gF) === "non" &&
+          E.signes[xF.k] === POS && crTient(gF + " : non") && crTient(xF.l + " — PRÉSENT"));
+      clic("grp", iF, "non");
+      clic("les", xF.k, POS);
     }
     /* Rédaction proposée : la phrase du cadre « Non », celle du signe présent, rien sinon */
     if (REDIGE){

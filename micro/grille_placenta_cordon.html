@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: CC-BY-NC-SA-4.0 | Hub Light | https://github.com/RemiMathevet/Monolithe_Foeto -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grille de lecture — placenta — cordon ombilical</title>
+<style>
+:root{
+  --paper:#EDEFEE; --card:#FFFFFF;
+  --ink:#161D1C; --ink-soft:#5A6462; --rule:#CBD2D0;
+  --drape:#0E6B62; --drape-soft:#E2EFEC; --alert:#9C3A28; --alert-soft:#F7EAE7;
+  --amber:#8A6A18; --amber-soft:#F6F0DE;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+     font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--drape);margin:0 0 4px}
+h1{font-size:21px;line-height:1.2;margin:0;font-weight:650;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--ink-soft);margin:6px 0 0}
+.ver{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink-soft);letter-spacing:.06em}
+
+section{background:var(--card);border:1px solid var(--rule);border-radius:3px;
+        padding:14px;margin-bottom:14px}
+h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);margin:0 0 12px;font-weight:600;
+   display:flex;align-items:baseline;gap:8px}
+h2 .n{color:var(--drape)}
+h2 .tally{margin-left:auto;color:var(--ink-soft);letter-spacing:.06em}
+section.off{opacity:.42}
+section.off button,section.off input,section.off select{pointer-events:none}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 170px;min-width:0}
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+input[type=text],input[type=number],textarea{width:100%;font-family:var(--sans);font-size:16px;
+  color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:9px 10px}
+input:focus,textarea:focus{outline:2px solid var(--drape);outline-offset:-1px;background:var(--card)}
+input[type=number]{font-family:var(--mono);letter-spacing:.03em}
+textarea{resize:vertical;min-height:60px;font-size:15px}
+.mono{font-family:var(--mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.hint{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px}
+.hint.bad{color:var(--alert)} .hint.good{color:var(--drape)} .hint.warn{color:var(--amber)}
+
+/* ── Boutons-clics : toute la saisie sémantique passe par là ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font-family:var(--sans);font-size:14px;line-height:1.25;
+  border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+  border-radius:2px;padding:8px 11px;cursor:pointer;min-height:38px;text-align:left}
+.chip:hover{background:var(--drape-soft)}
+.chip:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.chip.on{background:var(--drape);border-color:var(--drape);color:#fff;font-weight:600}
+.chip.no{background:var(--alert-soft);border-color:var(--alert);color:var(--alert);font-weight:600}
+.chip.sugg{border-color:var(--amber);border-style:dashed}
+.chip[data-act=foeto]::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:6px;background:var(--drape);opacity:.55}
+.chip.on[data-act=foeto]::after{background:#fff}
+.plus{font-size:13px;color:var(--drape);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline dotted}
+.rech{position:relative;margin-top:8px}
+.rech input{font:inherit;font-size:14px;padding:6px 10px;border:1px solid #bbb;border-radius:8px;width:min(100%,24rem)}
+.sugg{position:absolute;z-index:5;background:#fff;border:1px solid #bbb;border-radius:8px;max-height:12rem;overflow:auto;width:min(100%,24rem);display:none}
+.sugg.on{display:block}
+.sugg div{padding:5px 10px;cursor:pointer;font-size:14px}
+.sugg div:hover{background:var(--drape-soft)}
+.sugg small{color:#777}
+.chip .k{font-family:var(--mono);font-size:10px;letter-spacing:.07em;opacity:.75;
+         display:block;text-transform:uppercase}
+
+.item{border-top:1px solid var(--rule);padding:10px 0}
+.item:first-child{border-top:0}
+.item .head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.item .lbl{flex:1 1 240px;min-width:0;font-size:15px}
+.item .meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-soft);
+            display:block;margin-top:2px}
+.item .meta.bon{color:var(--drape)} .item .meta.mauvais{color:var(--alert)}
+.item .meta.moyen{color:var(--amber)}
+.unfold{margin:9px 0 0 0;padding:9px 0 0;border-top:1px dashed var(--rule)}
+.unfold[hidden]{display:none}
+.stop{font-size:13px;line-height:1.35;color:var(--alert);background:var(--alert-soft);
+      border-left:2px solid var(--alert);padding:6px 9px;margin-top:8px}
+.stop b{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+
+.verdict{font-size:14px;line-height:1.4;border-left:3px solid var(--rule);
+         padding:7px 10px;margin-top:11px;background:var(--paper)}
+.verdict.ok{border-color:var(--drape);background:var(--drape-soft)}
+.verdict.warn{border-color:var(--amber);background:var(--amber-soft)}
+.verdict.bad{border-color:var(--alert);background:var(--alert-soft)}
+.verdict b{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+           display:block;color:var(--ink-soft)}
+
+.sousTitre{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:5px;margin:16px 0 9px}
+.sousTitre:first-child{margin-top:0}
+/* LECTURE : blocs de sections, badge de grossissement, variantes dans leur cadre */
+.bloc{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--drape);margin:24px 0 8px}
+.mag{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--ink-soft);
+  border:1px solid var(--rule);border-radius:2px;padding:0 4px;margin-right:6px;white-space:nowrap}
+.mag.fort,.mag.technique{color:var(--drape);border-color:var(--drape)}
+.varRow{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.varRow .chip{font-size:13px;min-height:32px;padding:5px 9px}
+
+.btn{appearance:none;font-family:var(--sans);font-size:15px;font-weight:550;
+  border:1px solid var(--ink);background:var(--card);color:var(--ink);
+  border-radius:2px;padding:11px 15px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--drape-soft)}
+.btn:focus-visible{outline:3px solid var(--drape);outline-offset:2px}
+.btn.primary{background:var(--drape);border-color:var(--drape);color:#fff}
+.btn.primary:hover{background:#0B564F}
+.btn.danger{border-color:var(--alert);color:var(--alert)}
+.btn.danger:hover{background:var(--alert-soft)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+input[type=file]{display:none}
+
+pre.cr{font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;
+  padding:12px;margin:0 0 10px;max-height:44vh;overflow:auto}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+td{padding:6px 4px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
+.ok{color:var(--drape);font-weight:600} .ko{color:var(--alert);font-weight:600}
+.warn{color:var(--amber);font-weight:600}
+
+.note{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--rule);
+      padding-left:10px;margin:12px 0 0}
+.flash{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);
+  color:var(--paper);font-family:var(--mono);font-size:12px;padding:10px 14px;border-radius:2px;
+  max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.flash.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Fœtopathologie · lecture microscopique</p>
+  <h1>Grille de lecture — placenta — cordon ombilical <span class="ver" id="ver"></span></h1>
+  <p class="sub">Sortie de <code>fiche_placenta.md</code>. Tout se clique ; seuls le dossier, le terme et les comptes se tapent. Document autonome : rien n'est transmis.</p>
+</header>
+
+<!-- 01 — Dossier -->
+<section id="secDossier">
+  <h2><span class="n">01</span>Dossier</h2>
+  <div class="row">
+    <div class="field">
+      <label for="dossier">Numéro de dossier</label>
+      <input type="text" id="dossier" class="mono" placeholder="26P0123" autocomplete="off" spellcheck="false">
+      <div class="hint" id="dossierHint">Libre, mis en majuscules. Conditionne l'enregistrement.</div>
+    </div>
+    <div class="field">
+      <label for="operateur">Lecteur</label>
+      <input type="text" id="operateur" placeholder="Initiales" autocomplete="off">
+      <div class="hint" id="operateurHint">Requis pour déverrouiller la grille.</div>
+    </div>
+    <div class="field">
+      <label for="sa">Terme (SA)</label>
+      <input type="number" id="sa" min="8" max="45" step="1" inputmode="numeric" placeholder="—">
+      <div class="hint" id="saHint">SA = semaines de gestation + 2. Commande le stade attendu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — Prélèvement -->
+<section id="secPrelevement" class="off">
+  <h2><span class="n">02</span>Prélèvement<span class="tally" id="tPrelevement">—</span></h2>
+  <div id="coteBloc" hidden>
+    <div class="sousTitre">Côté prélevé</div>
+    <div class="chips" id="cote" style="margin-bottom:11px"></div>
+  </div>
+  <div class="field" id="blocsBloc" hidden style="margin-bottom:11px">
+    <label for="blocs">Blocs lus</label>
+    <input type="text" id="blocs" class="mono" placeholder="10, 11 ou 3-5" autocomplete="off" spellcheck="false">
+    <div class="hint" id="blocsHint">Numéros des blocs de cet organe : rattachent la lecture aux lames (dossier_bloc_coupe).</div>
+  </div>
+  <div class="chips" id="prelevement"></div>
+  <div class="verdict" id="vPrelevement"><b>Recevabilité</b>—</div>
+</section>
+
+<!-- Contexte hors lame — LECTURE seulement : macro, autre organe, clinique -->
+<section id="secContexte" class="off" hidden>
+  <h2><span class="n">··</span>Contexte hors lame<span class="tally" id="tContexte">—</span></h2>
+  <p class="note" style="margin-top:0">Ce qui ne se lit pas sur la lame mais pèse sur ce qu'on y cherche.</p>
+  <div id="contexte" style="margin-top:10px"></div>
+</section>
+
+<!-- 03 — Rétention -->
+<section id="secRetention" class="off">
+  <h2><span class="n">03</span>Rétention<span class="tally" id="tRetention">—</span></h2>
+  <div id="retention"></div>
+  <div class="chips" id="kcl" style="margin-top:11px"></div>
+  <div class="verdict" id="vRetention"><b>Borne inférieure</b>—</div>
+</section>
+
+<!-- 04 — Maturation -->
+<section id="secMaturation" class="off">
+  <h2><span class="n">04</span>Maturation<span class="tally" id="tMaturation">—</span></h2>
+  <div class="sousTitre" id="stTitre">Stade observé</div>
+  <div class="chips" id="stades"></div>
+  <div id="mesure"></div>
+  <div class="verdict" id="vMaturation"><b>Lecture</b>—</div>
+  <div class="verdict" id="vMesure" hidden><b>Mesure</b>—</div>
+</section>
+
+<!-- 05 — Variantes normales -->
+<section id="secVariantes" class="off">
+  <h2><span class="n">05</span>Variantes normales<span class="tally" id="tVariantes">—</span></h2>
+  <p class="note" style="margin-top:0">Cliquer ce qui est vu et écarté comme normal. Rien de coché ne veut pas dire absent : ça veut dire non regardé.</p>
+  <div class="chips" id="variantes" style="margin-top:10px"></div>
+</section>
+
+<!-- 06 — Signes -->
+<section id="secSignes" class="off">
+  <h2><span class="n">06</span>Signes<span class="tally" id="tSignes">—</span></h2>
+  <p class="note" style="margin-top:0">On coche des signes, pas des diagnostics. Les associations en dessous se déduisent de ce qui est coché : elles s'affichent, elles ne se choisissent pas.</p>
+  <div id="signes" style="margin-top:10px"></div>
+  <div class="sousTitre" id="assTitre" style="margin-top:16px">Associations lues</div>
+  <div id="diags"></div>
+</section>
+
+<!-- Associations — LECTURE seulement : sorties des Signes, en tête de la synthèse -->
+<section id="secAssoc" class="off" hidden>
+  <h2><span class="n">··</span>Associations lues</h2>
+  <p class="note" style="margin-top:0">Elles se déduisent des signes présents : elles s'affichent, elles ne se choisissent pas.</p>
+</section>
+
+<!-- 07 — Termes FOETO attestés par la fiche -->
+<section id="secFoeto" class="off">
+  <h2><span class="n">07</span>Termes FOETO<span class="tally" id="tFoeto">—</span></h2>
+  <p class="note" style="margin-top:0">Les termes du vocabulaire FOETO que la fiche de l'organe retient comme lésions, par sous-section. Un terme coché est présent ; rien de coché ne veut pas dire absent.</p>
+  <div id="foeto"></div>
+  <button type="button" class="plus" id="foetoPlus" hidden>▸ tous les termes attestés</button>
+  <div class="chips" id="foetoTous" hidden style="margin-top:6px"></div>
+  <div class="rech" id="foetoRech" hidden><input type="text" id="rqFoeto" placeholder="rechercher un terme (3 lettres)…" autocomplete="off"><div class="sugg" id="sgFoeto"></div></div>
+</section>
+
+<!-- 08 — Négatifs obligatoires -->
+<section id="secNegatifs" class="off">
+  <h2><span class="n">08</span>Négatifs obligatoires<span class="tally" id="tNegatifs">—</span></h2>
+  <div class="btns" style="margin-bottom:11px">
+    <button class="btn" id="btnNegAll">Tous vérifiés</button>
+  </div>
+  <div id="negatifs"></div>
+</section>
+
+<!-- 08 — Techniques -->
+<section id="secTechniques" class="off">
+  <h2><span class="n">09</span>Techniques<span class="tally" id="tTechniques">—</span></h2>
+  <p class="note" style="margin-top:0" id="techNote"></p>
+  <div class="chips" id="techniques" style="margin-top:10px"></div>
+</section>
+
+<!-- 09 — Compte rendu -->
+<section id="secCR" class="off">
+  <h2><span class="n">10</span>Compte rendu<span class="tally" id="tCR">—</span></h2>
+  <pre class="cr" id="cr">—</pre>
+  <div class="row">
+    <div class="field" style="flex:1 1 100%">
+      <label for="libre">Remarque libre</label>
+      <textarea id="libre" placeholder="Ce que la grille ne prévoit pas."></textarea>
+    </div>
+  </div>
+  <div class="btns" style="margin-top:10px">
+    <button class="btn" id="btnCopie">Copier le compte rendu</button>
+  </div>
+</section>
+
+<!-- 10 — Sortie -->
+<section id="secSortie" class="off">
+  <h2><span class="n">11</span>Sortie</h2>
+  <div class="btns">
+    <button class="btn primary" id="btnExport" disabled>Exporter le JSON</button>
+    <button class="btn" id="btnImport">Relire un JSON</button>
+    <button class="btn danger" id="btnWipe">Vider le stockage</button>
+  </div>
+  <p class="note" id="outHint">Saisir le numéro de dossier pour activer l'export.</p>
+</section>
+
+<!-- 11 — Diagnostic -->
+<section>
+  <h2><span class="n">12</span>Diagnostic</h2>
+  <table id="diag"><tbody></tbody></table>
+</section>
+
+</div>
+
+<input type="file" id="jsonPick" accept="application/json,.json">
+<div class="flash" id="flash" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   Document autonome. Aucune bibliothèque, aucun module ES, aucune police
+   distante, aucun fetch : doit fonctionner par double-clic hors réseau.
+
+   Ce module est la SORTIE de fiche_placenta.md, jamais l'inverse. Les bornes, les
+   spécificités et les « ce qu'il ne faut pas conclure » sont recopiés de la
+   fiche ; ils ne se corrigent pas ici mais dans la fiche.
+
+   La grille ne conclut pas : elle contraint la description et rend ses
+   réserves visibles. Un critère non cliqué n'est pas un négatif — c'est un
+   non-regardé, et le compte rendu le dit.
+
+   Fichier ENGENDRÉ par gen_grille.py depuis grilles/placenta_cordon.js.
+   Corriger le fragment, pas ce fichier.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  FRAGMENT D'ORGANE — grilles/placenta_cordon.js                            ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+/* Grille de lecture — placenta : CORDON OMBILICAL. VERSION 1.0.0.
+   Une des quatre grilles qui remplacent placenta.js (1.0.1) : cordon, membranes,
+   parenchyme, marges (Rémi, 14/11). La v1 reste publiée tant que les quatre n'ont pas
+   été validées à l'usage. Singleton seulement : les gémellaires viendront plus tard.
+   Ce qui change par rapport à placenta.js, sans rien retrancher :
+   · patron ordre de lecture (rein 3.5.0, poumon 2.1.0) : mode présence (présent /
+     absent / non regardé), cadres lus du faible au fort grossissement (mag, savoir de
+     pratique [expérience], à valider à l'usage), contexte hors lame avant la lame,
+     variantes dans le cadre qu'elles miment, négatifs déduits des signes, blocs lus ;
+   · les 14 signes de la section Cordon de la v1 sont ici, clés inchangées. L'artérite
+     ombilicale une ou deux artères se dédouble (une artère / deux artères) pour porter
+     les phrases RIF 2 et RIF 3 du gabarit de CR ; l'insertion vélamenteuse et
+     l'hypertorsion, lues en macroscopie, passent au contexte hors lame ;
+   · les trois critères de rétention du cordon (nécrose de la gelée, nécrose vasculaire,
+     média pycnotique) restent dans la rétention de la grille parenchyme, où se lisent les
+     quatre seaux de Genest II ; ici ce sont des variantes, dans le cadre qu'elles miment ;
+   · les négatifs trois vaisseaux, clamp et gestes se déduisent de signes ;
+   · CR prérédigé : cr (signe présent) et crNon (cadre répondu Non), repris de
+     placenta_cr_fusionné.html quand il a une phrase, sinon collés au libellé ;
+   · aucun terme FOETO n'est tagué verbatim pour le placenta : pas de branchement fv.
+   Les associations sont la part du cordon dans celles de la v1 ; la vasculite de la plaque
+   choriale (réponse fœtale stade 1) se lit sur la grille parenchyme.
+   Fond : ~/Bureau/fiches_lecture/diffusion/fiche_placenta.md (§1 à §9).
+   Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
+
+var ORGANE  = "placenta_cordon";
+var TITRE   = "placenta — cordon ombilical";
+var SOURCE  = "fiche_placenta.md";
+var MODULE  = "grille_placenta_cordon";
+var VERSION = "1.0.0";
+var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
+var ETATS   = "presence";
+var PAIR    = false;
+var BLOCS   = true;
+var LECTURE = true;      /* cadres (CADRES), grossissement (mag), variantes dans leur cadre */
+
+var TITRE_CR    = "PLACENTA — CORDON";
+var STADE_TITRE = "";
+
+/* Sans rétention ici (section masquée) : la datation se lit sur la grille parenchyme. */
+var KCL_TXT = "Fœticide par KCl déclaré — la mort est datée par le geste.";
+var RETARD_NOTE = "";
+var AVANCE_NOTE = "";
+var TECH_NOTE = "Les pointillés sont des propositions déduites des clics, jamais des prescriptions.";
+
+/* ── 01 · Prélèvement ─────────────────────────────────────────────────────── */
+var PRELEV = [
+  { k:"cordon2", g:"Qualifie la lecture", l:"Deux sections de cordon : pôle fœtal et ≈ 5 cm de l'insertion, hors clamp", grave:true,
+    manque:"une coupe trop près de l'insertion fabrique une fausse artère unique : 92 % des cordons ont une " +
+           "anastomose de Hyrtl [benirschke, ch. 11] ; éviter clamp et ponction [ernst, ch. 36]" }
+];
+
+/* Rétention, stades, mesure : sans objet sur le cordon (sections masquées). */
+var RETENTION = [];
+var STADES    = [];
+var MESURE    = null;
+
+/* ── Variantes — chacune dans le cadre dont elle mime un signe ───────────────
+   Les changements post-mortem du cordon sont rangés ici comme au poumon (artefacts de
+   macération) : vus, écartés, en parenthèse au CR ; ils datent sur la grille parenchyme. */
+var VARIANTES = [
+  { k:"fauxNoeud", g:"Vaisseaux ombilicaux", l:"Faux nœud du cordon (gelée ou dilatation vasculaire asymétrique)" },
+  { k:"vitellin", g:"Vaisseaux ombilicaux", l:"Reliquats du canal vitellin et de l'ouraque" },
+  { k:"whartonNecrose", g:"Gelée de Wharton", l:"Nécrose de la gelée de Wharton (rétention ≥ 48 h, mauvais prédicteur)" },
+  { k:"mediaPycnotique", g:"Inflammation — réponse fœtale",
+    l:"Noyaux pycnotiques et plissés de la média ombilicale (mort fœtale, « mimicking neutrophils »)" },
+  { k:"cordonVascNecrose", g:"Méconium", l:"Nécrose vasculaire du cordon (rétention ≥ 7 j)" }
+];
+
+/* ── Cadres, dans l'ordre de lecture d'une coupe de cordon ───────────────────
+   Faible : nombre et état des vaisseaux, puis la gelée ; moyen : la réponse fœtale ;
+   fort : les macrophages méconiaux. crNon = phrase du CR quand le cadre est répondu Non. */
+var CADRES = [
+  { g:"Contexte hors lame — macroscopie, dossier", hors:true },
+  { g:"Vaisseaux ombilicaux", sur:"Cordon",
+    crNon:"Le cordon présente 3 vaisseaux sur chacune de ses coupes, sans thrombose ni ectasie." },
+  { g:"Gelée de Wharton", sur:"Cordon",
+    crNon:"La gelée de Wharton est d'épaisseur et d'aspect normaux, sans hématome." },
+  { g:"Inflammation — réponse fœtale", sur:"Cordon",
+    crNon:"Absence de processus inflammatoire funiculaire (RIF 0)." },
+  { g:"Méconium", sur:"Cordon",
+    crNon:"Absence de macrophage chargé de méconium et de nécrose pariétale au cordon." }
+];
+
+/* ── Signes — des constats, jamais un nom de maladie ──────────────────────── */
+var H = "Contexte hors lame — macroscopie, dossier";
+
+var SIGNES = [
+  /* — Contexte hors lame — */
+  { k:"vaisseauxMembraneux", g:H, l:"Insertion vélamenteuse ou vaisseaux membraneux (insertion marginale comprise)",
+    meta:"vasa praevia = rapport à l'orifice interne, non diagnosticable sur la pièce",
+    cr:"Le cordon ombilical est d'insertion vélamenteuse ou marginale, avec des vaisseaux membraneux" },
+  { k:"hypertorsion", g:H, l:"Hypertorsion avec indentations périphériques du cordon", meta:"le patron, pas l'index",
+    cr:"Le cordon est hyperspiralé, avec des indentations périphériques" },
+  { k:"clampMarque", g:H, l:"Marque de clamp ou de ponction sur le segment de cordon prélevé",
+    cr:"Le segment de cordon examiné porte une marque de clamp ou de ponction" },
+  { k:"gesteInstrumental", g:H,
+    l:"Geste instrumental ou prélèvement fœtal (ponction de sang fœtal, amniocentèse, transfusion in utero, extraction)",
+    cr:"Notion de geste instrumental (ponction, amniocentèse, transfusion ou extraction)" },
+
+  /* — Vaisseaux ombilicaux — */
+  { k:"aou", g:"Vaisseaux ombilicaux", mag:"faible",
+    l:"Artère ombilicale unique sur coupe à circonférence complète, ≥ 5 cm de l'insertion",
+    meta:"Hyrtl dans 92 % des cordons",
+    cr:"Le cordon ne compte que deux vaisseaux sur chacune de ses coupes (artère ombilicale unique)." },
+  { k:"variceOmb", g:"Vaisseaux ombilicaux", mag:"faible", l:"Varice ou ectasie d'un vaisseau ombilical",
+    cr:"On note une varice (ectasie) d'un vaisseau ombilical" },
+  { k:"thromboseOmb", g:"Vaisseaux ombilicaux", mag:"faible", l:"Thrombose d'un vaisseau ombilical",
+    cr:"On note une thrombose d'un vaisseau ombilical" },
+
+  /* — Gelée de Wharton — */
+  { k:"striction", g:"Gelée de Wharton", mag:"faible", l:"Striction : gelée absente ou subtotale, cordon extrêmement spiralé",
+    cr:"On note une striction : gelée de Wharton absente ou subtotale sur un segment extrêmement spiralé" },
+  { k:"cordonGrele", g:"Gelée de Wharton", mag:"faible",
+    l:"Gelée de Wharton condensée en liseré, ± microcalcifications diffuses (cordon grêle)",
+    meta:"diamètre < 8 mm ; biaisé par la rétention",
+    cr:"La gelée de Wharton est condensée en liseré (cordon grêle)" },
+  { k:"oedemeCordon", g:"Gelée de Wharton", mag:"faible", l:"Œdème de la gelée, cordon épais", meta:"diabète maternel, hydrops",
+    cr:"La gelée de Wharton est œdémateuse (cordon épais)" },
+  { k:"hematomeCordon", g:"Gelée de Wharton", mag:"moyen",
+    l:"Hématome funiculaire avec organisation, lignes de Zahn ou polynucléaires",
+    meta:"sans les trois : artefact [ernst, ch. 36]",
+    cr:"On note un hématome funiculaire avec organisation, lignes de Zahn ou polynucléaires" },
+
+  /* — Inflammation — réponse fœtale — */
+  { k:"phlebiteOmb", g:"Inflammation — réponse fœtale", mag:"moyen",
+    l:"Phlébite ombilicale (polynucléaires dans la paroi veineuse)", meta:"FIR stade 1 ; RIF 1 du gabarit de CR",
+    cr:"On note la présence d'une inflammation polynucléaire neutrophile de la média de la veine ombilicale (RIF 1)." },
+  { k:"arteriteOmb", g:"Inflammation — réponse fœtale", mag:"moyen",
+    l:"Artérite ombilicale, une artère", meta:"FIR stade 2 ; RIF 2 du gabarit de CR",
+    cr:"On note la présence d'une inflammation polynucléaire neutrophile de la média de la veine ombilicale et d'une artère ombilicale (RIF 2)." },
+  { k:"arteriteDeux", g:"Inflammation — réponse fœtale", mag:"moyen",
+    l:"Artérite ombilicale, deux artères (trois vaisseaux atteints)",
+    meta:"FIR stade 2 chez Amsterdam (veine et une ou plusieurs artères) ; le gabarit de CR l'écrit RIF 3, " +
+         "qu'Amsterdam réserve à la funisite nécrosante",
+    cr:"On note la présence d'une inflammation polynucléaire neutrophile de la média des 3 vaisseaux (RIF 3)." },
+  { k:"funisiteNecro", g:"Inflammation — réponse fœtale", mag:"moyen",
+    l:"Funisite nécrosante, extension à la gelée de Wharton",
+    meta:"FIR stade 3 Amsterdam ; dans les stades 1–2 chez Van Hoeven",
+    cr:"On note une funisite nécrosante, étendue à la gelée de Wharton" },
+
+  /* — Méconium — */
+  { k:"meconiumWharton", g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans la gelée de Wharton",
+    meta:"plus tardif que les membranes ; « many hours »",
+    cr:"La gelée de Wharton contient des macrophages chargés de méconium" },
+  { k:"myonecrose", g:"Méconium", mag:"fort", l:"Nécrose de la paroi vasculaire, périphérique, adjacente à la gelée",
+    meta:"méconium, < 1 % des placentas méconiaux",
+    cr:"On note une nécrose des myocytes de la média de l'un des vaisseaux (MAVM)." }
+];
+
+/* ── Associations — affichées, jamais cochées ─────────────────────────────── */
+var DIAGS = [
+  { k:"fir", l:"Réponse inflammatoire fœtale (funisite)", min:1,
+    signes:["phlebiteOmb","arteriteOmb","arteriteDeux","funisiteNecro"],
+    stop:" — Amsterdam : phlébite → artérite → funisite nécrosante ; Van Hoeven met la gelée de Wharton DANS les " +
+         "stades 1–2 : les deux échelles se croisent. Le gabarit de CR numérote RIF 1 à 3 par nombre de vaisseaux " +
+         "atteints, alors qu'Amsterdam met la veine et une ou plusieurs artères au stade 2 et réserve le stade 3 à la " +
+         "funisite nécrosante : nommer l'échelle. Absente si la mort a précédé la chorioamniotite ; la média " +
+         "pycnotique du fœtus mort mime les polynucléaires. La vasculite des vaisseaux de la plaque choriale se lit " +
+         "sur la grille parenchyme." },
+
+  { k:"cordonComplication", l:"Complication funiculaire", min:2,
+    signes:["striction","hypertorsion","thromboseOmb","hematomeCordon","cordonGrele","vaisseauxMembraneux","variceOmb","aou"],
+    stop:" — 80 % des thromboses ombilicales ont une autre complication du cordon. L'index de spiralisation : le " +
+         "seuil de pathologie d'un auteur (0,3/cm) est dix fois plus bas que la normale d'un autre (2–2,5/cm), " +
+         "19 % de discordance artère/veine, 69 % de variation le long du cordon. L'artère unique exige la " +
+         "circonférence complète et une coupe loin de l'insertion. Un hématome sans organisation, lignes de Zahn " +
+         "ni polynucléaires est un artefact ; chercher ponction, amniocentèse, transfusion. Vasa praevia ne se " +
+         "lit pas sur la pièce." },
+
+  { k:"meconium", l:"Exposition prolongée au méconium (cordon)", min:1,
+    signes:["meconiumWharton","myonecrose"],
+    stop:" — 1–3 h contre 24–48 h : la profondeur de pénétration ORDONNE, elle ne date pas. Le fer positif tranche " +
+         "l'hémosidérine ; un bleu de Prusse négatif n'affirme pas le méconium (la bile se colore mal). Le fœtus " +
+         "très immature ne défèque pas — avec les deux modèles opposés du corpus. Myonécrose : < 1 % des placentas " +
+         "méconiaux, « many hours ». Le méconium de la gelée est plus tardif que celui des membranes, qui se lit " +
+         "sur la grille membranes. La nécrose vasculaire post-mortem du cordon ne se confond pas avec la myonécrose " +
+         "au méconium, périphérique et adjacente à la gelée [benirschke, ch. 16]." }
+];
+
+/* ── Négatifs obligatoires — déduits des signes ───────────────────────────── */
+var NEGATIFS = [
+  { k:"troisVaisseaux", signe:"aou", l:"Trois vaisseaux du cordon confirmés sur coupe à circonférence complète",
+    p:"Hyrtl fabrique une fausse artère unique près de l'insertion",
+    ko:"artère ombilicale unique PRÉSENTE — retenue sur coupe à circonférence complète, ≥ 5 cm de l'insertion" },
+  { k:"clamp", signe:"clampMarque", l:"Segment de cordon sans marque de clamp ni de ponction", p:"[ernst, ch. 36]",
+    ko:"cordon prélevé sur clamp ou ponction — hématome et hémorragie périvasculaire non interprétables" },
+  { k:"geste", signe:"gesteInstrumental",
+    l:"Gestes instrumentaux et prélèvements fœtaux exclus (ponction, amniocentèse, transfusion, extraction)",
+    p:"ils produisent hémorragie intravillositaire et hématomes",
+    ko:"gestes NON exclus — hématome du cordon et hémorragie intravillositaire ne se disent pas spontanés" }
+];
+
+/* ── Techniques ───────────────────────────────────────────────────────────── */
+var TECHNIQUES = [
+  { k:"gram", l:"Gram tissulaire, frottis de plaque choriale", q:"infection bactérienne — à adresser en microbiologie" }
+];
+
+/* ── Propositions de techniques — déduites des clics, jamais imposées ─────── */
+function suggerer(){
+  var s = {};
+  function vu(){ for (var i = 0; i < arguments.length; i++) if (E.signes[arguments[i]] === POS) return true; return false; }
+  if (vu("funisiteNecro", "arteriteOmb", "arteriteDeux")) s.gram = 1;
+  return s;
+}
+
+/* ── Contrôles propres au cordon ──────────────────────────────────────────── */
+async function testsOrgane(chk, clic, set, crTient, pause){
+  function pose(k, v){ if (E.signes[k] !== v) clic("les", k, v); }
+  function ote(k){ if (E.signes[k]) clic("les", k, E.signes[k]); }
+  function tenue(k){ return associations().some(function(a){ return a.d.k === k && a.tenu; }); }
+
+  /* Rien ne se perd : les 14 signes Cordon de la v1, clés inchangées */
+  chk("v1 : les 14 signes du cordon", ["aou","phlebiteOmb","arteriteOmb","funisiteNecro","thromboseOmb","myonecrose",
+      "hematomeCordon","striction","cordonGrele","oedemeCordon","meconiumWharton","vaisseauxMembraneux","variceOmb",
+      "hypertorsion"].every(function(k){ return !!par(SIGNES, k); }));
+  chk("sans rétention ni maturation : sections masquées", $("secRetention").hidden && $("secMaturation").hidden);
+
+  /* Réponse fœtale : la phlébite seule la tient ; RIF 1 du gabarit au CR */
+  pose("phlebiteOmb", POS);
+  chk("phlébite : réponse fœtale tenue", tenue("fir"));
+  chk("phlébite : phrase RIF 1 rédigée", crTient("de la média de la veine ombilicale (RIF 1)."));
+  ote("phlebiteOmb");
+  pose("arteriteDeux", POS);
+  chk("trois vaisseaux : phrase RIF 3 et Gram proposé", crTient("des 3 vaisseaux (RIF 3).") && suggerer().gram === 1);
+  ote("arteriteDeux");
+
+  /* Cadre répondu Non : la phrase normale du gabarit */
+  var iI = groupes().indexOf("Inflammation — réponse fœtale");
+  signesDe("Inflammation — réponse fœtale").forEach(function(x){ ote(x.k); });
+  clic("grp", iI, "non");
+  chk("inflammation Non : RIF 0 rédigé", crTient("Absence de processus inflammatoire funiculaire (RIF 0)."));
+  clic("grp", iI, "non");
+
+  /* Artère unique : négatif déduit, phrase du gabarit */
+  pose("aou", NEG);
+  chk("trois vaisseaux énoncés", etatNegatif(par(NEGATIFS, "troisVaisseaux")) === "ok");
+  pose("aou", POS);
+  chk("artère unique : négatif en défaut et phrase", etatNegatif(par(NEGATIFS, "troisVaisseaux")) === "ko" &&
+      crTient("(artère ombilicale unique)."));
+  ote("aou");
+
+  /* Complication funiculaire : deux signes */
+  pose("striction", POS);
+  chk("complication : un signe ne suffit pas", !tenue("cordonComplication"));
+  pose("thromboseOmb", POS);
+  chk("complication : deux signes la tiennent", tenue("cordonComplication"));
+  ote("striction"); ote("thromboseOmb");
+
+  /* Divergences portées, jamais arbitrées */
+  chk("RIF 3 du gabarit ≠ stade 3 d'Amsterdam", par(DIAGS, "fir").stop.indexOf("réserve le stade 3") >= 0 &&
+      par(SIGNES, "arteriteDeux").meta.indexOf("RIF 3") >= 0);
+  chk("Van Hoeven porté", par(DIAGS, "fir").stop.indexOf("Van Hoeven") >= 0);
+  chk("méconium : ordonne, ne date pas", par(DIAGS, "meconium").stop.indexOf("ORDONNE") >= 0);
+  chk("média pycnotique : variante sous la réponse fœtale", par(VARIANTES, "mediaPycnotique").g === "Inflammation — réponse fœtale");
+
+  /* Le nom se déduit des signes — il ne se coche pas */
+  chk("aucun bouton ne porte un diagnostic",
+      DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
+  /* FOETO : aucun terme tagué verbatim pour le placenta — rien de branché */
+  chk("FOETO : aucun signe branché", FOETOV === null && SIGNES.every(function(x){ return !x.fv && !x.foeto; }));
+}
+
+/* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
+var FOETO = {"sections":[],"formes":{}};
+var FOETOV = null;
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+
+/* Couple d'états des signes. Un fragment qui déclare ETATS = "presence" (schéma
+   0.3.0) lit ses signes comme des constats — présent / absent / non regardé — et
+   ses négatifs obligatoires se DÉDUISENT des clics (un signe répondu absent, une
+   mesure consignée) au lieu de se cocher une seconde fois. Sans ETATS : l'ancien
+   couple normal / anormal (0.2.0), inchangé. */
+var PRESENCE = typeof ETATS !== "undefined" && ETATS === "presence";
+/* opt-in (rein v3) : les termes FOETO vivent dans les signes, la section 07 disparaît */
+var FUSION = typeof FOETO_DANS_SIGNES !== "undefined" && FOETO_DANS_SIGNES === true;
+var POS = PRESENCE ? "present" : "anormal", NEG = PRESENCE ? "absent" : "normal";
+/* opt-in (rein v3.4) : les blocs lus pour l'organe. L'export rattache alors la lecture
+   aux lames — organe de chaque lame, signes présents / absents par lame. */
+var BLOCS_LUS = typeof BLOCS !== "undefined" && BLOCS === true;
+/* opt-in (rein 3.5, poumon 2.1) : la grille suit l'ordre de lecture de la lame.
+   Les paragraphes de signes sont les CADRES de l'organe (CADRES = [{g, sur?, hors?}],
+   dans l'ordre où on les lit) ; chaque signe porte son grossissement (mag) et se
+   range du faible au fort ; une variante normale vit dans le cadre qu'elle mime et
+   ne passe au CR qu'en parenthèse. Le cadre hors:true (macro, clinique) sort des
+   Signes vers « Contexte hors lame », avant la rétention ; les associations
+   ouvrent la synthèse. Le grossissement est un savoir de pratique [expérience]. */
+var LECT = typeof LECTURE !== "undefined" && LECTURE === true;
+var MAGS = [{ k:"faible", l:"faible gr." }, { k:"moyen", l:"moyen gr." },
+            { k:"fort", l:"fort gr." }, { k:"technique", l:"après technique" }];
+function magIdx(x){ for (var i = 0; i < MAGS.length; i++) if (MAGS[i].k === x.mag) return i; return -1; }
+
+/* « 10, 11 3-5 » -> { ok:[3,4,5,10,11], ko:[] } ; une plage de plus de 60 blocs est une faute de frappe */
+function lireBlocs(t){
+  var ok = {}, ko = [];
+  String(t || "").split(/[\s,;]+/).forEach(function(x){
+    if (!x) return;
+    var m = /^(\d+)(?:-(\d+))?$/.exec(x);
+    var a = m ? +m[1] : 0, b = m && m[2] ? +m[2] : a;
+    if (!m || a < 1 || b < a || b - a > 60){ ko.push(x); return; }
+    for (var i = a; i <= b; i++) ok[i] = true;
+  });
+  return { ok:Object.keys(ok).map(Number).sort(function(x, y){ return x - y; }), ko:ko };
+}
+
+/* Base locale distincte en présence : un brouillon 0.2.0 (normal/anormal) relu
+   ici se lirait de travers. */
+var DB_NAME = "foeto-" + MODULE + (PRESENCE ? "-presence" : ""), DB_VER = 1, db = null;
+
+/* Organe pair : le côté fait partie de la donnée, pas du commentaire. Un rein
+   lu sans son côté n'est pas rattachable à l'imagerie ni à l'autre rein. */
+var COTES = [{ k:"droit", l:"Droit — 1/2" }, { k:"gauche", l:"Gauche — 1/2" },
+             { k:"deux", l:"Les deux — 2/2" }];
+
+/* ── Utilitaires ──────────────────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+  });
+}
+function flash(m){
+  var f = $("flash"); f.textContent = m; f.classList.add("on");
+  clearTimeout(flash._t); flash._t = setTimeout(function(){ f.classList.remove("on"); }, 2600);
+}
+function normDossier(v){ return v.toUpperCase().replace(/\s+/g, ""); }
+function dossierOk(v){ return v.trim().length > 0; } // ponytail: plus de format imposé, seul le uppercase (normDossier) reste
+function num(id){ var e = $(id); if (!e) return null; var v = parseFloat(e.value); return isFinite(v) ? v : null; }
+function par(liste, k){ return liste.filter(function(x){ return x.k === k; })[0] || null; }
+function champs(){ return MESURE ? MESURE.champs : []; }
+
+/* ── État ─────────────────────────────────────────────────────────────────── */
+var dossier = "", E = null;
+function neuf(){
+  var e = { cote:null, blocs:[], prelev:{}, retention:{}, kcl:false, stade:null, variantes:{}, signes:{},
+            negatifs:{}, techniques:{}, foeto:{}, mesure:{ def:null, opt:null, v:{} }, libre:"",
+            groupes:{}, etendue:{} };
+  champs().forEach(function(c){ e.mesure.v[c.id] = null; });
+  return e;
+}
+
+/* Le stade attendu au terme saisi. Bornes reconstruites depuis la prose des
+   sources : ce sont des repères, pas des seuils. */
+function stadeAttendu(sa){
+  if (sa == null || !isFinite(sa) || !STADES.length) return null;
+  for (var i = 0; i < STADES.length; i++) if (sa < STADES[i].max) return STADES[i];
+  return STADES[STADES.length - 1];
+}
+function bornesTxt(s){
+  var i = STADES.indexOf(s), min = i ? STADES[i-1].max : 0;
+  return s.max === 99 ? "≳ " + min + " SA" : min + "–" + s.max + " SA";
+}
+
+/* ── Construction du DOM — une seule fois, le clic ne fait que repeindre ──── */
+function chip(act, k, l, sous){
+  return '<button type="button" class="chip" data-act="' + act + '" data-k="' + esc(k) + '">' +
+         (sous ? '<span class="k">' + esc(sous) + '</span>' : '') + esc(l) + '</button>';
+}
+function batir(){
+  if (PAIR){
+    $("coteBloc").hidden = false;
+    $("cote").innerHTML = COTES.map(function(c){ return chip("cote", c.k, c.l); }).join("");
+  }
+  if (BLOCS_LUS) $("blocsBloc").hidden = false;
+  /* Un critère de prélèvement peut porter un groupe g : ce qui qualifie la
+     lecture d'un côté, les critères de coupe (grille macro fixée) de l'autre. */
+  var pPrec = null;
+  $("prelevement").innerHTML = PRELEV.map(function(p){
+    var h = "";
+    if (p.g && p.g !== pPrec){ h = '<div class="sousTitre" style="flex-basis:100%">' + esc(p.g) + '</div>'; pPrec = p.g; }
+    return h + chip("prelev", p.k, p.l);
+  }).join("");
+
+  /* En présence, les critères datables tiennent dans une liste déroulante :
+     « absente », puis dans l'ordre du délai. Les non datables se signalent à part. */
+  var retItems = RETENTION;
+  if (PRESENCE){
+    retItems = RETENTION.filter(function(r){ return r.q === "mauvais"; });
+    $("retention").innerHTML = '<div class="field"><label for="retNiveau">Critère de rétention le plus avancé</label>' +
+      '<select id="retNiveau"><option value="">— non regardée</option>' +
+      '<option value="absente">Absente — aucun critère de rétention</option>' +
+      retDatables().map(function(r){
+        return '<option value="' + r.k + '">' + esc(r.l + " — " + r.b) + '</option>';
+      }).join("") + '</select></div>' +
+      '<div id="retDetail" class="note" style="margin:6px 0 0"></div>' +
+      (retItems.length ? '<div class="sousTitre">Non datables — à signaler s\'ils sont vus</div>' : "") +
+      '<div id="retMauvais"></div>';
+  }
+  $(PRESENCE ? "retMauvais" : "retention").innerHTML = retItems.map(function(r){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(r.l) +
+      '<span class="meta ' + r.q + '">' + esc(r.b) + " · " + esc(r.d) +
+      " · prédicteur " + r.q + '</span></div>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="present">Présent</button>' +
+      '<button type="button" class="chip" data-act="ret" data-k="' + r.k + '" data-v="absent">Absent</button>' +
+      '</div></div>';
+  }).join("");
+  $("kcl").innerHTML = chip("kcl", "kcl", "Fœticide par KCl", "geste à déclarer avant toute datation");
+
+  $("stTitre").textContent = STADE_TITRE;
+  $("stades").innerHTML = STADES.map(function(s){ return chip("stade", s.k, s.l); }).join("");
+
+  if (MESURE){
+    // ponytail: aide au survol (title) — pas de bulle maison
+    var aide = function(t){ return t ? ' title="' + esc(t) + '" style="cursor:help"' : ""; };
+    var h = '<div class="sousTitre"' + aide(MESURE.aide) + '>' + esc(MESURE.titre) + (MESURE.aide ? " ⓘ" : "") + '</div>';
+    h += '<div class="chips" id="mesDefs">' +
+         MESURE.defs.map(function(d){
+           return chip("mdef", d.k, d.l, MESURE.defLabel).replace("<button ", "<button" + aide(d.aide) + " ");
+         }).join("") + '</div>';
+    if (MESURE.opts && MESURE.opts.length)
+      h += '<div class="chips" id="mesOpts" style="margin-top:6px">' +
+           MESURE.opts.map(function(o){ return chip("mopt", o.k, o.l, MESURE.optLabel); }).join("") + '</div>';
+    h += '<div class="row" style="margin-top:9px">' + MESURE.champs.map(function(c){
+      return '<div class="field"><label for="m_' + c.id + '"' + aide(MESURE.aide) + '>' + esc(c.label) +
+             (MESURE.aide ? " ⓘ" : "") + '</label>' +
+             '<input type="number" id="m_' + c.id + '" min="' + c.min + '" max="' + c.max +
+             '" step="' + c.step + '" inputmode="decimal" placeholder="—"></div>';
+    }).join("") + '</div>';
+    $("mesure").innerHTML = h;
+    $("vMesure").hidden = false;
+    $("vMesure").querySelector("b").textContent = MESURE.titre;
+  }
+
+  /* en lecture, les variantes vivent dans leur cadre (paragraphes de signes) */
+  $("variantes").innerHTML = LECT ? "" : VARIANTES.map(function(v){ return chip("var", v.k, v.l); }).join("");
+
+  /* Un signe peut porter un groupe g (placenta : cordon, membranes, parenchyme sous
+     cordon, marge, systémique) : un sous-titre s'ouvre quand le groupe change.
+     En présence, le groupe devient un paragraphe replié : Non / Oui, et Oui
+     déplie ses signes et son étendue. */
+  var gPrec = null;
+  if (PRESENCE && groupes().length){
+    /* LECTURE : le cadre hors lame part dans sa section ; un sur-titre (sur) coiffe les
+       cadres qui se suivent ; les variantes du cadre restent visibles, paragraphe replié. */
+    var html = { signes:"", contexte:"" }, sPrec = null;
+    groupes().forEach(function(g, i){
+      var sig = signesDe(g), c = LECT ? CADRES[i] : {}, ou = horsLame(g) ? "contexte" : "signes";
+      if (c.sur && c.sur !== sPrec) html[ou] += '<div class="sousTitre">' + esc(c.sur) + '</div>';
+      sPrec = c.sur || null;
+      html[ou] += '<div class="item"><div class="head"><div class="lbl"><b>' + esc(g) + '</b>' +
+        '<span class="meta">' + sig.length + ' signe(s)' +
+        (sig.some(function(x){ return NEGATIFS.some(function(n){ return n.signe === x.k; }); })
+          ? " · porte un négatif à énoncer" : "") + '</span></div>' +
+        '<button type="button" class="chip" data-act="grp" data-k="' + i + '" data-v="non">Non</button>' +
+        '<button type="button" class="chip" data-act="grp" data-k="' + i + '" data-v="oui">Oui</button>' +
+        '</div>' +
+        (LECT && variantesDe(g).length ? '<div class="varRow">' + variantesDe(g).map(function(v){
+            return chip("var", v.k, v.l, "variante normale"); }).join("") + '</div>' : "") +
+        '<div class="unfold" id="grp_' + i + '" hidden>' +
+        (sansEtendue(g) ? "" : '<div class="chips" style="margin-bottom:6px">' + ETENDUES.map(function(e){
+            return '<button type="button" class="chip" data-act="etendue" data-k="' + i + '" data-v="' + e + '">' +
+                   '<span class="k">étendue</span>' + e + '</button>';
+          }).join("") + '</div>') +
+        sig.filter(blocable).map(ligneSigne).join("") + '</div>' +
+        sig.filter(function(x){ return !blocable(x); }).map(ligneSigne).join("") + '</div>';
+    });
+    $("signes").innerHTML = html.signes;
+    $("contexte").innerHTML = html.contexte;
+  } else $("signes").innerHTML = SIGNES.map(function(x){
+    var h = "";
+    if (x.g && x.g !== gPrec){ h = '<div class="sousTitre">' + esc(x.g) + '</div>'; gPrec = x.g; }
+    return h + ligneSigne(x);
+  }).join("");
+
+  if (FUSION){
+    /* La recherche descend sous les signes, la section 07 se retire et les
+       sections se renumérotent ; les termes ajoutés par recherche s'y rangent. */
+    var ass = $("assTitre");
+    ass.insertAdjacentHTML("beforebegin", '<div class="sousTitre" style="margin-top:16px">Autre terme FOETO</div>');
+    ass.parentNode.insertBefore($("foetoRech"), ass);
+    ass.parentNode.insertBefore($("foeto"), ass);
+    $("foetoRech").hidden = false;
+    $("secFoeto").hidden = true;
+  } else $("foeto").innerHTML = FOETO.sections.map(function(s){
+    return '<div class="sousTitre">' + esc(s.t) + '</div><div class="chips">' +
+           s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("") + '</div>';
+  }).join("") || '<p class="note">Aucun terme FOETO rattaché à cette fiche.</p>';
+  if (FOETO.sections.length && !FUSION){
+    $("foetoPlus").hidden = false; $("foetoRech").hidden = false;
+    $("foetoPlus").textContent = "▸ tous les termes attestés (" + nbFoeto() + ")";
+  }
+
+  /* En présence, les négatifs ne se cliquent pas : ils se lisent. Pas de bouton
+     « tous vérifiés » non plus — un négatif s'énonce signe par signe. */
+  if (PRESENCE) $("btnNegAll").hidden = true;
+  $("negatifs").innerHTML = NEGATIFS.map(function(n){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(n.l) +
+      '<span class="meta">' + esc(n.p) + '</span></div>' +
+      (PRESENCE
+        ? '<span class="chip" data-neg="' + n.k + '" style="cursor:default"></span>'
+        : '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="absent">Vérifié</button>' +
+          '<button type="button" class="chip" data-act="neg" data-k="' + n.k + '" data-v="present">EN DÉFAUT</button>') +
+      '</div></div>';
+  }).join("");
+
+  $("techNote").textContent = TECH_NOTE;
+  $("techniques").innerHTML = TECHNIQUES.map(function(t){ return chip("tech", t.k, t.l, t.q); }).join("");
+
+  /* Une grille sans rétention ni stades (cordon, membranes…) masque ces sections :
+     un tableau vide dit « sans objet ici », pas « non regardé ». */
+  if (!RETENTION.length) $("secRetention").hidden = true;
+  if (!STADES.length){ $("stTitre").hidden = true; $("vMaturation").hidden = true;
+                       if (!MESURE) $("secMaturation").hidden = true; }
+
+  /* LECTURE : sections dans l'ordre des dépendances — avant la lame, la lame se
+     lit-elle, lecture, synthèse, sortie. */
+  if (LECT){
+    $("secContexte").hidden = !groupes().some(horsLame);
+    $("secVariantes").hidden = true;
+    $("secAssoc").hidden = false;
+    $("secAssoc").appendChild($("diags"));
+    $("assTitre").hidden = true;
+    $("secSignes").querySelector(".note").textContent = "Un paragraphe par cadre, dans l'ordre de lecture ; " +
+      "dans chaque cadre, du faible au fort grossissement. On coche des signes, pas des diagnostics : " +
+      "les associations se lisent dans la synthèse.";
+    [[["secDossier"], "Avant la lame"], [["secRetention"], "La lame se lit-elle"],
+     [["secMaturation", "secSignes"], "Lecture"], [["secAssoc"], "Synthèse"], [["secCR"], "Sortie"]].forEach(function(b){
+      var s = b[0].map($).filter(function(e){ return !e.hidden; })[0];
+      if (s) s.insertAdjacentHTML("beforebegin", '<p class="bloc">' + b[1] + '</p>'); });
+  }
+  if (FUSION || LECT){
+    var n = 0;
+    document.querySelectorAll("section:not([hidden]) h2 .n").forEach(function(e){
+      e.textContent = ("0" + (++n)).slice(-2); });
+  }
+}
+
+function ligneSigne(x){
+    var oblig = PRESENCE && NEGATIFS.some(function(n){ return n.signe === x.k; });
+    return '<div class="item"><div class="head"><div class="lbl">' +
+      (LECT && x.mag ? '<span class="mag ' + x.mag + '">' + esc(MAGS[magIdx(x)].l) + '</span>' : "") + esc(x.l) +
+      (x.meta ? '<span class="meta">' + esc(x.meta) + '</span>' : "") +
+      (codesDe(x).length ? '<span class="meta">' + esc(codesDe(x).join(" · ")) + '</span>' : "") +
+      (x.horsFiche ? '<span class="meta">hors fiche — non sourcé par la biblio</span>' : "") +
+      (x.fiche && !x.foeto ? '<span class="meta">dans la fiche ' + esc(x.fiche) + ', sans terme FOETO</span>' : "") +
+      (oblig ? '<span class="meta">négatif à énoncer : répondre présent ou absent</span>' : "") +
+      (PRESENCE && !blocable(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
+        : "hors du « Non » en bloc : " + (x.mag === "technique" ? "se répond après la technique" : "polarité normale, à répondre seul")) +
+        '</span>' : "") +
+      '</div>' +
+      (x.auto ? '<span class="chip" data-auto="' + x.k + '" style="cursor:default"></span>' :
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="' + NEG + '">' +
+        (PRESENCE ? "Absent" : "Normal") + '</button>' +
+      '<button type="button" class="chip" data-act="les" data-k="' + x.k + '" data-v="' + POS + '">' +
+        (PRESENCE ? "Présent" : "Anormal") + '</button>') +
+      '</div></div>';
+}
+
+function nbFoeto(){ return FOETO.sections.reduce(function(a, s){ return a + s.termes.length; }, 0); }
+function foetoLabel(id){
+  var l = null;
+  FOETO.sections.forEach(function(s){ s.termes.forEach(function(t){ if (t.id === id) l = t.l; }); });
+  return l || (FOETO.formes[id] || [id])[0];
+}
+/* ajoute (ou coche) un terme FOETO — depuis la liste ou la recherche */
+function foetoAjouter(id){
+  /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
+  var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
+  if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
+  if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
+    var box = $("foeto").querySelector(".chips");
+    if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
+    box.insertAdjacentHTML("beforeend", chip("foeto", id, foetoLabel(id)));
+  }
+  E.foeto[id] = true;
+  peindre(); enregistrer();
+}
+function rechercherFoeto(q){
+  var sg = $("sgFoeto");
+  q = q.trim().toLowerCase();
+  if (q.length < 3){ sg.classList.remove("on"); return; }
+  var hits = [];
+  Object.keys(FOETO.formes).some(function(id){
+    var f = FOETO.formes[id].filter(function(x){ return x.toLowerCase().indexOf(q) >= 0; })[0];
+    if (f) hits.push({ id:id, l:foetoLabel(id), f:f, hf:FOETO.formes[id].indexOf("(hors fiche)") >= 0 });
+    return hits.length >= 10;
+  });
+  sg.innerHTML = hits.length ? hits.map(function(x){
+    return '<div data-pick="' + esc(x.id) + '">' + esc(x.l) +
+           (x.f !== x.l ? ' <small>— ' + esc(x.f) + '</small>' : '') + (x.hf ? ' <small>(hors fiche)</small>' : '') + '</div>';
+  }).join("") : '<div><small>aucun terme</small></div>';
+  sg.classList.add("on");
+}
+
+/* ── Associations ─────────────────────────────────────────────────────────────
+   Un diagnostic ne se coche pas : il se lit dans l'association des signes. Les
+   faisceaux incomplets sont affichés aussi — 2 signes sur 4 se dit, et dire
+   combien manquent est le seul moyen de distinguer « non trouvé » de « non
+   regardé ». */
+function seuil(d){ return d.min || d.signes.length; }
+function associations(){
+  return DIAGS.map(function(d){
+    var pris  = d.signes.filter(function(k){ return E.signes[k] === POS; });
+    var muets = d.signes.filter(function(k){ return !E.signes[k]; });
+    /* Un signe pivot ne se remplace pas par le nombre : sans lui, le compte peut
+       être atteint sans que l'association tienne. */
+    var pivot = !d.cle || E.signes[d.cle] === POS;
+    return { d:d, pris:pris, muets:muets, pivot:pivot,
+             tenu: pivot && pris.length >= seuil(d) };
+  }).filter(function(a){ return a.pris.length; })
+    .sort(function(a, b){ return (b.tenu - a.tenu) || (b.pris.length - a.pris.length); });
+}
+function nomSigne(k){ var s = par(SIGNES, k); return s ? s.l : k; }
+/* Codes portés par un signe (FOETO, HPO) : ils partent avec le signe PRÉSENT,
+   jamais avec un absent ni un non regardé. */
+function codesDe(x){ return [x.foeto, x.hpo].filter(Boolean); }
+function codesPresents(){
+  return SIGNES.filter(function(x){ return E.signes[x.k] === POS && codesDe(x).length; })
+               .map(function(x){ return { k:x.k, l:x.l, foeto:x.foeto || null, hpo:x.hpo || null }; });
+}
+/* Grille branchée sur FOETO : un signe porte fv (terme tagué « verbatim ») ; son
+   libellé et son HPO arbitré viennent de la base, le code exporté est l'id FOETO. */
+function resoudreFV(){
+  if (!FOETOV) return;
+  SIGNES.forEach(function(x){
+    var s = x.fv && FOETOV[x.fv];
+    if (s){ x.l = s.l; x.foeto = x.fv; if (s.hpo) x.hpo = s.hpo; }
+    else if (!x.fiche) x.horsFiche = true;   // aucun terme de fiche derrière : non sourcé par la biblio
+    /* fiche:"[keeling]" : constat sourcé dans la fiche que FOETO ne porte pas (encore) en terme */
+  });
+  DIAGS.forEach(function(d){ if (d.fv && FOETOV[d.fv]) d.foeto = [d.fv]; });
+}
+
+/* ── Mode présence : rétention en liste, signes en paragraphes ─────────────── */
+function retDatables(){
+  return RETENTION.filter(function(r){ return r.q !== "mauvais"; })
+                  .slice().sort(function(a, b){ return a.h - b.h; });
+}
+/* La liste déroulante se lit dans E.retention : le critère le plus avancé posé,
+   « absente » si tous les datables sont répondus absents, sinon rien. */
+function retNiveau(){
+  var d = retDatables(), pres = d.filter(function(r){ return E.retention[r.k] === "present"; });
+  if (pres.length) return pres[pres.length - 1].k;
+  return d.length && d.every(function(r){ return E.retention[r.k] === "absent"; }) ? "absente" : "";
+}
+function poserRetNiveau(v){
+  retDatables().forEach(function(r){
+    if (v === "absente") E.retention[r.k] = "absent";
+    else if (v === r.k) E.retention[r.k] = "present";
+    else delete E.retention[r.k];
+  });
+}
+var ETENDUES = ["focale", "multifocale", "diffuse"];
+function groupes(){
+  if (LECT) return CADRES.map(function(c){ return c.g; });
+  var g = [];
+  SIGNES.forEach(function(x){ if (x.g && g.indexOf(x.g) < 0) g.push(x.g); });
+  return g;
+}
+function horsLame(g){ return LECT && CADRES.some(function(c){ return c.g === g && c.hors; }); }
+function sansEtendue(g){
+  return horsLame(g) || typeof GROUPES_SANS_ETENDUE !== "undefined" && GROUPES_SANS_ETENDUE.indexOf(g) >= 0;
+}
+/* En lecture, du faible au fort grossissement ; le tri est stable, l'ordre du fragment départage. */
+function signesDe(g){
+  var s = SIGNES.filter(function(x){ return x.g === g; });
+  return LECT ? s.sort(function(a, b){ return magIdx(a) - magIdx(b); }) : s;
+}
+function variantesDe(g){ return VARIANTES.filter(function(v){ return v.g === g; }); }
+/* Le « Non » en bloc ne répond pas à la place du lecteur un signe qui demande une
+   technique (mag:"technique") ni un signe de polarité normale (bloc:false, ex.
+   « tubes collecteurs normaux » : absent y voudrait dire anormal). Ces signes restent
+   visibles, paragraphe replié, et se répondent un par un. */
+function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false; }
+/* Un signe bloc:false présent (méconium dans la lumière, collecteurs normaux) s'écrit au
+   CR mais n'ouvre pas le paragraphe et ne bloque pas son « Non » : ce n'est pas une lésion. */
+function lesionPresente(x){ return E.signes[x.k] === POS && x.bloc !== false; }
+/* Un signe peut se DÉDUIRE d'une donnée consignée (auto() → true / false / null) au lieu
+   de se cliquer : un « CRG bas » coché à la main pourrait contredire le compte saisi. */
+function deduire(){
+  SIGNES.forEach(function(x){
+    if (!x.auto) return;
+    var r = x.auto();
+    if (r === true) E.signes[x.k] = POS; else if (r === false) E.signes[x.k] = NEG; else delete E.signes[x.k];
+  });
+}
+/* Un paragraphe se lit : « non » (tous ses signes répondus absents), « oui »
+   (au moins un présent, ou déplié à la main), sinon non regardé. */
+function etatGroupe(g){
+  var s = signesDe(g);
+  if (s.some(lesionPresente)) return "oui";
+  if (E.groupes[g] === "oui") return "oui";
+  if (E.groupes[g] === "non" && s.filter(blocable).every(function(x){ return E.signes[x.k] === NEG; })) return "non";
+  return null;
+}
+
+/* Un négatif, en présence : « ok » (énoncé), « ko » (en défaut) ou null (pas
+   encore répondu). Il est lié à un signe (ok quand le signe est répondu absent)
+   ou à un contrôle `auto` (ok quand la donnée est consignée). */
+function etatNegatif(n){
+  if (n.signe){ var v = E.signes[n.signe]; return v === NEG ? "ok" : v === POS ? "ko" : null; }
+  if (n.auto){ var r = n.auto(); return r === true ? "ok" : r === false ? "ko" : null; }
+  return null;
+}
+
+/* ── Verdicts communs ─────────────────────────────────────────────────────── */
+function verdictPrelevement(){
+  var n = Object.keys(E.prelev).length, res = [], grave = false;
+  PRELEV.forEach(function(p){
+    if (p.manque && !E.prelev[p.k]){ res.push(p.manque); if (p.grave) grave = true; }
+  });
+  if (PAIR && !E.cote) res.push("côté non déclaré — organe pair");
+  return { n:n, res:res,
+    cls: res.length ? (grave ? "bad" : "warn") : (n === PRELEV.length ? "ok" : ""),
+    txt: n === 0 ? "—"
+       : (n + "/" + PRELEV.length + " item(s) confirmé(s)" +
+          (PAIR && E.cote ? ", " + par(COTES, E.cote).l.toLowerCase().split(" —")[0] : "") + ".") +
+         (res.length ? " Réserves : " + res.join(" ; ") + "." : " Prélèvement complet.") };
+}
+function verdictRetention(){
+  if (E.kcl) return { cls:"bad", borne:null, txt:KCL_TXT };
+  var pres = RETENTION.filter(function(r){ return E.retention[r.k] === "present"; });
+  if (!pres.length) return { cls:"", borne:null,
+    txt: Object.keys(E.retention).length ? "Aucun critère de rétention positif." : "—" };
+  var notes = [];
+  pres.forEach(function(r){ if (r.note) notes.push(r.note); });
+  var bons = pres.filter(function(r){ return r.q !== "mauvais"; });
+  if (!bons.length) return { cls:"warn", borne:null,
+    txt:"Seuls des prédicteurs MAUVAIS sont positifs — aucune borne recevable. " + notes.join(" ; ") + "." };
+  var top = bons.reduce(function(a, b){ return b.h > a.h ? b : a; });
+  if (top.alerte) notes.push(top.alerte);
+  return { cls:"ok", borne:top,
+    txt:"Rétention " + top.b + " — critère : " + top.l.toLowerCase() + " (" + top.d + ")." +
+        (notes.length ? " Réserves : " + notes.join(" ; ") + "." : "") };
+}
+function verdictMaturation(){
+  var sa = num("sa"), att = stadeAttendu(sa), obs = E.stade ? par(STADES, E.stade) : null;
+  if (!obs) return { cls:"", att:att, txt: att
+    ? "Stade attendu à " + sa + " SA : " + att.l.toLowerCase() + ". Confirmer ou choisir."
+    : "Saisir le terme pour afficher le stade attendu." };
+  if (!att) return { cls:"warn", att:null,
+    txt:"Stade " + obs.l.toLowerCase() + " — sans terme, aucune discordance n'est calculable." };
+  var io = STADES.indexOf(obs), ia = STADES.indexOf(att), t, cls;
+  if (io === ia){ cls = "ok"; t = "Maturation conforme au terme : " + obs.l.toLowerCase() + " à " + sa + " SA."; }
+  else if (io < ia){ cls = "warn";
+    t = "Retard de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (RETARD_NOTE ? " " + RETARD_NOTE : ""); }
+  else { cls = "warn";
+    t = "Avance de maturation : " + obs.l.toLowerCase() + " observé, " + att.l.toLowerCase() +
+        " attendu à " + sa + " SA (terme histologique estimé " + bornesTxt(obs) + ")." +
+        (AVANCE_NOTE ? " " + AVANCE_NOTE : ""); }
+  if (obs.note) t += " (" + obs.note + ")";
+  return { cls:cls, att:att, txt:t };
+}
+
+/* ── Peinture ─────────────────────────────────────────────────────────────── */
+function classe(act, v){
+  if (act === "neg") return v === "present" ? "no" : "on";
+  if (act === "les") return v === POS ? "no" : "on";
+  return "on";
+}
+function poser(id, v){
+  var e = $(id), t = e.querySelector("b").textContent;
+  e.className = "verdict" + (v.cls ? " " + v.cls : "");
+  e.innerHTML = "<b>" + esc(t) + "</b>" + esc(v.txt);
+}
+function tally(id, n, sur){ $(id).textContent = n ? n + "/" + sur : "—"; }
+
+function peindreDiags(){
+  var A = associations();
+  if (!A.length){
+    $("diags").innerHTML = '<p class="note" style="margin:0">Aucun signe ' + (PRESENCE ? "présent" : "anormal") +
+      ' coché : rien à associer.</p>';
+    return;
+  }
+  $("diags").innerHTML = A.map(function(a){
+    return '<div class="item"><div class="head"><div class="lbl">' + esc(a.d.l) +
+      (a.d.foeto ? '<span class="meta">' + esc(a.d.foeto.join(" · ")) + ' — affiché, non exporté</span>' : "") +
+      '<span class="meta">' + a.pris.length + "/" + a.d.signes.length + " signe(s), seuil " + seuil(a.d) +
+      (a.muets.length ? " · " + a.muets.length + " non regardé(s)" : "") + '</span></div>' +
+      '<span class="chip ' + (a.tenu ? "on" : "") + '" style="cursor:default">' +
+      (a.tenu ? "association tenue" : "faisceau incomplet") + '</span></div>' +
+      '<div class="unfold">' +
+      '<div class="note" style="margin:0">' +
+      (a.pivot ? "" : "Signe pivot non coché : " + esc(nomSigne(a.d.cle)) + ".<br>") +
+      esc(a.pris.map(nomSigne).join(" · ")) +
+      (a.muets.length ? "<br>Non regardés : " + esc(a.muets.map(nomSigne).join(" · ")) + "." : "") +
+      '</div>' +
+      '<div class="stop"><b>Ce qu\'il ne faut pas conclure</b>' + esc(a.d.stop) + '</div></div></div>';
+  }).join("");
+}
+
+function peindre(){
+  deduire();
+  document.querySelectorAll("[data-auto]").forEach(function(b){
+    var v = E.signes[b.dataset.auto];
+    b.className = "chip" + (v === POS ? " no" : v === NEG ? " on" : "");
+    b.textContent = v === POS ? "présent (déduit)" : v === NEG ? "absent (déduit)" : "non déduit";
+  });
+  if (PAIR) document.querySelectorAll("#cote .chip").forEach(function(b){
+    b.className = "chip" + (E.cote === b.dataset.k ? " on" : "");
+  });
+  document.querySelectorAll("#prelevement .chip").forEach(function(b){
+    b.className = "chip" + (E.prelev[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll("#retention .chip").forEach(function(b){
+    b.className = "chip" + (E.retention[b.dataset.k] === b.dataset.v ? " on" : "");
+  });
+  $("kcl").firstChild.className = "chip" + (E.kcl ? " no" : "");
+  document.querySelectorAll("#stades .chip").forEach(function(b){
+    var att = stadeAttendu(num("sa"));
+    b.className = "chip" + (E.stade === b.dataset.k ? " on"
+                          : (att && att.k === b.dataset.k ? " sugg" : ""));
+  });
+  if (MESURE){
+    document.querySelectorAll("#mesDefs .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.def === b.dataset.k ? " on" : "");
+    });
+    if ($("mesOpts")) document.querySelectorAll("#mesOpts .chip").forEach(function(b){
+      b.className = "chip" + (E.mesure.opt === b.dataset.k ? " on" : "");
+    });
+  }
+  document.querySelectorAll('[data-act="var"]').forEach(function(b){
+    b.className = "chip" + (E.variantes[b.dataset.k] ? " on" : "");
+  });
+  document.querySelectorAll('[data-act="les"]').forEach(function(b){
+    b.className = "chip" + (E.signes[b.dataset.k] === b.dataset.v
+                            ? " " + classe("les", b.dataset.v) : "");
+  });
+  if (PRESENCE){
+    if ($("retNiveau")){
+      var rn = retNiveau(), rr = par(RETENTION, rn);
+      $("retNiveau").value = rn;
+      $("retDetail").textContent = rr ? rr.d + (rr.note ? " — " + rr.note : "") : "";
+    }
+    groupes().forEach(function(g, i){
+      var st = etatGroupe(g), body = $("grp_" + i);
+      document.querySelectorAll('[data-act="grp"][data-k="' + i + '"]').forEach(function(b){
+        b.className = "chip" + (st === b.dataset.v ? (st === "oui" ? " no" : " on") : "");
+      });
+      document.querySelectorAll('[data-act="etendue"][data-k="' + i + '"]').forEach(function(b){
+        b.className = "chip" + (E.etendue[g] === b.dataset.v ? " on" : "");
+      });
+      if (body) body.hidden = st !== "oui";
+    });
+  }
+  peindreDiags();
+  document.querySelectorAll('[data-act="foeto"]').forEach(function(b){
+    b.className = "chip" + (E.foeto[b.dataset.k] ? " on" : "");
+  });
+  if (PRESENCE) NEGATIFS.forEach(function(n){
+    var b = document.querySelector('[data-neg="' + n.k + '"]'), s = etatNegatif(n);
+    b.className = "chip" + (s === "ok" ? " on" : s === "ko" ? " no" : "");
+    b.textContent = s === "ok" ? "énoncé" : s === "ko" ? "EN DÉFAUT" : "non répondu";
+  });
+  else document.querySelectorAll("#negatifs .chip").forEach(function(b){
+    b.className = "chip" + (E.negatifs[b.dataset.k] === b.dataset.v
+                            ? " " + classe("neg", b.dataset.v) : "");
+  });
+  var sug = suggerer();
+  document.querySelectorAll("#techniques .chip").forEach(function(b){
+    b.className = "chip" + (E.techniques[b.dataset.k] ? " on" : (sug[b.dataset.k] ? " sugg" : ""));
+  });
+
+  tally("tPrelevement", Object.keys(E.prelev).length, PRELEV.length);
+  tally("tRetention",   Object.keys(E.retention).length, RETENTION.length);
+  tally("tMaturation",  (E.stade ? 1 : 0) + (MESURE && E.mesure.def ? 1 : 0), MESURE ? 2 : 1);
+  tally("tVariantes",   Object.keys(E.variantes).length, VARIANTES.length);
+  if (PRESENCE && groupes().length){
+    var gl = groupes().filter(function(g){ return !horsLame(g); }), gh = groupes().filter(horsLame);
+    tally("tSignes", gl.filter(etatGroupe).length, gl.length);
+    if (gh.length) tally("tContexte", gh.filter(etatGroupe).length, gh.length);
+  }
+  else tally("tSignes",     Object.keys(E.signes).length, SIGNES.length);
+  tally("tFoeto",       Object.keys(E.foeto).length, nbFoeto());
+  tally("tNegatifs",    PRESENCE ? NEGATIFS.filter(etatNegatif).length : Object.keys(E.negatifs).length,
+        NEGATIFS.length);
+  tally("tTechniques",  Object.keys(E.techniques).length, TECHNIQUES.length);
+
+  poser("vPrelevement", verdictPrelevement());
+  poser("vRetention",   verdictRetention());
+  poser("vMaturation",  verdictMaturation());
+  if (MESURE) poser("vMesure", verdictMesure());
+
+  var cr = composer();
+  $("cr").textContent = cr;
+  $("tCR").textContent = cr.split("\n").length + " lignes";
+}
+
+/* ── Compte rendu — la sortie du module, écrite par les clics ─────────────── */
+/* Par paragraphe : « non » en une ligne ; les présents avec leur étendue ; les
+   absents isolés ; un paragraphe entier non regardé se nomme d'un mot. En lecture,
+   les variantes normales vues suivent leur cadre entre parenthèses. */
+function lignesGroupes(gs){
+  var L = [];
+  function paren(g){
+    var v = LECT ? variantesDe(g).filter(function(x){ return E.variantes[x.k]; }) : [];
+    return v.length ? " (variante normale : " + v.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ")" : "";
+  }
+  var gNon = gs.filter(function(g){ return etatGroupe(g) === "non"; });
+  gNon.forEach(function(g){ L.push("  " + g + " : non" + paren(g) + "."); });
+  gs.forEach(function(g){
+    var non = gNon.indexOf(g) >= 0;   /* un cadre « non » ne peut porter qu'un bloc:false présent */
+    signesDe(g).forEach(function(x){
+      if (E.signes[x.k] === POS) L.push("  " + g + (!non && E.etendue[g] ? " (" + E.etendue[g] + ")" : "") + " · " + x.l + " — PRÉSENT");
+    });
+    if (!non && paren(g)) L.push("  " + g + paren(g) + ".");
+  });
+  var dans = function(x){ return gs.indexOf(x.g) >= 0; };
+  var abs = SIGNES.filter(function(x){ return dans(x) && E.signes[x.k] === NEG && (gNon.indexOf(x.g) < 0 || !blocable(x)); });
+  if (abs.length) L.push("  Absents : " + abs.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  var gMuets = gs.filter(function(g){ return signesDe(g).every(function(x){ return !E.signes[x.k]; }); });
+  var sMuets = SIGNES.filter(function(x){ return dans(x) && !E.signes[x.k] && gMuets.indexOf(x.g) < 0; });
+  if (gMuets.length || sMuets.length)
+    L.push("  Non regardés : " + gMuets.map(function(g){ return g.toLowerCase(); })
+           .concat(sMuets.map(function(x){ return x.l.toLowerCase(); })).join(" · ") + ".");
+  return L;
+}
+/* Rédaction proposée (opt-in : un cadre porte crNon, un signe porte cr) : une phrase
+   par cadre répondu, dans l'ordre de lecture — crNon si le cadre est « Non », sinon
+   les phrases des signes présents (le libellé à défaut). Ce qui n'est pas répondu
+   n'est pas écrit : la rédaction ne dit que ce qui a été regardé. */
+var REDIGE = LECT && (CADRES.some(function(c){ return c.crNon; }) || SIGNES.some(function(x){ return x.cr; }));
+function phrase(t){ t = String(t).trim(); return t && !/[.!?…]$/.test(t) ? t + "." : t; }
+function redaction(){
+  var P = [];
+  groupes().forEach(function(g, i){
+    var vus = variantesDe(g).filter(function(v){ return E.variantes[v.k]; });
+    var paren = vus.length ? " (variante normale : " + vus.map(function(v){ return v.l.toLowerCase(); }).join(", ") + ")" : "";
+    if (etatGroupe(g) === "non"){ if (CADRES[i].crNon) P.push(phrase(CADRES[i].crNon.replace(/\.?$/, paren))); return; }
+    var pres = signesDe(g).filter(function(x){ return E.signes[x.k] === POS; });
+    if (pres.length) P.push(pres.map(function(x){ return phrase(x.cr || x.l); }).join(" ") +
+                            (E.etendue[g] ? " (" + E.etendue[g] + ")" : "") + paren);
+  });
+  return P;
+}
+function composer(){
+  var sa = num("sa"), L = [];
+  L.push(TITRE_CR + " — grille de lecture");
+  L.push((dossier || "dossier —") + " · " + (sa != null ? sa + " SA" : "terme —") +
+         " · " + ($("operateur").value.trim() || "lecteur —") +
+         (PAIR ? " · " + (E.cote ? par(COTES, E.cote).l : "côté non déclaré") : ""));
+  L.push("");
+  if (REDIGE){
+    var R = redaction();
+    L.push("RÉDACTION PROPOSÉE");
+    L.push(R.length ? "  " + R.join("\n  ") : "  — aucun cadre répondu.");
+    L.push("");
+  }
+
+  L.push("PRÉLÈVEMENT");
+  L.push("  " + verdictPrelevement().txt);
+  if (BLOCS_LUS) L.push("  Blocs lus : " + (E.blocs.length ? E.blocs.join(", ") : "non déclarés") + ".");
+
+  var gHors = PRESENCE ? groupes().filter(horsLame) : [];
+  if (gHors.length){
+    L.push("");
+    L.push("CONTEXTE HORS LAME");
+    L.push.apply(L, lignesGroupes(gHors));
+  }
+
+  if (RETENTION.length){
+    L.push("");
+    L.push("RÉTENTION");
+    L.push("  " + verdictRetention().txt);
+  }
+
+  if (STADES.length || MESURE){
+    L.push("");
+    L.push("MATURATION");
+    if (STADES.length) L.push("  " + verdictMaturation().txt);
+    if (MESURE) L.push("  " + verdictMesure().txt);
+  }
+
+  var vus = VARIANTES.filter(function(v){ return E.variantes[v.k]; });
+  if (vus.length && !LECT){   /* en lecture : parenthèse dans le cadre, pas de rubrique */
+    L.push("");
+    L.push("VARIANTES NORMALES VUES ET ÉCARTÉES");
+    L.push("  " + vus.map(function(v){ return v.l.toLowerCase(); }).join(" · "));
+  }
+
+  var anormales = SIGNES.filter(function(x){ return E.signes[x.k] === POS; });
+  var normales  = SIGNES.filter(function(x){ return E.signes[x.k] === NEG; });
+  L.push("");
+  L.push("SIGNES");
+  if (!anormales.length && !normales.length) L.push(PRESENCE ? "  aucun signe répondu." : "  aucun axe exploré.");
+  if (PRESENCE && groupes().length){
+    L.push.apply(L, lignesGroupes(groupes().filter(function(g){ return !horsLame(g); })));
+  } else {
+  anormales.forEach(function(x){
+    L.push("  " + (x.g ? x.g + " · " : "") + x.l + (PRESENCE ? " — PRÉSENT" : " — ANORMAL"));
+  });
+  if (normales.length)
+    L.push((PRESENCE ? "  Absents : " : "  Normaux : ") +
+           normales.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  var muets = SIGNES.filter(function(x){ return !E.signes[x.k]; });
+  if (muets.length)
+    L.push((PRESENCE ? "  Non regardés : " : "  Non explorés : ") +
+           muets.map(function(x){ return x.l.toLowerCase(); }).join(" · ") + ".");
+  }
+
+  var cp = codesPresents();
+  if (cp.length){
+    L.push("");
+    L.push("CODES DES SIGNES PRÉSENTS");
+    cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
+  }
+
+  var fo = Object.keys(E.foeto);
+  if (fo.length){
+    L.push("");
+    L.push("TERMES FOETO");
+    fo.forEach(function(id){ L.push("  " + foetoLabel(id) + " [" + id + "]"); });
+  }
+
+  var A = associations();
+  L.push("");
+  L.push("ASSOCIATIONS LUES");
+  if (!A.length) L.push("  aucune : les signes cochés ne dessinent aucune association.");
+  A.forEach(function(a){
+    L.push("  " + a.d.l + " — " + (a.tenu ? "association tenue" : "faisceau incomplet") +
+           " (" + a.pris.length + "/" + a.d.signes.length + ", seuil " + seuil(a.d) + ")");
+    L.push("      · " + a.pris.map(nomSigne).join(" · "));
+    if (!a.pivot) L.push("      · signe pivot non coché : " + nomSigne(a.d.cle));
+    if (a.muets.length) L.push("      · non regardés : " + a.muets.map(nomSigne).join(" · "));
+    L.push("      · ne pas conclure : " + a.d.stop);
+  });
+
+  L.push("");
+  L.push("NÉGATIFS OBLIGATOIRES");
+  if (PRESENCE) NEGATIFS.forEach(function(n){
+    var s = etatNegatif(n);
+    L.push("  " + (s === "ok" ? "· " + n.l : s === "ko" ? "! " + n.ko : "? " + n.l + " — non répondu"));
+  });
+  else NEGATIFS.forEach(function(n){
+    var v = E.negatifs[n.k];
+    L.push("  " + (v === "absent" ? "· " + n.l
+                 : v === "present" ? "! " + n.ko
+                 : "? " + n.l + " — non vérifié"));
+  });
+
+  var t = TECHNIQUES.filter(function(x){ return E.techniques[x.k]; });
+  if (t.length){
+    L.push("");
+    L.push("TECHNIQUES DEMANDÉES");
+    t.forEach(function(x){ L.push("  · " + x.l + " — " + x.q); });
+  }
+
+  if (E.libre.trim()){
+    L.push("");
+    L.push("REMARQUE");
+    E.libre.trim().split("\n").forEach(function(x){ L.push("  " + x); });
+  }
+
+  L.push("");
+  L.push("— La micro décrit ; la conclusion nomme. Grille v" + VERSION + " issue de " + SOURCE + ".");
+  return L.join("\n");
+}
+
+/* ── Clics ────────────────────────────────────────────────────────────────── */
+document.addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest("button[data-act]") : null;
+  if (!b || b.closest("section.off")) return;
+  var k = b.dataset.k, v = b.dataset.v, a = b.dataset.act;
+  if (a === "cote"){ E.cote = E.cote === k ? null : k; }
+  else if (a === "prelev"){ if (E.prelev[k]) delete E.prelev[k]; else E.prelev[k] = true; }
+  else if (a === "ret"){ if (E.retention[k] === v) delete E.retention[k]; else E.retention[k] = v; }
+  else if (a === "kcl"){ E.kcl = !E.kcl; }
+  else if (a === "stade"){ E.stade = E.stade === k ? null : k; }
+  else if (a === "mdef"){ E.mesure.def = E.mesure.def === k ? null : k; }
+  else if (a === "mopt"){ E.mesure.opt = E.mesure.opt === k ? null : k; }
+  else if (a === "var"){ if (E.variantes[k]) delete E.variantes[k]; else E.variantes[k] = true; }
+  else if (a === "les"){ if (E.signes[k] === v) delete E.signes[k]; else E.signes[k] = v; }
+  else if (a === "grp"){ basculerGroupe(groupes()[+k], v); }
+  else if (a === "etendue"){ var gg = groupes()[+k]; if (E.etendue[gg] === v) delete E.etendue[gg]; else E.etendue[gg] = v; }
+  else if (a === "neg"){ if (E.negatifs[k] === v) delete E.negatifs[k]; else E.negatifs[k] = v; }
+  else if (a === "tech"){ if (E.techniques[k]) delete E.techniques[k]; else E.techniques[k] = true; }
+  else if (a === "foeto"){ if (E.foeto[k]) delete E.foeto[k]; else E.foeto[k] = true; }
+  else return;
+  peindre(); enregistrer();
+});
+document.addEventListener("click", function(ev){
+  var t = ev.target.closest ? ev.target.closest("[data-pick]") : null;
+  if (t){ foetoAjouter(t.dataset.pick); $("rqFoeto").value = ""; $("sgFoeto").classList.remove("on"); }
+});
+$("foetoPlus").onclick = function(){
+  var box = $("foetoTous");
+  if (!box.children.length) box.innerHTML = FOETO.sections.map(function(s){
+    return s.termes.map(function(t){ return chip("foeto", t.id, t.l); }).join("");
+  }).join("");
+  box.hidden = !box.hidden; peindre();
+};
+$("rqFoeto").addEventListener("input", function(){ rechercherFoeto(this.value); });
+document.addEventListener("change", function(ev){
+  if (ev.target.id !== "retNiveau" || ev.target.closest("section.off")) return;
+  poserRetNiveau(ev.target.value); peindre(); enregistrer();
+});
+/* Non : tous les signes du paragraphe répondus absents — refusé s'il en est un
+   de présent (on ne l'efface pas en silence). Oui : déplie ; depuis « non », on
+   repart de zéro. Un second clic sur l'état actif le lève. */
+function basculerGroupe(g, v){
+  var pres = signesDe(g).filter(lesionPresente);
+  var s = signesDe(g).filter(blocable);
+  var actuel = etatGroupe(g);
+  if (v === "non"){
+    /* un cadre sans signe répondable en bloc ne passe pas « non » sans aucune réponse */
+    if (!s.length){ flash("« " + g + " » : aucun signe ne se répond en bloc — les répondre un par un."); return; }
+    if (pres.length){ flash(pres.length + " signe(s) présent(s) dans « " + g + " » : les retirer avant de répondre non."); return; }
+    if (actuel === "non"){ s.forEach(function(x){ delete E.signes[x.k]; }); delete E.groupes[g]; }
+    else { s.forEach(function(x){ E.signes[x.k] = NEG; }); E.groupes[g] = "non"; delete E.etendue[g]; }
+    return;
+  }
+  if (actuel === "oui"){
+    if (pres.length){ E.groupes[g] = "oui"; flash("Des signes sont présents : le paragraphe reste ouvert."); return; }
+    delete E.groupes[g];
+    return;
+  }
+  if (actuel === "non") s.forEach(function(x){ delete E.signes[x.k]; });
+  E.groupes[g] = "oui";
+}
+$("btnNegAll").onclick = function(){
+  NEGATIFS.forEach(function(n){ if (!E.negatifs[n.k]) E.negatifs[n.k] = "absent"; });
+  peindre(); enregistrer();
+};
+$("btnCopie").onclick = function(){
+  var t = composer();
+  if (navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(t).then(function(){ flash("Compte rendu copié."); },
+                                          function(){ flash("Copie refusée par le navigateur."); });
+  else flash("Presse-papiers indisponible en file://.");
+};
+document.addEventListener("input", function(e){
+  var id = e.target.id;
+  if (id.indexOf("m_") === 0) E.mesure.v[id.slice(2)] = num(id);
+  else if (id === "libre") E.libre = e.target.value;
+  else if (id === "blocs"){
+    var rb = lireBlocs(e.target.value);
+    E.blocs = rb.ok;
+    $("blocsHint").textContent = rb.ko.length ? "Non lu : " + rb.ko.join(" ") + " — un numéro, ou une plage 3-5."
+      : rb.ok.length ? rb.ok.length + " bloc(s) : " + rb.ok.join(", ") + "." : "Numéros des blocs de cet organe : rattachent la lecture aux lames (dossier_bloc_coupe).";
+  }
+  else if (id === "sa") majSa();
+  else return;
+  peindre(); enregistrer();
+});
+function majSa(){
+  var sa = num("sa"), att = stadeAttendu(sa), h = $("saHint");
+  h.className = "hint" + (att ? " good" : "");
+  h.textContent = att ? "Stade attendu : " + att.l.toLowerCase() + " (" + bornesTxt(att) + ")."
+                      : "SA = semaines de gestation + 2. Commande le stade attendu.";
+}
+
+/* ── IndexedDB ────────────────────────────────────────────────────────────────
+   localStorage est erratique en file:// et cloisonné par fichier sur certains
+   navigateurs : la saisie va en IndexedDB, y compris les champs texte.       */
+function openDB(){
+  return new Promise(function(res, rej){
+    var r;
+    try { r = indexedDB.open(DB_NAME, DB_VER); }
+    catch(e){ rej(e); return; }
+    r.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains("saisies")) d.createObjectStore("saisies", {keyPath:"dossier"});
+    };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
+  });
+}
+function tx(mode, fn){
+  return new Promise(function(res, rej){
+    if (!db){ rej(new Error("base indisponible")); return; }
+    var t = db.transaction("saisies", mode), out = fn(t.objectStore("saisies"));
+    /* Tester la présence de `result`, pas sa valeur : un get() qui ne trouve rien
+       a bien un `result` (undefined) — comparé à undefined, la requête elle-même
+       était rendue, et un dossier jamais saisi s'annonçait comme restitué. */
+    t.oncomplete = function(){ res(out && "result" in out ? out.result : out); };
+    t.onerror    = function(){ rej(t.error); };
+    t.onabort    = function(){ rej(t.error || new Error("transaction interrompue")); };
+  });
+}
+function putSaisie(r){ return tx("readwrite", function(s){ return s.put(r); }); }
+function getSaisie(d){ return tx("readonly",  function(s){ return s.get(d); }); }
+
+/* ── Verrou ───────────────────────────────────────────────────────────────── */
+function verrouiller(ouvert){
+  ["secPrelevement","secContexte","secRetention","secMaturation","secVariantes","secSignes","secAssoc","secFoeto",
+   "secNegatifs","secTechniques","secCR","secSortie"].forEach(function(id){
+    $(id).classList.toggle("off", !ouvert);
+  });
+}
+
+/* ── Collecte / restitution ───────────────────────────────────────────────── */
+function collecter(){
+  return {
+    schema_version: SCHEMA,
+    module: MODULE,
+    module_version: VERSION,
+    organe: ORGANE,
+    source: SOURCE,
+    dossier: dossier,
+    operateur: $("operateur").value.trim() || null,
+    exported_at: new Date().toISOString(),
+    terme_sa: num("sa"),
+    grille: JSON.parse(JSON.stringify(E)),
+    codes: codesPresents(),
+    compte_rendu: composer()
+  };
+}
+function appliquer(o){
+  var g = o.grille || {};
+  E = neuf();
+  ["prelev","retention","variantes","signes","negatifs","techniques","foeto","groupes","etendue"].forEach(function(c){
+    if (g[c]) E[c] = g[c];
+  });
+  /* Une saisie normal/anormal (0.2.0) ne se convertit pas à l'aveugle : « normal »
+     sur un signe descriptif n'est pas « absent ». Ses signes restent à reprendre. */
+  if (PRESENCE){
+    var avant = Object.keys(E.signes).length;
+    Object.keys(E.signes).forEach(function(k){
+      if (E.signes[k] !== POS && E.signes[k] !== NEG) delete E.signes[k];
+    });
+    if (Object.keys(E.signes).length < avant)
+      flash("Saisie " + (o.schema_version || "ancienne") + " : signes normal/anormal non repris — à répondre présent/absent.");
+    E.negatifs = {};
+  }
+  Object.keys(E.foeto).forEach(function(id){
+    if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')) foetoAjouter(id);
+  });
+  E.kcl = !!g.kcl; E.stade = g.stade || null; E.cote = g.cote || null;
+  E.blocs = Array.isArray(g.blocs) ? g.blocs : [];
+  if (BLOCS_LUS) $("blocs").value = E.blocs.join(", ");
+  if (g.mesure){
+    E.mesure.def = g.mesure.def || null;
+    E.mesure.opt = g.mesure.opt || null;
+    champs().forEach(function(c){
+      E.mesure.v[c.id] = (g.mesure.v && g.mesure.v[c.id] != null) ? g.mesure.v[c.id] : null;
+    });
+  }
+  E.libre = g.libre || "";
+  $("sa").value = o.terme_sa != null ? o.terme_sa : "";
+  champs().forEach(function(c){ $("m_" + c.id).value = E.mesure.v[c.id] != null ? E.mesure.v[c.id] : ""; });
+  $("libre").value = E.libre;
+  majSa(); peindre();
+}
+function vider(){
+  E = neuf();
+  ["sa","libre","blocs"].forEach(function(id){ $(id).value = ""; });
+  champs().forEach(function(c){ $("m_" + c.id).value = ""; });
+  majSa(); peindre();
+}
+
+/* ── Enregistrement continu ───────────────────────────────────────────────── */
+var attente = null;
+function enregistrer(){
+  if (!dossier || !db) return;
+  clearTimeout(attente);
+  attente = setTimeout(function(){
+    putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
+  }, 350);
+}
+
+/* ── Saisie du dossier ────────────────────────────────────────────────────── */
+$("dossier").addEventListener("input", function(){
+  var p = this.selectionStart;
+  this.value = normDossier(this.value);
+  try { this.setSelectionRange(p, p); } catch(e){}
+  majDossier();
+});
+$("operateur").addEventListener("input", function(){ majDossier(); enregistrer(); });
+
+async function majDossier(){
+  var v = $("dossier").value, ok1 = dossierOk(v), op = $("operateur").value.trim() !== "";
+  var ok = ok1 && op, h = $("dossierHint");
+  h.className = "hint" + (v && !ok1 ? " bad" : ok1 ? " good" : "");
+  h.textContent = !v ? "Libre, mis en majuscules. Conditionne l'enregistrement."
+                : ok1 ? "Fichier de sortie : " + v + "_" + MODULE + ".json"
+                      : "Numéro incomplet — enregistrement et export bloqués";
+  var oh = $("operateurHint");
+  oh.className = "hint" + (op ? " good" : "");
+  oh.textContent = op ? "Consigné dans l'export." : "Requis pour déverrouiller la grille.";
+
+  verrouiller(ok);
+  $("btnExport").disabled = !ok;
+  $("outHint").textContent = ok
+    ? "L'export produira " + v + "_" + MODULE + ".json."
+    : ok1 ? "Saisir le lecteur pour activer l'export."
+          : "Saisir le numéro de dossier pour activer l'export.";
+
+  if (ok && v !== dossier){
+    dossier = v;
+    vider();
+    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    if (rec){ appliquer(rec); flash("Grille du " + dossier + " restituée."); }
+  } else if (!ok && dossier){
+    dossier = ""; vider();
+  }
+  peindre();
+}
+
+/* ── Export / relecture / purge ───────────────────────────────────────────── */
+function telecharger(blob, nom){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+}
+$("btnExport").onclick = function(){
+  if (!dossierOk(dossier)) return;
+  var out = collecter();
+  telecharger(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}),
+              dossier + "_" + MODULE + ".json");
+  var n = NEGATIFS.filter(function(x){ return E.negatifs[x.k]; }).length;
+  flash("Grille exportée." + (n < NEGATIFS.length ? " ⚠ " + (NEGATIFS.length - n) + " négatif(s) non vérifié(s)." : ""));
+};
+function relire(o){
+  if (o.module && o.module !== MODULE) throw new Error("module « " + o.module + " », attendu « " + MODULE + " »");
+  if (!o.grille) throw new Error("aucune clé « grille »");
+  if (o.dossier) $("dossier").value = normDossier(o.dossier);
+  if (o.operateur) $("operateur").value = o.operateur;
+  return majDossier().then(function(){
+    if (!dossier) throw new Error("numéro de dossier absent ou lecteur manquant");
+    appliquer(o); enregistrer();
+    return true;
+  });
+}
+$("btnImport").onclick = function(){ $("jsonPick").click(); };
+$("jsonPick").addEventListener("change", function(){
+  var f = this.files[0]; this.value = "";
+  if (!f) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    Promise.resolve().then(function(){ return relire(JSON.parse(String(fr.result))); })
+      .then(function(){ flash("Grille relue."); })
+      .catch(function(e){ flash("Relecture impossible : " + e.message); });
+  };
+  fr.readAsText(f);
+});
+$("btnWipe").onclick = async function(){
+  var seul = dossier
+    ? confirm("Effacer la grille du dossier " + dossier + " ?\n\n" +
+              "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
+    : false;
+  if (seul){
+    await tx("readwrite", function(s){ return s.delete(dossier); });
+    vider(); flash("Dossier " + dossier + " vidé.");
+    return;
+  }
+  if (!confirm("Effacer TOUTES les grilles de TOUS les dossiers sur cet appareil ?\n" +
+               "Vérifier que les exports JSON ont bien été récupérés.")) return;
+  await tx("readwrite", function(s){ return s.clear(); });
+  vider(); flash("Stockage vidé.");
+};
+
+/* ── Diagnostic ───────────────────────────────────────────────────────────── */
+function ligne(k, v, c){
+  var tr = document.createElement("tr");
+  tr.innerHTML = '<td>' + k + '</td><td class="' + (c||"") + '">' + esc(v) + '</td>';
+  $("diag").querySelector("tbody").appendChild(tr);
+}
+async function diagnostic(){
+  var pr = location.protocol;
+  ligne("Ouverture", pr + (pr === "file:" ? " — double-clic" : " — servi"), pr === "file:" ? "warn" : "ok");
+  ligne("IndexedDB", db ? "opérationnel" : "INDISPONIBLE", db ? "ok" : "ko");
+  var p = false;
+  if (navigator.storage && navigator.storage.persist){
+    try { p = await navigator.storage.persisted(); if (!p) p = await navigator.storage.persist(); } catch(e){}
+  }
+  ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
+  ligne("Axes de la grille", PRELEV.length + " prélèvement · " + RETENTION.length + " rétention · " +
+                             STADES.length + " stades · " + SIGNES.length + " signes · " +
+                             DIAGS.length + " associations · " +
+                             NEGATIFS.length + " négatifs · " + TECHNIQUES.length + " techniques");
+  ligne("Source", SOURCE + " — la fiche est la source, ce module en est la sortie");
+  ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
+  ligne("Navigateur", navigator.userAgent.slice(0, 80));
+}
+
+/* ── Démarrage ────────────────────────────────────────────────────────────── */
+(async function(){
+  $("ver").textContent = "v" + VERSION;
+  E = neuf();
+  resoudreFV(); batir(); majSa(); peindre();
+  try { db = await openDB(); }
+  catch(e){
+    var h = $("dossierHint");
+    h.className = "hint bad";
+    h.textContent = "IndexedDB refusé (" + e.message +
+                    ") — aucune saisie ne sera conservée. Servir le fichier localement.";
+    await diagnostic();
+    return;
+  }
+  await majDossier();
+  await diagnostic();
+  if (location.search.indexOf("selftest") >= 0) autotest();
+})();
+
+/* ── Auto-contrôle — ouvrir le fichier avec ?selftest=1 ───────────────────── */
+async function autotest(){
+  var ok = [], ko = [];
+  function chk(n, c){ (c ? ok : ko).push(n); }
+  function set(id, v){ var e = $(id); e.value = v; e.dispatchEvent(new Event("input", {bubbles:true})); }
+  function clic(act, k, v){
+    var s = '[data-act="' + act + '"][data-k="' + k + '"]' + (v ? '[data-v="' + v + '"]' : "");
+    var b = document.querySelector(s);
+    if (!b){ ko.push("bouton introuvable : " + s); return null; }
+    b.click(); return b;
+  }
+  function crTient(t){ return $("cr").textContent.indexOf(t) >= 0; }
+  var pause = function(){ return new Promise(function(r){ setTimeout(r, 30); }); };
+
+  /* Intégrité des tableaux — pure, sans DOM */
+  ["PRELEV","RETENTION","STADES","VARIANTES","SIGNES","DIAGS","NEGATIFS","TECHNIQUES"].forEach(function(nom){
+    var t = { PRELEV:PRELEV, RETENTION:RETENTION, STADES:STADES, VARIANTES:VARIANTES,
+              SIGNES:SIGNES, DIAGS:DIAGS, NEGATIFS:NEGATIFS, TECHNIQUES:TECHNIQUES }[nom];
+    chk("clés uniques dans " + nom, new Set(t.map(function(x){ return x.k; })).size === t.length);
+  });
+  chk("stades ordonnés",      STADES.every(function(s, i){ return !i || s.max > STADES[i-1].max; }));
+  chk("dernier stade ouvert", !STADES.length || STADES[STADES.length-1].max === 99);
+  chk("sans terme, pas de stade", stadeAttendu(null) === null);
+  chk("chaque association a son « ne pas conclure »",
+      DIAGS.every(function(d){ return d.stop && d.signes.length >= 2; }));
+  chk("chaque association ne cite que des signes déclarés",
+      DIAGS.every(function(d){ return d.signes.every(function(k){ return !!par(SIGNES, k); }); }));
+  chk("le signe pivot fait partie de l'association",
+      DIAGS.every(function(d){ return !d.cle || d.signes.indexOf(d.cle) >= 0; }));
+  chk("seuil d'association atteignable",
+      DIAGS.every(function(d){ return seuil(d) >= 1 && seuil(d) <= d.signes.length; }));
+  chk("chaque négatif a son défaut", NEGATIFS.every(function(n){ return n.ko && n.p; }));
+  chk("une borne de rétention au moins est bonne (ou pas de rétention)",
+      !RETENTION.length || RETENTION.some(function(r){ return r.q === "bon"; }));
+
+  /* Verrou */
+  chk("verrouillé au départ",  $("secSignes").classList.contains("off"));
+  clic("prelev", PRELEV[0].k);
+  chk("clic ignoré sous verrou", !E.prelev[PRELEV[0].k]);
+  set("dossier", "26p0123");
+  chk("lecteur manquant",      $("secSignes").classList.contains("off"));
+  set("operateur", "RM");
+  await pause();
+  chk("déverrouillé",         !$("secSignes").classList.contains("off"));
+  chk("dossier normalisé",     $("dossier").value === "26P0123");
+  chk("export activé",        !$("btnExport").disabled);
+
+  /* Chips */
+  clic("prelev", PRELEV[0].k);
+  chk("chip prélèvement posée", E.prelev[PRELEV[0].k] === true &&
+      document.querySelector('[data-act="prelev"][data-k="' + PRELEV[0].k + '"]').className.indexOf("on") >= 0);
+  clic("prelev", PRELEV[0].k);
+  chk("chip retirée au 2e clic", !E.prelev[PRELEV[0].k]);
+
+  /* Rétention — le fœticide prime sur toute borne */
+  if (!RETENTION.length) chk("sans rétention : section masquée, hors CR", $("secRetention").hidden && !crTient("RÉTENTION"));
+  else {
+  var bon = RETENTION.filter(function(r){ return r.q === "bon"; })[0];
+  /* En présence la rétention datable se choisit dans une liste ; sinon, un bouton. */
+  function retPose(k){
+    if (!PRESENCE){ clic("ret", k, "present"); return; }
+    var sel = $("retNiveau"); sel.value = sel.value === k ? "" : k;
+    sel.dispatchEvent(new Event("change", {bubbles:true}));
+  }
+  retPose(bon.k);
+  chk("borne posée",           $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  clic("kcl", "kcl");
+  chk("KCl invalide la datation", $("vRetention").className.indexOf("bad") >= 0);
+  clic("kcl", "kcl");
+  chk("KCl levé, borne revenue", $("vRetention").textContent.indexOf("Rétention " + bon.b) >= 0);
+  retPose(bon.k);
+  if (PRESENCE){
+    var dat = retDatables(), sel = $("retNiveau");
+    chk("rétention : liste ordonnée par délai", dat.every(function(r, i){ return !i || r.h >= dat[i-1].h; }) &&
+        sel.options[1].value === "absente" && sel.options[2].value === dat[0].k);
+    chk("rétention : non datables hors de la liste",
+        RETENTION.every(function(r){ return (r.q === "mauvais") === !sel.querySelector('option[value="' + r.k + '"]'); }));
+    sel.value = "absente"; sel.dispatchEvent(new Event("change", {bubbles:true}));
+    chk("rétention absente → datables répondus absents", dat.every(function(r){ return E.retention[r.k] === "absent"; }) &&
+        $("vRetention").textContent.indexOf("Aucun critère de rétention positif") >= 0);
+    sel.value = dat[dat.length-1].k; sel.dispatchEvent(new Event("change", {bubbles:true}));
+    chk("rétention : le plus avancé fait la borne", $("vRetention").textContent.indexOf(dat[dat.length-1].b) >= 0 ||
+        dat[dat.length-1].q === "mauvais");
+    sel.value = ""; sel.dispatchEvent(new Event("change", {bubbles:true}));
+    chk("rétention : liste remise à non regardée", Object.keys(E.retention).length === 0);
+  }
+  }
+
+  /* Côté — organe pair */
+  if (PAIR){
+    chk("bloc côté visible",   !$("coteBloc").hidden);
+    chk("côté manquant en réserve",
+        verdictPrelevement().res.indexOf("côté non déclaré — organe pair") >= 0);
+    clic("cote", "droit");
+    chk("côté posé",            E.cote === "droit" && crTient("Droit — 1/2"));
+    clic("cote", "droit");
+    chk("2e clic retire le côté", E.cote === null);
+    clic("cote", "deux");
+  } else {
+    chk("pas de bloc côté sur organe impair", $("coteBloc").hidden);
+  }
+
+  /* Paragraphes de signes (présence) : Non répond absent à tout le paragraphe,
+     jamais par-dessus un présent ; Oui déplie. */
+  if (PRESENCE && groupes().length){
+    var gA = groupes()[0], iA = 0, sA = signesDe(gA).filter(blocable);
+    chk("paragraphes : repliés au départ", $("grp_0").hidden && etatGroupe(gA) === null);
+    clic("grp", iA, "non");
+    chk("paragraphe non → signes absents", sA.every(function(x){ return E.signes[x.k] === NEG; }) &&
+        etatGroupe(gA) === "non" && crTient(gA + " : non."));
+    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA; })[0];
+    if (lie) chk("paragraphe non → négatif lié énoncé", etatNegatif(lie) === "ok");
+    clic("grp", iA, "non");
+    chk("second non → non regardé", sA.every(function(x){ return !E.signes[x.k]; }) && etatGroupe(gA) === null);
+    clic("grp", iA, "oui");
+    chk("paragraphe oui → déplié", !$("grp_0").hidden);
+    clic("les", sA[0].k, POS);
+    clic("grp", iA, "non");
+    chk("non refusé sur un signe présent", E.signes[sA[0].k] === POS && etatGroupe(gA) === "oui");
+    if (!sansEtendue(gA)){
+      clic("etendue", iA, "multifocale");
+      chk("étendue écrite au CR", crTient(gA + " (multifocale) · " + sA[0].l + " — PRÉSENT"));
+      clic("etendue", iA, "multifocale");
+    }
+    clic("les", sA[0].k, POS);
+    clic("grp", iA, "oui");
+    chk("paragraphe replié sans présent", etatGroupe(gA) === null && $("grp_0").hidden);
+    chk("CR : paragraphe non regardé nommé", crTient(gA.toLowerCase()));
+  }
+
+  /* Codes des signes : ils partent avec le présent, pas avec l'absent */
+  var sc = SIGNES.filter(function(x){ return codesDe(x).length && !x.auto; })[0];
+  chk("signes déduits : pas de bouton, un état lu", SIGNES.filter(function(x){ return x.auto; }).every(function(x){
+    return !document.querySelector('[data-act="les"][data-k="' + x.k + '"]') && !!document.querySelector('[data-auto="' + x.k + '"]'); }));
+  if (sc){
+    clic("les", sc.k, NEG);
+    chk("codes : un absent n'exporte rien", !codesPresents().length && !crTient("CODES DES SIGNES PRÉSENTS"));
+    clic("les", sc.k, POS);
+    chk("codes : le présent exporte ses codes", collecter().codes.some(function(c){ return c.k === sc.k; }) &&
+        crTient(sc.l + " [" + codesDe(sc).join(" ") + "]"));
+    clic("les", sc.k, POS);
+    chk("codes : lisibles (FOETO:/HP:)", SIGNES.every(function(x){
+      return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)); }));
+  }
+
+  /* Signes et associations */
+  var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
+  chk("rien à associer au départ", $("diags").textContent.indexOf("rien à associer") >= 0);
+  clic("les", l0.k, POS);
+  chk("signe posé " + POS,     E.signes[l0.k] === POS);
+  chk("association esquissée",  $("diags").textContent.indexOf(d0.l) >= 0);
+  clic("les", l0.k, POS);
+  chk("2e clic remet à non exploré", !E.signes[l0.k]);
+  clic("les", l0.k, NEG);
+  chk(NEG + " ne nourrit pas l'association", associations().length === 0);
+  clic("les", l0.k, NEG);
+
+  /* L'association complète se tient, et elle seule */
+  d0.signes.forEach(function(k){ clic("les", k, POS); });
+  var a0 = associations().filter(function(a){ return a.d.k === d0.k; })[0];
+  chk("association tenue",     a0 && a0.tenu);
+  chk("CR : association écrite", crTient(d0.l + " — association tenue"));
+  chk("CR : ne pas conclure",  crTient("ne pas conclure : " + d0.stop));
+  d0.signes.slice(1).forEach(function(k){ clic("les", k, POS); });
+  chk("retirer les signes défait l'association",
+      (associations().filter(function(a){ return a.d.k === d0.k; })[0] || {}).pris.length === 1);
+
+  /* Négatifs */
+  if (PRESENCE){
+    /* Ils se déduisent : un signe lié répondu absent énonce le négatif, présent le
+       met en défaut ; non répondu, il reste ouvert — jamais supposé. */
+    var nS = NEGATIFS.filter(function(n){ return n.signe; })[0];
+    chk("négatifs : pas de « tous vérifiés »", $("btnNegAll").hidden);
+    chk("négatif lié non répondu au départ", etatNegatif(nS) === null && crTient("? " + nS.l + " — non répondu"));
+    clic("les", nS.signe, NEG);
+    chk("signe absent → négatif énoncé", etatNegatif(nS) === "ok" && crTient("· " + nS.l));
+    clic("les", nS.signe, POS);
+    chk("signe présent → négatif en défaut", etatNegatif(nS) === "ko" && crTient("! " + nS.ko) &&
+        document.querySelector('[data-neg="' + nS.k + '"]').className.indexOf("no") >= 0);
+    clic("les", nS.signe, POS);
+    chk("chaque négatif est lié ou calculé", NEGATIFS.every(function(n){ return n.signe || n.auto; }));
+    chk("négatifs liés à des signes déclarés",
+        NEGATIFS.every(function(n){ return !n.signe || !!par(SIGNES, n.signe); }));
+  } else {
+  $("btnNegAll").click();
+  chk("tous les négatifs posés", Object.keys(E.negatifs).length === NEGATIFS.length);
+  clic("neg", NEGATIFS[0].k, "present");
+  chk("négatif retourné en rouge", E.negatifs[NEGATIFS[0].k] === "present" &&
+      document.querySelector('[data-act="neg"][data-k="' + NEGATIFS[0].k + '"][data-v="present"]').className.indexOf("no") >= 0);
+  chk("CR : défaut écrit",     crTient("! " + NEGATIFS[0].ko));
+  clic("neg", NEGATIFS[0].k, "absent");
+  }
+
+  /* Compte rendu */
+  clic("tech", TECHNIQUES[0].k);
+  set("libre", "Bloc non parvenu.");
+  chk("CR : en-tête dossier",  crTient("26P0123") && crTient("RM"));
+  chk("CR : signe " + POS,     crTient(l0.l + (PRESENCE ? " — PRÉSENT" : " — ANORMAL")));
+  chk("CR : non regardés dits", crTient(PRESENCE ? "Non regardés :" : "Non explorés :"));
+  chk("CR : technique demandée", crTient(TECHNIQUES[0].l));
+  chk("CR : remarque libre",   crTient("Bloc non parvenu."));
+  if (BLOCS_LUS){
+    set("blocs", "10, 3-5 x 4");
+    chk("blocs : plage et doublon lus", E.blocs.join() === "3,4,5,10");
+    chk("blocs : saisie non lue signalée", $("blocsHint").textContent.indexOf("Non lu : x") === 0);
+    chk("blocs : au CR",          crTient("Blocs lus : 3, 4, 5, 10."));
+    chk("blocs : plage absurde refusée", lireBlocs("1-500").ok.length === 0 && lireBlocs("0").ko[0] === "0");
+  } else chk("blocs : masqué sans BLOCS", $("blocsBloc").hidden && !crTient("Blocs lus"));
+  chk("CR : la micro ne nomme pas", crTient("La micro décrit ; la conclusion nomme."));
+
+  /* Ordre de lecture : cadres déclarés, grossissement, variantes dans leur cadre */
+  if (LECT){
+    var dansCadre = function(x){ return CADRES.some(function(c){ return c.g === x.g; }); };
+    chk("lecture : cadres uniques", new Set(groupes()).size === CADRES.length);
+    chk("lecture : chaque signe dans un cadre déclaré", SIGNES.every(dansCadre));
+    chk("lecture : aucun cadre vide", CADRES.every(function(c){ return signesDe(c.g).length; }));
+    chk("lecture : grossissement de chaque signe de lame déclaré", SIGNES.every(function(x){
+      return horsLame(x.g) ? !x.mag : magIdx(x) >= 0; }));
+    chk("lecture : chaque variante dans un cadre", VARIANTES.every(dansCadre));
+    chk("lecture : du faible au fort dans chaque cadre", groupes().every(function(g, i){
+      var m = Array.prototype.map.call(document.querySelectorAll('#grp_' + i + ' [data-act="les"][data-v="' + POS + '"]'),
+                                       function(b){ return magIdx(par(SIGNES, b.dataset.k)); });
+      return m.every(function(v, j){ return !j || v >= m[j - 1]; }); }));
+    chk("lecture : le hors-lame sort des signes", groupes().every(function(g, i){
+      return !!$(horsLame(g) ? "contexte" : "signes").querySelector("#grp_" + i); }));
+    chk("lecture : contexte avant la rétention", !groupes().some(horsLame) ||
+        ($("secContexte").compareDocumentPosition($("secRetention")) & 4) && !$("secContexte").hidden);
+    chk("lecture : associations en tête de synthèse", $("secAssoc").contains($("diags")) && $("secVariantes").hidden);
+    /* Le « Non » en bloc laisse non regardés les signes techniques et de polarité normale */
+    var hb = function(x){ return !blocable(x) && !x.auto; };
+    var gT = groupes().filter(function(g){ return signesDe(g).some(hb); })[0];
+    if (gT){
+      var iT = groupes().indexOf(gT), xT = signesDe(gT).filter(hb)[0];
+      /* le banc commun a pu laisser des signes posés dans ce cadre : on part d'un cadre vierge */
+      signesDe(gT).forEach(function(x){ if (!x.auto) delete E.signes[x.k]; }); delete E.groupes[gT]; peindre();
+      clic("grp", iT, "non");
+      chk("non en bloc : « " + xT.k + " » reste non regardé", !E.signes[xT.k] && etatGroupe(gT) === "non" &&
+          !$("grp_" + iT).contains(document.querySelector('[data-act="les"][data-k="' + xT.k + '"]')));
+      clic("les", xT.k, NEG);
+      chk("non en bloc : répondu seul, il passe au CR", crTient(xT.l.toLowerCase()) && etatGroupe(gT) === "non");
+      clic("les", xT.k, NEG);
+      clic("grp", iT, "non");
+    }
+    /* Un bloc:false présent (contenu normal) ne bloque pas le « Non » et reste écrit */
+    var xF = SIGNES.filter(function(x){ return x.bloc === false && !x.auto; })[0];
+    if (xF){
+      var gF = xF.g, iF = groupes().indexOf(gF);
+      signesDe(gF).forEach(function(x){ if (!x.auto) delete E.signes[x.k]; }); delete E.groupes[gF]; peindre();
+      clic("les", xF.k, POS);
+      clic("grp", iF, "non");
+      chk("bloc:false présent : le « Non » passe, le signe reste au CR", etatGroupe(gF) === "non" &&
+          E.signes[xF.k] === POS && crTient(gF + " : non") && crTient(xF.l + " — PRÉSENT"));
+      clic("grp", iF, "non");
+      clic("les", xF.k, POS);
+    }
+    /* Rédaction proposée : la phrase du cadre « Non », celle du signe présent, rien sinon */
+    if (REDIGE){
+      var cN = CADRES.filter(function(c){ return c.crNon; })[0];
+      if (cN){
+        var iN = groupes().indexOf(cN.g);
+        signesDe(cN.g).forEach(function(x){ delete E.signes[x.k]; }); delete E.groupes[cN.g]; peindre();
+        chk("rédaction : cadre non répondu, rien d'écrit", !crTient(phrase(cN.crNon)));
+        clic("grp", iN, "non");
+        chk("rédaction : phrase du cadre « Non »", crTient("RÉDACTION PROPOSÉE") && crTient(phrase(cN.crNon)));
+        clic("grp", iN, "non");
+      }
+      var sR = SIGNES.filter(function(x){ return x.cr; })[0];
+      if (sR){
+        if (E.signes[sR.k]) clic("les", sR.k, E.signes[sR.k]);
+        clic("les", sR.k, POS);
+        chk("rédaction : phrase du signe présent", crTient(phrase(sR.cr)));
+        clic("les", sR.k, POS);
+      }
+    }
+    var v0 = VARIANTES[0];
+    clic("var", v0.k);
+    chk("variante : parenthèse dans son cadre, pas de rubrique",
+        crTient(v0.g + " (variante normale : " + v0.l.toLowerCase() + ")") && !crTient("VARIANTES NORMALES"));
+    clic("var", v0.k);
+  }
+
+  /* Contrôles propres à l'organe */
+  await testsOrgane(chk, clic, set, crTient, pause);
+
+  /* Termes FOETO — seulement si la fiche en rattache (en fusion, l'organe les teste) */
+  if (FOETO.sections.length && !FUSION){
+    var f0 = FOETO.sections[0].termes[0].id;
+    chk("FOETO : sections rendues", $("foeto").querySelectorAll(".sousTitre").length === FOETO.sections.length);
+    clic("foeto", f0);
+    chk("FOETO : terme coché",      E.foeto[f0] === true && $("tFoeto").textContent.indexOf("1/") === 0);
+    chk("FOETO : CR le porte",      crTient("[" + f0 + "]"));
+    chk("FOETO : exporté",          collecter().grille.foeto[f0] === true);
+    set("rqFoeto", foetoLabel(f0).slice(0, 4));
+    chk("FOETO : recherche",        $("sgFoeto").querySelectorAll("[data-pick]").length >= 1);
+    $("sgFoeto").querySelector("[data-pick]").click();
+    chk("FOETO : recherche vidée",  $("rqFoeto").value === "" && !$("sgFoeto").classList.contains("on"));
+    chk("FOETO : id lisible",       /^FOETO:/.test(f0));
+    clic("foeto", f0);
+    Object.keys(E.foeto).forEach(function(id){ delete E.foeto[id]; }); peindre();
+  }
+
+  /* Enveloppe, persistance, relecture — l'organe a pu reposer ses propres signes */
+  if (E.signes[l0.k] !== POS){
+    if (E.signes[l0.k]) clic("les", l0.k, E.signes[l0.k]);
+    clic("les", l0.k, POS);
+  }
+  var snap = collecter();
+  chk("enveloppe conforme",    snap.schema_version === SCHEMA && snap.module === MODULE &&
+                               snap.module_version === VERSION && snap.dossier === "26P0123" &&
+                               snap.organe === ORGANE && !!snap.exported_at);
+  chk("version en entête",     $("ver").textContent === "v" + VERSION);
+  chk("CR dans le JSON",       snap.compte_rendu.indexOf(TITRE_CR + " — grille de lecture") === 0);
+
+  await putSaisie(snap);
+  vider();
+  chk("vider efface la grille", Object.keys(E.signes).length === 0);
+  var relu = await getSaisie("26P0123");
+  appliquer(relu);
+  chk("IndexedDB restitue",    E.signes[l0.k] === POS &&
+                               $("sa").value === (snap.terme_sa == null ? "" : String(snap.terme_sa)));
+  if (BLOCS_LUS) chk("blocs : dans l'export et relus", snap.grille.blocs.join() === "3,4,5,10" &&
+                               E.blocs.join() === "3,4,5,10" && $("blocs").value === "3, 4, 5, 10");
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+  chk("banc remis à zéro",     Object.keys(E.signes).length === 0 && $("secSignes").classList.contains("off"));
+  await relire(snap);
+  chk("relecture d'un JSON",   E.signes[l0.k] === POS && dossier === "26P0123");
+  var refus = false;
+  try { await relire({module:"autopsie", grille:{}}); } catch(e){ refus = /module/.test(e.message); }
+  chk("JSON d'un autre module refusé", refus);
+
+  await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  document.body.insertAdjacentHTML("afterbegin",
+    '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +
+    'margin:0;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap">' +
+    (ko.length ? "ÉCHEC (" + ko.length + ") :\n  " + ko.join("\n  ") + "\n\n" : "") +
+    "OK : " + ok.length + "/" + (ok.length + ko.length) + "</pre>");
+}
+</script>
+</body>
+</html>
