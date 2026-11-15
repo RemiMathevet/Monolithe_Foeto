@@ -412,7 +412,7 @@ var SIGNES = [
   { k:"surrenaleFerACheval", fv:"FOETO:PF.HEM-MET-007", g:"Contexte hors lame — macro, latéralité, autres organes",
     l:"Surrénale en fer à cheval",
     meta:"lu hors rate — le meilleur témoin indirect de l'asplénie, et lui est sur une lame" },
-  { k:"atresieAnale", fv:"FOETO:PF.HEM-MAL-009", g:"Contexte hors lame — macro, latéralité, autres organes",
+  { k:"atresieAnale", fv:"FOETO:PF.DIG-MAL-089", g:"Contexte hors lame — macro, latéralité, autres organes",
     meta:"lu hors rate" },
   { k:"anomaliesViscerales", fv:"FOETO:PF.HEM-MAL-008", g:"Contexte hors lame — macro, latéralité, autres organes",
     l:"Anomalies viscérales associées (foie médian, malrotation)",

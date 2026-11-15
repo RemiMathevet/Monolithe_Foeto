@@ -314,17 +314,21 @@ const Engine = (function() {
         return scored.slice(0, topN);
     }
 
+    // Mots dans n'importe quel ordre, sans accents, sur le libellé fr et en, les synonymes fr et l'id
+    // (« atresie digestive » trouve HP:0002589 par son synonyme) ; libellé touché en entier d'abord.
+    const plat = s => (s || '').toLowerCase().replace(/œ/g, 'oe').replace(/æ/g, 'ae').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     function searchHPO(query, excludeSet, ctxFilter, catFilter) {
         if (!query || query.length < 2) return [];
-        const q = query.toLowerCase();
+        const q = plat(query).trim(), mots = q.split(/\s+/);
         return Object.entries(_hpo)
             .filter(([id, t]) => {
                 if (excludeSet && excludeSet.has(id)) return false;
                 if (ctxFilter && t.context !== ctxFilter && t.context !== 'both') return false;
                 if (catFilter && t.category !== catFilter) return false;
-                const n = (t.name_fr || t.name || '').toLowerCase();
-                return n.includes(q) || id.toLowerCase().includes(q);
+                const n = t._plat || (t._plat = plat([t.name_fr, t.name, t.aliases, id].join(' | ')));
+                return mots.every(m => n.includes(m));
             })
+            .sort(([, a], [, b]) => !plat(a.name_fr || a.name).includes(q) - !plat(b.name_fr || b.name).includes(q))
             .slice(0, 12)
             .map(([id, t]) => ({ id, name: t.name_fr || t.name || id, context: t.context || 'both', category: t.category, type: t.type || 'hpo' }));
     }
