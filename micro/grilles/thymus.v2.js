@@ -52,11 +52,17 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 17 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 7 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 1 fenêtre(s) de terme, 1 code(s) créé(s), 3 branché(s) sur un
+   code existant ; 2 proposition(s) rejetée(s) (le signe garde son comportement). */
+/* (même version) — reprise sur consignes de Rémi : un signe descriptif porte un terme descriptif,
+   la gradation ou le diagnostic se déduisent et leur code passe sur l'association ; un code NOR décrit
+   le normal (codes mal typés renumérotés) ; pancréas absent et réduit séparés. */
 var ORGANE  = "thymus";
 var TITRE   = "thymus";
 var SOURCE  = "fiche_thymus.md";
 var MODULE  = "grille_thymus";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -348,7 +354,7 @@ var SIGNES = [
   /* — Contexte hors lame — macro, autres organes, clinique — */
   { k:"poidsBas", fv:"FOETO:PF.HEM-MAL-036", g:"Contexte hors lame — macro, autres organes, clinique", l:"Poids abaissé pour le terme" },
   { k:"poidsEleve", fv:"FOETO:PF.HEM-MAL-028", g:"Contexte hors lame — macro, autres organes, clinique" },
-  { k:"masse2pc", fv:"FOETO:PF.HEM-NOR-124", fiche:"[keeling, ch. 27]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Thymus représentant plus de 2 % de la masse corporelle" },
+  { k:"masse2pc", fv:"FOETO:PF.HEM-MAL-064", fiche:"[keeling, ch. 27]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Thymus représentant plus de 2 % de la masse corporelle" },
   { k:"thymusAbsent", fv:"FOETO:PF.HEM-MAL-038", g:"Contexte hors lame — macro, autres organes, clinique",
     meta:"constat macro — « Son absence complète est rare même dans les cardiopathies cono-truncales » : chercher le reliquat histologique (médiastin antérieur ET cou)" },
   { k:"petechies", fv:"FOETO:PF.HEM-MAL-035", g:"Contexte hors lame — macro, autres organes, clinique",
@@ -370,11 +376,11 @@ var SIGNES = [
   { k:"tubesRenauxDil", fv:"FOETO:PF.HEM-MAL-059", fiche:"[soffoet, ch. 16]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Tubes rénaux dilatés", meta:"lu hors thymus" },
   { k:"placentaPetit", fv:"FOETO:PF.HEM-MAL-060", fiche:"[keeling, ch. 15]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Petit placenta", meta:"lu hors thymus" },
   /* — Repères manquants ou reliquat seul — */
-  { k:"medullaireAbsente", fv:"FOETO:PF.HEM-MAL-061", fiche:"[keeling, ch. 15]", g:"Repères manquants ou reliquat seul", mag:"faible", l:"Pas de médullaire sur la coupe",
+  { k:"medullaireAbsente", seul:true, fv:"FOETO:PF.HEM-MAL-061", fiche:"[keeling, ch. 15]", g:"Repères manquants ou reliquat seul", mag:"faible", l:"Pas de médullaire sur la coupe",
     meta:"quatre des cinq critères de gradation deviennent indéterminables" },
   { k:"reliquat", fv:"FOETO:PF.HEM-MAL-037", g:"Repères manquants ou reliquat seul", mag:"faible",
     meta:"le mot exact du geste diagnostique en cardiopathie cono-troncale — jamais l'aplasie sur une macro négative" },
-  { k:"hassallAbsents", seul:true, fiche:"[ernst, ch. 24]", g:"Repères manquants ou reliquat seul", mag:"moyen", l:"Aucun corpuscule de Hassall sur la coupe" },
+  { k:"hassallAbsents", fv:"FOETO:PF.HEM-MAL-063", seul:true, fiche:"[ernst, ch. 24]", g:"Repères manquants ou reliquat seul", mag:"moyen", l:"Aucun corpuscule de Hassall sur la coupe" },
   /* — Architecture lobulaire (colonne 1 de la Table 15.8) — */
   { k:"lobulesSepares", terme:[24, null], fv:"FOETO:PF.HEM-NOR-098", g:"Architecture lobulaire", mag:"faible", l:"Lobules séparés, septa élargis" },
   { k:"interstitiumProem", fv:"FOETO:PF.HEM-MAL-030", g:"Architecture lobulaire", mag:"faible" },
@@ -392,7 +398,7 @@ var SIGNES = [
     meta:"en foyers : la Cellularité du grade 3 ; l'étendue se gradue en Maturation" },
   { k:"cielEtoile", fv:"FOETO:PF.HEM-NOR-096", g:"Cellularité corticale", mag:"moyen",
     meta:"macrophages à corps tingibles démasqués — physiologiques en eux-mêmes" },
-  { k:"lymphophagoMarquee", fiche:"[keeling, ch. 15]", g:"Cellularité corticale", mag:"moyen", l:"Lymphophagocytose corticale marquée" },
+  { k:"lymphophagoMarquee", fv:"FOETO:PF.HEM-MAL-031", fiche:"[keeling, ch. 15]", g:"Cellularité corticale", mag:"moyen", l:"Lymphophagocytose corticale marquée" },
   { k:"lymphophagoFocale", fv:"FOETO:PF.HEM-MAL-031", g:"Cellularité corticale", mag:"fort", l:"Lymphophagocytose corticale focale",
     meta:"présente même focale : le seul critère qui sépare le grade 0 du grade 1" },
   { k:"epithDemasquees", fv:"FOETO:PF.HEM-MAL-022", g:"Cellularité corticale", mag:"fort",
@@ -406,7 +412,7 @@ var SIGNES = [
   { k:"poussiereBaso", fv:"FOETO:PF.HEM-NOR-117", fiche:"[ernst, ch. 37]", g:"Hémorragie et artefacts", mag:"moyen", l:"Poussière basophile péri-viscérale",
     meta:"Gram tissulaire avant de conclure" },
   /* — Kyste et tissu parathyroïdien (le nodule ectopique se lit sur un autre prélèvement : hors lame) — */
-  { k:"kysteThymique", fiche:"[keeling, ch. 27]", g:"Kyste et tissu parathyroïdien", mag:"faible", l:"Kyste bordé dans un tissu thymique" },
+  { k:"kysteThymique", fv:"FOETO:PF.HEM-MAL-045", fiche:"[keeling, ch. 27]", g:"Kyste et tissu parathyroïdien", mag:"faible", l:"Kyste bordé dans un tissu thymique" },
   { k:"parathyroide", fv:"FOETO:PF.HEM-NOR-122", g:"Kyste et tissu parathyroïdien", mag:"moyen",
     meta:"origine commune, 3e poche pharyngée" },
   /* — Déplétion non liée au stress — */

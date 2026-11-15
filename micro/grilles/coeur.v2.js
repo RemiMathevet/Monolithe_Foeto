@@ -57,11 +57,14 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 18 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 21 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 4 fenêtre(s) de terme, 5 code(s) créé(s), 2 branché(s) sur un
+   code existant ; 7 proposition(s) rejetée(s) (le signe garde son comportement). */
 var ORGANE  = "coeur";
 var TITRE   = "cœur, péricarde et artères coronaires";
 var SOURCE  = "fiche_coeur.md";
 var MODULE  = "grille_coeur";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -349,13 +352,13 @@ var SIGNES = [
   { k:"caviteNonIdentifiable", fiche:"[soffoet, ch. 5]", g:"Repérage de la coupe et des cavités", mag:"faible", l:"Cavité d'origine non identifiable sur la coupe" },
   { k:"coupeOG", fv:"FOETO:PF.COE-MAL-188", fiche:"[ashworth, ch. 1]", g:"Repérage de la coupe et des cavités", mag:"faible", l:"Coupe passant par l'oreillette gauche",
     meta:"signe de LOCALISATION, coché dès que la mesure ou l'épaississement porte sur l'OG" },
-  { k:"cavitesEffondrees", fiche:"[keeling, ch. 20]", g:"Repérage de la coupe et des cavités", mag:"faible", l:"Cavités effondrées ou déformées par la fixation" },
+  { k:"cavitesEffondrees", fv:"FOETO:PF.COE-MAL-201", fiche:"[keeling, ch. 20]", g:"Repérage de la coupe et des cavités", mag:"faible", l:"Cavités effondrées ou déformées par la fixation" },
   { k:"hemorragieIntraVentriculaire", fiche:"[corpus CR]", g:"Repérage de la coupe et des cavités", mag:"faible", l:"Hémorragie intra-ventriculaire" },
   { k:"coupeOblique", fv:"FOETO:PF.COE-NOR-100", g:"Repérage de la coupe et des cavités", mag:"moyen", l:"Coupe oblique ou tangentielle du myocarde",
     meta:"« oblique or tangential sectioning » ; les fibres sont « organised as geodesic curves around toroid nested layers », une coupe hors axe fabrique un faux disarray" },
   /* — Paroi, compaction et piliers — */
-  { k:"trabeculesEpais", fv:"FOETO:PF.COE-RET-030", g:"Paroi, compaction et piliers", mag:"faible", l:"Couche trabéculée épaisse au regard de la couche compacte" },
-  { k:"compacteMince", fv:"FOETO:PF.COE-MAL-189", fiche:"[keeling, ch. 20]", g:"Paroi, compaction et piliers", mag:"faible", l:"Couche compacte amincie" },
+  { k:"trabeculesEpais", seul:true, fv:"FOETO:PF.COE-RET-030", g:"Paroi, compaction et piliers", mag:"faible", l:"Couche trabéculée épaisse au regard de la couche compacte" },
+  { k:"compacteMince", seul:true, fv:"FOETO:PF.COE-MAL-189", fiche:"[keeling, ch. 20]", g:"Paroi, compaction et piliers", mag:"faible", l:"Couche compacte amincie" },
   { k:"cavitePresqueEpicarde", fv:"FOETO:PF.COE-MAL-190", fiche:"[keeling, ch. 20]", g:"Paroi, compaction et piliers", mag:"faible", l:"Cavité ventriculaire s'étendant presque jusqu'à l'épicarde",
     meta:"« The left ventricular cavity extends almost to the epicardial surface among a myriad of thin muscular trabeculations »" },
   { k:"recessusEndocardes", fv:"FOETO:PF.COE-MAL-167", g:"Paroi, compaction et piliers", mag:"faible", l:"Récessus intertrabéculaires profonds, tapissés d'endocarde" },
@@ -369,12 +372,12 @@ var SIGNES = [
     meta:"« dense laminar fibroelastic tissue that usually does not show increased vascularity or inflammatory cell infiltration »" },
   { k:"endoVG", fv:"FOETO:PF.COE-MAL-191", fiche:"[ashworth, ch. 7]", g:"Endocarde et valves", mag:"faible", l:"Épaississement endocardique portant sur le ventricule gauche",
     meta:"« The right ventricle usually does not show significant endocardial fibrosis. »" },
-  { k:"endoPiliers", fiche:"[ashworth, ch. 7]", g:"Endocarde et valves", mag:"faible", l:"Épaississement endocardique s'étendant aux piliers et cordages" },
+  { k:"endoPiliers", fv:"FOETO:PF.COE-MAL-202", fiche:"[ashworth, ch. 7]", g:"Endocarde et valves", mag:"faible", l:"Épaississement endocardique s'étendant aux piliers et cordages" },
   { k:"endoBiventriculaire", fv:"FOETO:PF.COE-MAL-192", fiche:"[keeling, ch. 20]", g:"Endocarde et valves", mag:"faible", l:"Épaississement endocardique des deux ventricules",
     meta:"répartition inhabituelle : le VD n'est pas le siège attendu, vérifier l'orientation du bloc" },
   { k:"endoFocalPeriLesionnel", fiche:"[keeling, ch. 20]", g:"Endocarde et valves", mag:"faible", l:"Épaississement endocardique focal au contact d'une lésion myocardique" },
   { k:"valveEpaissie", fiche:"[ashworth, ch. 1]", g:"Endocarde et valves", mag:"faible", l:"Valve globalement épaissie" },
-  { k:"endoSansVascul", fiche:"[ashworth, ch. 7]", g:"Endocarde et valves", mag:"moyen", l:"Épaississement endocardique sans néovascularisation ni infiltrat",
+  { k:"endoSansVascul", fv:"FOETO:PF.COE-INF-023", fiche:"[ashworth, ch. 7]", g:"Endocarde et valves", mag:"moyen", l:"Épaississement endocardique sans néovascularisation ni infiltrat",
     meta:"le corollaire du critère précédent : la pauvreté cellulaire fait partie de la description" },
   { k:"endoCellulaire", fv:"FOETO:PF.COE-MAL-193", seul:true, fiche:"[ashworth, ch. 1]", g:"Endocarde et valves", mag:"moyen", l:"Endocarde épaissi et riche en cellules",
     meta:"« The younger the tissue, the more likely it is to be cellular. » — à confronter au terme avant d'en faire une lésion" },
@@ -411,7 +414,7 @@ var SIGNES = [
   { k:"nodulesMultiples", fv:"FOETO:PF.COE-MAL-168", g:"Masses et nodules", mag:"faible", l:"Nodules multiples" },
   { k:"noduleUnique", fv:"FOETO:PF.COE-MAL-195", fiche:"[keeling, ch. 20]", g:"Masses et nodules", mag:"faible", l:"Nodule unique" },
   { k:"siegeSIV", fv:"FOETO:PF.COE-MAL-196", fiche:"[keeling, ch. 20]", g:"Masses et nodules", mag:"faible", l:"Masse siégeant dans le septum interventriculaire" },
-  { k:"masseIntrapericardique", fiche:"[keeling, ch. 20]", g:"Masses et nodules", mag:"faible", l:"Masse intrapéricardique refoulant le cœur" },
+  { k:"masseIntrapericardique", fv:"FOETO:PF.COE-MAL-203", fiche:"[keeling, ch. 20]", g:"Masses et nodules", mag:"faible", l:"Masse intrapéricardique refoulant le cœur" },
   { k:"calcificationTumorale", fv:"FOETO:PF.COE-VAS-014", fiche:"[keeling, ch. 20]", g:"Masses et nodules", mag:"moyen", l:"Calcification au sein de la masse",
     meta:"« Calcification is common. »" },
   { k:"collageneFusiforme", fv:"FOETO:PF.COE-VAS-008", g:"Masses et nodules", mag:"moyen", l:"Prolifération de cellules fusiformes uniformes dans un collagène abondant",
@@ -439,11 +442,11 @@ var SIGNES = [
     meta:"« necrosis of myocardium with dystrophic calcification » ; « Infant myocardium in particular has a propensity to calcify and may do so within a day of the insult, sometimes massively. »" },
   { k:"necroseCalcifiee", fv:"FOETO:PF.COE-CLA-007", g:"Fibrose et calcification", mag:"moyen",
     meta:"perte de myocytes avec calcification dystrophique, au tissu de conduction et à la jonction AV [ashworth, ch. 12]" },
-  { k:"calcificationPilier", fiche:"[corpus CR]", g:"Fibrose et calcification", mag:"moyen", l:"Calcification ponctiforme focale d'un pilier mitral",
+  { k:"calcificationPilier", fv:"FOETO:PF.COE-MAL-014", fiche:"[corpus CR]", g:"Fibrose et calcification", mag:"moyen", l:"Calcification ponctiforme focale d'un pilier mitral",
     meta:"le CR du corpus l'écrit avec son doute : “présence d'une calcification ponctiforme focale d'un pilier mitral (artéfact ?)”" },
   /* — Nécrose et souffrance ischémique — */
   { k:"necroseSousEndocardique", fv:"FOETO:PF.COE-DYS-019", g:"Nécrose et souffrance ischémique", mag:"faible", l:"Nécrose de topographie sous-endocardique" },
-  { k:"necroseRegionale", fiche:"[ashworth, ch. 6]", g:"Nécrose et souffrance ischémique", mag:"faible", l:"Nécrose myocardique limitée à un territoire" },
+  { k:"necroseRegionale", fv:"FOETO:PF.COE-VAS-002", fiche:"[ashworth, ch. 6]", g:"Nécrose et souffrance ischémique", mag:"faible", l:"Nécrose myocardique limitée à un territoire" },
   { k:"necrosePanDiffuse", fiche:"[corpus CR]", g:"Nécrose et souffrance ischémique", mag:"faible", l:"Nécrose myocardique diffuse, sans systématisation",
     meta:"“discrète nécrose pan myocardique post-mortem” — à lire comme un artefact avant toute autre chose" },
   { k:"cytoarchitecturePreservee", fv:"FOETO:PF.COE-NOR-113", bloc:false, fiche:"[ashworth, ch. 12]", g:"Nécrose et souffrance ischémique", mag:"faible", l:"Cytoarchitecture d'ensemble conservée malgré l'altération",
@@ -470,10 +473,10 @@ var SIGNES = [
   { k:"myocytesEtires", fv:"FOETO:PF.COE-DYS-017", g:"Myocytes — architecture et taille", mag:"moyen", l:"Myocytes étirés, amincis" },
   { k:"noyauxHyperchromatiques", fv:"FOETO:PF.COE-MAL-161", g:"Myocytes — architecture et taille", mag:"fort", l:"Noyaux myocytaires volumineux, hyperchromatiques et irréguliers",
     meta:"« myocytes with enlarged, hyperchromatic and irregular nuclei » ; le CR du corpus écrit “certains cardiomyocytes possèdent un noyau hyperchromatique et trop volumineux”" },
-  { k:"mitosesNombreuses", fv:"FOETO:PF.COE-MAL-160", g:"Myocytes — architecture et taille", mag:"fort",
+  { k:"mitosesNombreuses", seul:true, fv:"FOETO:PF.COE-MAL-160", g:"Myocytes — architecture et taille", mag:"fort",
     meta:"hors association : le critère « numerous mitotic figures in myocytes » d'une forme infantile de myocarde dilaté est inutilisable in utero, les mitoses étant normales jusqu'à la naissance (fiche § 9.9)" },
   /* — Vacuoles et surcharge — */
-  { k:"vacuolisationEtendue", fv:"FOETO:PF.COE-MET-040", g:"Vacuoles et surcharge", mag:"moyen", l:"Vacuolisation myocytaire d'étendue anormale",
+  { k:"vacuolisationEtendue", seul:true, fv:"FOETO:PF.COE-MET-040", g:"Vacuoles et surcharge", mag:"moyen", l:"Vacuolisation myocytaire d'étendue anormale",
     meta:"« If more extensive vacuolar change is seen, however, it is likely to represent pathologic change »" },
   { k:"vacuolesSousEndocardiques", fv:"FOETO:PF.COE-CLA-010", g:"Vacuoles et surcharge", mag:"moyen", l:"Vacuolisation prédominant en sous-endocardique",
     meta:"siège sous-endocardique : « particularly in the subendocardial location » ; « Care should be taken to exclude … ischemia, cardiomyopathy, myocarditis, or a storage disorder. »" },
@@ -516,7 +519,7 @@ var SIGNES = [
   { k:"calcificationNodale", fv:"FOETO:PF.COE-VAS-015", fiche:"[ashworth, ch. 12]", g:"Tissu de conduction", mag:"moyen", l:"Calcification au sein du tissu de conduction" },
   { k:"infiltratPauvre", fv:"FOETO:PF.COE-INF-022", fiche:"[ashworth, ch. 12]", g:"Tissu de conduction", mag:"moyen", l:"Lésion de conduction avec très peu de cellules inflammatoires",
     meta:"« it is striking how frequently there is minimal inflammatory cell infiltration » et « remarkably little inflammatory cell infiltration »" },
-  { k:"perteMyocytesNodaux", fiche:"[ashworth, ch. 12]", g:"Tissu de conduction", mag:"fort", l:"Perte des myocytes du tissu nodal" },
+  { k:"perteMyocytesNodaux", fv:"FOETO:PF.COE-MAL-204", fiche:"[ashworth, ch. 12]", g:"Tissu de conduction", mag:"fort", l:"Perte des myocytes du tissu nodal" },
   { k:"depotsCalciques", fv:"FOETO:PF.COE-MET-037", g:"Tissu de conduction", mag:"technique",
     meta:"« There is deposition of calcium (black) beneath the aortic valve, and focally beneath the endocardium of the right ventricle (von Kossa stain). »" }
 ];

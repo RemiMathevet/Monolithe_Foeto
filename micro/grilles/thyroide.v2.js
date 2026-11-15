@@ -64,11 +64,17 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 11 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 13 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 1 fenêtre(s) de terme, 2 code(s) créé(s), 1 branché(s) sur un
+   code existant ; 3 proposition(s) rejetée(s) (le signe garde son comportement). */
+/* (même version) — reprise sur consignes de Rémi : un signe descriptif porte un terme descriptif,
+   la gradation ou le diagnostic se déduisent et leur code passe sur l'association ; un code NOR décrit
+   le normal (codes mal typés renumérotés) ; pancréas absent et réduit séparés. */
 var ORGANE  = "thyroide";
 var TITRE   = "thyroïde et parathyroïdes";
 var SOURCE  = "fiche_thyroide.md";
 var MODULE  = "grille_thyroide";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -454,7 +460,7 @@ var SIGNES = [
     l:"Thymus absent ou hypoplasique" },
   { k:"malfCardiaqueConotroncale", fv:"FOETO:PF.END-MAL-114", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
     l:"Malformation cardiaque cono-troncale", meta:"hors de cette lame — le cœur d'abord" },
-  { k:"rciuOligo", fiche:"[soffoet, ch. 13]", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
+  { k:"rciuOligo", fv:"FOETO:PF.END-MAL-069", fiche:"[soffoet, ch. 13]", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
     l:"RCIU sévère et précoce avec oligo-anamnios", meta:"hors lame" },
   { k:"nidfPlacenta", fv:"FOETO:PF.END-MET-005", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
     l:"Placenta trapu, NIDF diffuse, dépôts fibrinoïdes massifs", meta:"lame placentaire" },
@@ -473,7 +479,7 @@ var SIGNES = [
     l:"Glande très atrophique" },
   { k:"lobeAbsent", fv:"FOETO:PF.END-MAL-118", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Un lobe absent, l'autre en place" },
-  { k:"lobeAsymetrique", fiche:"[keeling, ch. 26]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
+  { k:"lobeAsymetrique", fv:"FOETO:PF.END-MAL-165", fiche:"[keeling, ch. 26]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Asymétrie de taille ou de stade entre les deux lobes" },
   { k:"coupeTangentielle", fv:"FOETO:PF.END-MAL-156", fiche:"[ernst, ch. 21]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Coupe tangentielle ou périphérique du lobe" },
@@ -490,12 +496,12 @@ var SIGNES = [
   /* — Masses et tissus non thyroïdiens — masse, et le muscle de bordure — */
   { k:"masse", fiche:"[keeling, ch. 26]", g:"Masses et tissus non thyroïdiens", mag:"faible",
     l:"Masse ou nodule expansif" },
-  { k:"muscleStrieIntrathy", fiche:"[ernst, ch. 21]", g:"Masses et tissus non thyroïdiens", mag:"faible",
+  { k:"muscleStrieIntrathy", fv:"FOETO:PF.END-MAL-166", fiche:"[ernst, ch. 21]", g:"Masses et tissus non thyroïdiens", mag:"faible",
     l:"Muscle strié dans la thyroïde ou en bordure de coupe",
     meta:"lobe pyramidal normal, ou « a possible association with myopathies » — non tranché" },
   { k:"contingentsMultiples", g:"Masses et tissus non thyroïdiens", mag:"moyen",
     l:"Contingents tissulaires multiples dans la masse" },
-  { k:"surchargePAS", fv:"FOETO:PF.END-INF-013", fiche:"[soffoet, ch. 20]", g:"Masses et tissus non thyroïdiens", mag:"technique",
+  { k:"surchargePAS", fv:"FOETO:PF.END-MET-013", fiche:"[soffoet, ch. 20]", g:"Masses et tissus non thyroïdiens", mag:"technique",
     l:"Inclusions PAS+ résistantes à l'amylase dans les fibres striées" },
 
   /* — Parathyroïdes — */
@@ -516,7 +522,7 @@ var SIGNES = [
     l:"Nodule cervical non rattachable : parathyroïde, ganglion ou thyroïde" },
 
   /* — Nappe épithéliale et déplétion colloïdale — autolyse et son témoin, le piège central — */
-  { k:"nappePleine", fv:"FOETO:PF.END-MAL-159", fiche:"[ernst, ch. 21]", g:"Nappe épithéliale et déplétion colloïdale", mag:"faible",
+  { k:"nappePleine", terme:[14, null], fv:"FOETO:PF.END-MAL-159", fiche:"[ernst, ch. 21]", g:"Nappe épithéliale et déplétion colloïdale", mag:"faible",
     l:"Follicules non identifiables, nappe épithéliale quasi pleine",
     meta:"mime à la fois l'immaturité et la déplétion colloïdale" },
   { k:"contrasteTemoin", fv:"FOETO:PF.END-MAL-160", fiche:"[ernst, ch. 22]", g:"Nappe épithéliale et déplétion colloïdale", mag:"moyen",

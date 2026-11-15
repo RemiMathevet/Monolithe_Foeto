@@ -33,11 +33,17 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 0 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 51 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 1.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 2 fenêtre(s) de terme, 2 code(s) créé(s), 9 branché(s) sur un
+   code existant ; 2 proposition(s) rejetée(s) (le signe garde son comportement). */
+/* (même version) — reprise sur consignes de Rémi : un signe descriptif porte un terme descriptif,
+   la gradation ou le diagnostic se déduisent et leur code passe sur l'association ; un code NOR décrit
+   le normal (codes mal typés renumérotés) ; pancréas absent et réduit séparés. */
 var ORGANE  = "placenta_parenchyme";
 var TITRE   = "placenta — parenchyme";
 var SOURCE  = "fiche_placenta.md";
 var MODULE  = "grille_placenta_parenchyme";
-var VERSION = "1.1.0";
+var VERSION = "1.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var PAIR    = false;
@@ -288,17 +294,17 @@ var SIGNES = [
   /* — Plaque choriale — toit et inflammation — */
   { k:"amniosDecolle", fv:"FOETO:PP.PLA-MAL-059", g:PC, mag:"faible", l:"Amnios décollé de la plaque choriale", meta:"traction sur le cordon au 3e stade — artefact",
     cr:"On note un décollement partiel de l'amnios" },
-  { k:"langhansExces", g:PC, mag:"faible", l:"Fibrinoïde sous-chorial de Langhans épais, chorioamnion épaissi",
+  { k:"langhansExces", fv:"FOETO:PP.PLA-INF-064", g:PC, mag:"faible", l:"Fibrinoïde sous-chorial de Langhans épais, chorioamnion épaissi",
     meta:"faux négatif géométrique : l'inflammation « will not be seen » [khong2019, ch. 13]",
     cr:"Le fibrinoïde sous-chorial de Langhans est épais, le chorioamnion épaissi" },
   { k:"pchoSousChorionite", fv:"FOETO:PP.PLA-INF-054", g:PC, mag:"moyen",
     l:"Polynucléaires dans le toit de la chambre intervilleuse (fibrinoïde sous-chorial), sans extension au chorion",
     meta:"intervillite sous-choriale = stade 1 de Blanc ; sous-chorionite = stade 1 d'Amsterdam",
     cr:"Le toit de la chambre intervilleuse présente un infiltrat inflammatoire à contingent principalement polynucléaire neutrophile souvent englué de fibrine, sans extension au chorion (stade 1)." },
-  { k:"pchoChorionite", g:PC, mag:"moyen", l:"Polynucléaires étendus au chorion de la plaque choriale",
+  { k:"pchoChorionite", fv:"FOETO:PP.PCH-INF-002", g:PC, mag:"moyen", l:"Polynucléaires étendus au chorion de la plaque choriale",
     meta:"chorionite = stade 2 de Blanc, stade 1 d'Amsterdam (stade 2 dès le chorion fibreux ou l'amnios)",
     cr:"Le toit de la chambre intervilleuse présente un infiltrat inflammatoire à contingent principalement polynucléaire neutrophile souvent englué de fibrine, avec de multiples extensions au chorion (stade 2)." },
-  { k:"pchoNecrose", g:PC, mag:"moyen", l:"Polynucléaires étendus au chorion avec nécrose",
+  { k:"pchoNecrose", fv:"FOETO:PP.PLA-INF-051", g:PC, mag:"moyen", l:"Polynucléaires étendus au chorion avec nécrose",
     meta:"nécrose = stade 3 d'Amsterdam ; elle n'existe pas dans l'échelle de Blanc",
     cr:"Le toit de la chambre intervilleuse présente un infiltrat inflammatoire à contingent principalement polynucléaire neutrophile souvent englué de fibrine, avec de multiples extensions au chorion et de la nécrose (stade 3)." },
   { k:"vasculiteChoriale", fv:"FOETO:PP.PLA-VAS-068", g:PC, mag:"moyen", l:"Vasculite des vaisseaux de la plaque choriale",
@@ -309,16 +315,16 @@ var SIGNES = [
     cr:"On note un infiltrat granulocytaire maternel bien limité de la plaque choriale basale" },
 
   /* — Vaisseaux fœtaux — malperfusion fœtale — */
-  { k:"ectasie", fv:"FOETO:PP.PLA-NOR-225", g:VF, mag:"faible", l:"Ectasie d'un vaisseau chorial ou souche ≥ 4 fois le diamètre des vaisseaux voisins",
+  { k:"ectasie", fv:"FOETO:PP.PLA-VAS-082", g:VF, mag:"faible", l:"Ectasie d'un vaisseau chorial ou souche ≥ 4 fois le diamètre des vaisseaux voisins",
     meta:"seul seuil chiffré, absent d'Amsterdam",
     cr:"On note une ectasie d'un vaisseau chorial ou souche (au moins 4 fois le diamètre des vaisseaux voisins)" },
-  { k:"thrombusChorial", g:VF, mag:"faible",
+  { k:"thrombusChorial", fv:"FOETO:PP.PAR-VAS-020", g:VF, mag:"faible",
     l:"Thrombus d'un vaisseau chorial : récent (fibrine adhérente), en organisation (néo-intima), organisé, ancien (calcifié)",
     meta:"le seul signe de FVM qui ne se fabrique pas après la mort",
     cr:"On note un thrombus d'un vaisseau chorial" },
-  { k:"thrombusSouche", g:VF, mag:"faible", l:"Thrombus mural ou occlusif d'un vaisseau souche",
+  { k:"thrombusSouche", fv:"FOETO:PP.PLA-VAS-046", g:VF, mag:"faible", l:"Thrombus mural ou occlusif d'un vaisseau souche",
     cr:"On note un thrombus mural ou occlusif d'un vaisseau souche" },
-  { k:"foyersLarges", fv:"FOETO:PP.PLA-NOR-226", g:VF, mag:"faible",
+  { k:"foyersLarges", fv:"FOETO:PP.PLA-VAS-083", g:VF, mag:"faible",
     l:"Foyers larges d'avascularité, cumul ≥ 45 villosités sur 3 sections ou > 15 par section",
     meta:"haut grade Amsterdam ; khong2019 abandonne le dénominateur",
     cr:"On note de larges foyers de villosités avasculaires (cumul d'au moins 45 villosités sur 3 sections)" },
@@ -330,7 +336,7 @@ var SIGNES = [
     cr:"On note un dépôt de fibrine intramural sous-endothélial, non occlusif" },
   { k:"coussinFibrine", fv:"FOETO:PP.PLA-VAS-070", g:VF, mag:"moyen", l:"Coussin myxoïde intimal AVEC fibrine ou calcification",
     cr:"On note un coussin myxoïde intimal avec fibrine ou calcification" },
-  { k:"obliterationSouche", g:VF, mag:"moyen", l:"Oblitération de vaisseau souche : septation fibroblastique, sclérose de collapsus",
+  { k:"obliterationSouche", fv:"FOETO:PP.PLA-VAS-028", g:VF, mag:"moyen", l:"Oblitération de vaisseau souche : septation fibroblastique, sclérose de collapsus",
     cr:"On note une oblitération de vaisseau souche (septation fibroblastique, sclérose de collapsus)" },
   { k:"avascTrophoVivant", fv:"FOETO:PP.PLA-VAS-071", g:VF, mag:"moyen", l:"Villosités avasculaires à trophoblaste VIVANT (lésion « inside out »)",
     meta:"le critère positif de FVM — le sépare de l'infarctus",
@@ -349,14 +355,14 @@ var SIGNES = [
   { k:"dvh", fv:"FOETO:PP.PLA-MAL-060", g:MM, mag:"faible", l:"Hypoplasie villositaire distale : terminales rares, fines, allongées, deux tiers inférieurs",
     meta:"≥ 30 % d'une lame pleine épaisseur ; focal/diffus = nombre de lames",
     cr:"On note de multiples plages d'hypoplasie villositaire distale (HVD)." },
-  { k:"matAcceleree", fv:"FOETO:PP.PLA-MAL-061", g:MM, mag:"faible",
+  { k:"matAcceleree", terme:[null, 32], fv:"FOETO:PP.PLA-MAL-061", g:MM, mag:"faible",
     l:"Villosités d'aspect terme pour le terme, nœuds ↑, fibrine intervilleuse, alternant avec des plages de paucité",
     meta:"32,4 % des témoins normaux [vogel]",
     cr:"On note de multiples plages d'hypoplasie villositaire distale avec importante accélération de la maturation villositaire (AMV)." },
   { k:"agglutination", fv:"FOETO:PP.PLA-MAL-062", g:MM, mag:"moyen", l:"Villosités agglutinées par la fibrine (2 à 20), touchant d'autres villosités",
     meta:"« villi should not ever be directly touching »",
     cr:"On note des villosités agglutinées par la fibrine" },
-  { k:"noeudsAugmentes", g:MM, mag:"moyen", l:"Nœuds syncytiaux augmentés (≥ 5 noyaux, bombant), hors bordure de lésion",
+  { k:"noeudsAugmentes", fv:"FOETO:PP.PAR-NOR-001", g:MM, mag:"moyen", l:"Nœuds syncytiaux augmentés (≥ 5 noyaux, bombant), hors bordure de lésion",
     meta:"voir le compte de la maturation",
     cr:"On note de multiples plages d'hypoplasie villositaire distale avec augmentation diffuse du nombre d'amas nucléaires syncytiotrophoblastiques (ANSCT)." },
   { k:"minéralisationMB", fv:"FOETO:PP.PLA-MAL-063", g:MM, mag:"fort", l:"Minéralisation de la membrane basale trophoblastique",
@@ -368,14 +374,14 @@ var SIGNES = [
     l:"Fibrinoïde périvillositaire comblant l'espace, chambre intervilleuse CONSERVÉE, villosités épargnées dans la lésion",
     meta:"conservé = fibrine ; collabé = infarctus",
     cr:"La fibrine périvillositaire est diffusément augmentée sans toutefois nécroser de villosités." },
-  { k:"fibrineTransmurale", fv:"FOETO:PP.PLA-NOR-227", g:FI, mag:"faible", l:"Fibrinoïde transmural, de la plaque choriale à la basale, > 50 % d'une lame",
+  { k:"fibrineTransmurale", fv:"FOETO:PP.PLA-VAS-084", g:FI, mag:"faible", l:"Fibrinoïde transmural, de la plaque choriale à la basale, > 50 % d'une lame",
     cr:"Le fibrinoïde périvillositaire est transmural, de la plaque choriale à la basale, sur plus de la moitié d'une lame" },
-  { k:"fibrine2550", fv:"FOETO:PP.PLA-NOR-228", g:FI, mag:"faible", l:"Fibrinoïde sur 25–50 % d'une lame", meta:"« increased » (khong2019) ou « borderline » (recurrent)",
+  { k:"fibrine2550", fv:"FOETO:PP.PLA-VAS-085", g:FI, mag:"faible", l:"Fibrinoïde sur 25–50 % d'une lame", meta:"« increased » (khong2019) ou « borderline » (recurrent)",
     cr:"Le fibrinoïde périvillositaire occupe 25 à 50 % d'une lame" },
-  { k:"fibrineBasale3mm", fv:"FOETO:PP.PLA-NOR-229", g:FI, mag:"faible", l:"Fibrinoïde basal encastrant les villosités sur ≥ 3 mm le long du plancher",
+  { k:"fibrineBasale3mm", fv:"FOETO:PP.PLA-VAS-086", g:FI, mag:"faible", l:"Fibrinoïde basal encastrant les villosités sur ≥ 3 mm le long du plancher",
     meta:"le seul chiffre partagé par toutes les sources",
     cr:"Le fibrinoïde basal encastre les villosités sur au moins 3 mm le long du plancher" },
-  { k:"nidf", g:FI, mag:"faible", l:"Travées de nécrose ischémique avec dépôts de fibrine (NIDF)",
+  { k:"nidf", fv:"FOETO:PP.PLA-VAS-080", g:FI, mag:"faible", l:"Travées de nécrose ischémique avec dépôts de fibrine (NIDF)",
     meta:"taxonomie francophone, sans table de correspondance avec Amsterdam ; seuil > 30 % [soffoet, ch. 15]",
     cr:"On note la présence de multiples travées NIDF (nécrose ischémique avec dépôts de fibrine)." },
   { k:"calcifAugmentees", g:FI, mag:"faible", l:"Calcifications augmentées, diffuses",
@@ -406,13 +412,13 @@ var SIGNES = [
     cr:"On note la présence de kystes d'inclusion trophoblastiques au sein du stroma de quelques villosités sans citerne ni prolifération trophoblastique anormale (KIT)." },
 
   /* — Capillaires villositaires — */
-  { k:"chorangiome", g:CA, mag:"faible", l:"Nodule capillaire expansif d'une souche sous-choriale, péricytes présents",
+  { k:"chorangiome", fv:"FOETO:PP.PAR-DYS-002", g:CA, mag:"faible", l:"Nodule capillaire expansif d'une souche sous-choriale, péricytes présents",
     cr:"On note un nodule capillaire expansif d'une villosité souche sous-choriale" },
   { k:"villositesRondes", fv:"FOETO:PP.PLA-VAS-076", g:CA, mag:"faible",
     l:"Villosités terminales grandes, rondes, à vascularisation proéminente au faible grossissement",
     meta:"congestion ou chorangiose : compter, ne pas juger la surface",
     cr:"Les villosités terminales sont grandes, rondes, à vascularisation proéminente" },
-  { k:"capillairesSup10", fv:"FOETO:PP.PLA-NOR-231", g:CA, mag:"moyen",
+  { k:"capillairesSup10", fv:"FOETO:PP.PLA-VAS-087", g:CA, mag:"moyen",
     l:"Villosités terminales à > 10 capillaires, 10 villosités, 10 champs, hors zones ischémiques",
     meta:"quatre lectures d'Altshuler ; coloration à nommer",
     cr:"On note la présence de multiples foyers de villosités, principalement distales, hypervascularisées (chorangiose)." },
@@ -476,14 +482,14 @@ var SIGNES = [
     cr:"On note un matériel granuleux éosinophile intracellulaire" },
 
   /* — Plaque basale — */
-  { k:"hrp", fv:"FOETO:PP.PLA-INF-063", g:PB, mag:"faible",
+  { k:"hrp", fv:"FOETO:PP.PLA-VAS-088", g:PB, mag:"faible",
     l:"Hématome rétroplacentaire adhérent : sang et fibrine (frais) ; polynucléaires, macrophages, sidérophages (chronique)",
     meta:"l'adhérence, pas la taille",
     cr:"On note un hématome rétroplacentaire adhérent" },
-  { k:"abruptus", g:PB, mag:"faible", l:"Plaque basale disséquée par de petites effusions de sang frais",
+  { k:"abruptus", fv:"FOETO:PP.PLA-VAS-081", g:PB, mag:"faible", l:"Plaque basale disséquée par de petites effusions de sang frais",
     meta:"aspect d'abruptus du gabarit de CR ; un caillot non adhérent peut se détacher à la délivrance [vogel, ch. 7]",
     cr:"La plaque basale est déchirée par de multiples petites effusions de sang frais (aspect d'abruptus)." },
-  { k:"atheroseBasale", fv:"FOETO:PP.PLA-MAL-075", g:PB, mag:"moyen",
+  { k:"atheroseBasale", seul:true, fv:"FOETO:PP.PLA-MAL-075", g:PB, mag:"moyen",
     l:"Athérose ou muscularisation persistante des artères spiralées de la plaque basale", meta:"identique à la pariétale",
     cr:"On note une nécrose fibrinoïde de la média de quelques artères utéro-placentaires (artériose décidue)." },
   { k:"implantationSuperficielle", fv:"FOETO:PP.PLA-MAL-076", g:PB, mag:"moyen",
@@ -515,7 +521,7 @@ var DIAGS = [
          "patron global, pas le grade. Après la mort, tout se fabrique sauf le thrombus ; > 48 h, prudence. Avec " +
          "villite : « chronic villitis with associated avascular villi »." },
 
-  { k:"mir", l:"Réponse inflammatoire maternelle — plaque choriale", min:1,
+  { k:"mir", fv:"FOETO:PP.PLA-INF-007", l:"Réponse inflammatoire maternelle — plaque choriale", min:1,
     signes:["pchoSousChorionite","pchoChorionite","pchoNecrose"],
     stop:" — un stade sans le nom de l'école est ininterprétable : le gabarit de CR écrit stade 1 pour l'intervillite " +
          "sous-choriale (Blanc 1, Amsterdam 1) et stade 2 pour la chorionite (Blanc 2, Amsterdam 1) ; le stade 3 de " +
@@ -590,7 +596,21 @@ var DIAGS = [
          "sans vacuole ; la quantité dépend du terme. « Fetal death or edema does not give rise to vacuolation » " +
          "[benirschke, ch. 24] : ne pas imputer à la macération. Trois vacuolisations ne sont pas des surcharges : " +
          "trophoblaste extravilleux du chorion lisse, amnios du laparoschisis, amnios sous méconium. Résine et " +
-         "coupes semi-fines montrent ce que la paraffine cache." }
+         "coupes semi-fines montrent ce que la paraffine cache." },
+
+  { k:"abruptio", l:"Décollement placentaire (abruptio)", fv:"FOETO:PP.PAR-VAS-030", min:1,
+    signes:["abruptus","hrp"],
+    stop:" — se déduit des constats de la plaque basale ; retentissement chiffré [vogel, ch. 7] : « Premature " +
+         "abruption affecting 20 % or more of placental tissue will causes intrauterine hypoxia ». Faux négatifs " +
+         "nommés : intervalle court jusqu'à l'accouchement, décollement partiel ou marginal sans atteinte de la " +
+         "plaque basale [vogel, ch. 7]." },
+
+  { k:"chi", l:"Intervillite chronique histiocytaire (CHI)", fv:"FOETO:PP.PAR-INF-002", min:1,
+    signes:["intervilliteChronique"],
+    stop:" — étendue à grader : focale < 10 %, modérée 10–50 %, massive > 50 % [khong2019, ch. 30] ; « focale » " +
+         "chez [vogel, ch. 9] contre « massive » comme nom historique [recurrent]. Des polynucléaires dans la " +
+         "chambre intervilleuse ne sont pas une intervillite chronique [khong2019, ch. 30]." }
+
 ];
 
 /* ── Négatifs obligatoires — chacun conditionne la lecture d'une lésion ──────

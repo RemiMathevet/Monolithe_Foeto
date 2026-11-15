@@ -59,11 +59,14 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 11 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 3 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 3.6.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 0 fenêtre(s) de terme, 1 code(s) créé(s), 2 branché(s) sur un
+   code existant ; 1 proposition(s) rejetée(s) (le signe garde son comportement). */
 var ORGANE  = "rein";
 var TITRE   = "rein et voies urinaires hautes";
 var SOURCE  = "fiche_rein.md";
 var MODULE  = "grille_rein";
-var VERSION = "3.6.0";
+var VERSION = "3.6.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;   /* v3 : plus de section “Termes FOETO” */
@@ -290,7 +293,7 @@ var SIGNES = [
      « Absent » est un clic explicite — l'absence de clic n'est jamais un négatif. */
   /* — Contexte hors lame — macro, foie, clinique — */
   { k:"uretereDilate", fv:"FOETO:PF.REN-MAL-073", g:"Contexte hors lame — macro, foie, clinique",  l:"Uretère ou bassinet dilaté en amont" },
-  { k:"reinsVolumineux", hpo:"HP:0000105", g:"Contexte hors lame — macro, foie, clinique", l:"Reins volumineux, contour conservé" },
+  { k:"reinsVolumineux", fv:"FOETO:PF.REN-MAL-141", hpo:"HP:0000105", g:"Contexte hors lame — macro, foie, clinique", l:"Reins volumineux, contour conservé" },
   { k:"reinsPetits", fv:"FOETO:PF.REN-MAL-066", g:"Contexte hors lame — macro, foie, clinique",    l:"Reins de petite taille, architecture conservée" },
   { k:"reinsIrreguliers", fv:"FOETO:PF.REN-MAL-067", g:"Contexte hors lame — macro, foie, clinique" },
   { k:"reinsLobules", fv:"FOETO:PF.REN-MAL-068", g:"Contexte hors lame — macro, foie, clinique" },
@@ -307,7 +310,7 @@ var SIGNES = [
     meta:"néphrogenèse arrêtée — décrite dès 23 SA" },
   { k:"crgBas", auto:function(){ var x = situationCRG(); return x == null ? null : x === "bas"; }, fv:"FOETO:PF.REN-MAL-047", g:"Zone néphrogène et glomérules", mag:"faible",         l:"CRG abaissé pour le terme" },
   { k:"crgHaut", auto:function(){ var n = E.mesure.v.crg; return n == null ? null : n > 14; }, fv:"FOETO:PF.REN-NOR-020", g:"Zone néphrogène et glomérules", mag:"faible",        l:"CRG au-dessus de 12–14 rangées" },
-  { k:"nephronsReduits", g:"Zone néphrogène et glomérules", mag:"faible", l:"Néphrons normalement constitués, en nombre réduit" },
+  { k:"nephronsReduits", fv:"FOETO:PF.REN-MAL-047", g:"Zone néphrogène et glomérules", mag:"faible", l:"Néphrons normalement constitués, en nombre réduit" },
   { k:"nephronsSuperf", fv:"FOETO:PF.REN-MAL-005", g:"Zone néphrogène et glomérules", mag:"moyen" },
   { k:"hypertrophieGlom", fv:"FOETO:PF.REN-MAL-026", g:"Zone néphrogène et glomérules", mag:"moyen", l:"Hypertrophie glomérulaire",
     meta:"compensatrice : surtout postnatale" },
@@ -337,7 +340,7 @@ var SIGNES = [
   { k:"kystesNoyau", fv:"FOETO:PF.REN-MAL-003", g:"Kystes", mag:"faible",    l:"Amas de kystes translucides centrés sur un noyau fibreux dense" },
   { k:"kystesRadiaires", fv:"FOETO:PF.REN-NOR-017", g:"Kystes", mag:"faible", l:"Kystes fusiformes radiaires, tous les néphrons atteints" },
   { k:"gradientKystes", fv:"FOETO:PF.REN-NOR-013", g:"Kystes", mag:"faible" },
-  { k:"kystesDiffus", g:"Kystes", mag:"faible",   l:"Kystes corticaux ET médullaires diffus" },
+  { k:"kystesDiffus", fv:"FOETO:PF.REN-MAL-032", g:"Kystes", mag:"faible",   l:"Kystes corticaux ET médullaires diffus" },
   { k:"intercalaire", bloc:false, g:"Kystes", mag:"faible",   l:"Parenchyme intercalaire normal entre les kystes" },
   { k:"kystesMed", fv:"FOETO:PF.REN-MAL-035", g:"Kystes", mag:"faible", l:"Kystes médullaires" },
   { k:"kystesGlom", fv:"FOETO:PF.REN-MAL-034", g:"Kystes", mag:"moyen",     l:"Kystes glomérulaires nombreux" },

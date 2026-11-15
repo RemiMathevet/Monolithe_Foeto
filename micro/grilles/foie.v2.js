@@ -59,11 +59,14 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 11 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 2 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 2 fenêtre(s) de terme, 0 code(s) créé(s), 2 branché(s) sur un
+   code existant ; 0 proposition(s) rejetée(s) (le signe garde son comportement). */
 var ORGANE  = "foie";
 var TITRE   = "foie et voies biliaires";
 var SOURCE  = "fiche_foie.md";
 var MODULE  = "grille_foie";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -329,13 +332,13 @@ var SIGNES = [
   { k:"proliferationDuctulaire", fiche:"§ 5.11", g:"Plaque ductale et canaux biliaires", mag:"moyen", l:"Prolifération ductulaire" },
   { k:"canauxAbsentsHile", seul:true, fiche:"§ 5.2", g:"Plaque ductale et canaux biliaires", mag:"moyen", l:"Espaces portes hilaires dépourvus de canal biliaire",
     meta:"au hile le remodelage est achevé bien avant le terme : l'immaturité est écartée par la topographie" },
-  { k:"ratioBas", seul:true, fiche:"§ 5.2", g:"Plaque ductale et canaux biliaires", mag:"moyen", l:"Ratio canal / espace porte < 0,4 sur ≥ 10 espaces portes",
+  { k:"ratioBas", fv:"FOETO:PF.FOI-DYS-001", seul:true, fiche:"§ 5.2", g:"Plaque ductale et canaux biliaires", mag:"moyen", l:"Ratio canal / espace porte < 0,4 sur ≥ 10 espaces portes",
     meta:"déduit du comptage : rien sous 10 espaces portes ni sur épithélium biliaire effacé",
     auto:function(){
       var r = E.mesure.v.ratio, ep = E.mesure.v.ep;
       if (r == null || ep == null || ep < 10 || E.retention.epithBiliaire === "present") return null;
       return r < 0.4; } },
-  { k:"ckConfirme", fiche:"§ 5.2", g:"Plaque ductale et canaux biliaires", mag:"technique", l:"Raréfaction confirmée en CK7 / CK19" },
+  { k:"ckConfirme", fv:"FOETO:PF.FOI-DYS-001", fiche:"§ 5.2", g:"Plaque ductale et canaux biliaires", mag:"technique", l:"Raréfaction confirmée en CK7 / CK19" },
   /* — Voies biliaires extra-hépatiques (prélevées en bloc avec le foie) — */
   { k:"obliterationVBEH", fv:"FOETO:PF.FOI-MAL-047", g:"Voies biliaires extra-hépatiques", mag:"faible",
     l:"Oblitération fibreuse du canal extra-hépatique" },
@@ -349,9 +352,9 @@ var SIGNES = [
   /* — Hématopoïèse — */
   { k:"erythroAugmentee", seul:true, fv:"FOETO:PF.FOI-MET-006", g:"Hématopoïèse", mag:"moyen", l:"Érythropoïèse sinusoïdale augmentée (CD71)",
     meta:"lignée confirmée en CD71" },
-  { k:"myeloAugmentee", fv:"FOETO:PF.FOI-MAL-065", g:"Hématopoïèse", mag:"moyen", l:"Myélopoïèse portale augmentée (MPO)",
+  { k:"myeloAugmentee", seul:true, fv:"FOETO:PF.FOI-MAL-065", g:"Hématopoïèse", mag:"moyen", l:"Myélopoïèse portale augmentée (MPO)",
     meta:"lignée confirmée en MPO" },
-  { k:"erythroDiminuee", fv:"FOETO:PF.FOI-MAL-061", g:"Hématopoïèse", mag:"moyen", l:"Érythropoïèse diminuée" },
+  { k:"erythroDiminuee", terme:[null, 24], fv:"FOETO:PF.FOI-MAL-061", g:"Hématopoïèse", mag:"moyen", l:"Érythropoïèse diminuée" },
   { k:"megacaryocytes", fiche:"§ 5.13", g:"Hématopoïèse", mag:"moyen", l:"Mégacaryocytes en excès" },
   /* — Infection et inflammation — */
   { k:"abces", fv:"FOETO:PF.FOI-INF-002", g:"Infection et inflammation", mag:"faible",

@@ -54,11 +54,14 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 13 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 8 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 0 fenêtre(s) de terme, 2 code(s) créé(s), 2 branché(s) sur un
+   code existant ; 6 proposition(s) rejetée(s) (le signe garde son comportement). */
 var ORGANE  = "vessie";
 var TITRE   = "vessie et voies urinaires basses — urètre, ouraque";
 var SOURCE  = "fiche_vessie.md";
 var MODULE  = "grille_vessie";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -473,7 +476,7 @@ var SIGNES = [
     meta:"macro — « The bladder is thick-walled, although usually not trabeculated. » (prune belly)" },
   { k:"paroiMince", fv:"FOETO:PF.REN-MAL-100", g:"Contexte hors lame — vessie et urètre en macro",
     meta:"macro — v1 : vessie de grande capacité, « very large capacity, thin-walled bladder »" },
-  { k:"asciteUrineuse", fiche:"[soffoet]", g:"Contexte hors lame — vessie et urètre en macro",
+  { k:"asciteUrineuse", fv:"FOETO:PF.REN-MAL-142", fiche:"[soffoet]", g:"Contexte hors lame — vessie et urètre en macro",
     l:"Ascite urineuse, urinome ou rupture vésicale",
     meta:"macro — l'ascite urineuse accompagne la paroi très mince [soffoet, ch. 9] ; urinome et rupture : libellé v1, sans source dans la fiche" },
   { k:"vessieTubulaire", fiche:"[corpus CR]", g:"Contexte hors lame — vessie et urètre en macro",
@@ -509,7 +512,7 @@ var SIGNES = [
     l:"Éviscération partielle artefactuelle, fragilité du mur abdominal antérieur",
     meta:"artefact — “une éviscération partielle artefactuelle liée à une fragilité du mur antérieur de la cavité abdominale” [corpus CR] : piège du différentiel exstrophie / omphalocèle" },
   /* — Contexte hors lame : l'amont, le rein, le poumon — ce que la vessie seule ne montre pas — */
-  { k:"uretereDilate", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
+  { k:"uretereDilate", fv:"FOETO:PF.REN-MAL-143", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Uretère dilaté, urétéro-hydronéphrose", meta:"amont — bloc rein/voies ; « dilated ureters often have a thin wall »" },
   { k:"hydronephrose", fv:"FOETO:PF.REN-MAL-133", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Hydronéphrose", meta:"amont" },
@@ -517,10 +520,10 @@ var SIGNES = [
     l:"Kyste sous-capsulaire cortical rénal", meta:"lame de rein — « hallmark of obstruction » sur la grille rein" },
   { k:"desorganisation", fv:"FOETO:PF.REN-MAL-016", g:"Contexte hors lame — amont, rein, poumon, Potter",
     meta:"lame de rein — « the cortex is thin and disorganized »" },
-  { k:"reinDysplasique", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
+  { k:"reinDysplasique", fv:"FOETO:PF.REN-MAL-076", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Rein dysplasique sur la lame de rein",
     meta:"amont — c'est là que se juge la gravité ; reprise de la grille rein, pas un constat de cette lame" },
-  { k:"oligoamnios", fiche:"[soffoet]", g:"Contexte hors lame — amont, rein, poumon, Potter",
+  { k:"oligoamnios", fv:"FOETO:PF.POU-MAL-071", fiche:"[soffoet]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Oligoamnios ou anamnios", meta:"clinique" },
   { k:"hypoplasiePulmonaire", fv:"FOETO:PF.REN-MAL-135", fiche:"[soffoet]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Hypoplasie pulmonaire", meta:"aval de la séquence — se juge sur la lame de poumon et le rapport poids" },

@@ -44,11 +44,14 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 5 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 10 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 0 fenêtre(s) de terme, 1 code(s) créé(s), 1 branché(s) sur un
+   code existant ; 2 proposition(s) rejetée(s) (le signe garde son comportement). */
 var ORGANE  = "rate";
 var TITRE   = "rate";
 var SOURCE  = "fiche_rate.md";
 var MODULE  = "grille_rate";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -421,7 +424,7 @@ var SIGNES = [
     l:"Isomérisme droit (deux poumons trilobés, deux oreillettes droites)", meta:"lu hors rate" },
   { k:"blocAV", fiche:"[keeling, ch. 27]", g:"Contexte hors lame — macro, latéralité, autres organes",
     l:"Bloc auriculo-ventriculaire complet", meta:"lu hors rate" },
-  { k:"hydrops", fiche:"[keeling, ch. 27]", g:"Contexte hors lame — macro, latéralité, autres organes",
+  { k:"hydrops", fv:"FOETO:PF.MUL-MAL-040", fiche:"[keeling, ch. 27]", g:"Contexte hors lame — macro, latéralité, autres organes",
     l:"Anasarque fœto-placentaire", meta:"lu hors rate" },
   { k:"anemieFoetale", fiche:"[benirschke]", g:"Contexte hors lame — macro, latéralité, autres organes",
     l:"Anémie fœtale ou érythroblastose", meta:"lu hors rate" },
@@ -433,7 +436,7 @@ var SIGNES = [
   { k:"capsuleAbsente", fiche:"[expérience]", g:"Architecture — identité du tissu, plan de coupe, masse", mag:"faible",
     l:"Pas de capsule sur la coupe",
     meta:"ni l'épaisseur capsulaire ni l'exclusion d'une masse accessoire capsulée ne se jugent plus" },
-  { k:"pasTissuSplenique", seul:true, fiche:"[ernst, ch. 25]", g:"Architecture — identité du tissu, plan de coupe, masse", mag:"faible",
+  { k:"pasTissuSplenique", fv:"FOETO:PF.HEM-MAL-062", seul:true, fiche:"[ernst, ch. 25]", g:"Architecture — identité du tissu, plan de coupe, masse", mag:"faible",
     l:"Masse sans pulpe rouge ni pulpe blanche identifiable",
     meta:"ganglion, surrénale accessoire ou pancréas ectopique : la lame sert d'abord à ça" },
   { k:"trabeculeLongue", fv:"FOETO:PF.HEM-VAS-004", fiche:"[ernst, ch. 25]", g:"Architecture — identité du tissu, plan de coupe, masse", mag:"faible",

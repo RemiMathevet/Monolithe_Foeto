@@ -78,11 +78,17 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 12 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 21 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 1 fenêtre(s) de terme, 5 code(s) créé(s), 2 branché(s) sur un
+   code existant ; 4 proposition(s) rejetée(s) (le signe garde son comportement). */
+/* (même version) — reprise sur consignes de Rémi : un signe descriptif porte un terme descriptif,
+   la gradation ou le diagnostic se déduisent et leur code passe sur l'association ; un code NOR décrit
+   le normal (codes mal typés renumérotés) ; pancréas absent et réduit séparés. */
 var ORGANE  = "oeil";
 var TITRE   = "œil fœtal";
 var SOURCE  = "fiche_oeil.md";
 var MODULE  = "grille_oeil";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -535,7 +541,7 @@ var CADRES = [
    le libellé est rappelé en commentaire. */
 var SIGNES = [
   /* — Contexte hors lame — examen externe et macroscopie du globe — */
-  { k:"dapBas", fiche:"[verdijk, ch. 5]", g:"Contexte hors lame — examen externe et macroscopie du globe",
+  { k:"dapBas", fv:"FOETO:PF.ORL-MAL-164", fiche:"[verdijk, ch. 5]", g:"Contexte hors lame — examen externe et macroscopie du globe",
     l:"DAP sous la norme du terme (ou nettement inférieur à l'œil adelphe)" },
   { k:"dapHaut", fv:"FOETO:PF.ORL-MAL-055", g:"Contexte hors lame — examen externe et macroscopie du globe",
     meta:"DAP au-dessus de la norme du terme" },   /* Globe entier agrandi */
@@ -570,7 +576,7 @@ var SIGNES = [
     l:"Anomalies extra-oculaires associées (dents, os de la face)" },
   { k:"placentaCMV", fv:"FOETO:PF.ORL-INF-018", fiche:"[verdijk, ch. 7]", g:"Contexte hors lame — autres organes et caryotype",
     l:"Placenta porteur des mêmes inclusions cytomégaliques" },
-  { k:"t21", fiche:"[verdijk, ch. 4]", g:"Contexte hors lame — autres organes et caryotype",
+  { k:"t21", fv:"FOETO:PF.END-MAL-088", fiche:"[verdijk, ch. 4]", g:"Contexte hors lame — autres organes et caryotype",
     l:"Trisomie 21 au caryotype",
     meta:"0/65 dans la cohorte : une anomalie oculaire n'y est pas expliquée par la trisomie" },
 
@@ -618,7 +624,7 @@ var SIGNES = [
   { k:"tvlAttacheeCornee", fv:"FOETO:PF.ORL-MAL-152", fiche:"[verdijk, ch. 5]", g:"Segment antérieur — cornée, angle, iris", mag:"moyen",
     l:"TVL antérieure attachée à la face postérieure de la cornée",
     meta:"indice indirect de fixation lenticulaire quand la synéchie a été lysée" },
-  { k:"angleRudimentaire", fv:"FOETO:PF.ORL-MAL-037", g:"Segment antérieur — cornée, angle, iris", mag:"moyen",
+  { k:"angleRudimentaire", terme:[34, null], fv:"FOETO:PF.ORL-MAL-037", g:"Segment antérieur — cornée, angle, iris", mag:"moyen",
     meta:"au terme — un angle rempli de mésenchyme est normal avant ~28 SA" },
   { k:"schwalbeAnteposee", fv:"FOETO:PF.ORL-MAL-076", g:"Segment antérieur — cornée, angle, iris", mag:"moyen" },
   { k:"descemetEnroulee", fv:"FOETO:PF.ORL-MAL-078", g:"Segment antérieur — cornée, angle, iris", mag:"moyen" },   /* Stries de Haab */
@@ -634,7 +640,7 @@ var SIGNES = [
   { k:"cristallinCompact", fv:"FOETO:PF.ORL-NOR-047", g:"Cristallin", mag:"faible",
     meta:"ne suffit pas : « further verification is required »" },
   { k:"microphakie", fv:"FOETO:PF.ORL-MAL-065", g:"Cristallin", mag:"faible" },
-  { k:"aphakie", fiche:"[verdijk, ch. 5]", g:"Cristallin", mag:"faible", l:"Aphakie ou résorption du cristallin" },
+  { k:"aphakie", fv:"FOETO:PF.ORL-MAL-162", fiche:"[verdijk, ch. 5]", g:"Cristallin", mag:"faible", l:"Aphakie ou résorption du cristallin" },
   { k:"wedl", fv:"FOETO:PF.ORL-MAL-041", g:"Cristallin", mag:"moyen" },
   { k:"noyauxRetenus", fv:"FOETO:PF.ORL-MAL-072", g:"Cristallin", mag:"moyen",
     meta:"item 2 de la liste fermée — rubéole, syndrome de Lowe ; la v1 le portait deux fois (cataracte, rubéole)" },
@@ -682,12 +688,12 @@ var SIGNES = [
 
   /* — Hémorragies — */
   { k:"hemorragieRetinienne", fv:"FOETO:PF.ORL-VAS-004", g:"Hémorragies", mag:"faible" },
-  { k:"surface2030", fiche:"[verdijk, ch. 6]", g:"Hémorragies", mag:"faible",
+  { k:"surface2030", fv:"FOETO:PF.ORL-VAS-019", fiche:"[verdijk, ch. 6]", g:"Hémorragies", mag:"faible",
     l:"Hémorragie couvrant 20–30 % ou plus de la surface rétinienne",
     meta:"mesure de SURFACE, pas un compte de foyers" },
   { k:"hemGaineNerf", fv:"FOETO:PF.ORL-VAS-002", g:"Hémorragies", mag:"faible",
     meta:"préciser uni- ou bilatérale : OR 5,1 contre 7,6" },
-  { k:"toutesCouches", fv:"FOETO:PF.ORL-NOR-100", fiche:"[verdijk, ch. 6]", g:"Hémorragies", mag:"moyen",
+  { k:"toutesCouches", fv:"FOETO:PF.ORL-VAS-018", fiche:"[verdijk, ch. 6]", g:"Hémorragies", mag:"moyen",
     l:"Toutes les couches rétiniennes intéressées par l'hémorragie" },
   { k:"hemIntrasclerale", fv:"FOETO:PF.ORL-VAS-003", g:"Hémorragies", mag:"moyen",
     meta:"« highly suspect for AHT »" },
@@ -716,9 +722,9 @@ var SIGNES = [
 
   /* — Tumeurs — */
   { k:"masseOrbitaire", fv:"FOETO:PF.ORL-MAL-061", g:"Tumeurs", mag:"faible" },
-  { k:"troisFeuillets", fiche:"[verdijk, ch. 8]", g:"Tumeurs", mag:"faible",
+  { k:"troisFeuillets", fv:"FOETO:PF.ORL-TUM-010", fiche:"[verdijk, ch. 8]", g:"Tumeurs", mag:"faible",
     l:"Dérivés des trois feuillets sur la même lame" },
-  { k:"neuroepitheliumImmature", fiche:"[verdijk, ch. 8]", g:"Tumeurs", mag:"faible",
+  { k:"neuroepitheliumImmature", fv:"FOETO:PF.ORL-TUM-011", fiche:"[verdijk, ch. 8]", g:"Tumeurs", mag:"faible",
     l:"Neuroépithélium IMMATURE, quantifié en champs à 40× sur la lame la plus atteinte" },
   { k:"cellulesRondesBleues", fv:"FOETO:PF.ORL-TUM-002", g:"Tumeurs", mag:"faible",
     meta:"mitoses fréquentes — la v1 portait la nécrose à manchons en signe séparé, le terme FOETO la réunit" },
@@ -738,7 +744,7 @@ var SIGNES = [
     meta:"lumière à fines extensions cytoplasmiques, sans neuropile" },
   { k:"fleurettes", fv:"FOETO:PF.ORL-MAL-054", g:"Tumeurs", mag:"fort" },
   { k:"yolkSac", fv:"FOETO:PF.ORL-TUM-001", g:"Tumeurs", mag:"technique" },
-  { k:"synaptoNSE", fiche:"[verdijk, ch. 8]", g:"Tumeurs", mag:"technique",
+  { k:"synaptoNSE", fv:"FOETO:PF.ORL-MAL-163", fiche:"[verdijk, ch. 8]", g:"Tumeurs", mag:"technique",
     l:"Synaptophysine / NSE positives" }
 ];
 
@@ -1000,7 +1006,7 @@ var DIAGS = [
          "nécrose hémorragique croise le différentiel de l'hémorragie rétinienne (Table 6.1). Les " +
          "inclusions de Cowdry B ne sont vues qu'« occasionally »." },
 
-  { k:"teratome", l:"Tératome orbitaire", fv:"FOETO:PF.ORL-TUM-004", cle:"masseOrbitaire", min:2,
+  { k:"teratome", l:"Tératome orbitaire", fv:["FOETO:PF.ORL-TUM-004","FOETO:PF.ORL-NOR-035"], cle:"masseOrbitaire", min:2,
     signes:["masseOrbitaire","troisFeuillets","neuroepitheliumImmature","yolkSac"],
     stop:" — SEUL GRADE SOURCÉ DE CETTE FICHE, et il est extra-oculaire : Norris modifié " +
          "Gonzalez-Crussi, mesuré en champs à faible grossissement (40×) SUR LA LAME QUI EN " +

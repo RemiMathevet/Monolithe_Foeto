@@ -28,11 +28,17 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 0 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 4 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 1.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 0 fenêtre(s) de terme, 2 code(s) créé(s), 8 branché(s) sur un
+   code existant ; 2 proposition(s) rejetée(s) (le signe garde son comportement). */
+/* (même version) — reprise sur consignes de Rémi : un signe descriptif porte un terme descriptif,
+   la gradation ou le diagnostic se déduisent et leur code passe sur l'association ; un code NOR décrit
+   le normal (codes mal typés renumérotés) ; pancréas absent et réduit séparés. */
 var ORGANE  = "placenta_cordon";
 var TITRE   = "placenta — cordon ombilical";
 var SOURCE  = "fiche_placenta.md";
 var MODULE  = "grille_placenta_cordon";
-var VERSION = "1.1.0";
+var VERSION = "1.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var PAIR    = false;
@@ -92,10 +98,10 @@ var H = "Contexte hors lame — macroscopie, dossier";
 
 var SIGNES = [
   /* — Contexte hors lame — */
-  { k:"vaisseauxMembraneux", g:H, l:"Insertion vélamenteuse ou vaisseaux membraneux (insertion marginale comprise)",
+  { k:"vaisseauxMembraneux", fv:"FOETO:PP.PLA-MAL-078", g:H, l:"Insertion vélamenteuse ou vaisseaux membraneux (insertion marginale comprise)",
     meta:"vasa praevia = rapport à l'orifice interne, non diagnosticable sur la pièce",
     cr:"Le cordon ombilical est d'insertion vélamenteuse ou marginale, avec des vaisseaux membraneux" },
-  { k:"hypertorsion", g:H, l:"Hypertorsion avec indentations périphériques du cordon", meta:"le patron, pas l'index",
+  { k:"hypertorsion", fv:"FOETO:PP.PLA-MAL-016", g:H, l:"Hypertorsion avec indentations périphériques du cordon", meta:"le patron, pas l'index",
     cr:"Le cordon est hyperspiralé, avec des indentations périphériques" },
   { k:"clampMarque", g:H, l:"Marque de clamp ou de ponction sur le segment de cordon prélevé",
     cr:"Le segment de cordon examiné porte une marque de clamp ou de ponction" },
@@ -104,7 +110,7 @@ var SIGNES = [
     cr:"Notion de geste instrumental (ponction, amniocentèse, transfusion ou extraction)" },
 
   /* — Vaisseaux ombilicaux — */
-  { k:"aou", g:"Vaisseaux ombilicaux", mag:"faible",
+  { k:"aou", fv:"FOETO:PP.COR-MAL-002", g:"Vaisseaux ombilicaux", mag:"faible",
     l:"Artère ombilicale unique sur coupe à circonférence complète, ≥ 5 cm de l'insertion",
     meta:"Hyrtl dans 92 % des cordons",
     cr:"Le cordon ne compte que deux vaisseaux sur chacune de ses coupes (artère ombilicale unique)." },
@@ -122,40 +128,40 @@ var SIGNES = [
     cr:"La gelée de Wharton est condensée en liseré (cordon grêle)" },
   { k:"oedemeCordon", g:"Gelée de Wharton", mag:"faible", l:"Œdème de la gelée, cordon épais", meta:"diabète maternel, hydrops",
     cr:"La gelée de Wharton est œdémateuse (cordon épais)" },
-  { k:"hematomeCordon", g:"Gelée de Wharton", mag:"moyen",
+  { k:"hematomeCordon", fv:"FOETO:PP.PLA-VAS-012", g:"Gelée de Wharton", mag:"moyen",
     l:"Hématome funiculaire avec organisation, lignes de Zahn ou polynucléaires",
     meta:"sans les trois : artefact [ernst, ch. 36]",
     cr:"On note un hématome funiculaire avec organisation, lignes de Zahn ou polynucléaires" },
 
   /* — Inflammation — réponse fœtale — */
-  { k:"phlebiteOmb", g:"Inflammation — réponse fœtale", mag:"moyen",
+  { k:"phlebiteOmb", fv:"FOETO:PP.PLA-INF-065", g:"Inflammation — réponse fœtale", mag:"moyen",
     l:"Phlébite ombilicale (polynucléaires dans la paroi veineuse)", meta:"FIR stade 1 ; RIF 1 du gabarit de CR",
     cr:"On note la présence d'une inflammation polynucléaire neutrophile de la média de la veine ombilicale (RIF 1)." },
-  { k:"arteriteOmb", g:"Inflammation — réponse fœtale", mag:"moyen",
+  { k:"arteriteOmb", fv:"FOETO:PP.PLA-INF-066", g:"Inflammation — réponse fœtale", mag:"moyen",
     l:"Artérite ombilicale, une artère", meta:"FIR stade 2 ; RIF 2 du gabarit de CR",
     cr:"On note la présence d'une inflammation polynucléaire neutrophile de la média de la veine ombilicale et d'une artère ombilicale (RIF 2)." },
-  { k:"arteriteDeux", g:"Inflammation — réponse fœtale", mag:"moyen",
+  { k:"arteriteDeux", fv:"FOETO:PP.PLA-INF-066", g:"Inflammation — réponse fœtale", mag:"moyen",
     l:"Artérite ombilicale, deux artères (trois vaisseaux atteints)",
     meta:"FIR stade 2 chez Amsterdam (veine et une ou plusieurs artères) ; le gabarit de CR l'écrit RIF 3, " +
          "qu'Amsterdam réserve à la funisite nécrosante",
     cr:"On note la présence d'une inflammation polynucléaire neutrophile de la média des 3 vaisseaux (RIF 3)." },
-  { k:"funisiteNecro", g:"Inflammation — réponse fœtale", mag:"moyen",
+  { k:"funisiteNecro", fv:"FOETO:PP.PLA-INF-067", g:"Inflammation — réponse fœtale", mag:"moyen",
     l:"Funisite nécrosante, extension à la gelée de Wharton",
     meta:"FIR stade 3 Amsterdam ; dans les stades 1–2 chez Van Hoeven",
     cr:"On note une funisite nécrosante, étendue à la gelée de Wharton" },
 
   /* — Méconium — */
-  { k:"meconiumWharton", seul:true, g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans la gelée de Wharton",
+  { k:"meconiumWharton", fv:"FOETO:PP.PLA-MAL-079", seul:true, g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans la gelée de Wharton",
     meta:"plus tardif que les membranes ; « many hours »",
     cr:"La gelée de Wharton contient des macrophages chargés de méconium" },
-  { k:"myonecrose", g:"Méconium", mag:"fort", l:"Nécrose de la paroi vasculaire, périphérique, adjacente à la gelée",
+  { k:"myonecrose", fv:"FOETO:PP.COR-VAS-001", g:"Méconium", mag:"fort", l:"Nécrose de la paroi vasculaire, périphérique, adjacente à la gelée",
     meta:"méconium, < 1 % des placentas méconiaux",
     cr:"On note une nécrose des myocytes de la média de l'un des vaisseaux (MAVM)." }
 ];
 
 /* ── Associations — affichées, jamais cochées ─────────────────────────────── */
 var DIAGS = [
-  { k:"fir", l:"Réponse inflammatoire fœtale (funisite)", min:1,
+  { k:"fir", fv:"FOETO:PP.COR-INF-008", l:"Réponse inflammatoire fœtale (funisite)", min:1,
     signes:["phlebiteOmb","arteriteOmb","arteriteDeux","funisiteNecro"],
     stop:" — Amsterdam : phlébite → artérite → funisite nécrosante ; Van Hoeven met la gelée de Wharton DANS les " +
          "stades 1–2 : les deux échelles se croisent. Le gabarit de CR numérote RIF 1 à 3 par nombre de vaisseaux " +

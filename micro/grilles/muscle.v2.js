@@ -49,11 +49,14 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 6 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 17 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 4 fenêtre(s) de terme, 1 code(s) créé(s), 3 branché(s) sur un
+   code existant ; 1 proposition(s) rejetée(s) (le signe garde son comportement). */
 var ORGANE  = "muscle";
 var TITRE   = "muscle squelettique";
 var SOURCE  = "fiche_muscle.md";
 var MODULE  = "grille_muscle";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -390,7 +393,7 @@ var SIGNES = [
   /* — Contexte hors lame — macro, moelle, clinique — lu ailleurs, répondu ici
        parce qu'il commande la lecture — */
   { k:"contractures", fv:"FOETO:PF.MUS-MAL-039", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Contractures multiples articulaires (macro)" },
-  { k:"contracturesDistales", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Contractures distales seulement (mains, pieds, poignets, chevilles)" },
+  { k:"contracturesDistales", fv:"FOETO:PF.MUS-MAL-052", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Contractures distales seulement (mains, pieds, poignets, chevilles)" },
   { k:"contracturesPoly", fv:"FOETO:PF.MUS-MAL-013", g:"Contexte hors lame — macro, moelle, clinique",
     meta:"ce qui sépare la SDAF de l'AMC [keeling, ch. 31] — redit trois signes de ce cadre, répondre aussi chacun" },
   { k:"asymetrie", fv:"FOETO:PF.MUS-MAL-040", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Anomalies posturales ASYMÉTRIQUES" },
@@ -406,7 +409,7 @@ var SIGNES = [
   { k:"anasarque", fv:"FOETO:PF.MUS-MAL-046", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Œdème sous-cutané ou anasarque" },
   { k:"diaphragmeSureleve", fv:"FOETO:PF.MUS-MAL-047", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Diaphragme surélevé ou éventré" },
   { k:"peauRigide", fv:"FOETO:PF.MUS-MAL-048", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Peau rigide, bouche fixée ouverte en « O »" },
-  { k:"mortNeuronale", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Mort neuronale des cornes antérieures (moelle, 3 niveaux)" },
+  { k:"mortNeuronale", fv:"FOETO:PF.CER-INF-033", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Mort neuronale des cornes antérieures (moelle, 3 niveaux)" },
   { k:"cornesNormales", fv:"FOETO:PF.MUS-NOR-023", bloc:false, fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Cornes antérieures SANS déplétion ni dégénérescence" },
 
   /* — Architecture fasciculaire — le seul axe qui survit à la fixation — */
@@ -446,7 +449,7 @@ var SIGNES = [
     meta:"critère majeur de la myopathie inflammatoire congénitale (McNeil 2002)" },
 
   /* — Calibre des fibres — sur coupe transversale — */
-  { k:"dispersion", fv:"FOETO:PF.MUS-MAL-006", g:"Calibre des fibres", mag:"moyen", l:"Dispersion de calibre",
+  { k:"dispersion", terme:[35, null], fv:"FOETO:PF.MUS-MAL-006", g:"Calibre des fibres", mag:"moyen", l:"Dispersion de calibre",
     meta:"bimodale = Wohlfart si 18–35 SA ; anarchique = à coter" },
   { k:"petitesFibres", fv:"FOETO:PF.MUS-MAL-011", g:"Calibre des fibres", mag:"moyen", l:"Fibres de petite taille",
     meta:"« small and rounded as they are in arthrogryposis » chez le fœtus normal" },
@@ -457,9 +460,9 @@ var SIGNES = [
   /* — Noyaux et myotubes — */
   { k:"myotubes", terme:[18, null], fv:"FOETO:PF.MUS-MAL-010", g:"Noyaux et myotubes", mag:"moyen", l:"Myotubes présents — noyaux centraux en chaîne",
     meta:"noyaux centraux en chaîne ; normal avant 18 SA, signe après — le terme tranche, pas la lame" },
-  { k:"noyauxCentrauxPredom", fv:"FOETO:PF.MUS-MAL-051", fiche:"[keeling, ch. 31]", g:"Noyaux et myotubes", mag:"moyen", l:"Prédominance de noyaux centraux" },
-  { k:"morphoMyotubulaire", fiche:"[keeling, ch. 31]", g:"Noyaux et myotubes", mag:"moyen", l:"Morphologie myotubulaire diffuse" },
-  { k:"noyauxInternes", fv:"FOETO:PF.MUS-RET-035", g:"Noyaux et myotubes", mag:"fort", l:"Noyaux internes au-delà de 5 %",
+  { k:"noyauxCentrauxPredom", terme:[25, null], fv:"FOETO:PF.MUS-MAL-051", fiche:"[keeling, ch. 31]", g:"Noyaux et myotubes", mag:"moyen", l:"Prédominance de noyaux centraux" },
+  { k:"morphoMyotubulaire", fv:"FOETO:PF.MUS-RET-004", terme:[18, null], fiche:"[keeling, ch. 31]", g:"Noyaux et myotubes", mag:"moyen", l:"Morphologie myotubulaire diffuse" },
+  { k:"noyauxInternes", terme:[40, null], fv:"FOETO:PF.MUS-RET-035", g:"Noyaux et myotubes", mag:"fort", l:"Noyaux internes au-delà de 5 %",
     meta:"au-delà de 5 % ; 5–75 % dans la myopathie myotubulaire — les seuils se touchent à 5 %" },
   { k:"myosineLenteRetardee", fv:"FOETO:PF.MUS-MAL-019", g:"Noyaux et myotubes", mag:"technique",
     meta:"retardée dans le Steinert, normale dans la myopathie myotubulaire — le différentiel exige de l'immuno" },

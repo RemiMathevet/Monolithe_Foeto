@@ -75,11 +75,17 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 17 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 13 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 2 fenêtre(s) de terme, 0 code(s) créé(s), 4 branché(s) sur un
+   code existant ; 2 proposition(s) rejetée(s) (le signe garde son comportement). */
+/* (même version) — reprise sur consignes de Rémi : un signe descriptif porte un terme descriptif,
+   la gradation ou le diagnostic se déduisent et leur code passe sur l'association ; un code NOR décrit
+   le normal (codes mal typés renumérotés) ; pancréas absent et réduit séparés. */
 var ORGANE  = "digestif";
 var TITRE   = "tube digestif";
 var SOURCE  = "fiche_digestif.md";
 var MODULE  = "grille_digestif";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -621,7 +627,7 @@ var SIGNES = [
 
   /* — Repérage et lisibilité du fragment — */
   /* v2 : déduit de la Maturation (segment NON identifiable) — la v1 le faisait déclarer deux fois. */
-  { k:"segmentNonIdentifiable", auto:function(){ var d = E.mesure.def; return d === "nonNomme" ? true : d ? false : null; },
+  { k:"segmentNonIdentifiable", terme:[18, null], auto:function(){ var d = E.mesure.def; return d === "nonNomme" ? true : d ? false : null; },
     fiche:"[ernst, ch. 4]", g:"Repérage et lisibilité du fragment", mag:"faible", l:"Segment du fragment non identifiable" },
   { k:"coupeTangentielle", fiche:"[keeling]", g:"Repérage et lisibilité du fragment", mag:"faible",
     l:"Coupe mal orientée — les deux couches de la musculeuse ne sont pas sur le même plan" },
@@ -672,7 +678,7 @@ var SIGNES = [
   /* — Nécrose et inflammation de la paroi — */
   { k:"necroseCoagulation", fv:"FOETO:PF.DIG-MAL-030", g:"Nécrose et inflammation de la paroi", mag:"faible",
     meta:"« may be difficult to differentiate from post-mortem tissue autolysis » sur pièce d'autopsie" },
-  { k:"necroseTransmurale", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"faible",
+  { k:"necroseTransmurale", fv:"FOETO:PF.DIG-VAS-007", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"faible",
     l:"Nécrose atteignant la MUSCULEUSE PROPRE — transmurale" },
   { k:"oedemeParoi", fv:"FOETO:PF.DIG-MAL-084", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"faible", l:"Œdème de la paroi" },
   { k:"hemorragieParoi", fv:"FOETO:PF.DIG-VAS-004", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"faible", l:"Hémorragie de la paroi" },
@@ -680,8 +686,8 @@ var SIGNES = [
     meta:"le constat est un gaz dans la paroi : aucune source ne le sépare d'un gaz de putréfaction sur macéré" },
   { k:"perforation", fv:"FOETO:PF.DIG-MAL-085", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"faible", l:"Perforation pariétale",
     meta:"siège antimésentérique à noter ; dans la péritonite fibro-adhésive, le trou peut être introuvable" },
-  { k:"necroseMuqueuse", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"moyen", l:"Nécrose limitée à la MUQUEUSE" },
-  { k:"necroseSousMuqueuse", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"moyen", l:"Nécrose atteignant la SOUS-MUQUEUSE" },
+  { k:"necroseMuqueuse", fv:"FOETO:PF.DIG-VAS-005", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"moyen", l:"Nécrose limitée à la MUQUEUSE" },
+  { k:"necroseSousMuqueuse", fv:"FOETO:PF.DIG-VAS-006", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"moyen", l:"Nécrose atteignant la SOUS-MUQUEUSE" },
   { k:"infiltratParoi", fv:"FOETO:PF.DIG-INF-007", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"moyen", l:"Infiltrat inflammatoire de la PAROI",
     meta:"des polynucléaires DANS LA LUMIÈRE ne sont pas une inflammation pariétale" },
   { k:"abcesCryptiques", g:"Nécrose et inflammation de la paroi", mag:"moyen", l:"Abcès cryptiques" },
@@ -707,10 +713,10 @@ var SIGNES = [
 
   /* — Innervation — plexus. Cellules immatures, ganglions de la séreuse et zone
      hypoganglionnaire sont des pièges de lecture, pas des lésions : hors du bloc. */
-  { k:"hypoganglionnaireSigne", bloc:false, fiche:"[keeling]", g:"Innervation — plexus", mag:"faible",
+  { k:"hypoganglionnaireSigne", fv:"FOETO:PF.DIG-NOR-115", bloc:false, fiche:"[keeling]", g:"Innervation — plexus", mag:"faible",
     l:"Fragment pris dans la zone distale normalement pauvre en ganglions",
     meta:"faux positif n° 1 — et les deux sources ne s'accordent pas sur la longueur de cette zone" },
-  { k:"ganglionsAbsents", fv:"FOETO:PF.DIG-MAL-002", g:"Innervation — plexus", mag:"moyen",
+  { k:"ganglionsAbsents", terme:[16, null], fv:"FOETO:PF.DIG-MAL-002", g:"Innervation — plexus", mag:"moyen",
     meta:"plexus sous-muqueux ET myentérique ; cellules résolues à l'objectif ×10, sur au moins deux coupes adjacentes" },
   { k:"zoneTransition", fv:"FOETO:PF.DIG-MAL-065", g:"Innervation — plexus", mag:"moyen",
     meta:"seuil propre : plus de 12,5 % de la circonférence" },

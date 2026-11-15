@@ -26,11 +26,14 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 0 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 17 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 1.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 4 fenêtre(s) de terme, 2 code(s) créé(s), 5 branché(s) sur un
+   code existant ; 0 proposition(s) rejetée(s) (le signe garde son comportement). */
 var ORGANE  = "placenta_membranes";
 var TITRE   = "placenta — membranes libres";
 var SOURCE  = "fiche_placenta.md";
 var MODULE  = "grille_placenta_membranes";
-var VERSION = "1.1.0";
+var VERSION = "1.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var PAIR    = false;
@@ -95,26 +98,26 @@ var SIGNES = [
   { k:"rpmProlongee", fv:"FOETO:PP.PLA-MAL-056", g:H, l:"Rupture des membranes depuis plus d'une semaine",
     meta:"l'inflammation n'est plus présente, la fibrose reste [vogel, ch. 9]",
     cr:"Les membranes étaient rompues depuis plus d'une semaine" },
-  { k:"meconiumMacro", g:H, l:"Membranes teintées ou liquide méconial (macroscopie)",
+  { k:"meconiumMacro", fv:"FOETO:PP.PLA-MAL-080", terme:[20, null], g:H, l:"Membranes teintées ou liquide méconial (macroscopie)",
     meta:"sur un placenta immature, la teinte verte tient plus souvent à l'hématoïdine ou à l'hémosidérine [benirschke, ch. 1]",
     cr:"Les membranes sont imprégnées de méconium en macroscopie" },
 
   /* — Amnios et chorion — */
-  { k:"brides", g:"Amnios et chorion", mag:"faible", l:"Brides ou feuillets amniotiques ; chorion nodosum",
+  { k:"brides", fv:"FOETO:PP.PLA-MAL-081", g:"Amnios et chorion", mag:"faible", l:"Brides ou feuillets amniotiques ; chorion nodosum",
     cr:"On note des brides ou des feuillets amniotiques, ou un chorion nodosum" },
   { k:"collageneDense", fv:"FOETO:PP.PLA-INF-046", g:"Amnios et chorion", mag:"faible", l:"Dépôt collagène dense sans inflammation",
     meta:"RPM > 1 semaine : l'inflammation est partie, la fibrose reste",
     cr:"Le chorion est le siège d'un dépôt collagène dense, sans inflammation" },
-  { k:"pseudokyste", g:"Amnios et chorion", mag:"faible", l:"Pseudokyste du chorion lisse, îlots de fibrinoïde à cellules X",
+  { k:"pseudokyste", fv:"FOETO:PP.PLA-DYS-021", g:"Amnios et chorion", mag:"faible", l:"Pseudokyste du chorion lisse, îlots de fibrinoïde à cellules X",
     meta:"preuve insuffisante pour la MVM [amsterdam]",
     cr:"On note un pseudokyste du chorion lisse, avec des îlots de fibrinoïde à cellules X" },
   { k:"hemorragieMembranes", g:"Amnios et chorion", mag:"faible",
     l:"Effusions de sang frais disséquant le chorion cellulaire du chorion fibreux",
     cr:"Le chorion cellulaire est souvent disséqué du chorion fibreux par de multiples effusions de sang frais." },
-  { k:"amniosNodosum", seul:true, g:"Amnios et chorion", mag:"moyen",
+  { k:"amniosNodosum", fv:"FOETO:PP.MEM-CLA-001", seul:true, g:"Amnios et chorion", mag:"moyen",
     l:"Amnios nodosum : nodules de vernix PAS et bleu alcian positifs, non kératinisés",
     cr:"On note un amnios nodosum : nodules de vernix non kératinisés" },
-  { k:"amniosDegenere", g:"Amnios et chorion", mag:"moyen",
+  { k:"amniosDegenere", fv:"FOETO:PP.PLA-CLA-009", g:"Amnios et chorion", mag:"moyen",
     l:"Amnios vacuolisé, hérissé, nécrosé (méconium prolongé, laparoschisis)", meta:"mime une surcharge",
     cr:"L'amnios est vacuolisé, hérissé, par places nécrosé" },
 
@@ -152,7 +155,7 @@ var SIGNES = [
   { k:"muscularisation", fv:"FOETO:PP.PLA-VAS-066", seul:true, g:CAD, mag:"moyen", l:"Muscularisation persistante des artérioles spiralées (défaut de remodelage)",
     meta:"en caduque pariétale le muscle lisse est normal (§ 4.2) : c'est son épaisseur relative qui devient lésionnelle",
     cr:"Les artérioles spiralées gardent une musculature (défaut de remodelage)" },
-  { k:"hypertrophieMurale", g:CAD, mag:"moyen",
+  { k:"hypertrophieMurale", fv:"FOETO:PP.PLA-NOR-085", g:CAD, mag:"moyen",
     l:"Hypertrophie murale des vaisseaux déciduaux, paroi > 1/3 de la circonférence",
     meta:"formulation dimensionnellement fautive, partagée par deux sources",
     cr:"Les vaisseaux déciduaux ont une paroi épaissie (hypertrophie murale)" },
@@ -166,11 +169,11 @@ var SIGNES = [
     cr:"La décidue capsulaire présente de multiples sidérophages." },
 
   /* — Méconium — */
-  { k:"meconiumAmnios", fv:"FOETO:PP.PLA-MAL-058", g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans l'amnios",
+  { k:"meconiumAmnios", terme:[20, null], fv:"FOETO:PP.PLA-MAL-058", g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans l'amnios",
     cr:"On note des macrophages chargés de méconium dans l'amnios" },
-  { k:"meconiumChorion", g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans le chorion et la caduque capsulaire",
+  { k:"meconiumChorion", terme:[20, null], g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans le chorion et la caduque capsulaire",
     cr:"Les membranes présentent quelques macrophages chargés de méconium épars au chorion (MFM)." },
-  { k:"meconiumNombreux", g:"Méconium", mag:"fort", l:"Macrophages méconiaux très nombreux dans le chorion",
+  { k:"meconiumNombreux", terme:[20, null], g:"Méconium", mag:"fort", l:"Macrophages méconiaux très nombreux dans le chorion",
     cr:"Les membranes présentent de très nombreux macrophages chargés de méconium épars au chorion (MFM+)." }
 ];
 

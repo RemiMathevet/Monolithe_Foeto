@@ -71,11 +71,14 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 5 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 11 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 2 fenêtre(s) de terme, 2 code(s) créé(s), 3 branché(s) sur un
+   code existant ; 0 proposition(s) rejetée(s) (le signe garde son comportement). */
 var ORGANE  = "cerveau_moelle";
 var TITRE   = "cerveau et moelle";
 var SOURCE  = "fiche_cerveau_moelle.md";
 var MODULE  = "grille_cerveau_moelle";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -641,7 +644,7 @@ var SIGNES = [
     meta:"perineuro ch. 38 distingue le clivage de la vraie duplication" },
 
   /* — Structures transitoires — maturation anormale, par structure — */
-  { k:"matricePersistante", seul:true, fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"matricePersistante", fv:"FOETO:PF.CER-MAL-347", seul:true, fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Matrice germinative persistante au-delà de l'âge attendu",
     meta:"seule sa PERSISTANCE se coche : on ne sait pas dire à partir de quel âge son absence est anormale" },
   { k:"sousPlaquePersistante", terme:[35, null], fiche:"[§ 3.4]", g:"Structures transitoires — maturation", mag:"faible",
@@ -652,22 +655,22 @@ var SIGNES = [
   { k:"laminaHemisphere", fv:"FOETO:PF.CER-NOR-114", bloc:false, fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Lamina dissecans présente à l'hémisphère cérébelleux",
     meta:"observation : perineuro la donne disparue à 30 aux hémisphères, ernst à 32" },
-  { k:"laminaDissecansPersistante", seul:true, fiche:"[ernst, ch. 29 ; perineuro]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"laminaDissecansPersistante", fv:"FOETO:PF.CER-MAL-348", seul:true, fiche:"[ernst, ch. 29 ; perineuro]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Lamina dissecans persistante aux DEUX étages, vermis compris" },
   { k:"dentelNonCrenele", terme:[22, null], fiche:"[§ 3.5]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Noyau dentelé à contour lisse et mal délimité après 22",
     meta:"une FORME, lue à faible grossissement : survit à la macération" },
   { k:"oliveNonCrenelee", seul:true, fiche:"[§ 3.5]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Olive bulbaire inférieure à contour lisse au 3ᵉ trimestre" },
-  { k:"granSousPialePersistante", fiche:"[§ 3.4]", g:"Structures transitoires — maturation", mag:"moyen",
+  { k:"granSousPialePersistante", terme:[30, null], fiche:"[§ 3.4]", g:"Structures transitoires — maturation", mag:"moyen",
     l:"Couche granulaire sous-piale persistante après 30",
     meta:"date portée par un seul terme de base, sans source livre retrouvée" },
 
   /* — Destruction, hémorragie, substance blanche — et leur horloge — */
-  { k:"hemorragieMatrice", fiche:"[devneuro, ch. 20]", g:"Destruction, hémorragie, substance blanche", mag:"faible",
+  { k:"hemorragieMatrice", fv:"FOETO:PF.CER-VAS-004", fiche:"[devneuro, ch. 20]", g:"Destruction, hémorragie, substance blanche", mag:"faible",
     l:"Hémorragie de la matrice germinative ou intraventriculaire",
     meta:"1 seul CR sur 176 en mentionne une — et c'est le type de lésion qui part dans le rapport différé" },
-  { k:"leucomalacie", fiche:"[devneuro, ch. 21]", g:"Destruction, hémorragie, substance blanche", mag:"faible",
+  { k:"leucomalacie", fv:"FOETO:PF.CER-VAS-005", fiche:"[devneuro, ch. 21]", g:"Destruction, hémorragie, substance blanche", mag:"faible",
     l:"Leucomalacie périventriculaire ou cavitation de la substance blanche" },
   { k:"caviteSansGliose", fv:"FOETO:PF.CER-MAL-346", fiche:"[devneuro, ch. 19]", g:"Destruction, hémorragie, substance blanche", mag:"faible",
     l:"Cavité ou perte de substance SANS gliose" },
@@ -676,13 +679,13 @@ var SIGNES = [
   { k:"necroseLaminaire", fv:"FOETO:PF.CER-CLA-151", g:"Destruction, hémorragie, substance blanche", mag:"faible" },
   { k:"rarefactionNeuronale", fiche:"[§ 5.3]", g:"Destruction, hémorragie, substance blanche", mag:"moyen",
     l:"Raréfaction neuronale" },
-  { k:"glioseReactionnelle", fv:"FOETO:PF.CER-RET-026", g:"Destruction, hémorragie, substance blanche", mag:"moyen",
+  { k:"glioseReactionnelle", terme:[20, null], fv:"FOETO:PF.CER-RET-026", g:"Destruction, hémorragie, substance blanche", mag:"moyen",
     meta:"astrocytose réactionnelle (libellé v1) — n'apparaît que vers 20-23 semaines : avant, son absence ne prouve rien" },
   { k:"sansMacrophagesMyeline", fv:"FOETO:PF.CER-NOR-115", bloc:false, fiche:"[perineuro, s9_infections]", g:"Destruction, hémorragie, substance blanche", mag:"fort",
     l:"Pas de macrophages chargés de myéline — pas de démyélinisation active",
     meta:"polarité normale, à répondre seul : c'est l'ABSENCE qui est le critère différentiel du retard de " +
          "myélinisation infectieux (§ 5.9) ; absent = macrophages chargés de myéline vus (v1 : macrophagesMyeline)" },
-  { k:"retardMyelinisation", fiche:"[perineuro, s9_infections]", g:"Destruction, hémorragie, substance blanche", mag:"technique",
+  { k:"retardMyelinisation", fv:"FOETO:PF.CER-NOR-076", fiche:"[perineuro, s9_infections]", g:"Destruction, hémorragie, substance blanche", mag:"technique",
     l:"Réduction d'intensité de la substance blanche attendue pour l'âge",
     meta:"le critère existe, la technique qui le lit (coloration de myéline) n'apparaît dans aucun CR" },
 

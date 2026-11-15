@@ -47,11 +47,17 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 16 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 6 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 4 fenêtre(s) de terme, 3 code(s) créé(s), 1 branché(s) sur un
+   code existant ; 3 proposition(s) rejetée(s) (le signe garde son comportement). */
+/* (même version) — reprise sur consignes de Rémi : un signe descriptif porte un terme descriptif,
+   la gradation ou le diagnostic se déduisent et leur code passe sur l'association ; un code NOR décrit
+   le normal (codes mal typés renumérotés) ; pancréas absent et réduit séparés. */
 var ORGANE  = "peau";
 var TITRE   = "peau";
 var SOURCE  = "fiche_peau.md";
 var MODULE  = "grille_peau";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -440,22 +446,22 @@ var SIGNES = [
     meta:"à lire d'abord : elle contrefait l'acanthose et l'avance" },
   { k:"epidermeEpais", fiche:"[expérience]", g:"Épiderme et kératinisation", mag:"faible", l:"Épiderme épais, couches désorganisées",
     meta:"chercher d'abord la coupe tangentielle" },
-  { k:"epidermeMince", fv:"FOETO:PF.PEA-MAL-125", fiche:"[soffoet, ch. 12]", g:"Épiderme et kératinisation", mag:"faible", l:"Épiderme mince, non kératinisé au terme déclaré" },
+  { k:"epidermeMince", seul:true, fv:"FOETO:PF.PEA-MAL-125", fiche:"[soffoet, ch. 12]", g:"Épiderme et kératinisation", mag:"faible", l:"Épiderme mince, non kératinisé au terme déclaré" },
   { k:"acanthose", fv:"FOETO:PF.PEA-MAL-067", g:"Épiderme et kératinisation", mag:"faible" },
   { k:"hyperkeratose", fv:"FOETO:PF.PEA-MAL-076", g:"Épiderme et kératinisation", mag:"faible",
     meta:"descripteur : « There is usually variable hyperkeratosis, focal parakeratosis, hypergranulosis and acanthosis of the epidermis in all forms »" },
-  { k:"corneeAbsente", fiche:"[soffoet, ch. 12]", g:"Épiderme et kératinisation", mag:"moyen", l:"Couche cornée absente" },
+  { k:"corneeAbsente", fv:"FOETO:PF.PEA-MAL-125", terme:[29, null], fiche:"[soffoet, ch. 12]", g:"Épiderme et kératinisation", mag:"moyen", l:"Couche cornée absente" },
   { k:"hypergranulose", fv:"FOETO:PF.PEA-MAL-075", g:"Épiderme et kératinisation", mag:"moyen" },
   { k:"parakeratoseFocale", fv:"FOETO:PF.PEA-MAL-080", g:"Épiderme et kératinisation", mag:"fort" },
 
   /* — Annexes — le compte des dysplasies ectodermiques — */
-  { k:"annexesAbsentes", fiche:"[expérience]", g:"Annexes", mag:"faible", l:"Aucune annexe sur le fragment",
+  { k:"annexesAbsentes", terme:[15, null], fiche:"[expérience]", g:"Annexes", mag:"faible", l:"Aucune annexe sur le fragment",
     meta:"prélèvement trop superficiel avant tout — pas de derme profond" },
   { k:"annexesReduites", seul:true, fv:"FOETO:PF.PEA-MAL-061", g:"Annexes", mag:"faible",
     meta:"les trois annexes ensemble ; aucune densité normale par terme n'est publiée" },
-  { k:"folliculesReduits", fiche:"[keeling, ch. 33]", g:"Annexes", mag:"faible", l:"Follicules pileux réduits en nombre ou en taille" },
-  { k:"eccrinesReduites", seul:true, fiche:"[keeling, ch. 33]", g:"Annexes", mag:"moyen", l:"Glandes sudorales eccrines réduites en nombre ou en taille" },
-  { k:"sebaceesReduites", seul:true, fiche:"[keeling, ch. 33]", g:"Annexes", mag:"moyen", l:"Glandes sébacées réduites en nombre ou en taille" },
+  { k:"folliculesReduits", fv:"FOETO:PF.PEA-MAL-126", seul:true, fiche:"[keeling, ch. 33]", g:"Annexes", mag:"faible", l:"Follicules pileux réduits en nombre ou en taille" },
+  { k:"eccrinesReduites", fv:"FOETO:PF.PEA-MAL-127", seul:true, fiche:"[keeling, ch. 33]", g:"Annexes", mag:"moyen", l:"Glandes sudorales eccrines réduites en nombre ou en taille" },
+  { k:"sebaceesReduites", fv:"FOETO:PF.PEA-MAL-128", seul:true, fiche:"[keeling, ch. 33]", g:"Annexes", mag:"moyen", l:"Glandes sébacées réduites en nombre ou en taille" },
 
   /* — Derme — œdème et vaisseaux — */
   { k:"oedemeDermoHypo", fv:"FOETO:PF.PEA-MAL-079", g:"Derme — œdème et vaisseaux", mag:"faible" },

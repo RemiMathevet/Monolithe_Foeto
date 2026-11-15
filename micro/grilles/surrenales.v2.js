@@ -69,11 +69,17 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 12 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 13 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 0 fenêtre(s) de terme, 1 code(s) créé(s), 3 branché(s) sur un
+   code existant ; 3 proposition(s) rejetée(s) (le signe garde son comportement). */
+/* (même version) — reprise sur consignes de Rémi : un signe descriptif porte un terme descriptif,
+   la gradation ou le diagnostic se déduisent et leur code passe sur l'association ; un code NOR décrit
+   le normal (codes mal typés renumérotés) ; pancréas absent et réduit séparés. */
 var ORGANE  = "surrenales";
 var TITRE   = "surrénales fœtales";
 var SOURCE  = "fiche_surrenales.md";
 var MODULE  = "grille_surrenales";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -490,7 +496,7 @@ var SIGNES = [
     meta:"glande volumineuse et cérébriforme, poids très au-dessus du repère — « average ~ 15 g » contre « the normal combined weight of 9 g »" },
   { k:"petiteBlanche", fv:"FOETO:PF.END-MAL-100", g:"Contexte hors lame — macro et pesée des surrénales",
     meta:"glandes « anormalement petites, blanches »" },
-  { k:"glandeJaune", fiche:"[keeling, ch. 26] [soffoet, ch. 8]", g:"Contexte hors lame — macro et pesée des surrénales",
+  { k:"glandeJaune", fv:"FOETO:PF.END-MAL-164", fiche:"[keeling, ch. 26] [soffoet, ch. 8]", g:"Contexte hors lame — macro et pesée des surrénales",
     l:"Glande jaune au lieu de rose, ou « liseré blanchâtre au centre de la glande, à la partie profonde du cortex fœtal »" },
   { k:"galette", fv:"FOETO:PF.END-MAL-054", g:"Contexte hors lame — macro et pesée des surrénales",
     meta:"surrénale en galette, glande aplatie" },
@@ -562,7 +568,7 @@ var SIGNES = [
   { k:"nodulesCentraux", fv:"FOETO:PF.END-NOR-113", bloc:false, fiche:"[ernst, ch. 20]", g:"Médullaire et amas neuroblastiques", mag:"faible",
     l:"Amas neuroblastiques centraux, autour des veines médullaires",
     meta:"attendus chez tous les fœtus vers 16–20 SA ; une coupe périphérique ne les montre pas" },
-  { k:"nodulePlus35", fv:"FOETO:PF.END-NOR-114", auto:function(){ var n = E.mesure.v.nodule; return n == null ? null : n > 3.5; },
+  { k:"nodulePlus35", fv:"FOETO:PF.END-TUM-006", auto:function(){ var n = E.mesure.v.nodule; return n == null ? null : n > 3.5; },
     fiche:"[keeling, ch. 26]", g:"Médullaire et amas neuroblastiques", mag:"faible",
     l:"Nodule dépassant 3,5 mm",
     meta:"« typically measuring less than 3,5 mm in maximum size » — seule borne qui sépare l'incidentel du reste ; déduit du plus grand nodule saisi en Maturation" },
@@ -580,11 +586,11 @@ var SIGNES = [
     meta:"médullaire « un peu plus mature pour l'âge, avec des phéochromocytes bien visibles » ; paradoxe de l'anencéphalie — la médullaire peut être en avance quand le cortex est en retard" },
 
   /* — Surcharges du cortex fœtal : réactionnelle (stéatose) et constitutionnelle — */
-  { k:"vacuolesDiffuses", fiche:"[ernst, ch. 20]", g:"Surcharges du cortex fœtal", mag:"faible",
+  { k:"vacuolesDiffuses", fv:"FOETO:PF.END-MAL-051", fiche:"[ernst, ch. 20]", g:"Surcharges du cortex fœtal", mag:"faible",
     l:"« lipid accumulation throughout the entire fetal zone »" },
   { k:"perteArchiCF", fv:"FOETO:PF.END-MAL-098", g:"Surcharges du cortex fœtal", mag:"faible",
     meta:"« l'architecture générale du cortex fœtal a disparu »" },
-  { k:"vacuolesPeriVeine", fiche:"[ernst, ch. 20]", g:"Surcharges du cortex fœtal", mag:"moyen",
+  { k:"vacuolesPeriVeine", fv:"FOETO:PF.END-MAL-051", fiche:"[ernst, ch. 20]", g:"Surcharges du cortex fœtal", mag:"moyen",
     l:"Vacuolisation bordant la veine centrale seulement",
     meta:"l'étendue radiale est l'axe de la gradation I/II/III, qui vit dans foeto_grades" },
   { k:"vacuolesCF", fv:"FOETO:PF.END-MAL-051", g:"Surcharges du cortex fœtal", mag:"moyen",
@@ -621,7 +627,7 @@ var SIGNES = [
     meta:"« multifocal, punctate cortical necrosis with surrounding hyperemia or hemorrhage »" },
   { k:"infiltrat", fv:"FOETO:PF.END-MAL-028", g:"Infection et inflammation", mag:"moyen",
     meta:"infiltrat leucocytaire dans le parenchyme ; « La réaction inflammatoire n'apparaît que dans un deuxième temps » — son absence n'exclut pas le CMV" },
-  { k:"amasBasophilesPeri", fiche:"[keeling, ch. 15]", g:"Infection et inflammation", mag:"moyen",
+  { k:"amasBasophilesPeri", fv:"FOETO:PF.END-NOR-083", fiche:"[keeling, ch. 15]", g:"Infection et inflammation", mag:"moyen",
     l:"Amas basophiles granuleux au contact de la glande, SANS polynucléaires",
     meta:"« Degeneration of soft tissues results in granular debris which may be mistaken for bacterial colonisation »" },
   { k:"hematopoieseFoyer", fv:"FOETO:PF.END-NOR-085", g:"Infection et inflammation", mag:"moyen",

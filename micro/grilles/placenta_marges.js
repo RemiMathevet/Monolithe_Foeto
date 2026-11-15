@@ -22,11 +22,14 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 0 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 0 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 1.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 0 fenêtre(s) de terme, 2 code(s) créé(s), 1 branché(s) sur un
+   code existant ; 0 proposition(s) rejetée(s) (le signe garde son comportement). */
 var ORGANE  = "placenta_marges";
 var TITRE   = "placenta — marges";
 var SOURCE  = "fiche_placenta.md";
 var MODULE  = "grille_placenta_marges";
-var VERSION = "1.1.0";
+var VERSION = "1.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var PAIR    = false;
@@ -88,10 +91,10 @@ var SIGNES = [
   { k:"infarctusPeriph", g:"Parenchyme marginal", mag:"faible", l:"Infarctus périphérique (marginal)",
     meta:"à terme, hors du seuil des 5 % non périphériques — la malperfusion maternelle se lit sur la grille parenchyme",
     cr:"On note un infarctus périphérique (marginal)" },
-  { k:"villositesAtrophiques", g:"Parenchyme marginal", mag:"faible",
+  { k:"villositesAtrophiques", fv:"FOETO:PP.PLA-NOR-232", g:"Parenchyme marginal", mag:"faible",
     l:"Villosités marginales atrophiques, fibrine périvillositaire de bord", meta:"la zone prélevée décide du chiffre",
     cr:"Les villosités marginales sont atrophiques, cernées de fibrine périvillositaire de bord" },
-  { k:"dvhSousChorial", g:"Parenchyme marginal", mag:"moyen",
+  { k:"dvhSousChorial", fv:"FOETO:PP.PLA-NOR-233", g:"Parenchyme marginal", mag:"moyen",
     l:"Paucité villositaire focale sous-choriale ou péri-lésionnelle", meta:"ne qualifie pas pour la DVH",
     cr:"On note une paucité villositaire focale, sous-choriale ou péri-lésionnelle" }
 ];

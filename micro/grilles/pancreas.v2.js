@@ -65,11 +65,17 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 16 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 6 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 0 fenêtre(s) de terme, 0 code(s) créé(s), 1 branché(s) sur un
+   code existant ; 4 proposition(s) rejetée(s) (le signe garde son comportement). */
+/* (même version) — reprise sur consignes de Rémi : un signe descriptif porte un terme descriptif,
+   la gradation ou le diagnostic se déduisent et leur code passe sur l'association ; un code NOR décrit
+   le normal (codes mal typés renumérotés) ; pancréas absent et réduit séparés. */
 var ORGANE  = "pancreas";
 var TITRE   = "pancréas";
 var SOURCE  = "fiche_pancreas.md";
 var MODULE  = "grille_pancreas";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -494,8 +500,11 @@ var CADRES = [
    terme FOETO porte fiche:"[source]". */
 var SIGNES = [
   /* — Contexte hors lame — macro, autres organes, clinique — */
-  { k:"pancreasPetit", fiche:"[keeling, ch. 22] · [soffoet, ch. 7]", g:"Contexte hors lame — macro, autres organes, clinique",
-    l:"Pancréas macroscopiquement absent, réduit ou hypoplasique" },
+  { k:"pancreasPetit", fv:"FOETO:PF.END-MAL-080", fiche:"[keeling, ch. 22] · [soffoet, ch. 7]", g:"Contexte hors lame — macro, autres organes, clinique",
+    l:"Pancréas macroscopiquement réduit ou hypoplasique" },  { k:"pancreasAbsent", fiche:"[keeling, ch. 22] · [soffoet, ch. 7]", g:"Contexte hors lame — macro, autres organes, clinique",
+    l:"Pancréas macroscopiquement absent",
+    meta:"le pancréas d'un fœtus jeune peut peser 0 g (≈ 1 g à 500 g de poids fœtal) : le poids seul ne fait pas l'agénésie" },
+
   { k:"pancreasNonRetrouve", fiche:"[corpus CR] · [keeling, ch. 15]", g:"Contexte hors lame — macro, autres organes, clinique",
     l:"Pancréas non identifié à la dissection", meta:"non identifié n'est pas absent : rouvrir la masse duodénale avant toute phrase d'agénésie" },
   { k:"omphalocele", fv:"FOETO:PF.END-MAL-068", g:"Contexte hors lame — macro, autres organes, clinique",
@@ -534,7 +543,7 @@ var SIGNES = [
   /* — Acini et canaux — */
   { k:"distensionCanalaire", seul:true, fv:"FOETO:PF.END-MAL-061", g:"Acini et canaux", mag:"faible",
     meta:"« La distension des canaux pancréatiques est plus nette au troisième trimestre »" },   // Distension des canaux pancréatiques
-  { k:"materielInspisse", terme:[null, 20], fiche:"[keeling, ch. 22] · [soffoet, ch. 7]", g:"Acini et canaux", mag:"moyen",
+  { k:"materielInspisse", fv:"FOETO:PF.DIG-MAL-026", terme:[null, 20], fiche:"[keeling, ch. 22] · [soffoet, ch. 7]", g:"Acini et canaux", mag:"moyen",
     l:"Matériel éosinophile ou PAS+ inspissé dans les acini et les canaux",
     meta:"le signe est daté : « vers 20 SA », jamais avant la mi-gestation" },
   { k:"atrophieAcineuse", fv:"FOETO:PF.END-MAL-143", fiche:"[keeling, ch. 22]", g:"Acini et canaux", mag:"moyen",
@@ -645,7 +654,7 @@ var DIAGS = [
     stop:"l'érythropoïèse interstitielle est physiologique au 2e trimestre : elle ne devient un argument que rapportée à un âge déclaré. Le foie, la rate et la moelle décident avant le pancréas. Le discriminant est la topographie insuline / glucagon CONSERVÉE dans l'îlot, qui ne se lit qu'en IHC." },
 
   { k:"agenesieAssoc", l:"Agénésie ou hypoplasie pancréatique", fv:["FOETO:PF.END-MAL-074","FOETO:PF.END-MAL-080"],
-    signes:["pancreasPetit","pancreasNonRetrouve","rciuSevere"],
+    signes:["pancreasPetit","pancreasAbsent","pancreasNonRetrouve","rciuSevere"],
     min:1, cle:"pancreasPetit",
     stop:"non identifié à la dissection n'est pas absent : le pancréas fœtal est petit, mou, autolytique et se dissocie du rétropéritoine. Sans réserve de dissection levée, l'agénésie ne s'écrit pas. Un pancréas hypoplasique impose de regarder les reins (MODY5, HNF1B). Le diabète néonatal n'a pas d'autre substrat morphologique décrit que celui-ci." },
 
@@ -1009,7 +1018,8 @@ async function testsOrgane(chk, clic, set, crTient, pause){
         .every(function(k){ return par(VARIANTES, k).g === par(SIGNES, "ilotsVolumineux").g; }));
   chk("l'hématopoïèse vit sous les infiltrats", par(VARIANTES, "hematopoiese").g === par(SIGNES, "erythropoieseInterstitielle").g);
   chk("pancréas petit ou non retrouvé : hors lame",
-      horsLame(par(SIGNES, "pancreasPetit").g) && horsLame(par(SIGNES, "pancreasNonRetrouve").g));
+      horsLame(par(SIGNES, "pancreasPetit").g) && horsLame(par(SIGNES, "pancreasAbsent").g) &&
+      horsLame(par(SIGNES, "pancreasNonRetrouve").g));
   var iF = cadre("nucleomegalie");
   clic("grp", iF, "non");
   chk("« Non » sur les îlots au fort : nucléomégalie et éosinophiles énoncés absents",

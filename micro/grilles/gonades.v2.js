@@ -65,11 +65,14 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 18 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 4 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 0 fenêtre(s) de terme, 4 code(s) créé(s), 2 branché(s) sur un
+   code existant ; 4 proposition(s) rejetée(s) (le signe garde son comportement). */
 var ORGANE  = "gonades";
 var TITRE   = "gonades et tractus génitaux internes";
 var SOURCE  = "fiche_gonades.md";
 var MODULE  = "grille_gonades";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -505,7 +508,7 @@ var GROUPES_SANS_ETENDUE = ["Bandelette — gonade fibreuse", "Compartiments, la
    selon le terme ou le sexe). */
 var SIGNES = [
   /* — Contexte hors lame — macro, caryotype, autres organes — */
-  { k:"autresOrganesLyses", auto:function(){ var o = E.mesure.opt; return o === "lyseSevere" ? true : o === "conserve" ? false : null; },
+  { k:"autresOrganesLyses", fv:"FOETO:PF.MUL-RET-017", auto:function(){ var o = E.mesure.opt; return o === "lyseSevere" ? true : o === "conserve" ? false : null; },
     fiche:"[ernst, ch. 15]", g:"Contexte hors lame — macro, caryotype, autres organes", l:"Les autres organes du même fœtus sont lysés",
     meta:"c'est là que se tranche l'autolyse ovarienne, jamais sur la gonade seule — déduit de la conservation du §04 (lyse débutante : non déduit)" },
   { k:"perforationDigestive", fiche:"[§ 5.6]", g:"Contexte hors lame — macro, caryotype, autres organes", l:"Perforation digestive anténatale retrouvée sur le tube digestif" },
@@ -525,16 +528,16 @@ var SIGNES = [
   /* — Compartiments, latéralité, tractus — */
   { k:"deuxCompartiments", fv:"FOETO:PF.GEN-MAL-040", g:"Compartiments, latéralité, tractus", mag:"faible",
     meta:"cordons ou tubes séminifères d'un côté, cortex folliculaire de l'autre — la partie ovarienne peut être polaire" },
-  { k:"asymetrieGonadique", fiche:"[soffoet, ch. 8]", g:"Compartiments, latéralité, tractus", mag:"faible", l:"Les deux gonades diffèrent l'une de l'autre",
+  { k:"asymetrieGonadique", fv:"FOETO:PF.GEN-MAL-061", fiche:"[soffoet, ch. 8]", g:"Compartiments, latéralité, tractus", mag:"faible", l:"Les deux gonades diffèrent l'une de l'autre",
     meta:"c'est la définition même de la dysgénésie gonadique mixte — exige deux blocs étiquetés" },
   { k:"derivesCanalaires", bloc:false, fv:"FOETO:PF.GEN-MAL-041", g:"Compartiments, latéralité, tractus", mag:"faible",
     meta:"présent = dérivés canalaires identifiés sur les blocs lus, à préciser côté par côté dans les deux signes suivants ; absent = aucun dérivé sur les blocs lus" },
-  { k:"derivesMesonephrotiques", bloc:false, fiche:"[keeling, ch. 25]", g:"Compartiments, latéralité, tractus", mag:"faible", l:"Dérivés mésonéphrotiques présents du côté examiné (épididyme, déférent)",
+  { k:"derivesMesonephrotiques", fv:"FOETO:PF.GEN-MAL-062", bloc:false, fiche:"[keeling, ch. 25]", g:"Compartiments, latéralité, tractus", mag:"faible", l:"Dérivés mésonéphrotiques présents du côté examiné (épididyme, déférent)",
     meta:"attendus sur un testicule : le sens dépend du sexe gonadique" },
-  { k:"derivesMulleriens", bloc:false, fiche:"[keeling, ch. 25]", g:"Compartiments, latéralité, tractus", mag:"faible", l:"Dérivés paramésonéphrotiques persistants du côté examiné (trompe, utérus)",
+  { k:"derivesMulleriens", fv:"FOETO:PF.GEN-MAL-063", bloc:false, fiche:"[keeling, ch. 25]", g:"Compartiments, latéralité, tractus", mag:"faible", l:"Dérivés paramésonéphrotiques persistants du côté examiné (trompe, utérus)",
     meta:"attendus sur un ovaire : le sens dépend du sexe gonadique" },
   /* — Testicule — capsule, tubes, interstitium — */
-  { k:"albugineeAbsente", fiche:"[soffoet, ch. 8]", g:"Testicule — capsule, tubes, interstitium", mag:"faible", l:"Albuginée non identifiable, cordons au contact de l'épithélium de surface" },
+  { k:"albugineeAbsente", fv:"FOETO:PF.GEN-MAL-064", fiche:"[soffoet, ch. 8]", g:"Testicule — capsule, tubes, interstitium", mag:"faible", l:"Albuginée non identifiable, cordons au contact de l'épithélium de surface" },
   { k:"tubesNonIndividualises", fiche:"[corpus CR]", g:"Testicule — capsule, tubes, interstitium", mag:"faible", l:"Tubes séminifères mal individualisés",
     meta:"critère du service, non retrouvé dans les livres ouverts (§ 9.11)" },
   { k:"centreDysgenetique", fiche:"[corpus CR]", g:"Testicule — capsule, tubes, interstitium", mag:"faible", l:"Foyer dysgénétique central, périphérie corticale normale",
@@ -567,7 +570,7 @@ var SIGNES = [
     meta:"aucun critère ne la sépare d'un saignement de dissection — même trou qu'à la surrénale et au thymus" },
   { k:"cellulesGeantes", fiche:"[§ 5.6]", g:"Albuginée, péri-gonade, hémorragie", mag:"moyen", l:"Macrophages et cellules géantes péri-testiculaires" },
   /* — Hématopoïèse intra-gonadique — */
-  { k:"nidsErythroides", bloc:false, fiche:"[corpus CR]", g:"Hématopoïèse intra-gonadique", mag:"moyen", l:"Nids érythroïdes le long des septa fibreux inter-tubulaires",
+  { k:"nidsErythroides", fv:"FOETO:PF.GEN-NOR-200", bloc:false, fiche:"[corpus CR]", g:"Hématopoïèse intra-gonadique", mag:"moyen", l:"Nids érythroïdes le long des septa fibreux inter-tubulaires",
     meta:"présents au terme sur testicule normal : à répondre seul, avec le terme" },
   { k:"erythroAbondante", fiche:"[corpus CR]", g:"Hématopoïèse intra-gonadique", mag:"moyen", l:"Érythropoïèse abondante — de nombreux érythroblastes" },
   { k:"multilignee", fiche:"[corpus CR]", g:"Hématopoïèse intra-gonadique", mag:"technique", l:"Lignée granulocytaire ou B associée (MPO+, PAX5+)",

@@ -63,11 +63,14 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 16 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 6 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 0 fenêtre(s) de terme, 1 code(s) créé(s), 9 branché(s) sur un
+   code existant ; 2 proposition(s) rejetée(s) (le signe garde son comportement). */
 var ORGANE  = "oreille";
 var TITRE   = "oreille — rocher, caisse du tympan et conduit auditif externe";
 var SOURCE  = "fiche_oreille.md";
 var MODULE  = "grille_oreille";
-var VERSION = "2.1.0";
+var VERSION = "2.1.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -439,26 +442,26 @@ var SIGNES = [
   { k:"cmvAutre",      g:C_HORS, l:"Inclusions de type CMV sur un autre organe du même fœtus" },
   { k:"hemoFossePost", fv:"FOETO:PF.ORL-VAS-017", fiche:"[ernst, ch. 31]", g:C_HORS, l:"Hémorragie sous-arachnoïdienne de la fosse postérieure documentée" },
   { k:"hemoIntracranienne", fv:"FOETO:PF.ORL-VAS-009", g:C_HORS },
-  { k:"abruptio",      fiche:"[ernst, ch. 31]", g:C_HORS, l:"Décollement placentaire aigu documenté" },
+  { k:"abruptio",      fv:"FOETO:PF.ORL-VAS-011", fiche:"[ernst, ch. 31]", g:C_HORS, l:"Décollement placentaire aigu documenté" },
   /* — Conduit auditif externe et tympan — la règle des annexes, le bouchon — */
   { k:"atresieCae",    fv:"FOETO:PF.ORL-MAL-096", g:C_CAE, mag:"faible" },
   { k:"bouchonPersistant", fv:"FOETO:PF.ORL-MAL-158", seul:true, fiche:"[ernst, ch. 31]", g:C_CAE, mag:"faible", l:"Bouchon méatique encore plein" },
-  { k:"tympanImmature", seul:true, fiche:"[ernst, ch. 31]", g:C_CAE, mag:"moyen", l:"Membrane tympanique immature, plans conjonctifs peu développés" },
+  { k:"tympanImmature", fv:"FOETO:PF.ORL-NOR-068", seul:true, fiche:"[ernst, ch. 31]", g:C_CAE, mag:"moyen", l:"Membrane tympanique immature, plans conjonctifs peu développés" },
   { k:"cerumineuseInterne", fv:"FOETO:PF.ORL-MAL-159", fiche:"[ernst, ch. 31]", g:C_CAE, mag:"moyen", l:"Glande cérumineuse dans la moitié INTERNE du conduit" },
   { k:"glandeSudorale", fv:"FOETO:PF.ORL-MAL-097", g:C_CAE, mag:"moyen",
     meta:"absolu de la source : il n'y en a nulle part" },
   /* — Caisse et osselets — malformation — */
-  { k:"caisseMalformee", fiche:"[keeling, ch. 34]", g:C_MALF, mag:"faible", l:"Caisse du tympan malformée ou non individualisée" },
+  { k:"caisseMalformee", fv:"FOETO:PF.ORL-MAL-106", fiche:"[keeling, ch. 34]", g:C_MALF, mag:"faible", l:"Caisse du tympan malformée ou non individualisée" },
   { k:"osseletsMalformes", fiche:"[ernst, ch. 31]", g:C_MALF, mag:"faible", l:"Osselets malformés, fusionnés ou absents" },
   { k:"platineAnormale", fiche:"[ernst, ch. 31]", g:C_MALF, mag:"moyen", l:"Platine de l'étrier anormale",
     meta:"elle vient de la capsule otique, pas du 2e arc" },
   /* — Contenu de la caisse — le continuum amniotique, le sang — */
-  { k:"debrisExces",   fiche:"[ernst, ch. 31]", g:C_LUM, mag:"faible", l:"Débris amniotiques en EXCÈS dans la caisse",
+  { k:"debrisExces",   fv:"FOETO:PF.ORL-NOR-066", fiche:"[ernst, ch. 31]", g:C_LUM, mag:"faible", l:"Débris amniotiques en EXCÈS dans la caisse",
     meta:"seule la quantité porte l'information" },
   { k:"nodulesPolypoides", fv:"FOETO:PF.ORL-MAL-160", fiche:"[ernst, ch. 31]", g:C_LUM, mag:"faible", l:"Nodules polypoïdes sur les osselets ou la paroi de la caisse",
     meta:"réaction à corps étranger — plus probable chez le nouveau-né que chez le fœtus" },
   { k:"hemoCaisse",    fv:"FOETO:PF.ORL-VAS-008", g:C_LUM, mag:"faible" },
-  { k:"hyrtlOuverte",  fiche:"[ernst, ch. 31]", bloc:false, g:C_LUM, mag:"moyen", l:"Fissure de Hyrtl encore ouverte sur la coupe",
+  { k:"hyrtlOuverte",  fv:"FOETO:PF.ORL-NOR-082", fiche:"[ernst, ch. 31]", bloc:false, g:C_LUM, mag:"moyen", l:"Fissure de Hyrtl encore ouverte sur la coupe",
     meta:"se ferme à 24 semaines, unité source — présente avant, elle est normale" },
   { k:"pnLumiere",     fv:"FOETO:PF.ORL-INF-020", fiche:"[ernst, ch. 31]", g:C_LUM, mag:"moyen", l:"Polynucléaires dans la LUMIÈRE de la caisse",
     meta:"degré 4 du continuum, pas une otite" },
@@ -471,19 +474,19 @@ var SIGNES = [
   { k:"cilieBosses",   fv:"FOETO:PF.ORL-MAL-161", fiche:"[ernst, ch. 31]", g:C_PAROI, mag:"moyen", l:"Épithélium cylindrique cilié pseudostratifié sur une BOSSE de mésenchyme",
     meta:"normal dans les creux, pas sur les reliefs" },
   { k:"hemAbondante",  fiche:"[ernst, ch. 31]", g:C_PAROI, mag:"moyen", l:"Hématopoïèse extramédullaire au-delà de l'abondance attendue" },
-  { k:"infiltratMonomorphe", fiche:"[ernst, ch. 31]", g:C_PAROI, mag:"moyen", l:"Infiltrat cellulaire monomorphe inattendu dans la caisse ou le rocher" },
+  { k:"infiltratMonomorphe", fv:"FOETO:PF.ORL-INF-021", fiche:"[ernst, ch. 31]", g:C_PAROI, mag:"moyen", l:"Infiltrat cellulaire monomorphe inattendu dans la caisse ou le rocher" },
   { k:"mitoses",       g:C_PAROI, mag:"fort", l:"Mitoses nombreuses dans l'infiltrat" },
   /* — Cochlée — Corti, strie, rampes — */
   { k:"hemoLabyrinthe", fv:"FOETO:PF.ORL-VAS-010", g:C_COCH, mag:"faible" },
-  { k:"reticulumRampes", terme:[14, null], fiche:"[ernst, ch. 31]", g:C_COCH, mag:"moyen", l:"Réticulum périlymphatique persistant dans les RAMPES cochléaires",
+  { k:"reticulumRampes", fv:"FOETO:PF.ORL-NOR-074", terme:[14, null], fiche:"[ernst, ch. 31]", g:C_COCH, mag:"moyen", l:"Réticulum périlymphatique persistant dans les RAMPES cochléaires",
     meta:"les rampes en sont vides dès la 12e semaine post-fertilisation ; au-delà, la source ne dit rien" },
-  { k:"cortiImmature", seul:true, fiche:"[ernst, ch. 31]", g:C_COCH, mag:"fort", l:"Organe de Corti immature : cellules ciliées indifférenciées, tunnel non ouvert",
+  { k:"cortiImmature", fv:"FOETO:PF.ORL-NOR-070", seul:true, fiche:"[ernst, ch. 31]", g:C_COCH, mag:"fort", l:"Organe de Corti immature : cellules ciliées indifférenciées, tunnel non ouvert",
     meta:"ne date rien sans la position de la coupe sur la spirale" },
-  { k:"inclusionsStrie", fiche:"[ernst, ch. 31]", g:C_COCH, mag:"fort", l:"Inclusions virales dans la strie vasculaire" },
+  { k:"inclusionsStrie", fv:"FOETO:PF.ORL-INF-010", fiche:"[ernst, ch. 31]", g:C_COCH, mag:"fort", l:"Inclusions virales dans la strie vasculaire" },
   /* — Vestibule, canaux et sac endolymphatique — */
   { k:"otolithesLibres", fv:"FOETO:PF.ORL-NOR-089", g:C_VEST, mag:"moyen",
     meta:"le piège majeur : pris pour des germes" },
-  { k:"inclusionsMacule", fiche:"[ernst, ch. 31]", g:C_VEST, mag:"fort", l:"Inclusions virales dans une macule otolithique" }
+  { k:"inclusionsMacule", fv:"FOETO:PF.ORL-INF-010", fiche:"[ernst, ch. 31]", g:C_VEST, mag:"fort", l:"Inclusions virales dans une macule otolithique" }
 ];
 
 /* ── Associations — affichées, jamais cochées ─────────────────────────────── */

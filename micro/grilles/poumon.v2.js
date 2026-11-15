@@ -39,11 +39,14 @@
    un signe daté hors de sa fenêtre (seul : un par un) ; 19 code(s) FOETO existant(s) branché(s)
    (variantes, rétention, stades, mesures, associations) ; 1 code(s) créé(s) depuis le verbatim de la
    fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
+/* 2.2.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
+   fiche et vérifiées par script : 1 fenêtre(s) de terme, 1 code(s) créé(s), 0 branché(s) sur un
+   code existant ; 0 proposition(s) rejetée(s) (le signe garde son comportement). */
 var ORGANE  = "poumon";
 var TITRE   = "poumon";
 var SOURCE  = "fiche_poumon.md";
 var MODULE  = "grille_poumon";
-var VERSION = "2.2.0";
+var VERSION = "2.2.1";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -218,7 +221,7 @@ var SIGNES = [
   { k:"artereSystemique", fv:"FOETO:PF.POU-VAS-002", g:"Contexte hors lame — macro, clinique" },
   { k:"plevrePropre",    fv:"FOETO:PF.POU-MAL-072", g:"Contexte hors lame — macro, clinique" },
   /* — Architecture et lobule — */
-  { k:"divisionsReduites", fv:"FOETO:PF.POU-MAL-048", g:"Architecture et lobule", mag:"faible", meta:"atteinte avant la 16e semaine" },
+  { k:"divisionsReduites", terme:[18, null], fv:"FOETO:PF.POU-MAL-048", g:"Architecture et lobule", mag:"faible", meta:"atteinte avant la 16e semaine" },
   { k:"emphyseme",         fv:"FOETO:PF.POU-MAL-015", g:"Architecture et lobule", mag:"faible" },
   /* — Kystes et malformations — */
   { k:"kystesGrands",    fv:"FOETO:PF.POU-MAL-063", g:"Kystes et malformations", mag:"faible", meta:"Stocker type 1" },
@@ -264,7 +267,7 @@ var SIGNES = [
   { k:"necroseBronchiol", fv:"FOETO:PF.POU-INF-006", g:"Poumon ventilé — né vivant", mag:"fort",
     meta:"signe le plus précoce" },
   { k:"membranophages",  fv:"FOETO:PF.POU-MAL-027", g:"Poumon ventilé — né vivant", mag:"fort" },
-  { k:"pneumocytesRegen", fiche:"[keeling]", g:"Poumon ventilé — né vivant", mag:"fort",
+  { k:"pneumocytesRegen", fv:"FOETO:PF.POU-MAL-087", fiche:"[keeling]", g:"Poumon ventilé — né vivant", mag:"fort",
     l:"Pneumocytes de type II régénératifs recouvrant les membranes" },
   { k:"materielPAS",     fv:"FOETO:PF.POU-MAL-067", g:"Poumon ventilé — né vivant", mag:"technique" }
 ];
