@@ -292,7 +292,7 @@ var SIGNES = [
     cr:"Notion de geste instrumental ou obstétrical (aspiration, extraction, césarienne, ponction ou transfusion)" },
 
   /* — Plaque choriale — toit et inflammation — */
-  { k:"amniosDecolle", fv:"FOETO:PP.PLA-MAL-059", g:PC, mag:"faible", l:"Amnios décollé de la plaque choriale", meta:"traction sur le cordon au 3e stade — artefact",
+  { k:"amniosDecolle", g:PC, mag:"faible", l:"Amnios décollé de la plaque choriale", meta:"traction sur le cordon au 3e stade — artefact",
     cr:"On note un décollement partiel de l'amnios" },
   { k:"langhansExces", fv:"FOETO:PP.PLA-INF-064", g:PC, mag:"faible", l:"Fibrinoïde sous-chorial de Langhans épais, chorioamnion épaissi",
     meta:"faux négatif géométrique : l'inflammation « will not be seen » [khong2019, ch. 13]",
@@ -365,7 +365,7 @@ var SIGNES = [
   { k:"noeudsAugmentes", fv:"FOETO:PP.PAR-NOR-001", g:MM, mag:"moyen", l:"Nœuds syncytiaux augmentés (≥ 5 noyaux, bombant), hors bordure de lésion",
     meta:"voir le compte de la maturation",
     cr:"On note de multiples plages d'hypoplasie villositaire distale avec augmentation diffuse du nombre d'amas nucléaires syncytiotrophoblastiques (ANSCT)." },
-  { k:"minéralisationMB", fv:"FOETO:PP.PLA-MAL-063", g:MM, mag:"fort", l:"Minéralisation de la membrane basale trophoblastique",
+  { k:"minéralisationMB", g:MM, mag:"fort", l:"Minéralisation de la membrane basale trophoblastique",
     meta:"artefact de macération — mime l'épaississement de la membrane basale du trépied",
     cr:"La membrane basale trophoblastique est minéralisée (artefact de macération)" },
 
@@ -492,11 +492,11 @@ var SIGNES = [
   { k:"atheroseBasale", seul:true, fv:"FOETO:PP.PLA-MAL-075", g:PB, mag:"moyen",
     l:"Athérose ou muscularisation persistante des artères spiralées de la plaque basale", meta:"identique à la pariétale",
     cr:"On note une nécrose fibrinoïde de la média de quelques artères utéro-placentaires (artériose décidue)." },
-  { k:"implantationSuperficielle", fv:"FOETO:PP.PLA-MAL-076", g:PB, mag:"moyen",
+  { k:"implantationSuperficielle", g:PB, mag:"moyen",
     l:"Cellules géantes ↑ et trophoblaste extravilleux immature au site d'implantation",
     meta:"implantation trop superficielle [lherminecoulomb]",
     cr:"Les cellules géantes sont augmentées et le trophoblaste extravilleux est immature au site d'implantation" },
-  { k:"deciduiteBasale", fv:"FOETO:PP.PLA-MAL-077", g:PB, mag:"fort", l:"Plasmocytes dans la plaque basale",
+  { k:"deciduiteBasale", g:PB, mag:"fort", l:"Plasmocytes dans la plaque basale",
     meta:"le lymphocyte est normal, le plasmocyte ne l'est pas [ernst, ch. 36]",
     cr:"La plaque basale présente de multiples plasmocytes épars (déciduite chronique)." }
 ];
@@ -605,11 +605,12 @@ var DIAGS = [
          "nommés : intervalle court jusqu'à l'accouchement, décollement partiel ou marginal sans atteinte de la " +
          "plaque basale [vogel, ch. 7]." },
 
-  { k:"chi", l:"Intervillite chronique histiocytaire (CHI)", fv:"FOETO:PP.PAR-INF-002", min:1,
-    signes:["intervilliteChronique"],
+  { k:"chi", l:"Intervillite chronique histiocytaire (CHI)", fv:"FOETO:PP.PAR-INF-002", min:1, cle:"intervilliteChronique",
+    signes:["intervilliteChronique","villite"],
     stop:" — étendue à grader : focale < 10 %, modérée 10–50 %, massive > 50 % [khong2019, ch. 30] ; « focale » " +
          "chez [vogel, ch. 9] contre « massive » comme nom historique [recurrent]. Des polynucléaires dans la " +
-         "chambre intervilleuse ne sont pas une intervillite chronique [khong2019, ch. 30]." }
+         "chambre intervilleuse ne sont pas une intervillite chronique [khong2019, ch. 30]. Villite associée : 25–35 % " +
+         "[recurrent] contre 30–47 % [khong2019, ch. 30]." }
 
 ];
 
@@ -825,5 +826,5 @@ async function testsOrgane(chk, clic, set, crTient, pause){
   ote("mvsReduites");
 
   /* 1.1.0 : codes créés depuis le verbatim de la fiche (lot FOETO) — les signes branchés exportent leur code */
-  chk("FOETO 1.1 : 51 signe(s) codé(s) depuis le verbatim", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 51);
+  chk("FOETO 1.1.1 : 53 signe(s) codé(s) depuis le verbatim (après le tri et le réancrage)", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 53);
 }

@@ -450,7 +450,7 @@ var SIGNES = [
     cr:"La gelée de Wharton est condensée en liseré (cordon grêle)" },
   { k:"oedemeCordon", g:"Gelée de Wharton", mag:"faible", l:"Œdème de la gelée, cordon épais", meta:"diabète maternel, hydrops",
     cr:"La gelée de Wharton est œdémateuse (cordon épais)" },
-  { k:"hematomeCordon", fv:"FOETO:PP.PLA-VAS-012", g:"Gelée de Wharton", mag:"moyen",
+  { k:"hematomeCordon", g:"Gelée de Wharton", mag:"moyen",
     l:"Hématome funiculaire avec organisation, lignes de Zahn ou polynucléaires",
     meta:"sans les trois : artefact [ernst, ch. 36]",
     cr:"On note un hématome funiculaire avec organisation, lignes de Zahn ou polynucléaires" },
@@ -592,12 +592,12 @@ async function testsOrgane(chk, clic, set, crTient, pause){
       DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
   /* FOETO : aucun terme tagué verbatim pour le placenta — rien de branché */
   /* 1.1.0 : codes créés depuis le verbatim de la fiche (lot FOETO) — les signes branchés exportent leur code */
-  chk("FOETO 1.1 : 4 signe(s) codé(s) depuis le verbatim", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 4);
+  chk("FOETO 1.1.1 : 11 signe(s) codé(s) depuis le verbatim (après le tri et le réancrage)", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 11);
 }
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
 var FOETO = {"sections":[],"formes":{}};
-var FOETOV = {"FOETO:PP.PLA-INF-066":{"l":"Artérite ombilicale","hpo":null},"FOETO:PP.PLA-MAL-016":{"l":"Hyperenroulement du cordon ombilical","hpo":null},"FOETO:PP.PLA-INF-067":{"l":"Funisite nécrosante","hpo":null},"FOETO:PP.PLA-MAL-079":{"l":"Méconium dans la gelée de Wharton","hpo":null},"FOETO:PP.PLA-MAL-078":{"l":"Vaisseaux fœtaux à trajet membraneux, sur insertion vélamenteuse ou marginale","hpo":null},"FOETO:PP.PLA-MAL-054":{"l":"Striction : gelée absente ou subtotale, cordon extrêmement spiralé","hpo":null},"FOETO:PP.COR-VAS-001":{"l":"MAVM (meconium associated vascular myonecrosis)","hpo":null},"FOETO:PP.COR-MAL-002":{"l":"Artère ombilicale unique","hpo":null},"FOETO:PP.PLA-MAL-053":{"l":"Varice ou ectasie d'un vaisseau ombilical","hpo":null},"FOETO:PP.COR-INF-008":{"l":"Réponse inflammatoire fœtale (FIR)","hpo":null},"FOETO:PP.PLA-INF-065":{"l":"Phlébite ombilicale","hpo":null},"FOETO:PP.PLA-VAS-012":{"l":"Hématome du cordon ombilical","hpo":null},"FOETO:PP.PLA-VAS-062":{"l":"Gelée de Wharton condensée en liseré, ± microcalcifications diffuses (cordon grêle)","hpo":null},"FOETO:PP.PLA-VAS-061":{"l":"Thrombose d'un vaisseau ombilical","hpo":null}};
+var FOETOV = {"FOETO:PP.COR-INF-008":{"l":"Réponse inflammatoire fœtale (FIR)","hpo":null},"FOETO:PP.COR-MAL-002":{"l":"Artère ombilicale unique","hpo":null},"FOETO:PP.COR-VAS-001":{"l":"MAVM (meconium associated vascular myonecrosis)","hpo":null},"FOETO:PP.PLA-INF-065":{"l":"Phlébite ombilicale","hpo":null},"FOETO:PP.PLA-INF-066":{"l":"Artérite ombilicale","hpo":null},"FOETO:PP.PLA-INF-067":{"l":"Funisite nécrosante","hpo":null},"FOETO:PP.PLA-MAL-016":{"l":"Hyperenroulement du cordon ombilical","hpo":null},"FOETO:PP.PLA-MAL-053":{"l":"Varice ou ectasie d'un vaisseau ombilical","hpo":null},"FOETO:PP.PLA-MAL-054":{"l":"Striction : gelée absente ou subtotale, cordon extrêmement spiralé","hpo":null},"FOETO:PP.PLA-MAL-078":{"l":"Vaisseaux fœtaux à trajet membraneux, sur insertion vélamenteuse ou marginale","hpo":null},"FOETO:PP.PLA-MAL-079":{"l":"Méconium dans la gelée de Wharton","hpo":null},"FOETO:PP.PLA-VAS-061":{"l":"Thrombose d'un vaisseau ombilical","hpo":null},"FOETO:PP.PLA-VAS-062":{"l":"Gelée de Wharton condensée en liseré, ± microcalcifications diffuses (cordon grêle)","hpo":null}};
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */

@@ -128,7 +128,7 @@ var SIGNES = [
     cr:"La gelée de Wharton est condensée en liseré (cordon grêle)" },
   { k:"oedemeCordon", g:"Gelée de Wharton", mag:"faible", l:"Œdème de la gelée, cordon épais", meta:"diabète maternel, hydrops",
     cr:"La gelée de Wharton est œdémateuse (cordon épais)" },
-  { k:"hematomeCordon", fv:"FOETO:PP.PLA-VAS-012", g:"Gelée de Wharton", mag:"moyen",
+  { k:"hematomeCordon", g:"Gelée de Wharton", mag:"moyen",
     l:"Hématome funiculaire avec organisation, lignes de Zahn ou polynucléaires",
     meta:"sans les trois : artefact [ernst, ch. 36]",
     cr:"On note un hématome funiculaire avec organisation, lignes de Zahn ou polynucléaires" },
@@ -270,5 +270,5 @@ async function testsOrgane(chk, clic, set, crTient, pause){
       DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
   /* FOETO : aucun terme tagué verbatim pour le placenta — rien de branché */
   /* 1.1.0 : codes créés depuis le verbatim de la fiche (lot FOETO) — les signes branchés exportent leur code */
-  chk("FOETO 1.1 : 4 signe(s) codé(s) depuis le verbatim", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 4);
+  chk("FOETO 1.1.1 : 11 signe(s) codé(s) depuis le verbatim (après le tri et le réancrage)", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 11);
 }

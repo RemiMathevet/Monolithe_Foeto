@@ -1361,8 +1361,8 @@ async function testsOrgane(chk, clic, set, crTient, pause){
   /* ── v2 · Branchement FOETO ──────────────────────────────────────────────── */
   chk("v2 : libellé venu de FOETO", par(SIGNES, "gonadeFibreuse").l ===
       "Tissu fibreux fasciculé en tourbillons de cellules fusiformes, sans cellule germinale ni structure différenciée");
-  chk("v2.1 : les dix constats FOETO de la fiche + les 4 du lot sont branchés",
-      SIGNES.filter(function(x){ return /^FOETO:/.test(x.foeto); }).length === 14);
+  chk("v2.1.1 : 20 signes branchés (fiche, lot, tri)",
+      SIGNES.filter(function(x){ return /^FOETO:/.test(x.foeto); }).length === 20);
   chk("v2 : code FOETO du terme verbatim", codesDe(par(SIGNES, "distribGerminale"))[0] === "FOETO:PF.GEN-MAL-044");
   pose("distribGerminale", POS);
   chk("v2 : le code du signe présent part au CR", crTient("[FOETO:PF.GEN-MAL-044]"));

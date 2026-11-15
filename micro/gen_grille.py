@@ -1934,7 +1934,7 @@ def bloc_foeto_verbatim(nom, frag):
     c = sqlite3.connect("file:%s?mode=ro" % DB, uri=True)
     tag = {r[0] for r in c.execute("select term_id from foeto_tags where tag = 'verbatim'")}
     base = {}
-    for i in set(ids):
+    for i in sorted(set(ids)):   # ordre stable : deux générations du même état donnent le même fichier
         r = c.execute("select label_fr from foeto_terms where id = ?", (i,)).fetchone()
         if not r or i not in tag:
             raise SystemExit("grilles/%s.js : %s %s" % (nom, i, "absent de FOETO" if not r else "non tagué verbatim"))

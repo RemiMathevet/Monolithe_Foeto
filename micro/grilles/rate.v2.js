@@ -1048,7 +1048,7 @@ async function testsOrgane(chk, clic, set, crTient, pause){
       !/§ 0[4-8]/.test(JSON.stringify([STADES, RETENTION, DIAGS, NEGATIFS]) + RETARD_NOTE + AVANCE_NOTE));
 
   /* ── v2 · branchement FOETO ── */
-  chk("v2.1 : 13 constats de la fiche + 10 du lot branchés", SIGNES.filter(function(x){ return x.foeto; }).length === 23);
+  chk("v2.1.1 : 25 signes branchés (fiche, lot, tri)", SIGNES.filter(function(x){ return x.foeto; }).length === 25);
   chk("v2 : libellé venu de FOETO", par(SIGNES, "centreGerminatif").l === "Centre germinatif (follicule secondaire)");
   chk("v2 : code FOETO du terme verbatim",
       codesDe(par(SIGNES, "pancreasIntrasplenique"))[0] === "FOETO:PF.HEM-MAL-005");

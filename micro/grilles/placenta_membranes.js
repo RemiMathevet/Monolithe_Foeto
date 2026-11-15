@@ -146,22 +146,22 @@ var SIGNES = [
     cr:"Les polynucléaires migrent vers l'amnios" },
 
   /* — Caduque — vaisseaux et inflammation chronique — */
-  { k:"thromboseDeciduale", fv:"FOETO:PP.PLA-VAS-063", g:CAD, mag:"faible", l:"Thrombose récente d'une artère déciduale", meta:"item francophone de l'athérose",
+  { k:"thromboseDeciduale", g:CAD, mag:"faible", l:"Thrombose récente d'une artère déciduale", meta:"item francophone de l'athérose",
     cr:"On note une thrombose récente d'une artère déciduale" },
   { k:"necroseDeciduale", fv:"FOETO:PP.PLA-VAS-064", g:CAD, mag:"faible", l:"Nécrose déciduale membraneuse", meta:"preuve insuffisante pour la MVM [amsterdam]",
     cr:"La décidue capsulaire présente de multiples plages de nécrose basale." },
   { k:"atherose", fv:"FOETO:PP.PLA-VAS-065", g:CAD, mag:"moyen", l:"Athérose aiguë déciduale : nécrose fibrinoïde, macrophages spumeux, vaisseau dilaté",
     cr:"On note une athérose aiguë des vaisseaux déciduaux : nécrose fibrinoïde, macrophages spumeux" },
-  { k:"muscularisation", fv:"FOETO:PP.PLA-VAS-066", seul:true, g:CAD, mag:"moyen", l:"Muscularisation persistante des artérioles spiralées (défaut de remodelage)",
+  { k:"muscularisation", seul:true, g:CAD, mag:"moyen", l:"Muscularisation persistante des artérioles spiralées (défaut de remodelage)",
     meta:"en caduque pariétale le muscle lisse est normal (§ 4.2) : c'est son épaisseur relative qui devient lésionnelle",
     cr:"Les artérioles spiralées gardent une musculature (défaut de remodelage)" },
-  { k:"hypertrophieMurale", fv:"FOETO:PP.PLA-NOR-085", g:CAD, mag:"moyen",
+  { k:"hypertrophieMurale", fv:"FOETO:PP.PLA-VAS-089", g:CAD, mag:"moyen",
     l:"Hypertrophie murale des vaisseaux déciduaux, paroi > 1/3 de la circonférence",
     meta:"formulation dimensionnellement fautive, partagée par deux sources",
     cr:"Les vaisseaux déciduaux ont une paroi épaissie (hypertrophie murale)" },
-  { k:"lymphocytesT", fv:"FOETO:PP.PLA-INF-053", g:CAD, mag:"moyen", l:"Infiltrat lymphocytaire T péri-artériel décidual",
+  { k:"lymphocytesT", g:CAD, mag:"moyen", l:"Infiltrat lymphocytaire T péri-artériel décidual",
     cr:"On note un infiltrat lymphocytaire péri-artériel dans la caduque" },
-  { k:"deciduitePlasmo", fv:"FOETO:PP.PLA-MAL-057", g:CAD, mag:"fort", l:"Plasmocytes dans la caduque (déciduite plasmocytaire)",
+  { k:"deciduitePlasmo", g:CAD, mag:"fort", l:"Plasmocytes dans la caduque (déciduite plasmocytaire)",
     cr:"On note la présence de quelques plasmocytes au sein de la décidue basale (déciduite chronique)." },
   { k:"deciduitePlasmoNombreux", g:CAD, mag:"fort", l:"Plasmocytes nombreux dans la caduque",
     cr:"On note la présence de nombreux plasmocytes au sein de la décidue basale (déciduite chronique marquée)." },
@@ -318,5 +318,5 @@ async function testsOrgane(chk, clic, set, crTient, pause){
   chk("aucun bouton ne porte un diagnostic",
       DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
   /* 1.1.0 : codes créés depuis le verbatim de la fiche (lot FOETO) — les signes branchés exportent leur code */
-  chk("FOETO 1.1 : 17 signe(s) codé(s) depuis le verbatim", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 17);
+  chk("FOETO 1.1.1 : 18 signe(s) codé(s) depuis le verbatim (après le tri et le réancrage)", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 18);
 }

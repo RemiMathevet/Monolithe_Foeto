@@ -164,5 +164,5 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 
   chk("aucun bouton ne porte un diagnostic",
       DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
-  chk("FOETO : aucun signe branché", FOETOV === null && SIGNES.every(function(x){ return !x.fv && !x.foeto; }));
+  chk("FOETO 1.1.1 : 2 signes codés depuis le verbatim (après le tri)", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 2);
 }
