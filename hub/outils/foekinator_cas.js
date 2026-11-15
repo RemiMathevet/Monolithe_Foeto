@@ -48,5 +48,15 @@ for (const c of cas) {
   if (inconnus.length) console.log("   signes inconnus de la matrice : " + inconnus.join(" "));
   r.forEach((d, k) => console.log("   %d. %s %%  %s [%s]", k + 1, (d.probability * 100).toFixed(1).padStart(5), d.name, d.id));
 }
+// Mode échographiste : les questions proposées sont toutes visibles à l'écho et aucune n'est
+// un ancêtre HPO d'un signe présent (une CIV n'appelle pas « anomalie morphologique du cœur »).
+const brutJ = JSON.parse(brut), parents = brutJ.hpo_parents || {};
+for (const c of cas) {
+  const acquis = new Set(), pile = c.present.slice();
+  while (pile.length) for (const p of (parents[pile.pop()] || [])) if (!acquis.has(p)) { acquis.add(p); pile.push(p); }
+  const q = Engine.suggest(c.present, c.absent || [], 30, "echo");
+  const faux = q.filter(s => acquis.has(s.hpo) || !((brutJ.hpo_terms[s.hpo] || {}).modalites || []).includes("echo"));
+  if (faux.length || !q.length) { echecs++; console.log("✗ échographiste — %s : %s", c.nom, faux.length ? faux.map(s => s.hpo).join(" ") : "aucune question"); }
+}
 console.log("\n%d/%d cas conformes", cas.length - echecs, cas.length);
 process.exit(echecs ? 1 : 0);

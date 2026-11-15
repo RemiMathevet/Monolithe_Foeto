@@ -2096,6 +2096,7 @@ function vueBiblio(v){
         '<div class="ctx-toggle" id="ctxToggle"><button class="active" data-ctx="" onclick="setContext(\'\')">Tous</button>' +
         '<button data-ctx="prenatal" onclick="setContext(\'prenatal\')">Prénatal</button><button data-ctx="postnatal" onclick="setContext(\'postnatal\')">Postnatal</button></div>' +
         '<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer"><input type="checkbox" id="hierToggle" checked onchange="state.useHierarchy=this.checked;updateRanking()"> Hiérarchie HPO</label>' +
+        '<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer" title="Questions et recherche limitées aux signes visibles à l\'échographie"><input type="checkbox" id="echoToggle" onchange="state.echographiste=this.checked;updateRanking()"> Mode échographiste</label>' +
         '<span id="akStatus" style="font-size:11px"></span></div>' +
       '<div id="akLoading">Chargement de la matrice…</div>' +
       '<div id="akMain" style="display:none"><div class="ak-wrap"><div>' +
