@@ -60,11 +60,16 @@
    tous les deux : celui du sexe non lu reste non regardé au CR.
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 0 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 18 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 4 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "gonades";
 var TITRE   = "gonades et tractus génitaux internes";
 var SOURCE  = "fiche_gonades.md";
 var MODULE  = "grille_gonades";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -183,7 +188,7 @@ var RETENTION = [
          "couronne — donc la maturation tombe en même temps que le diagnostic, et ce qui survit (stroma, " +
          "épithélium de surface) ne date rien. Sur un ovaire macéré : ni stade ni dysgénésie, « non " +
          "analysable »" },
-  { k:"germSertoli", l:"Cellules germinales et de Sertoli indistinctes",
+  { k:"germSertoli", fv:"FOETO:PF.GEN-NOR-202", l:"Cellules germinales et de Sertoli indistinctes",
     b:"—", d:"normal en autopsie, pas un signe", h:0, q:"mauvais",
     note:"« Even in this well-preserved specimen, the germ cells are difficult to differentiate from " +
          "Sertoli cells » [ernst, ch. 10] — l'indistinction ne signe ni la rétention ni une hypoplasie " +
@@ -193,7 +198,7 @@ var RETENTION = [
     note:"« Identification of subtypes of germ cells is impossible in most autopsy specimens » ; la " +
          "distinction exige « very fresh tissue obtained within an hour of death » [ernst, ch. 10]. Ce " +
          "n'est donc pas un seuil de macération mais un délai d'autopsie qu'aucun fœtus ne satisfait" },
-  { k:"stereocils", l:"Desquamation des stéréocils du déférent, perte de la barre terminale éosinophile",
+  { k:"stereocils", fv:"FOETO:PF.GEN-NOR-195", l:"Desquamation des stéréocils du déférent, perte de la barre terminale éosinophile",
     b:"—", d:"artéfact post-mortem pur", h:0, q:"mauvais",
     note:"« not easily seen in sections from autopsy material, as preservation is typically suboptimal » " +
          "[ernst, ch. 12] — à ne pas lire comme une anomalie épithéliale" },
@@ -302,9 +307,9 @@ var MESURE = {
        "à les typer [ernst, ch. 10]. Kyste : grand axe en cm, seuil 3 cm [ernst, ch. 15]. " +
        "Diamètre tubulaire : aucune norme par terme (§ 9.5).",
   defs:SEXES, opts:CONSERV,
-  champs:[{ id:"germ",    label:"Cellules germinales par section transversale de tube", min:0, max:60, step:1 },
-          { id:"kyste",   label:"Grand axe du plus grand kyste ovarien (cm)", min:0, max:20, step:0.1 },
-          { id:"diamTub", label:"Diamètre tubulaire médian (µm)", min:0, max:300, step:1 }]
+  champs:[{ id:"germ",    fv:"FOETO:PF.GEN-NOR-190", label:"Cellules germinales par section transversale de tube", min:0, max:60, step:1 },
+          { id:"kyste",   fv:"FOETO:PF.GEN-NOR-191", label:"Grand axe du plus grand kyste ovarien (cm)", min:0, max:20, step:0.1 },
+          { id:"diamTub", fv:"FOETO:PF.GEN-NOR-189", label:"Diamètre tubulaire médian (µm)", min:0, max:300, step:1 }]
 };
 
 function verdictMesure(){
@@ -458,21 +463,21 @@ function verdictMesure(){
    dans le cadre dont elle mime un signe ; deux pièges de la fiche ajoutés (les
    deux dernières lignes). */
 var VARIANTES = [
-  { k:"blastemeAlbuginee", g:"Testicule — capsule, tubes, interstitium", l:"Restes de blastème testiculaire dans l'albuginée — « should not be mistaken for testicular dysgenesis »" },
-  { k:"gonadoblastomeLike", g:"Ovaire — cortex, follicules, kystes", l:"Nodules gonadoblastome-like ou SCTAT dans des follicules atrétiques — jusqu'à 35 % des fœtus normaux, à NE JAMAIS énoncer en négatif" },
-  { k:"plapOct4", g:"Testicule — capsule, tubes, interstitium", l:"Cellules PLAP+, OCT-4+, CD117+ avant 6 mois de vie" },
-  { k:"hematoTerme", g:"Hématopoïèse intra-gonadique", l:"Nids d'hématopoïèse extramédullaire testiculaire au terme" },
-  { k:"marchand", g:"Testicule — capsule, tubes, interstitium", l:"Résidus corticaux surrénaliens de Marchand au contact du cordon" },
-  { k:"nidsGerminaux", g:"Testicule — capsule, tubes, interstitium", l:"Nids de cellules germinales dans l'épithélium de surface testiculaire" },
-  { k:"cellulesHilaires", g:"Compartiments, latéralité, tractus", l:"Cellules hilaires ovariennes, éosinophiles polygonales, « morphologically identical to Leydig cells »" },
-  { k:"atresie", g:"Ovaire — cortex, follicules, kystes", l:"Atrésie folliculaire active, pyknose ovocytaire, corpus fibrosum" },
+  { k:"blastemeAlbuginee", fv:"FOETO:PF.GEN-NOR-137", g:"Testicule — capsule, tubes, interstitium", l:"Restes de blastème testiculaire dans l'albuginée — « should not be mistaken for testicular dysgenesis »" },
+  { k:"gonadoblastomeLike", fv:"FOETO:PF.GEN-TUM-001", g:"Ovaire — cortex, follicules, kystes", l:"Nodules gonadoblastome-like ou SCTAT dans des follicules atrétiques — jusqu'à 35 % des fœtus normaux, à NE JAMAIS énoncer en négatif" },
+  { k:"plapOct4", fv:"FOETO:PF.GEN-MAL-053", g:"Testicule — capsule, tubes, interstitium", l:"Cellules PLAP+, OCT-4+, CD117+ avant 6 mois de vie" },
+  { k:"hematoTerme", fv:"FOETO:PF.GEN-NOR-200", g:"Hématopoïèse intra-gonadique", l:"Nids d'hématopoïèse extramédullaire testiculaire au terme" },
+  { k:"marchand", fv:"FOETO:PF.GEN-MAL-008", g:"Testicule — capsule, tubes, interstitium", l:"Résidus corticaux surrénaliens de Marchand au contact du cordon" },
+  { k:"nidsGerminaux", fv:"FOETO:PF.GEN-NOR-199", g:"Testicule — capsule, tubes, interstitium", l:"Nids de cellules germinales dans l'épithélium de surface testiculaire" },
+  { k:"cellulesHilaires", fv:"FOETO:PF.GEN-NOR-196", g:"Compartiments, latéralité, tractus", l:"Cellules hilaires ovariennes, éosinophiles polygonales, « morphologically identical to Leydig cells »" },
+  { k:"atresie", fv:"FOETO:PF.GEN-NOR-194", g:"Ovaire — cortex, follicules, kystes", l:"Atrésie folliculaire active, pyknose ovocytaire, corpus fibrosum" },
   { k:"stromaFusiforme", g:"Ovaire — cortex, follicules, kystes", l:"Stroma ovarien fusiforme peu développé" },
-  { k:"albugineeOvaire", g:"Testicule — capsule, tubes, interstitium", l:"Tunica albuginea ovarienne peu ou pas individualisée" },
+  { k:"albugineeOvaire", fv:"FOETO:PF.GEN-NOR-192", g:"Testicule — capsule, tubes, interstitium", l:"Tunica albuginea ovarienne peu ou pas individualisée" },
   { k:"germSertoliVar", g:"Testicule — capsule, tubes, interstitium", l:"Cellules germinales et de Sertoli difficiles à distinguer" },
-  { k:"appendices", g:"Compartiments, latéralité, tractus", l:"Appendice pédiculé au pôle supérieur — appendix testis et epididymis non départageables sur la lame" },
-  { k:"hyperplasieVaginale", g:"Compartiments, latéralité, tractus", l:"Hyperplasie de l'épithélium malpighien vaginal, imprégnation œstrogénique" },
-  { k:"epididymeVariable", g:"Compartiments, latéralité, tractus", l:"Épididyme peu développé, sans muscle lisse, à terme avancé — le tractus ne date pas" },
-  { k:"follAtretiqueKystique", g:"Ovaire — cortex, follicules, kystes", l:"Follicule atrétique kystique de moins de 3 cm — pas un kyste folliculaire" }
+  { k:"appendices", fv:"FOETO:PF.GEN-NOR-193", g:"Compartiments, latéralité, tractus", l:"Appendice pédiculé au pôle supérieur — appendix testis et epididymis non départageables sur la lame" },
+  { k:"hyperplasieVaginale", fv:"FOETO:PF.GEN-NOR-201", g:"Compartiments, latéralité, tractus", l:"Hyperplasie de l'épithélium malpighien vaginal, imprégnation œstrogénique" },
+  { k:"epididymeVariable", fv:"FOETO:PF.GEN-NOR-197", g:"Compartiments, latéralité, tractus", l:"Épididyme peu développé, sans muscle lisse, à terme avancé — le tractus ne date pas" },
+  { k:"follAtretiqueKystique", fv:"FOETO:PF.GEN-NOR-198", g:"Ovaire — cortex, follicules, kystes", l:"Follicule atrétique kystique de moins de 3 cm — pas un kyste folliculaire" }
 ];
 
 /* ── Cadres de lecture — dans l'ordre où la lame se lit ───────────────────────
@@ -513,9 +518,9 @@ var SIGNES = [
     meta:"la forme, scindée du signe gonadeFibreuse de la v1 ; le tissu est le signe suivant" },
   { k:"gonadeFibreuse", fv:"FOETO:PF.GEN-MAL-049", g:"Bandelette — gonade fibreuse", mag:"faible",
     meta:"« being composed entirely of fibrous tissue in poorly organized fascicles and whorls of spindle cells »" },
-  { k:"aucuneStructure", fiche:"[keeling, ch. 25]", g:"Bandelette — gonade fibreuse", mag:"faible", l:"Aucune structure différenciée identifiable — ni cordon ou tube, ni follicule" },
+  { k:"aucuneStructure", fv:"FOETO:PF.GEN-MAL-057", fiche:"[keeling, ch. 25]", g:"Bandelette — gonade fibreuse", mag:"faible", l:"Aucune structure différenciée identifiable — ni cordon ou tube, ni follicule" },
   { k:"gonadeAtrophique", fiche:"[soffoet, ch. 23]", g:"Bandelette — gonade fibreuse", mag:"faible", l:"Gonade atrophique" },
-  { k:"aucuneGerminale", fiche:"[keeling, ch. 25]", g:"Bandelette — gonade fibreuse", mag:"fort", l:"Aucune cellule germinale identifiable",
+  { k:"aucuneGerminale", fv:"FOETO:PF.GEN-MAL-058", fiche:"[keeling, ch. 25]", g:"Bandelette — gonade fibreuse", mag:"fort", l:"Aucune cellule germinale identifiable",
     meta:"exactement ce que produit l'autolyse ovarienne — le différentiel qui compte est la macération" },
   /* — Compartiments, latéralité, tractus — */
   { k:"deuxCompartiments", fv:"FOETO:PF.GEN-MAL-040", g:"Compartiments, latéralité, tractus", mag:"faible",
@@ -540,7 +545,7 @@ var SIGNES = [
   { k:"calcifsIntraluminales", fiche:"[corpus CR]", g:"Testicule — capsule, tubes, interstitium", mag:"moyen", l:"Calcifications intraluminales de tubes séminifères",
     meta:"« calcifications intraluminales concernant quelques tubules séminifères » — absentes de la base ET des livres" },
   { k:"noyauxGerminauxElargis", fv:"FOETO:PF.GEN-MAL-047", g:"Testicule — capsule, tubes, interstitium", mag:"fort" },
-  { k:"moinsDe6Germinales", auto:function(){ var n = E.mesure.v.germ; return n == null ? null : n < 6; },
+  { k:"moinsDe6Germinales", fv:"FOETO:PF.GEN-MAL-059", auto:function(){ var n = E.mesure.v.germ; return n == null ? null : n < 6; },
     fiche:"[ernst, ch. 10]", g:"Testicule — capsule, tubes, interstitium", mag:"fort", l:"Moins de 6 cellules germinales par section transversale de tube",
     meta:"déduit du compte germinal du §04 — compter, jamais typer" },
   /* — Ovaire — cortex, follicules, kystes — */
@@ -552,7 +557,7 @@ var SIGNES = [
   { k:"fibroseStromale", fv:"FOETO:PF.GEN-MAL-042", g:"Ovaire — cortex, follicules, kystes", mag:"moyen" },
   { k:"pasDeFolliculeProfond", bloc:false, fv:"FOETO:PF.GEN-MAL-043", g:"Ovaire — cortex, follicules, kystes", mag:"moyen",
     meta:"avant 20 SA l'absence n'est pas un signe : à répondre seul, avec le terme" },
-  { k:"folliculesPrimairesReduits", fiche:"[ernst, ch. 15]", g:"Ovaire — cortex, follicules, kystes", mag:"moyen", l:"Follicules primaires réduits en nombre" },
+  { k:"folliculesPrimairesReduits", fv:"FOETO:PF.GEN-MAL-060", fiche:"[ernst, ch. 15]", g:"Ovaire — cortex, follicules, kystes", mag:"moyen", l:"Follicules primaires réduits en nombre" },
   { k:"coquesCanalaires", fiche:"[corpus CR]", g:"Ovaire — cortex, follicules, kystes", mag:"technique", l:"Structures canalaires régulières dans les coques du kyste (WT1)" },
   { k:"inhibineNeg", fiche:"[corpus CR]", g:"Ovaire — cortex, follicules, kystes", mag:"technique", l:"Inhibine α négative dans la coque du kyste" },
   /* — Albuginée, péri-gonade, hémorragie — */
@@ -1353,8 +1358,8 @@ async function testsOrgane(chk, clic, set, crTient, pause){
   /* ── v2 · Branchement FOETO ──────────────────────────────────────────────── */
   chk("v2 : libellé venu de FOETO", par(SIGNES, "gonadeFibreuse").l ===
       "Tissu fibreux fasciculé en tourbillons de cellules fusiformes, sans cellule germinale ni structure différenciée");
-  chk("v2 : les dix constats FOETO de la fiche sont branchés",
-      SIGNES.filter(function(x){ return /^FOETO:/.test(x.foeto); }).length === 10);
+  chk("v2.1 : les dix constats FOETO de la fiche + les 4 du lot sont branchés",
+      SIGNES.filter(function(x){ return /^FOETO:/.test(x.foeto); }).length === 14);
   chk("v2 : code FOETO du terme verbatim", codesDe(par(SIGNES, "distribGerminale"))[0] === "FOETO:PF.GEN-MAL-044");
   pose("distribGerminale", POS);
   chk("v2 : le code du signe présent part au CR", crTient("[FOETO:PF.GEN-MAL-044]"));

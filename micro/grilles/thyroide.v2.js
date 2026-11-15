@@ -59,11 +59,16 @@
      Perls, comme la v1 ;
    · blocs lus en § 02 (BLOCS) ; toujours pas de côté. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 3 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 11 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 13 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "thyroide";
 var TITRE   = "thyroïde et parathyroïdes";
 var SOURCE  = "fiche_thyroide.md";
 var MODULE  = "grille_thyroide";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -271,7 +276,7 @@ var MESURE = {
   optLabel:"siège de la parathyroïde identifiée — l'ectopie y est normale",
   defs:LOBES, opts:SIEGES,
   champs:[{ id:"follicule", label:"Diamètre du plus gros follicule (mm)", min:0, max:10, step:0.1 },
-          { id:"poids",     label:"Poids thyroïdien (g)",                 min:0, max:30, step:0.01 },
+          { id:"poids",     fv:"FOETO:PF.END-NOR-096", label:"Poids thyroïdien (g)",                 min:0, max:30, step:0.01 },
           { id:"nPara",     label:"Parathyroïdes identifiées (n)",        min:0, max:4,  step:1 }]
 };
 
@@ -399,25 +404,25 @@ var VARIANTES = [
     l:"Aspect cellulaire, presque solide, à faible grossissement sur tissu conservé" },
   { k:"neonatalPostTsh", g:"Nappe épithéliale et déplétion colloïdale",
     l:"Aspect néonatal d'après le pic de TSH — rang hors échelle fœtale" },
-  { k:"gradientCentrifuge", g:"Follicules et colloïde",
+  { k:"gradientCentrifuge", fv:"FOETO:PF.END-NOR-102", g:"Follicules et colloïde",
     l:"Follicules plus gros à la périphérie du lobe — gradient centre → périphérie" },
   /* v2, fiche § 4 [ernst, ch. 21] : mime l'épithélium hyperplasique */
-  { k:"epitheliumSecretoire", g:"Follicules et colloïde",
+  { k:"epitheliumSecretoire", fv:"FOETO:PF.END-NOR-101", g:"Follicules et colloïde",
     l:"Cellules folliculaires plus hautes, cytoplasme apical éosinophile pâle — activité sécrétoire" },
-  { k:"cellulesC", g:"Follicules et colloïde",
+  { k:"cellulesC", fv:"FOETO:PF.END-NOR-100", g:"Follicules et colloïde",
     l:"Cellules C parafolliculaires du tiers moyen profond des lobes latéraux" },
-  { k:"nidsSolides", g:"Masses et tissus non thyroïdiens",
+  { k:"nidsSolides", fv:"FOETO:PF.END-NOR-104", g:"Masses et tissus non thyroïdiens",
     l:"Nids de cellules solides, reliquats des corps ultimobranchiaux (p63+)" },
-  { k:"inclusionsHetero", g:"Masses et tissus non thyroïdiens",
+  { k:"inclusionsHetero", fv:"FOETO:PF.END-NOR-028", g:"Masses et tissus non thyroïdiens",
     l:"Inclusions intrathyroïdiennes hétérotopiques : thymus, cartilage, épithélium cilié, graisse" },
   { k:"choristome", g:"Masses et tissus non thyroïdiens", l:"Choristome thymique intrathyroïdien, bénin" },
-  { k:"lobePyramidal", g:"Masses et tissus non thyroïdiens", l:"Lobe pyramidal mêlé de muscle squelettique" },
+  { k:"lobePyramidal", fv:"FOETO:PF.END-NOR-103", g:"Masses et tissus non thyroïdiens", l:"Lobe pyramidal mêlé de muscle squelettique" },
   { k:"paraIntrathy", g:"Parathyroïdes", l:"Parathyroïde en arrière du lobe ou dans la thyroïde" },
   { k:"paraThymusEctopique", g:"Parathyroïdes", l:"Parathyroïdes entourées de tissu thymique ectopique" },
-  { k:"pasOxyphiles", g:"Parathyroïdes", l:"Absence de cellule oxyphile parathyroïdienne" },
-  { k:"pasStromaAdipeux", g:"Parathyroïdes", l:"Absence de stroma adipeux parathyroïdien" },
+  { k:"pasOxyphiles", fv:"FOETO:PF.END-NOR-098", g:"Parathyroïdes", l:"Absence de cellule oxyphile parathyroïdienne" },
+  { k:"pasStromaAdipeux", fv:"FOETO:PF.END-NOR-099", g:"Parathyroïdes", l:"Absence de stroma adipeux parathyroïdien" },
   /* v2, fiche § 3 [ernst, ch. 22] : mime l'hypertrophie parathyroïdienne */
-  { k:"tailleParaCroissante", g:"Parathyroïdes",
+  { k:"tailleParaCroissante", fv:"FOETO:PF.END-NOR-107", g:"Parathyroïdes",
     l:"Parathyroïde plus grande avec le terme — tendance illustrée, sans borne chiffrée" }
 ];
 
@@ -453,28 +458,28 @@ var SIGNES = [
     l:"RCIU sévère et précoce avec oligo-anamnios", meta:"hors lame" },
   { k:"nidfPlacenta", fv:"FOETO:PF.END-MET-005", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
     l:"Placenta trapu, NIDF diffuse, dépôts fibrinoïdes massifs", meta:"lame placentaire" },
-  { k:"tubesDedifferencies", fiche:"[soffoet, ch. 13]", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
+  { k:"tubesDedifferencies", fv:"FOETO:PF.END-MAL-153", fiche:"[soffoet, ch. 13]", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
     l:"Dysgénésie tubulaire acquise — dé-différenciation des tubes contournés proximaux", meta:"lame rénale" },
-  { k:"hypocalvaria", fiche:"[soffoet, ch. 13]", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
+  { k:"hypocalvaria", fv:"FOETO:PF.END-MAL-154", fiche:"[soffoet, ch. 13]", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
     l:"Hypocalvaria, ostéopénie radiologique", meta:"hors lame" },
   /* prélèvement qui contrefait des lésions : se sait du bloc, pas de la lame */
   { k:"blocNonSerie", fiche:"[ernst, ch. 22]", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
     l:"Bloc cervical NON sérié en coupes transversales" },
 
   /* — Glande, lobes, ectopie et kystes — dysgénésie, kystes, plan de coupe — */
-  { k:"tissuAbsent", fv:"FOETO:PF.END-MAL-123", g:"Glande, lobes, ectopie et kystes", mag:"faible",
+  { k:"tissuAbsent", terme:[9, null], fv:"FOETO:PF.END-MAL-123", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Aucun tissu thyroïdien en position normale sur le bloc" },
-  { k:"glandeAtrophique", fiche:"[keeling, ch. 26]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
+  { k:"glandeAtrophique", fv:"FOETO:PF.END-MAL-155", fiche:"[keeling, ch. 26]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Glande très atrophique" },
   { k:"lobeAbsent", fv:"FOETO:PF.END-MAL-118", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Un lobe absent, l'autre en place" },
   { k:"lobeAsymetrique", fiche:"[keeling, ch. 26]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Asymétrie de taille ou de stade entre les deux lobes" },
-  { k:"coupeTangentielle", fiche:"[ernst, ch. 21]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
+  { k:"coupeTangentielle", fv:"FOETO:PF.END-MAL-156", fiche:"[ernst, ch. 21]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Coupe tangentielle ou périphérique du lobe" },
   { k:"tissuEctopique", fv:"FOETO:PF.END-MAL-055", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Foyer de tissu thyroïdien ectopique — lingual, sublingual, supra- ou infrathyroïdien" },
-  { k:"kysteTrajet", fiche:"[keeling, ch. 26]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
+  { k:"kysteTrajet", fv:"FOETO:PF.END-MAL-157", fiche:"[keeling, ch. 26]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Kyste médian sur le trajet du canal thyréoglosse" },
   { k:"kysteIntraglandulaire", fiche:"[corpus CR]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Kyste intraglandulaire à matrice éosinophile" },
@@ -490,7 +495,7 @@ var SIGNES = [
     meta:"lobe pyramidal normal, ou « a possible association with myopathies » — non tranché" },
   { k:"contingentsMultiples", g:"Masses et tissus non thyroïdiens", mag:"moyen",
     l:"Contingents tissulaires multiples dans la masse" },
-  { k:"surchargePAS", fiche:"[soffoet, ch. 20]", g:"Masses et tissus non thyroïdiens", mag:"technique",
+  { k:"surchargePAS", fv:"FOETO:PF.END-INF-013", fiche:"[soffoet, ch. 20]", g:"Masses et tissus non thyroïdiens", mag:"technique",
     l:"Inclusions PAS+ résistantes à l'amylase dans les fibres striées" },
 
   /* — Parathyroïdes — */
@@ -499,7 +504,7 @@ var SIGNES = [
   /* Déduit, ne se clique pas : il redit le siège déclaré en Maturation (Aucune parathyroïde
      identifiée sur la lame) ou le compte saisi. Hors du Non en bloc : formulé en négatif,
      le Non affirmerait qu'une parathyroïde a été vue, sans siège. */
-  { k:"aucuneParaVue", auto:function(){
+  { k:"aucuneParaVue", fv:"FOETO:PF.END-MAL-158", auto:function(){
       var o = E.mesure.opt, n = E.mesure.v.nPara;
       if (o) return o === "aucune";
       return n == null ? null : n === 0; },
@@ -511,18 +516,18 @@ var SIGNES = [
     l:"Nodule cervical non rattachable : parathyroïde, ganglion ou thyroïde" },
 
   /* — Nappe épithéliale et déplétion colloïdale — autolyse et son témoin, le piège central — */
-  { k:"nappePleine", fiche:"[ernst, ch. 21]", g:"Nappe épithéliale et déplétion colloïdale", mag:"faible",
+  { k:"nappePleine", fv:"FOETO:PF.END-MAL-159", fiche:"[ernst, ch. 21]", g:"Nappe épithéliale et déplétion colloïdale", mag:"faible",
     l:"Follicules non identifiables, nappe épithéliale quasi pleine",
     meta:"mime à la fois l'immaturité et la déplétion colloïdale" },
-  { k:"contrasteTemoin", fiche:"[ernst, ch. 22]", g:"Nappe épithéliale et déplétion colloïdale", mag:"moyen",
+  { k:"contrasteTemoin", fv:"FOETO:PF.END-MAL-160", fiche:"[ernst, ch. 22]", g:"Nappe épithéliale et déplétion colloïdale", mag:"moyen",
     l:"Contraste sur la même lame : thyroïde effondrée, parathyroïde préservée",
     meta:"témoin interne — c'est la paire qui informe, pas chaque glande" },
-  { k:"deplationColloide", fv:"FOETO:PF.END-NOR-095", g:"Nappe épithéliale et déplétion colloïdale", mag:"moyen",
+  { k:"deplationColloide", seul:true, fv:"FOETO:PF.END-NOR-095", g:"Nappe épithéliale et déplétion colloïdale", mag:"moyen",
     l:"Déplétion colloïdale, perte de colloïde",
     meta:"trois lectures irréconciliables : lésion, réponse au travail, autolyse" },
-  { k:"vacuolisationDetachement", fiche:"[ernst, ch. 21]", g:"Nappe épithéliale et déplétion colloïdale", mag:"fort",
+  { k:"vacuolisationDetachement", fv:"FOETO:PF.END-MET-012", fiche:"[ernst, ch. 21]", g:"Nappe épithéliale et déplétion colloïdale", mag:"fort",
     l:"Vacuolisation ou détachement des cellules épithéliales" },
-  { k:"noyauxPycnotiques", fiche:"[ernst, ch. 21]", g:"Nappe épithéliale et déplétion colloïdale", mag:"fort",
+  { k:"noyauxPycnotiques", fv:"FOETO:PF.END-MAL-161", fiche:"[ernst, ch. 21]", g:"Nappe épithéliale et déplétion colloïdale", mag:"fort",
     l:"Noyaux irréguliers et pycnotiques, « nuclear knots »" },
 
   /* — Follicules et colloïde — goitre, trois images à ne pas confondre, et l'image sans source — */
@@ -530,7 +535,7 @@ var SIGNES = [
     l:"Glande augmentée de volume" },
   { k:"hyperplasieNodulaire", fv:"FOETO:PF.END-MAL-117", g:"Follicules et colloïde", mag:"faible",
     l:"Hyperplasie nodulaire" },
-  { k:"folliculesGros", fiche:"[keeling, ch. 26]", g:"Follicules et colloïde", mag:"faible",
+  { k:"folliculesGros", fv:"FOETO:PF.END-MAL-162", fiche:"[keeling, ch. 26]", g:"Follicules et colloïde", mag:"faible",
     l:"Follicules larges" },
   { k:"colloideAugmentee", fv:"FOETO:PF.END-MAL-116", g:"Follicules et colloïde", mag:"faible",
     l:"Colloïde augmentée en quantité" },
@@ -540,7 +545,7 @@ var SIGNES = [
   /* bloc:false — polarité normale (« régulier ») : absent en bloc dirait un épithélium irrégulier */
   { k:"epitheliumCubiqueRegulier", bloc:false, fiche:"[corpus CR]", g:"Follicules et colloïde", mag:"moyen",
     l:"Épithélium folliculaire cubique régulier bordant les follicules dilatés" },
-  { k:"folliculesPetitsVides", fiche:"[keeling, ch. 26]", g:"Follicules et colloïde", mag:"moyen",
+  { k:"folliculesPetitsVides", fv:"FOETO:PF.END-MAL-163", terme:[14, null], fiche:"[keeling, ch. 26]", g:"Follicules et colloïde", mag:"moyen",
     l:"Petits follicules vides" },
   { k:"epitheliumHyperplasique", fv:"FOETO:PF.END-MAL-016", g:"Follicules et colloïde", mag:"moyen",
     l:"Épithélium folliculaire hyperplasique" },
@@ -727,7 +732,7 @@ var DIAGS = [
          "la congestion post-mortem : la fiche ne le tranche pas non plus." },
 
   { k:"tumeur", l:"Masse thyroïdienne — tératome en tête, carcinome à ne pas surdire",
-    fv:"FOETO:PF.END-TUM-005", cle:"masse", min:2,
+    fv:["FOETO:PF.END-TUM-005","FOETO:PF.END-TUM-004"], cle:"masse", min:2,
     signes:["masse","contingentsMultiples","hyperplasieNodulaire","pleomorphismeNucleaire"],
     stop:"« Teratomas are the most common neonatal thyroid tumor and may present with " +
          "polyhydramnios. Congenital carcinoma of the thyroid is extremely rare, and some of the " +

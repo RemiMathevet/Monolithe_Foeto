@@ -70,11 +70,16 @@
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées.
    Aucune page n'est citée : page_start est vide sur tout le corpus. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 2 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 17 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 13 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "digestif";
 var TITRE   = "tube digestif";
 var SOURCE  = "fiche_digestif.md";
 var MODULE  = "grille_digestif";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -383,7 +388,7 @@ var MESURE = {
   defLabel:"segment — sans lui, aucune norme",
   optLabel:"horloge qui survit à la macération",
   defs:SEGMENTS, opts:MM,
-  champs:[{ id:"calibre",  label:"Calibre du segment (mm)",  min:0, max:60,  step:0.1 },
+  champs:[{ id:"calibre",  fv:"FOETO:PF.DIG-NOR-083", label:"Calibre du segment (mm)",  min:0, max:60,  step:0.1 },
           { id:"longueur", label:"Longueur totale du grêle ou du côlon (cm)", min:0, max:400, step:1 }]
 };
 
@@ -539,25 +544,25 @@ function verdictMesure(){
    sur un tube fœtal, la plupart des « lésions » sont des étapes. Celles qui font
    prendre un segment pour un autre vivent dans le repérage du fragment. */
 var VARIANTES = [
-  { k:"colonVillositaire", g:"Repérage et lisibilité du fragment", l:"Côlon villositaire — « The colonic mucosa is villous from this point in development until the 30th week or later. »" },
+  { k:"colonVillositaire", fv:"FOETO:PF.DIG-NOR-092", g:"Repérage et lisibilité du fragment", l:"Côlon villositaire — « The colonic mucosa is villous from this point in development until the 30th week or later. »" },
   { k:"villiGastriques",   g:"Repérage et lisibilité du fragment", l:"Villosités cardiales et pyloriques proéminentes (16–32 SA), pouvant persister au-delà" },
-  { k:"ciliesOesophage",   g:"Repérage et lisibilité du fragment", l:"Cellules ciliées à la surface de l'œsophage — « Some patches of ciliated epithelium may remain at birth »" },
+  { k:"ciliesOesophage",   fv:"FOETO:PF.DIG-NOR-089", g:"Repérage et lisibilité du fragment", l:"Cellules ciliées à la surface de l'œsophage — « Some patches of ciliated epithelium may remain at birth »" },
   { k:"mmAbsenteGrele",    g:"Repérage et lisibilité du fragment", l:"Absence de muscularis mucosae dans le grêle avant 23 SA" },
-  { k:"longiFine",         g:"Obstacle et atrésie", l:"Longitudinale externe très fine — « The outer longitudinal layer is very thin until approximately the third trimester »" },
-  { k:"pasDePapilles",     g:"Repérage et lisibilité du fragment", l:"Absence de papilles de la lamina propria œsophagienne, à tout âge fœtal" },
-  { k:"muscleStrieOeso",   g:"Repérage et lisibilité du fragment", l:"Muscle strié squelettique dans le tiers supérieur de l'œsophage" },
-  { k:"gastriqueEctopique",g:"Duplication et hétérotopie", l:"Muqueuse gastrique ectopique dans l'œsophage — hétérotopie fréquente et banale" },
-  { k:"pyloriqueDuodenum", g:"Duplication et hétérotopie", l:"« pyloric-like epithelium may be found in the duodenum » — hétérotopie banale" },
-  { k:"cryptesMicrokystiques", g:"Nécrose et inflammation de la paroi", l:"Cryptes microkystiques appendiculaires et microdiverticules (17–28 SA, pic 20–25 SA)" },
-  { k:"muqueuseDesorganisee", g:"Nécrose et inflammation de la paroi", l:"Muqueuse appendiculaire désorganisée — « This process results in a disorganized mucosa with extensive areas of crypt dropout »" },
-  { k:"folliculesAppendice", g:"Tissu lymphoïde (GALT)", l:"Gros follicules primaires appendiculaires après 22 SA — « Beginning at 20 weeks, larger primary follicles become common. »" },
+  { k:"longiFine",         fv:"FOETO:PF.DIG-NOR-103", g:"Obstacle et atrésie", l:"Longitudinale externe très fine — « The outer longitudinal layer is very thin until approximately the third trimester »" },
+  { k:"pasDePapilles",     fv:"FOETO:PF.DIG-NOR-113", g:"Repérage et lisibilité du fragment", l:"Absence de papilles de la lamina propria œsophagienne, à tout âge fœtal" },
+  { k:"muscleStrieOeso",   fv:"FOETO:PF.DIG-NOR-109", g:"Repérage et lisibilité du fragment", l:"Muscle strié squelettique dans le tiers supérieur de l'œsophage" },
+  { k:"gastriqueEctopique",fv:"FOETO:PF.DIG-NOR-108", g:"Duplication et hétérotopie", l:"Muqueuse gastrique ectopique dans l'œsophage — hétérotopie fréquente et banale" },
+  { k:"pyloriqueDuodenum", fv:"FOETO:PF.DIG-NOR-095", g:"Duplication et hétérotopie", l:"« pyloric-like epithelium may be found in the duodenum » — hétérotopie banale" },
+  { k:"cryptesMicrokystiques", fv:"FOETO:PF.DIG-NOR-093", g:"Nécrose et inflammation de la paroi", l:"Cryptes microkystiques appendiculaires et microdiverticules (17–28 SA, pic 20–25 SA)" },
+  { k:"muqueuseDesorganisee", fv:"FOETO:PF.DIG-NOR-106", g:"Nécrose et inflammation de la paroi", l:"Muqueuse appendiculaire désorganisée — « This process results in a disorganized mucosa with extensive areas of crypt dropout »" },
+  { k:"folliculesAppendice", fv:"FOETO:PF.DIG-NOR-097", g:"Tissu lymphoïde (GALT)", l:"Gros follicules primaires appendiculaires après 22 SA — « Beginning at 20 weeks, larger primary follicles become common. »" },
   { k:"appendiceSansVilli",g:"Repérage et lisibilité du fragment", l:"Appendice sans villosités et à couches musculaires indistinctes avant 22 SA" },
-  { k:"thanatosomes",      g:"Nécrose et inflammation de la paroi", l:"Globules hyalins / thanatosomes aux sommets des villosités, 16–22 SA, absents des cryptes" },
-  { k:"apoptoseApicale",   g:"Nécrose et inflammation de la paroi", l:"Apoptose des cellules au sommet des villosités et débris épithéliaux dans la lumière" },
-  { k:"segiCaps",          g:"Repérage et lisibilité du fragment", l:"Coiffes de Segi au sommet des villosités après 22 SA" },
-  { k:"panethDroit",       g:"Repérage et lisibilité du fragment", l:"Cellules de Paneth au fond des cryptes, « confined to the right colon »" },
-  { k:"ganglionsImmaturesVar", g:"Innervation — plexus", l:"Cellules ganglionnaires immatures dans les plexus entériques" },
-  { k:"hypoganglionnaire", g:"Innervation — plexus", l:"Segment hypoganglionnaire physiologique du canal anal distal" }
+  { k:"thanatosomes",      fv:"FOETO:PF.DIG-NOR-101", g:"Nécrose et inflammation de la paroi", l:"Globules hyalins / thanatosomes aux sommets des villosités, 16–22 SA, absents des cryptes" },
+  { k:"apoptoseApicale",   fv:"FOETO:PF.DIG-MAL-074", g:"Nécrose et inflammation de la paroi", l:"Apoptose des cellules au sommet des villosités et débris épithéliaux dans la lumière" },
+  { k:"segiCaps",          fv:"FOETO:PF.DIG-NOR-090", g:"Repérage et lisibilité du fragment", l:"Coiffes de Segi au sommet des villosités après 22 SA" },
+  { k:"panethDroit",       fv:"FOETO:PF.DIG-NOR-112", g:"Repérage et lisibilité du fragment", l:"Cellules de Paneth au fond des cryptes, « confined to the right colon »" },
+  { k:"ganglionsImmaturesVar", fv:"FOETO:PF.DIG-NOR-099", g:"Innervation — plexus", l:"Cellules ganglionnaires immatures dans les plexus entériques" },
+  { k:"hypoganglionnaire", fv:"FOETO:PF.DIG-NOR-115", g:"Innervation — plexus", l:"Segment hypoganglionnaire physiologique du canal anal distal" }
 ];
 
 /* Cadres, dans l'ordre où l'on lit une section transversale de tube : le
@@ -595,11 +600,11 @@ var SIGNES = [
     meta:"macroscopie exclusivement, avant éviscération" },
   { k:"omphalocele", fv:"FOETO:PF.DIG-MAL-063", g:"Contexte hors lame — macro du tube et de la paroi abdominale",
     meta:"macroscopie — le sac fait la différence" },
-  { k:"ansesExposees", fiche:"[soffoet]", g:"Contexte hors lame — macro du tube et de la paroi abdominale", l:"Anses ayant flotté librement dans le liquide amniotique",
+  { k:"ansesExposees", fv:"FOETO:PF.DIG-MAL-079", fiche:"[soffoet]", g:"Contexte hors lame — macro du tube et de la paroi abdominale", l:"Anses ayant flotté librement dans le liquide amniotique",
     meta:"macroscopie — c'est l'exposition qui produit la lésion digestive" },
   { k:"disparite", fv:"FOETO:PF.DIG-MAL-049", g:"Contexte hors lame — macro du tube et de la paroi abdominale" },
-  { k:"deuxCulsDeSac", fiche:"[keeling]", g:"Contexte hors lame — macro du tube et de la paroi abdominale", l:"Deux culs-de-sac borgnes" },
-  { k:"culDeSacOeso", fiche:"[soffoet]", g:"Contexte hors lame — macro du tube et de la paroi abdominale", l:"Cul-de-sac œsophagien supérieur",
+  { k:"deuxCulsDeSac", fv:"FOETO:PF.DIG-MAL-080", fiche:"[keeling]", g:"Contexte hors lame — macro du tube et de la paroi abdominale", l:"Deux culs-de-sac borgnes" },
+  { k:"culDeSacOeso", fv:"FOETO:PF.DIG-MAL-081", fiche:"[soffoet]", g:"Contexte hors lame — macro du tube et de la paroi abdominale", l:"Cul-de-sac œsophagien supérieur",
     meta:"l'atrésie, avec ou sans fistule — le type C a sa propre ligne" },
   { k:"fistuleOesoTracheale", fv:"FOETO:PF.DIG-MAL-051", g:"Contexte hors lame — macro du tube et de la paroi abdominale",
     meta:"type C : le cul-de-sac ET la fistule inférieure" },
@@ -611,7 +616,7 @@ var SIGNES = [
   { k:"microcolon", fv:"FOETO:PF.DIG-MAL-058", g:"Contexte hors lame — macro du tube et de la paroi abdominale" },
   { k:"contenuPoumon", fiche:"[corpus CR]", g:"Contexte hors lame — autres lames : poumon, pancréas", l:"Même contenu dans les lumières aériques pulmonaires",
     meta:"hors lame digestive — un même liquide amniotique dégluti ET inhalé" },
-  { k:"pancreasCanauxMucus", fv:"FOETO:PF.DIG-MAL-060", g:"Contexte hors lame — autres lames : poumon, pancréas",
+  { k:"pancreasCanauxMucus", seul:true, fv:"FOETO:PF.DIG-MAL-060", g:"Contexte hors lame — autres lames : poumon, pancréas",
     meta:"lame de pancréas — ces lésions « ne sont pas précoces » : un pancréas normal avant mi-gestation n'exclut rien" },
 
   /* — Repérage et lisibilité du fragment — */
@@ -641,7 +646,7 @@ var SIGNES = [
     meta:"peu altérés = déglutis récemment ; l'altération n'est pas une gradation, c'est une chronologie" },
 
   /* — Obstacle et atrésie — */
-  { k:"amontDilate", fiche:"[keeling]", g:"Obstacle et atrésie", mag:"faible", l:"Segment d'amont dilaté et hypertrophié",
+  { k:"amontDilate", fv:"FOETO:PF.DIG-MAL-082", fiche:"[keeling]", g:"Obstacle et atrésie", mag:"faible", l:"Segment d'amont dilaté et hypertrophié",
     meta:"l'amont seul — les deux bouts sur la lame ont leur propre ligne" },
   { k:"avalCollabe", fv:"FOETO:PF.DIG-MAL-040", g:"Obstacle et atrésie", mag:"faible",
     meta:"les deux bouts : amont dilaté ET aval rétracté, étroit, collabé" },
@@ -655,7 +660,7 @@ var SIGNES = [
     meta:"la preuve du mécanisme : l'atrésie est postérieure à la perméabilité établie" },
 
   /* — Duplication et hétérotopie — */
-  { k:"kysteParoiIntestinale", fiche:"[keeling]", g:"Duplication et hétérotopie", mag:"faible",
+  { k:"kysteParoiIntestinale", fv:"FOETO:PF.DIG-MAL-083", fiche:"[keeling]", g:"Duplication et hétérotopie", mag:"faible",
     l:"Structure kystique ou tubulaire à paroi identique à celle de l'intestin",
     meta:"la paroi prouve, quel que soit le siège — le siège mésentérique a sa propre ligne" },
   { k:"bordMesenterique", fv:"FOETO:PF.DIG-MAL-061", g:"Duplication et hétérotopie", mag:"faible",
@@ -669,15 +674,15 @@ var SIGNES = [
     meta:"« may be difficult to differentiate from post-mortem tissue autolysis » sur pièce d'autopsie" },
   { k:"necroseTransmurale", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"faible",
     l:"Nécrose atteignant la MUSCULEUSE PROPRE — transmurale" },
-  { k:"oedemeParoi", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"faible", l:"Œdème de la paroi" },
-  { k:"hemorragieParoi", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"faible", l:"Hémorragie de la paroi" },
+  { k:"oedemeParoi", fv:"FOETO:PF.DIG-MAL-084", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"faible", l:"Œdème de la paroi" },
+  { k:"hemorragieParoi", fv:"FOETO:PF.DIG-VAS-004", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"faible", l:"Hémorragie de la paroi" },
   { k:"pneumatose", fv:"FOETO:PF.DIG-MAL-032", g:"Nécrose et inflammation de la paroi", mag:"faible",
     meta:"le constat est un gaz dans la paroi : aucune source ne le sépare d'un gaz de putréfaction sur macéré" },
-  { k:"perforation", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"faible", l:"Perforation pariétale",
+  { k:"perforation", fv:"FOETO:PF.DIG-MAL-085", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"faible", l:"Perforation pariétale",
     meta:"siège antimésentérique à noter ; dans la péritonite fibro-adhésive, le trou peut être introuvable" },
   { k:"necroseMuqueuse", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"moyen", l:"Nécrose limitée à la MUQUEUSE" },
   { k:"necroseSousMuqueuse", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"moyen", l:"Nécrose atteignant la SOUS-MUQUEUSE" },
-  { k:"infiltratParoi", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"moyen", l:"Infiltrat inflammatoire de la PAROI",
+  { k:"infiltratParoi", fv:"FOETO:PF.DIG-INF-007", fiche:"[keeling]", g:"Nécrose et inflammation de la paroi", mag:"moyen", l:"Infiltrat inflammatoire de la PAROI",
     meta:"des polynucléaires DANS LA LUMIÈRE ne sont pas une inflammation pariétale" },
   { k:"abcesCryptiques", g:"Nécrose et inflammation de la paroi", mag:"moyen", l:"Abcès cryptiques" },
   { k:"pseudomembrane", g:"Nécrose et inflammation de la paroi", mag:"moyen", l:"Pseudomembrane" },
@@ -688,9 +693,9 @@ var SIGNES = [
   /* — Séreuse et péritoine — */
   { k:"calcificationsPeritoneales", fv:"FOETO:PF.DIG-MAL-009", g:"Séreuse et péritoine", mag:"faible",
     meta:"isolées, sans réaction cellulaire, elles ne prouvent pas la péritonite méconiale" },
-  { k:"adherences", fiche:"[soffoet]", g:"Séreuse et péritoine", mag:"faible", l:"Adhérences péritonéales" },
+  { k:"adherences", fv:"FOETO:PF.DIG-MAL-086", fiche:"[soffoet]", g:"Séreuse et péritoine", mag:"faible", l:"Adhérences péritonéales" },
   { k:"squamesPeritoine", fv:"FOETO:PF.DIG-MAL-064", g:"Séreuse et péritoine", mag:"moyen" },
-  { k:"gigantoCellulaire", fiche:"[keeling]", g:"Séreuse et péritoine", mag:"moyen", l:"Réaction giganto-cellulaire péritonéale au méconium",
+  { k:"gigantoCellulaire", fv:"FOETO:PF.DIG-MAL-087", fiche:"[keeling]", g:"Séreuse et péritoine", mag:"moyen", l:"Réaction giganto-cellulaire péritonéale au méconium",
     meta:"« typically associated » pour keeling, « exceptionnel » pour soffoet — divergence non arbitrée" },
   { k:"macrophagesBiliaires", fv:"FOETO:PF.DIG-MAL-056", g:"Séreuse et péritoine", mag:"fort" },
 
@@ -711,11 +716,11 @@ var SIGNES = [
     meta:"seuil propre : plus de 12,5 % de la circonférence" },
   { k:"nerfsHypertrophiques", fv:"FOETO:PF.DIG-MAL-029", g:"Innervation — plexus", mag:"moyen",
     meta:"plus de 40 µm, au moins deux" },
-  { k:"filetsEpais", fiche:"[soffoet]", g:"Innervation — plexus", mag:"moyen",
+  { k:"filetsEpais", fv:"FOETO:PF.DIG-MAL-088", fiche:"[soffoet]", g:"Innervation — plexus", mag:"moyen",
     l:"« Le plexus myentérique est remplacé par d'épais filets nerveux »" },
   { k:"ganglionsSereuse", bloc:false, fv:"FOETO:PF.DIG-NOR-100", g:"Innervation — plexus", mag:"moyen",
     meta:"« erroneously interpreted as ganglionic submucosa »" },
-  { k:"ganglionsImmatures", bloc:false, fiche:"[keeling]", g:"Innervation — plexus", mag:"fort",
+  { k:"ganglionsImmatures", fv:"FOETO:PF.DIG-NOR-118", bloc:false, fiche:"[keeling]", g:"Innervation — plexus", mag:"fort",
     l:"Cellules ganglionnaires petites, à chromatine mottée, sans nucléole",
     meta:"normales jusqu'à la fin de la 1ʳᵉ année — PHOX2B les révèle" },
   { k:"perteCalretinine", fv:"FOETO:PF.DIG-MAL-031", g:"Innervation — plexus", mag:"technique",
@@ -724,7 +729,7 @@ var SIGNES = [
     meta:"histochimie sur muqueuse rectale FRAÎCHE congelée seulement ; à peine ébauchée chez le fœtus" },
 
   /* — Tissu lymphoïde (GALT) — deux signes, deux négatifs : le « Non » compte double. */
-  { k:"folliculesSousMuqueux", fv:"FOETO:PF.DIG-MAL-052", g:"Tissu lymphoïde (GALT)", mag:"faible",
+  { k:"folliculesSousMuqueux", seul:true, fv:"FOETO:PF.DIG-MAL-052", g:"Tissu lymphoïde (GALT)", mag:"faible",
     meta:"versant fragile : le seuil repose sur un « 20 weeks » écrit avec deux échelles (§ 9-6)" },
   { k:"cgPlasmocyte", fv:"FOETO:PF.DIG-MAL-043", g:"Tissu lymphoïde (GALT)", mag:"fort",
     meta:"anormal SANS condition d'âge fœtal — le versant fort du critère" }
@@ -1312,8 +1317,12 @@ async function testsOrgane(chk, clic, set, crTient, pause){
       lue("stimulationAntigenique"));
   ote("folliculesSousMuqueux");
   clic("grp", groupes().indexOf("Tissu lymphoïde (GALT)"), "non");
-  chk("v2 : « Non » au GALT énonce ses deux négatifs",
+  /* lot FOETO : les follicules sous-muqueux dépendent du terme (seul) — le « Non » ne les répond pas */
+  chk("lot : « Non » au GALT laisse les follicules non regardés", !E.signes.folliculesSousMuqueux);
+  clic("les", "folliculesSousMuqueux", NEG);
+  chk("v2 : « Non » au GALT + follicules répondus énoncent les deux négatifs",
       neg("pasDeCentreGerminatif") === "ok" && neg("pasDeFolliculeSousMuqueux") === "ok");
+  clic("les", "folliculesSousMuqueux", NEG);
   clic("grp", groupes().indexOf("Tissu lymphoïde (GALT)"), "non");
 
   /* ── Contenu luminal : le tube lit le liquide amniotique ───────────────── */

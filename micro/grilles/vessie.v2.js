@@ -49,11 +49,16 @@
    deux axes catégoriels (site du bloc, couches présentes) et leur verdict
    bloquant, techniques. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 1 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 13 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 8 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "vessie";
 var TITRE   = "vessie et voies urinaires basses — urètre, ouraque";
 var SOURCE  = "fiche_vessie.md";
 var MODULE  = "grille_vessie";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -194,7 +199,7 @@ var RETENTION = [
          "délabré : “La vessie est composée d'une épaisse couche scléreuse à l'intérieur de laquelle se " +
          "trouve un urothélium nécrosé” [corpus CR]. Cela ORDONNE sans DATER : " + HORS_BAREME },
 
-  { k:"urotheliumAbsent", l:"Urothélium incomplet ou totalement absent", b:"—", d:"artefact d'autopsie de base", h:0, q:"mauvais",
+  { k:"urotheliumAbsent", fv:"FOETO:PF.REN-NOR-052", l:"Urothélium incomplet ou totalement absent", b:"—", d:"artefact d'autopsie de base", h:0, q:"mauvais",
     note:"c'est le seul fait de lisibilité sourcé, et il est catégorique : « The urothelium is usually up " +
          "to six to seven layers thick in the contracted bladder, but in autopsy specimens, the urothelium " +
          "often is poorly preserved, and its layers may be incomplete or completely absent » [ernst, " +
@@ -206,7 +211,7 @@ var RETENTION = [
     note:"« The underlying lamina propria is relatively thick, depending on the degree of dilatation » " +
          "[ernst, ch. 9] : l'épaisseur du chorion mesure la réplétion, pas le temps" },
 
-  { k:"basophiliePerdue", l:"Perte de la basophilie nucléaire dans la paroi vésicale", b:"—", d:"aucun rang attribuable", h:0, q:"mauvais",
+  { k:"basophiliePerdue", fv:"FOETO:PF.REN-NOR-048", l:"Perte de la basophilie nucléaire dans la paroi vésicale", b:"—", d:"aucun rang attribuable", h:0, q:"mauvais",
     note:"« There is a predictable pattern of loss of nuclear basophilia in the internal organs which " +
          "should not be mistaken for necrosis » [keeling, ch. 15] — la règle générale s'applique, la " +
          "séquence chiffrée non : " + HORS_BAREME },
@@ -285,7 +290,7 @@ var MESURE = {
   optLabel:"couches présentes — paroi complète ou incomplète",
   defs:PLANS, opts:COUCHES,
   champs:[
-    { id:"couches",    label:"Couches urothéliales comptées", min:0, max:20, step:1 },
+    { id:"couches",    fv:"FOETO:PF.REN-NOR-039", label:"Couches urothéliales comptées", min:0, max:20, step:1 },
     { id:"musculeuse", label:"Épaisseur de la musculeuse (mm)", min:0, max:15, step:0.1 },
     { id:"paroi",      label:"Épaisseur pariétale totale à la coupe (mm)", min:0, max:30, step:0.1 }
   ]
@@ -428,19 +433,19 @@ var CADRES = [
 var VARIANTES = [
   { k:"desquamation", g:"Urothélium", l:"Urothélium desquamé ou absent — « in autopsy specimens, the urothelium often is poorly preserved »" },
   { k:"sixSept", g:"Urothélium",      l:"Six à sept couches urothéliales — « six to seven layers thick in the contracted bladder », valeur de réplétion" },
-  { k:"urotheliumMur", g:"Urothélium", l:"Urothélium d'aspect adulte dès le milieu de grossesse — « fully differentiated prenatally »" },
+  { k:"urotheliumMur", fv:"FOETO:PF.REN-NOR-053", g:"Urothélium", l:"Urothélium d'aspect adulte dès le milieu de grossesse — « fully differentiated prenatally »" },
   { k:"chorionVariable", g:"Paroi et contenu vésical", l:"Chorion d'épaisseur relative, fonction de la dilatation" },
-  { k:"muscMuqIndistincte", g:"Paroi et contenu vésical", l:"Musculaire muqueuse indistincte — « may be indistinct and composed of a thin, discontinuous layer of smooth muscle », existence contestée" },
-  { k:"faisceauxSansOrientation", g:"Paroi et contenu vésical", l:"Faisceaux musculaires sans orientation définie hors du col" },
-  { k:"peritoine", g:"Paroi et contenu vésical", l:"Péritoine recouvrant l'adventice sur une coupe de vessie supérieure" },
-  { k:"amande", g:"Contexte hors lame — vessie et urètre en macro",
+  { k:"muscMuqIndistincte", fv:"FOETO:PF.REN-NOR-045", g:"Paroi et contenu vésical", l:"Musculaire muqueuse indistincte — « may be indistinct and composed of a thin, discontinuous layer of smooth muscle », existence contestée" },
+  { k:"faisceauxSansOrientation", fv:"FOETO:PF.REN-NOR-046", g:"Paroi et contenu vésical", l:"Faisceaux musculaires sans orientation définie hors du col" },
+  { k:"peritoine", fv:"FOETO:PF.REN-NOR-040", g:"Paroi et contenu vésical", l:"Péritoine recouvrant l'adventice sur une coupe de vessie supérieure" },
+  { k:"amande", fv:"FOETO:PF.REN-NOR-057", g:"Contexte hors lame — vessie et urètre en macro",
     l:"Vessie haut située, flanquée des deux artères ombilicales, en amande vers l'ouraque" },
-  { k:"metaplasieUretrale", g:"Urètre et continuité vésico-urétrale", l:"Métaplasie malpighienne de l'urètre, « especially along the posterior wall » — normale, hormonale, décroissante" },
-  { k:"utricule", g:"Urètre et continuité vésico-urétrale", l:"Utricule prostatique au veru montanum, épithélium malpighien stratifié" },
+  { k:"metaplasieUretrale", fv:"FOETO:PF.REN-NOR-044", g:"Urètre et continuité vésico-urétrale", l:"Métaplasie malpighienne de l'urètre, « especially along the posterior wall » — normale, hormonale, décroissante" },
+  { k:"utricule", fv:"FOETO:PF.REN-NOR-054", g:"Urètre et continuité vésico-urétrale", l:"Utricule prostatique au veru montanum, épithélium malpighien stratifié" },
   { k:"veruU", g:"Urètre et continuité vésico-urétrale", l:"Lumière urétrale en U inversé au niveau du veru montanum" },
   { k:"morgagniLittre", g:"Urètre et continuité vésico-urétrale", l:"Lacunes de Morgagni et glandes de Littre de l'urètre pénien" },
-  { k:"fosseNaviculaire", g:"Urètre et continuité vésico-urétrale", l:"Fosse naviculaire à épithélium malpighien non kératinisant" },
-  { k:"reliquatCordon", g:"Contexte hors lame — ouraque et cordon",
+  { k:"fosseNaviculaire", fv:"FOETO:PF.REN-NOR-042", g:"Urètre et continuité vésico-urétrale", l:"Fosse naviculaire à épithélium malpighien non kératinisant" },
+  { k:"reliquatCordon", fv:"FOETO:PF.REN-NOR-049", g:"Contexte hors lame — ouraque et cordon",
      l:"Amas d'épithélium transitionnel sans lumière dans le cordon, central entre les deux artères — 14,6 %" },
   { k:"cryptorchidie", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
     l:"Testicules non descendus chez le jeune fœtus — « une cryptorchidie qui, chez le jeune fœtus, est physiologique » [soffoet]" }
@@ -506,9 +511,9 @@ var SIGNES = [
   /* — Contexte hors lame : l'amont, le rein, le poumon — ce que la vessie seule ne montre pas — */
   { k:"uretereDilate", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Uretère dilaté, urétéro-hydronéphrose", meta:"amont — bloc rein/voies ; « dilated ureters often have a thin wall »" },
-  { k:"hydronephrose", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
+  { k:"hydronephrose", fv:"FOETO:PF.REN-MAL-133", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Hydronéphrose", meta:"amont" },
-  { k:"kysteSousCapsulaire", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
+  { k:"kysteSousCapsulaire", fv:"FOETO:PF.REN-MAL-134", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Kyste sous-capsulaire cortical rénal", meta:"lame de rein — « hallmark of obstruction » sur la grille rein" },
   { k:"desorganisation", fv:"FOETO:PF.REN-MAL-016", g:"Contexte hors lame — amont, rein, poumon, Potter",
     meta:"lame de rein — « the cortex is thin and disorganized »" },
@@ -517,14 +522,14 @@ var SIGNES = [
     meta:"amont — c'est là que se juge la gravité ; reprise de la grille rein, pas un constat de cette lame" },
   { k:"oligoamnios", fiche:"[soffoet]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Oligoamnios ou anamnios", meta:"clinique" },
-  { k:"hypoplasiePulmonaire", fiche:"[soffoet]", g:"Contexte hors lame — amont, rein, poumon, Potter",
+  { k:"hypoplasiePulmonaire", fv:"FOETO:PF.REN-MAL-135", fiche:"[soffoet]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Hypoplasie pulmonaire", meta:"aval de la séquence — se juge sur la lame de poumon et le rapport poids" },
   { k:"faciesPotter", fiche:"[soffoet]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Faciès de Potter, déformations positionnelles", meta:"externe" },
   /* — Contexte hors lame : paroi abdominale, génital, digestif — */
   { k:"defautMusculatureAbdo", fv:"FOETO:PF.REN-MAL-089", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
     meta:"macro — non spécifique : aussi dans les distensions d'origine non vésicale" },
-  { k:"testiculesNonDescendus", fv:"FOETO:PF.REN-MAL-088", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
+  { k:"testiculesNonDescendus", seul:true, fv:"FOETO:PF.REN-MAL-088", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
     meta:"critère prune belly pour keeling ; non retenu chez le jeune fœtus par soffoet — § 9-8" },
   { k:"sexeFemininOuAmbigu", fv:"FOETO:PF.REN-MAL-104", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
     meta:"v1 : féminin OU AMBIGU, même sous phénotype masculin — les VUP n'existent que chez le garçon" },
@@ -539,21 +544,21 @@ var SIGNES = [
     meta:"pratiquement constante dans l'exstrophie ; parfois associée à l'atrésie urétrale" },
   { k:"deuxHemivessies", fv:"FOETO:PF.REN-MAL-090", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
     meta:"forme majeure, cloacale" },
-  { k:"omphalocele", fiche:"[keeling]", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
+  { k:"omphalocele", fv:"FOETO:PF.REN-MAL-136", fiche:"[keeling]", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
     l:"Omphalocèle", meta:"spectre OEIS" },
-  { k:"defectSpinal", fiche:"[keeling]", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
+  { k:"defectSpinal", fv:"FOETO:PF.REN-MAL-137", fiche:"[keeling]", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
     l:"Défect spinal", meta:"spectre OEIS" },
   /* — Contexte hors lame : ouraque en macro, reliquat sur la lame de cordon — */
-  { k:"ouraquePermeable", fiche:"[keeling]", g:"Contexte hors lame — ouraque et cordon",
+  { k:"ouraquePermeable", fv:"FOETO:PF.REN-MAL-138", fiche:"[keeling]", g:"Contexte hors lame — ouraque et cordon",
     l:"Ouraque perméable, fistule vésico-ombilicale", meta:"« once in 200,000 births », plus fréquent chez le garçon" },
   { k:"cordonGeant", fv:"FOETO:PF.REN-MAL-087", g:"Contexte hors lame — ouraque et cordon",
     meta:"« giant umbilical cord » : peut révéler un ouraque perméable" },
-  { k:"kysteOuraquien", fiche:"[keeling]", g:"Contexte hors lame — ouraque et cordon",
+  { k:"kysteOuraquien", fv:"FOETO:PF.REN-MAL-139", fiche:"[keeling]", g:"Contexte hors lame — ouraque et cordon",
     l:"Kyste ou diverticule ouraquien", meta:"persistance partielle, moyenne ou distale" },
   { k:"reliquatExcentre", fiche:"[benirschke]", g:"Contexte hors lame — ouraque et cordon",
     l:"Reliquat épithélial du cordon NON central entre les deux artères",
     meta:"lame de cordon — la position est le critère : hors du centre, penser omphalomésentérique" },
-  { k:"ouraqueMuscle", fiche:"[benirschke]", g:"Contexte hors lame — ouraque et cordon",
+  { k:"ouraqueMuscle", fv:"FOETO:PF.REN-MAL-140", fiche:"[benirschke]", g:"Contexte hors lame — ouraque et cordon",
     l:"Reliquat allantoïdien accompagné de musculature", meta:"lame de cordon — « Rarely is the allantoic tissue accompanied by muscle »" },
 
   /* — Paroi et contenu vésical — */
@@ -619,7 +624,7 @@ var DIAGS = [
          "variability of physiologic dilatation, which will also affect the thickness of the wall and " +
          "its histological appearance. » [ernst, ch. 9]." },
 
-  { k:"obstacleUretral", l:"Obstacle urétral, niveau à préciser en macro", cle:"discontinuiteVesicoUretrale", min:2,
+  { k:"obstacleUretral", fv:"FOETO:PF.REN-MAL-122", l:"Obstacle urétral, niveau à préciser en macro", cle:"discontinuiteVesicoUretrale", min:2,
     signes:["discontinuiteVesicoUretrale","obstacleInfranchissable","colBorgne","orificePunctiforme",
             "replisVeru","uretrePostDilate","megavessie"],
     stop:" — la lame établit la CONTINUITÉ vésico-urétrale ou son absence, pas le type d'obstacle. " +

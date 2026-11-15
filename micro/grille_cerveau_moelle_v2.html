@@ -388,11 +388,16 @@ var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
       contredit sur sa propre unité — donc une incertitude de ±2 semaines pèse sur
       toute la datation, et le SENS de cet écart est inconnu. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 6 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 5 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 11 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "cerveau_moelle";
 var TITRE   = "cerveau et moelle";
 var SOURCE  = "fiche_cerveau_moelle.md";
 var MODULE  = "grille_cerveau_moelle";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -567,14 +572,14 @@ var RETENTION = [
          "estimating gestational age » [keeling, ch. 15] — ce n'est pas une borne de rétention, c'est " +
          "l'inverse : sur un fœtus macéré, c'est la GYRATION qui date, pas la cytologie (Maturation)" },
 
-  { k:"massesRacines", l:"Tissu cérébral autolysé poussé dans la moelle, le long des racines ou hors des trous de conjugaison",
+  { k:"massesRacines", fv:"FOETO:PF.CER-NOR-105", l:"Tissu cérébral autolysé poussé dans la moelle, le long des racines ou hors des trous de conjugaison",
     b:"—", d:"artefact de geste, ne date rien", h:0, q:"mauvais",
     note:"c'est l'accouchement par voie basse qui presse le cerveau liquéfié — « Such masses of " +
          "autolysed brain tissue should not be mistaken for a neurogenic neoplasm or encephalocele » " +
          "[keeling, ch. 15] et « This finding should not be confused with a neuroblastic tumor in the " +
          "retroperitoneum » [ernst, ch. 37]. Parade nommée : GFAP ou CD56" },
 
-  { k:"tissuViscere", l:"Tissu cérébral dans la vascularisation du foie ou d'un autre viscère",
+  { k:"tissuViscere", fv:"FOETO:PF.CER-NOR-106", l:"Tissu cérébral dans la vascularisation du foie ou d'un autre viscère",
     b:"—", d:"artefact de geste, ne date rien", h:0, q:"mauvais",
     note:"le piège n'est pas confiné à la lame de cerveau : ernst ch. 37 signale du tissu cérébral " +
          "dans la vascularisation du foie et des autres organes — il peut surgir sur n'importe quelle " +
@@ -679,7 +684,7 @@ var MESURE = {
   defLabel:"niveaux médullaires — sans eux, “cornes antérieures normales” ne veut rien dire",
   optLabel:"gyration — le seul repère qui survive à la macération",
   defs:NIVEAUX, opts:GYRATION,
-  champs:[{ id:"egl", label:"Couche granuleuse externe cérébelleuse (nombre de cellules)",
+  champs:[{ id:"egl", fv:"FOETO:PF.CER-NOR-103", label:"Couche granuleuse externe cérébelleuse (nombre de cellules)",
             min:0, max:20, step:1 }]
 };
 
@@ -813,13 +818,13 @@ var VARIANTES = [
     l:"Hétérotopie cérébelleuse non proéminente, isolée, sans contexte syndromique" },
   { k:"grandsNeuronesInterstitiels", g:"Cortex — migration, lamination, ligne médiane",
     l:"Grands neurones interstitiels de la substance blanche — résidus probables de la sous-plaque" },
-  { k:"statusVerrucosus", g:"Cortex — migration, lamination, ligne médiane",
+  { k:"statusVerrucosus", fv:"FOETO:PF.CER-NOR-111", g:"Cortex — migration, lamination, ligne médiane",
     l:"Status verrucosus simplex, papilles de Retzius — avant 24 SA" },
   { k:"sillonCentralIrregulier", g:"Cortex — migration, lamination, ligne médiane",
     l:"Irrégularités du sillon central à 21 — formation précoce du sillon" },
   { k:"cajalRetzius", g:"Cortex — migration, lamination, ligne médiane",
     l:"Neurones de Cajal-Retzius sous-piaux bien visibles en HE" },
-  { k:"glieRadiaire", g:"Structures transitoires — maturation",
+  { k:"glieRadiaire", fv:"FOETO:PF.CER-NOR-108", g:"Structures transitoires — maturation",
     l:"Glie radiaire du raphé dorsal — persiste NORMALEMENT jusqu'au terme" },
   { k:"eglResiduelle", g:"Structures transitoires — maturation",
     l:"Couche granuleuse externe cérébelleuse résiduelle au terme" },
@@ -863,12 +868,12 @@ var CADRES = [
    répond pas, il se répond seul. */
 var SIGNES = [
   /* — Contexte hors lame — macro, autre organe, clinique — */
-  { k:"corpsCalleuxAbsent", fiche:"[§ 5.2]", g:"Contexte hors lame — macro, autre organe, clinique", l:"Corps calleux absent",
+  { k:"corpsCalleuxAbsent", fv:"FOETO:PF.CER-MAL-341", fiche:"[§ 5.2]", g:"Contexte hors lame — macro, autre organe, clinique", l:"Corps calleux absent",
     meta:"diagnostic MACROSCOPIQUE — la coupe n'ajoute que trois points : faisceaux de Probst, cortex adjacent, gliose" },
   { k:"commissureManquante", fiche:"[§ 4, § 6]", g:"Contexte hors lame — macro, autre organe, clinique",
     l:"Capsule interne ou commissure antérieure absente",
     meta:"v2 : pour que le négatif des commissures blanches ne dise pas plus que ce qui a été répondu" },
-  { k:"corticalHyperconvolute", fiche:"[devneuro, ch. 8]", g:"Contexte hors lame — macro, autre organe, clinique",
+  { k:"corticalHyperconvolute", fv:"FOETO:PF.CER-MAL-342", fiche:"[devneuro, ch. 8]", g:"Contexte hors lame — macro, autre organe, clinique",
     l:"Cortex macroscopiquement hyperconvoluté",
     meta:"seule la coupe tranche : lamination normale dessous = polygyrie, pas polymicrogyrie" },
   { k:"gyrationRetard", auto:function(){ var o = E.mesure.opt; return o === "harmonieuse" || o === "dysharmonieuse" ? true : o === "conforme" ? false : null; }, fv:"FOETO:PF.CER-MAL-289", g:"Contexte hors lame — macro, autre organe, clinique",
@@ -879,7 +884,7 @@ var SIGNES = [
     meta:"constat MACROSCOPIQUE — aucun seuil de microcéphalie en DS n'existe dans les six livres" },
   { k:"herniationCervelet", fv:"FOETO:PF.CER-MAL-290", g:"Contexte hors lame — macro, autre organe, clinique",
     meta:"lecture MACROSCOPIQUE — point commun des quatre types de Chiari" },
-  { k:"coneNiveau", fiche:"[ernst, ch. 29]", g:"Contexte hors lame — macro, autre organe, clinique",
+  { k:"coneNiveau", fv:"FOETO:PF.CER-MAL-343", seul:true, fiche:"[ernst, ch. 29]", g:"Contexte hors lame — macro, autre organe, clinique",
     l:"Moelle descendant plus bas que le rachis lombaire moyen au-delà de 27 semaines [non convertible]",
     meta:"repère d'ernst : à 27 semaines gestation, la moelle « extends only to the mid lumbar spine » — " +
          "semaines d'ernst, non convertibles en SA (§ 3.0). Seul repère médullaire daté de tout le corpus, " +
@@ -893,7 +898,7 @@ var SIGNES = [
   { k:"espaceSousArachnoidienOblitere", fv:"FOETO:PF.CER-MAL-223", g:"Cortex — migration, lamination, ligne médiane", mag:"faible" },
   { k:"vaguesAmasNeuronaux", fv:"FOETO:PF.CER-MAL-287", g:"Cortex — migration, lamination, ligne médiane", mag:"faible" },
   { k:"heterotopiesNodulairesProfondes", fv:"FOETO:PF.CER-MAL-292", g:"Cortex — migration, lamination, ligne médiane", mag:"faible" },
-  { k:"laminationNormaleSousGyri", bloc:false, fiche:"[devneuro, ch. 8]", g:"Cortex — migration, lamination, ligne médiane", mag:"faible",
+  { k:"laminationNormaleSousGyri", fv:"FOETO:PF.CER-NOR-112", bloc:false, fiche:"[devneuro, ch. 8]", g:"Cortex — migration, lamination, ligne médiane", mag:"faible",
     l:"Histologie et lamination NORMALES sous les circonvolutions surnuméraires",
     meta:"présent = lamination normale : c'est ce qui fait une polygyrie d'hydrocéphalie, pas une polymicrogyrie" },
   { k:"laminationDesorganisee", fiche:"[§ 6]", g:"Cortex — migration, lamination, ligne médiane", mag:"faible",
@@ -924,7 +929,7 @@ var SIGNES = [
     meta:"le négatif utile porte sur le caractère proéminent, jamais sur la présence" },
   { k:"vermisAplasieFusion", fv:"FOETO:PF.CER-MAL-296", g:"Fosse postérieure — cervelet, aqueduc, tronc", mag:"faible",
     meta:"diagnostic de coupe FRONTALE — fusion apparente des hémisphères cérébelleux (libellé v1)" },
-  { k:"dysplasieCerebelleuseExtensive", fiche:"[devneuro, ch. 15]", g:"Fosse postérieure — cervelet, aqueduc, tronc", mag:"faible",
+  { k:"dysplasieCerebelleuseExtensive", fv:"FOETO:PF.CER-MAL-344", fiche:"[devneuro, ch. 15]", g:"Fosse postérieure — cervelet, aqueduc, tronc", mag:"faible",
     l:"Dysplasie cérébelleuse extensive" },
   { k:"aqueducStenose", fiche:"[§ 5.5]", g:"Fosse postérieure — cervelet, aqueduc, tronc", mag:"faible",
     l:"Aqueduc de Sylvius rétréci ou non perméable" },
@@ -944,7 +949,7 @@ var SIGNES = [
   { k:"fermetureSousLesion", fiche:"[corpus CR]", g:"Tube neural et moelle — fermeture, clivage", mag:"faible",
     l:"Fermeture de la moelle sous le niveau lésionnel, malformative et hémorragique",
     meta:"second verbatim du même CR, et il décrit un étage SOUS la lésion — donc plusieurs niveaux" },
-  { k:"areaCerebrovasculosa", fiche:"[devneuro, ch. 2]", g:"Tube neural et moelle — fermeture, clivage", mag:"faible",
+  { k:"areaCerebrovasculosa", fv:"FOETO:PF.CER-VAS-012", fiche:"[devneuro, ch. 2]", g:"Tube neural et moelle — fermeture, clivage", mag:"faible",
     l:"Area cerebrovasculosa — tissu neuroglial désorganisé et vasculaire",
     meta:"l'anencéphalie n'est pas un défaut de fermeture mais une dégénérescence secondaire d'un tube " +
          "ouvert : on trouve un tissu désorganisé, pas un cerveau formé puis amputé" },
@@ -952,29 +957,29 @@ var SIGNES = [
     meta:"critère de coupe TRANSVERSALE : le sac dural, pas la moelle" },
   { k:"deuxSacsDuraux", fv:"FOETO:PF.CER-MAL-288", g:"Tube neural et moelle — fermeture, clivage", mag:"faible",
     meta:"critère de coupe TRANSVERSALE : le sac dural, pas la moelle" },
-  { k:"hydromyelie", fiche:"[devneuro, ch. 2]", g:"Tube neural et moelle — fermeture, clivage", mag:"faible",
+  { k:"hydromyelie", fv:"FOETO:PF.CER-MAL-345", fiche:"[devneuro, ch. 2]", g:"Tube neural et moelle — fermeture, clivage", mag:"faible",
     l:"Dilatation du canal médullaire (hydromyélie)" },
   { k:"clivageDuplicationPartielle", fv:"FOETO:PF.CER-MAL-286", g:"Tube neural et moelle — fermeture, clivage", mag:"faible",
     meta:"perineuro ch. 38 distingue le clivage de la vraie duplication" },
 
   /* — Structures transitoires — maturation anormale, par structure — */
-  { k:"matricePersistante", fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"matricePersistante", seul:true, fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Matrice germinative persistante au-delà de l'âge attendu",
     meta:"seule sa PERSISTANCE se coche : on ne sait pas dire à partir de quel âge son absence est anormale" },
-  { k:"sousPlaquePersistante", fiche:"[§ 3.4]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"sousPlaquePersistante", terme:[35, null], fiche:"[§ 3.4]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Sous-plaque persistante après 35" },
-  { k:"laminaVermis", bloc:false, fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"laminaVermis", fv:"FOETO:PF.CER-NOR-113", bloc:false, fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Lamina dissecans présente au vermis",
     meta:"observation : perineuro la donne disparue à 28 au vermis, ernst à 32 sans distinguer d'étage" },
-  { k:"laminaHemisphere", bloc:false, fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"laminaHemisphere", fv:"FOETO:PF.CER-NOR-114", bloc:false, fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Lamina dissecans présente à l'hémisphère cérébelleux",
     meta:"observation : perineuro la donne disparue à 30 aux hémisphères, ernst à 32" },
-  { k:"laminaDissecansPersistante", fiche:"[ernst, ch. 29 ; perineuro]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"laminaDissecansPersistante", seul:true, fiche:"[ernst, ch. 29 ; perineuro]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Lamina dissecans persistante aux DEUX étages, vermis compris" },
-  { k:"dentelNonCrenele", fiche:"[§ 3.5]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"dentelNonCrenele", terme:[22, null], fiche:"[§ 3.5]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Noyau dentelé à contour lisse et mal délimité après 22",
     meta:"une FORME, lue à faible grossissement : survit à la macération" },
-  { k:"oliveNonCrenelee", fiche:"[§ 3.5]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"oliveNonCrenelee", seul:true, fiche:"[§ 3.5]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Olive bulbaire inférieure à contour lisse au 3ᵉ trimestre" },
   { k:"granSousPialePersistante", fiche:"[§ 3.4]", g:"Structures transitoires — maturation", mag:"moyen",
     l:"Couche granulaire sous-piale persistante après 30",
@@ -986,7 +991,7 @@ var SIGNES = [
     meta:"1 seul CR sur 176 en mentionne une — et c'est le type de lésion qui part dans le rapport différé" },
   { k:"leucomalacie", fiche:"[devneuro, ch. 21]", g:"Destruction, hémorragie, substance blanche", mag:"faible",
     l:"Leucomalacie périventriculaire ou cavitation de la substance blanche" },
-  { k:"caviteSansGliose", fiche:"[devneuro, ch. 19]", g:"Destruction, hémorragie, substance blanche", mag:"faible",
+  { k:"caviteSansGliose", fv:"FOETO:PF.CER-MAL-346", fiche:"[devneuro, ch. 19]", g:"Destruction, hémorragie, substance blanche", mag:"faible",
     l:"Cavité ou perte de substance SANS gliose" },
   { k:"structurePetiteBienConstruite", fiche:"[§ 5.3]", g:"Destruction, hémorragie, substance blanche", mag:"faible",
     l:"Structure petite mais bien construite, sans gliose ni perte neuronale" },
@@ -995,7 +1000,7 @@ var SIGNES = [
     l:"Raréfaction neuronale" },
   { k:"glioseReactionnelle", fv:"FOETO:PF.CER-RET-026", g:"Destruction, hémorragie, substance blanche", mag:"moyen",
     meta:"astrocytose réactionnelle (libellé v1) — n'apparaît que vers 20-23 semaines : avant, son absence ne prouve rien" },
-  { k:"sansMacrophagesMyeline", bloc:false, fiche:"[perineuro, s9_infections]", g:"Destruction, hémorragie, substance blanche", mag:"fort",
+  { k:"sansMacrophagesMyeline", fv:"FOETO:PF.CER-NOR-115", bloc:false, fiche:"[perineuro, s9_infections]", g:"Destruction, hémorragie, substance blanche", mag:"fort",
     l:"Pas de macrophages chargés de myéline — pas de démyélinisation active",
     meta:"polarité normale, à répondre seul : c'est l'ABSENCE qui est le critère différentiel du retard de " +
          "myélinisation infectieux (§ 5.9) ; absent = macrophages chargés de myéline vus (v1 : macrophagesMyeline)" },
@@ -1723,8 +1728,8 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 }
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
-var FOETO = {"sections":[],"formes":{"FOETO:PF.CER-CLA-003":["Activation microgliale"],"FOETO:PF.CER-MAL-016":["Agénésie du corps calleux"],"FOETO:PF.CER-MAL-022":["Amas de neurones immatures dans la zone sous-ventriculaire externe"],"FOETO:PF.CER-MAL-297":["Amyotrophie spinale"],"FOETO:PF.CER-MAL-024":["Anencéphalie"],"FOETO:PF.CER-MAL-296":["Aplasie du vermis avec continuité des hémisphères cérébelleux"],"FOETO:PF.CER-RET-007":["Atteinte des noyaux moteurs bulbaires"],"FOETO:PF.CER-CLA-199":["Ballonnement et chromatolyse des motoneurones"],"FOETO:PF.CER-RET-012":["Cellules de Gaucher cérébrales (histiocytes périvasculaires à cytoplasme strié)"],"FOETO:PF.CER-RET-015":["Chromatolyse des neurones des ganglions rachidiens"],"FOETO:PF.CER-MAL-285":["Chromatolyse thalamique"],"FOETO:PF.CER-MAL-286":["Clivage médullaire avec duplication seulement partielle, lombaire basse"],"FOETO:PF.CER-MAL-299":["Craniorachischisis"],"FOETO:PF.CER-NOR-107":["Cône médullaire en regard du rachis lombaire moyen"],"FOETO:PF.CER-MAL-300":["Duplication caudale"],"FOETO:PF.CER-MAL-072":["Dysplasie corticale focale"],"FOETO:PF.CER-MAL-287":["Désorganisation complète de la lamination en vagues et amas neuronaux"],"FOETO:PF.CER-MAL-105":["Encéphalocèle"],"FOETO:PF.CER-MAL-301":["Exencéphalie"],"FOETO:PF.CER-NOR-104":["Fraction infratentorielle du poids cérébral"],"FOETO:PF.CER-NOR-108":["Glie radiaire du raphé dorsal"],"FOETO:PF.CER-RET-026":["Gliose astrocytaire avec astrocytes hypertrophiques"],"FOETO:PF.CER-MET-115":["Glycogénose de type IV"],"FOETO:PF.CER-MAL-289":["Gyration moins développée qu'attendu pour l'âge — harmonieuse ou dysharmonieuse"],"FOETO:PF.CER-MAL-127":["Gyration simplifiée"],"FOETO:PF.CER-MAL-290":["Hernie du cervelet, parfois du tronc, hors de la fosse postérieure"],"FOETO:PF.CER-MAL-303":["Hydrocéphalie autosomique récessive non syndromique (MPDZ, CCDC88C)"],"FOETO:PF.CER-MAL-139":["Hydrocéphalie — dilatation ventriculaire"],"FOETO:PF.CER-MAL-142":["Hypoplasie cérébelleuse"],"FOETO:PF.CER-MAL-288":["Hémi-moelles dans deux sacs duraux"],"FOETO:PF.CER-MAL-295":["Hémi-moelles dans un seul sac dural"],"FOETO:PF.CER-VAS-004":["Hémorragie de la matrice germinale"],"FOETO:PF.CER-MAL-158":["Hétérotopie cérébelleuse"],"FOETO:PF.CER-MAL-291":["Hétérotopie cérébelleuse proéminente"],"FOETO:PF.CER-MAL-169":["Hétérotopie neuronale striée de la zone intermédiaire"],"FOETO:PF.CER-MAL-292":["Hétérotopies nodulaires profondes"],"FOETO:PF.CER-MAL-179":["Inversion des couches corticales"],"FOETO:PF.CER-CLA-106":["Karyolyse neuronale"],"FOETO:PF.CER-VAS-005":["Leucomalacie périventriculaire / atteinte diffuse de la substance blanche"],"FOETO:PF.CER-MAL-191":["Lissencéphalie cobblestone (type II)"],"FOETO:PF.CER-MAL-193":["Lissencéphalie type I"],"FOETO:PF.CER-MAL-304":["Lésion encéphaloclastique (acquise)"],"FOETO:PF.CER-MAL-302":["Maladie de Gaucher"],"FOETO:PF.CER-MAL-298":["Malformation de Chiari"],"FOETO:PF.CER-NOR-109":["Matrice germinale encore épaisse vers 29, non proliférante"],"FOETO:PF.CER-RET-051":["Matériel de surcharge PASD+ et fer colloïdal+ dans le cerveau et les cellules ganglionnaires"],"FOETO:PF.CER-MAL-201":["Microcéphalie (histologie)"],"FOETO:PF.CER-MAL-202":["Microlissencéphalie"],"FOETO:PF.CER-MAL-305":["Moelle fendue (split cord malformation, diastématomyélie)"],"FOETO:PF.CER-INF-033":["Mort neuronale des motoneurones"],"FOETO:PF.CER-NOR-110":["Motoneurones des cornes antérieures organisés en agrégats"],"FOETO:PF.CER-MAL-205":["Myéloméningocèle"],"FOETO:PF.CER-MET-077":["Neurones ballonnés (stockage lysosomal)"],"FOETO:PF.CER-MAL-210":["Neurones dysmorphiques"],"FOETO:PF.CER-MAL-293":["Neuronophagie"],"FOETO:PF.CER-MAL-216":["Nids neuroglieux ectopiques sous-arachnoïdiens"],"FOETO:PF.CER-CLA-151":["Nécrose laminaire corticale"],"FOETO:PF.CER-VAS-006":["Nécrose pontosubiculaire"],"FOETO:PF.CER-MAL-223":["Oblitération de l'espace sous-arachnoïdien"],"FOETO:PF.CER-RET-041":["Perte neuronale de la colonne de Clarke"],"FOETO:PF.CER-MET-114":["Perte neuronale des noyaux gris centraux, du tronc et des noyaux dentelés"],"FOETO:PF.CER-MAL-294":["Placode neurale — moelle ouverte"],"FOETO:PF.CER-MAL-308":["Polygyrie — cortex hyperconvoluté à histologie et lamination normales"],"FOETO:PF.CER-MAL-306":["Polymicrogyrie"],"FOETO:PF.CER-MAL-244":["Rhombencéphalosynapsis"],"FOETO:PF.CER-CLA-176":["Rosettes épendymaires intraventriculaires"],"FOETO:PF.CER-NOR-111":["Status verrucosus simplex et papilles de Retzius"],"FOETO:PF.CER-MAL-258":["Sténose de l'aqueduc cérébral"],"FOETO:PF.CER-MET-116":["Surcharge neuronale, maladie non typable sur la lame"],"FOETO:PF.CER-MAL-307":["Syndrome de Zellweger"],"FOETO:PF.CER-NOR-105":["Tissu cérébral autolysé pressé hors du névraxe (moelle, racines, rétropéritoine, sous-cutané)"],"FOETO:PF.CER-NOR-106":["Tissu cérébral dans la vascularisation du foie ou d'un autre viscère"],"FOETO:PF.CER-NOR-103":["Épaisseur de la couche granuleuse externe cérébelleuse, en cellules"]}};
-var FOETOV = {"FOETO:PF.CER-MAL-127":{"l":"Gyration simplifiée","hpo":null},"FOETO:PF.CER-MAL-169":{"l":"Hétérotopie neuronale striée de la zone intermédiaire","hpo":null},"FOETO:PF.CER-CLA-151":{"l":"Nécrose laminaire corticale","hpo":null},"FOETO:PF.CER-MAL-223":{"l":"Oblitération de l'espace sous-arachnoïdien","hpo":null},"FOETO:PF.CER-MAL-290":{"l":"Hernie du cervelet, parfois du tronc, hors de la fosse postérieure","hpo":null},"FOETO:PF.CER-MAL-286":{"l":"Clivage médullaire avec duplication seulement partielle, lombaire basse","hpo":null},"FOETO:PF.CER-MAL-285":{"l":"Chromatolyse thalamique","hpo":null},"FOETO:PF.CER-MAL-294":{"l":"Placode neurale — moelle ouverte","hpo":null},"FOETO:PF.CER-MAL-302":{"l":"Maladie de Gaucher","hpo":null},"FOETO:PF.CER-MAL-297":{"l":"Amyotrophie spinale","hpo":"HP:0007269"},"FOETO:PF.CER-CLA-003":{"l":"Activation microgliale","hpo":null},"FOETO:PF.CER-MAL-158":{"l":"Hétérotopie cérébelleuse","hpo":null},"FOETO:PF.CER-RET-007":{"l":"Atteinte des noyaux moteurs bulbaires","hpo":null},"FOETO:PF.CER-MAL-016":{"l":"Agénésie du corps calleux","hpo":"HP:0001274"},"FOETO:PF.CER-CLA-176":{"l":"Rosettes épendymaires intraventriculaires","hpo":null},"FOETO:PF.CER-MAL-308":{"l":"Polygyrie — cortex hyperconvoluté à histologie et lamination normales","hpo":null},"FOETO:PF.CER-MAL-216":{"l":"Nids neuroglieux ectopiques sous-arachnoïdiens","hpo":null},"FOETO:PF.CER-RET-015":{"l":"Chromatolyse des neurones des ganglions rachidiens","hpo":null},"FOETO:PF.CER-MAL-291":{"l":"Hétérotopie cérébelleuse proéminente","hpo":null},"FOETO:PF.CER-MAL-244":{"l":"Rhombencéphalosynapsis","hpo":"HP:0031913"},"FOETO:PF.CER-MAL-305":{"l":"Moelle fendue (split cord malformation, diastématomyélie)","hpo":null},"FOETO:PF.CER-MAL-293":{"l":"Neuronophagie","hpo":null},"FOETO:PF.CER-MAL-258":{"l":"Sténose de l'aqueduc cérébral","hpo":"HP:0002410"},"FOETO:PF.CER-RET-012":{"l":"Cellules de Gaucher cérébrales (histiocytes périvasculaires à cytoplasme strié)","hpo":null},"FOETO:PF.CER-RET-041":{"l":"Perte neuronale de la colonne de Clarke","hpo":null},"FOETO:PF.CER-MAL-304":{"l":"Lésion encéphaloclastique (acquise)","hpo":null},"FOETO:PF.CER-MAL-296":{"l":"Aplasie du vermis avec continuité des hémisphères cérébelleux","hpo":null},"FOETO:PF.CER-RET-051":{"l":"Matériel de surcharge PASD+ et fer colloïdal+ dans le cerveau et les cellules ganglionnaires","hpo":null},"FOETO:PF.CER-MAL-210":{"l":"Neurones dysmorphiques","hpo":null},"FOETO:PF.CER-MET-116":{"l":"Surcharge neuronale, maladie non typable sur la lame","hpo":null},"FOETO:PF.CER-RET-026":{"l":"Gliose astrocytaire avec astrocytes hypertrophiques","hpo":"HP:0002171"},"FOETO:PF.CER-MAL-287":{"l":"Désorganisation complète de la lamination en vagues et amas neuronaux","hpo":null},"FOETO:PF.CER-MAL-289":{"l":"Gyration moins développée qu'attendu pour l'âge — harmonieuse ou dysharmonieuse","hpo":null},"FOETO:PF.CER-MAL-191":{"l":"Lissencéphalie cobblestone (type II)","hpo":"HP:0007260"},"FOETO:PF.CER-MAL-288":{"l":"Hémi-moelles dans deux sacs duraux","hpo":null},"FOETO:PF.CER-MAL-022":{"l":"Amas de neurones immatures dans la zone sous-ventriculaire externe","hpo":null},"FOETO:PF.CER-INF-033":{"l":"Mort neuronale des motoneurones","hpo":null},"FOETO:PF.CER-MAL-292":{"l":"Hétérotopies nodulaires profondes","hpo":null},"FOETO:PF.CER-MAL-205":{"l":"Myéloméningocèle","hpo":"HP:0002475"},"FOETO:PF.CER-MAL-072":{"l":"Dysplasie corticale focale","hpo":"HP:0032046"},"FOETO:PF.CER-MET-114":{"l":"Perte neuronale des noyaux gris centraux, du tronc et des noyaux dentelés","hpo":null},"FOETO:PF.CER-VAS-004":{"l":"Hémorragie de la matrice germinale","hpo":null},"FOETO:PF.CER-MET-077":{"l":"Neurones ballonnés (stockage lysosomal)","hpo":null},"FOETO:PF.CER-CLA-199":{"l":"Ballonnement et chromatolyse des motoneurones","hpo":null},"FOETO:PF.CER-MAL-298":{"l":"Malformation de Chiari","hpo":"HP:0002308"},"FOETO:PF.CER-MAL-179":{"l":"Inversion des couches corticales","hpo":null},"FOETO:PF.CER-MAL-295":{"l":"Hémi-moelles dans un seul sac dural","hpo":null}};
+var FOETO = {"sections":[],"formes":{"FOETO:PF.CER-CLA-003":["Activation microgliale"],"FOETO:PF.CER-MAL-016":["Agénésie du corps calleux"],"FOETO:PF.CER-MAL-022":["Amas de neurones immatures dans la zone sous-ventriculaire externe"],"FOETO:PF.CER-MAL-297":["Amyotrophie spinale"],"FOETO:PF.CER-MAL-024":["Anencéphalie"],"FOETO:PF.CER-MAL-296":["Aplasie du vermis avec continuité des hémisphères cérébelleux"],"FOETO:PF.CER-VAS-012":["Area cerebrovasculosa — tissu neuroglial désorganisé et vasculaire"],"FOETO:PF.CER-RET-007":["Atteinte des noyaux moteurs bulbaires"],"FOETO:PF.CER-CLA-199":["Ballonnement et chromatolyse des motoneurones"],"FOETO:PF.CER-MAL-346":["Cavité ou perte de substance SANS gliose"],"FOETO:PF.CER-RET-012":["Cellules de Gaucher cérébrales (histiocytes périvasculaires à cytoplasme strié)"],"FOETO:PF.CER-RET-015":["Chromatolyse des neurones des ganglions rachidiens"],"FOETO:PF.CER-MAL-285":["Chromatolyse thalamique"],"FOETO:PF.CER-MAL-286":["Clivage médullaire avec duplication seulement partielle, lombaire basse"],"FOETO:PF.CER-MAL-341":["Corps calleux absent"],"FOETO:PF.CER-MAL-342":["Cortex macroscopiquement hyperconvoluté"],"FOETO:PF.CER-MAL-299":["Craniorachischisis"],"FOETO:PF.CER-NOR-107":["Cône médullaire en regard du rachis lombaire moyen"],"FOETO:PF.CER-MAL-345":["Dilatation du canal médullaire (hydromyélie)"],"FOETO:PF.CER-MAL-300":["Duplication caudale"],"FOETO:PF.CER-MAL-072":["Dysplasie corticale focale"],"FOETO:PF.CER-MAL-344":["Dysplasie cérébelleuse extensive"],"FOETO:PF.CER-MAL-287":["Désorganisation complète de la lamination en vagues et amas neuronaux"],"FOETO:PF.CER-MAL-105":["Encéphalocèle"],"FOETO:PF.CER-MAL-301":["Exencéphalie"],"FOETO:PF.CER-NOR-104":["Fraction infratentorielle du poids cérébral"],"FOETO:PF.CER-NOR-108":["Glie radiaire du raphé dorsal"],"FOETO:PF.CER-RET-026":["Gliose astrocytaire avec astrocytes hypertrophiques"],"FOETO:PF.CER-MET-115":["Glycogénose de type IV"],"FOETO:PF.CER-MAL-289":["Gyration moins développée qu'attendu pour l'âge — harmonieuse ou dysharmonieuse"],"FOETO:PF.CER-MAL-127":["Gyration simplifiée"],"FOETO:PF.CER-MAL-290":["Hernie du cervelet, parfois du tronc, hors de la fosse postérieure"],"FOETO:PF.CER-NOR-112":["Histologie et lamination NORMALES sous les circonvolutions surnuméraires"],"FOETO:PF.CER-MAL-303":["Hydrocéphalie autosomique récessive non syndromique (MPDZ, CCDC88C)"],"FOETO:PF.CER-MAL-139":["Hydrocéphalie — dilatation ventriculaire"],"FOETO:PF.CER-MAL-142":["Hypoplasie cérébelleuse"],"FOETO:PF.CER-MAL-288":["Hémi-moelles dans deux sacs duraux"],"FOETO:PF.CER-MAL-295":["Hémi-moelles dans un seul sac dural"],"FOETO:PF.CER-VAS-004":["Hémorragie de la matrice germinale"],"FOETO:PF.CER-MAL-158":["Hétérotopie cérébelleuse"],"FOETO:PF.CER-MAL-291":["Hétérotopie cérébelleuse proéminente"],"FOETO:PF.CER-MAL-169":["Hétérotopie neuronale striée de la zone intermédiaire"],"FOETO:PF.CER-MAL-292":["Hétérotopies nodulaires profondes"],"FOETO:PF.CER-MAL-179":["Inversion des couches corticales"],"FOETO:PF.CER-CLA-106":["Karyolyse neuronale"],"FOETO:PF.CER-NOR-113":["Lamina dissecans présente au vermis"],"FOETO:PF.CER-NOR-114":["Lamina dissecans présente à l'hémisphère cérébelleux"],"FOETO:PF.CER-VAS-005":["Leucomalacie périventriculaire / atteinte diffuse de la substance blanche"],"FOETO:PF.CER-MAL-191":["Lissencéphalie cobblestone (type II)"],"FOETO:PF.CER-MAL-193":["Lissencéphalie type I"],"FOETO:PF.CER-MAL-304":["Lésion encéphaloclastique (acquise)"],"FOETO:PF.CER-MAL-302":["Maladie de Gaucher"],"FOETO:PF.CER-MAL-298":["Malformation de Chiari"],"FOETO:PF.CER-NOR-109":["Matrice germinale encore épaisse vers 29, non proliférante"],"FOETO:PF.CER-RET-051":["Matériel de surcharge PASD+ et fer colloïdal+ dans le cerveau et les cellules ganglionnaires"],"FOETO:PF.CER-MAL-201":["Microcéphalie (histologie)"],"FOETO:PF.CER-MAL-202":["Microlissencéphalie"],"FOETO:PF.CER-MAL-343":["Moelle descendant plus bas que le rachis lombaire moyen au-delà de 27 semaines [non convertible]"],"FOETO:PF.CER-MAL-305":["Moelle fendue (split cord malformation, diastématomyélie)"],"FOETO:PF.CER-INF-033":["Mort neuronale des motoneurones"],"FOETO:PF.CER-NOR-110":["Motoneurones des cornes antérieures organisés en agrégats"],"FOETO:PF.CER-MAL-205":["Myéloméningocèle"],"FOETO:PF.CER-MET-077":["Neurones ballonnés (stockage lysosomal)"],"FOETO:PF.CER-MAL-210":["Neurones dysmorphiques"],"FOETO:PF.CER-MAL-293":["Neuronophagie"],"FOETO:PF.CER-MAL-216":["Nids neuroglieux ectopiques sous-arachnoïdiens"],"FOETO:PF.CER-CLA-151":["Nécrose laminaire corticale"],"FOETO:PF.CER-VAS-006":["Nécrose pontosubiculaire"],"FOETO:PF.CER-MAL-223":["Oblitération de l'espace sous-arachnoïdien"],"FOETO:PF.CER-NOR-115":["Pas de macrophages chargés de myéline — pas de démyélinisation active"],"FOETO:PF.CER-RET-041":["Perte neuronale de la colonne de Clarke"],"FOETO:PF.CER-MET-114":["Perte neuronale des noyaux gris centraux, du tronc et des noyaux dentelés"],"FOETO:PF.CER-MAL-294":["Placode neurale — moelle ouverte"],"FOETO:PF.CER-MAL-308":["Polygyrie — cortex hyperconvoluté à histologie et lamination normales"],"FOETO:PF.CER-MAL-306":["Polymicrogyrie"],"FOETO:PF.CER-MAL-244":["Rhombencéphalosynapsis"],"FOETO:PF.CER-CLA-176":["Rosettes épendymaires intraventriculaires"],"FOETO:PF.CER-NOR-111":["Status verrucosus simplex et papilles de Retzius"],"FOETO:PF.CER-MAL-258":["Sténose de l'aqueduc cérébral"],"FOETO:PF.CER-MET-116":["Surcharge neuronale, maladie non typable sur la lame"],"FOETO:PF.CER-MAL-307":["Syndrome de Zellweger"],"FOETO:PF.CER-NOR-105":["Tissu cérébral autolysé pressé hors du névraxe (moelle, racines, rétropéritoine, sous-cutané)"],"FOETO:PF.CER-NOR-106":["Tissu cérébral dans la vascularisation du foie ou d'un autre viscère"],"FOETO:PF.CER-NOR-103":["Épaisseur de la couche granuleuse externe cérébelleuse, en cellules"]}};
+var FOETOV = {"FOETO:PF.CER-CLA-151":{"l":"Nécrose laminaire corticale","hpo":null},"FOETO:PF.CER-MET-077":{"l":"Neurones ballonnés (stockage lysosomal)","hpo":null},"FOETO:PF.CER-MAL-342":{"l":"Cortex macroscopiquement hyperconvoluté","hpo":null},"FOETO:PF.CER-MAL-296":{"l":"Aplasie du vermis avec continuité des hémisphères cérébelleux","hpo":null},"FOETO:PF.CER-MAL-244":{"l":"Rhombencéphalosynapsis","hpo":"HP:0031913"},"FOETO:PF.CER-MAL-343":{"l":"Moelle descendant plus bas que le rachis lombaire moyen au-delà de 27 semaines [non convertible]","hpo":null},"FOETO:PF.CER-VAS-004":{"l":"Hémorragie de la matrice germinale","hpo":null},"FOETO:PF.CER-MAL-287":{"l":"Désorganisation complète de la lamination en vagues et amas neuronaux","hpo":null},"FOETO:PF.CER-NOR-113":{"l":"Lamina dissecans présente au vermis","hpo":null},"FOETO:PF.CER-MAL-022":{"l":"Amas de neurones immatures dans la zone sous-ventriculaire externe","hpo":null},"FOETO:PF.CER-MAL-286":{"l":"Clivage médullaire avec duplication seulement partielle, lombaire basse","hpo":null},"FOETO:PF.CER-MAL-346":{"l":"Cavité ou perte de substance SANS gliose","hpo":null},"FOETO:PF.CER-MAL-191":{"l":"Lissencéphalie cobblestone (type II)","hpo":"HP:0007260"},"FOETO:PF.CER-MAL-072":{"l":"Dysplasie corticale focale","hpo":"HP:0032046"},"FOETO:PF.CER-CLA-003":{"l":"Activation microgliale","hpo":null},"FOETO:PF.CER-MAL-302":{"l":"Maladie de Gaucher","hpo":null},"FOETO:PF.CER-NOR-112":{"l":"Histologie et lamination NORMALES sous les circonvolutions surnuméraires","hpo":null},"FOETO:PF.CER-MAL-293":{"l":"Neuronophagie","hpo":null},"FOETO:PF.CER-MAL-258":{"l":"Sténose de l'aqueduc cérébral","hpo":"HP:0002410"},"FOETO:PF.CER-MAL-288":{"l":"Hémi-moelles dans deux sacs duraux","hpo":null},"FOETO:PF.CER-MAL-345":{"l":"Dilatation du canal médullaire (hydromyélie)","hpo":null},"FOETO:PF.CER-MAL-285":{"l":"Chromatolyse thalamique","hpo":null},"FOETO:PF.CER-MET-114":{"l":"Perte neuronale des noyaux gris centraux, du tronc et des noyaux dentelés","hpo":null},"FOETO:PF.CER-NOR-103":{"l":"Épaisseur de la couche granuleuse externe cérébelleuse, en cellules","hpo":null},"FOETO:PF.CER-MAL-223":{"l":"Oblitération de l'espace sous-arachnoïdien","hpo":null},"FOETO:PF.CER-RET-015":{"l":"Chromatolyse des neurones des ganglions rachidiens","hpo":null},"FOETO:PF.CER-NOR-115":{"l":"Pas de macrophages chargés de myéline — pas de démyélinisation active","hpo":null},"FOETO:PF.CER-RET-041":{"l":"Perte neuronale de la colonne de Clarke","hpo":null},"FOETO:PF.CER-MAL-216":{"l":"Nids neuroglieux ectopiques sous-arachnoïdiens","hpo":null},"FOETO:PF.CER-MET-116":{"l":"Surcharge neuronale, maladie non typable sur la lame","hpo":null},"FOETO:PF.CER-MAL-169":{"l":"Hétérotopie neuronale striée de la zone intermédiaire","hpo":null},"FOETO:PF.CER-MAL-127":{"l":"Gyration simplifiée","hpo":null},"FOETO:PF.CER-MAL-289":{"l":"Gyration moins développée qu'attendu pour l'âge — harmonieuse ou dysharmonieuse","hpo":null},"FOETO:PF.CER-MAL-308":{"l":"Polygyrie — cortex hyperconvoluté à histologie et lamination normales","hpo":null},"FOETO:PF.CER-MAL-305":{"l":"Moelle fendue (split cord malformation, diastématomyélie)","hpo":null},"FOETO:PF.CER-MAL-016":{"l":"Agénésie du corps calleux","hpo":"HP:0001274"},"FOETO:PF.CER-MAL-304":{"l":"Lésion encéphaloclastique (acquise)","hpo":null},"FOETO:PF.CER-NOR-111":{"l":"Status verrucosus simplex et papilles de Retzius","hpo":null},"FOETO:PF.CER-NOR-114":{"l":"Lamina dissecans présente à l'hémisphère cérébelleux","hpo":null},"FOETO:PF.CER-MAL-297":{"l":"Amyotrophie spinale","hpo":"HP:0007269"},"FOETO:PF.CER-MAL-290":{"l":"Hernie du cervelet, parfois du tronc, hors de la fosse postérieure","hpo":null},"FOETO:PF.CER-INF-033":{"l":"Mort neuronale des motoneurones","hpo":null},"FOETO:PF.CER-MAL-341":{"l":"Corps calleux absent","hpo":null},"FOETO:PF.CER-MAL-210":{"l":"Neurones dysmorphiques","hpo":null},"FOETO:PF.CER-RET-051":{"l":"Matériel de surcharge PASD+ et fer colloïdal+ dans le cerveau et les cellules ganglionnaires","hpo":null},"FOETO:PF.CER-VAS-012":{"l":"Area cerebrovasculosa — tissu neuroglial désorganisé et vasculaire","hpo":null},"FOETO:PF.CER-RET-026":{"l":"Gliose astrocytaire avec astrocytes hypertrophiques","hpo":"HP:0002171"},"FOETO:PF.CER-NOR-108":{"l":"Glie radiaire du raphé dorsal","hpo":null},"FOETO:PF.CER-NOR-105":{"l":"Tissu cérébral autolysé pressé hors du névraxe (moelle, racines, rétropéritoine, sous-cutané)","hpo":null},"FOETO:PF.CER-RET-007":{"l":"Atteinte des noyaux moteurs bulbaires","hpo":null},"FOETO:PF.CER-CLA-199":{"l":"Ballonnement et chromatolyse des motoneurones","hpo":null},"FOETO:PF.CER-MAL-158":{"l":"Hétérotopie cérébelleuse","hpo":null},"FOETO:PF.CER-RET-012":{"l":"Cellules de Gaucher cérébrales (histiocytes périvasculaires à cytoplasme strié)","hpo":null},"FOETO:PF.CER-CLA-176":{"l":"Rosettes épendymaires intraventriculaires","hpo":null},"FOETO:PF.CER-NOR-106":{"l":"Tissu cérébral dans la vascularisation du foie ou d'un autre viscère","hpo":null},"FOETO:PF.CER-MAL-294":{"l":"Placode neurale — moelle ouverte","hpo":null},"FOETO:PF.CER-MAL-205":{"l":"Myéloméningocèle","hpo":"HP:0002475"},"FOETO:PF.CER-MAL-292":{"l":"Hétérotopies nodulaires profondes","hpo":null},"FOETO:PF.CER-MAL-344":{"l":"Dysplasie cérébelleuse extensive","hpo":null},"FOETO:PF.CER-MAL-295":{"l":"Hémi-moelles dans un seul sac dural","hpo":null},"FOETO:PF.CER-MAL-298":{"l":"Malformation de Chiari","hpo":"HP:0002308"},"FOETO:PF.CER-MAL-291":{"l":"Hétérotopie cérébelleuse proéminente","hpo":null},"FOETO:PF.CER-MAL-179":{"l":"Inversion des couches corticales","hpo":null}};
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
@@ -1914,8 +1919,8 @@ function batir(){
             return '<button type="button" class="chip" data-act="etendue" data-k="' + i + '" data-v="' + e + '">' +
                    '<span class="k">étendue</span>' + e + '</button>';
           }).join("") + '</div>') +
-        sig.filter(blocable).map(ligneSigne).join("") + '</div>' +
-        sig.filter(function(x){ return !blocable(x); }).map(ligneSigne).join("") + '</div>';
+        sig.filter(function(x){ return !horsBloc(x); }).map(ligneSigne).join("") + '</div>' +
+        sig.filter(horsBloc).map(ligneSigne).join("") + '</div>';
     });
     $("signes").innerHTML = html.signes;
     $("contexte").innerHTML = html.contexte;
@@ -1997,8 +2002,11 @@ function ligneSigne(x){
       (x.horsFiche ? '<span class="meta">hors fiche — non sourcé par la biblio</span>' : "") +
       (x.fiche && !x.foeto ? '<span class="meta">dans la fiche ' + esc(x.fiche) + ', sans terme FOETO</span>' : "") +
       (oblig ? '<span class="meta">négatif à énoncer : répondre présent ou absent</span>' : "") +
-      (PRESENCE && !blocable(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
-        : "hors du « Non » en bloc : " + (x.mag === "technique" ? "se répond après la technique" : "polarité normale, à répondre seul")) +
+      (PRESENCE && horsBloc(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
+        : x.mag === "technique" ? "hors du « Non » en bloc : se répond après la technique"
+        : x.bloc === false ? "hors du « Non » en bloc : polarité normale, à répondre seul"
+        : x.seul ? "hors du « Non » en bloc : dépend du terme, à répondre seul"
+        : "« Non » en bloc seulement " + fenetreTxt(x.terme) + " — hors de là, à répondre seul") +
         '</span>' : "") +
       '</div>' +
       (x.auto ? '<span class="chip" data-auto="' + x.k + '" style="cursor:default"></span>' :
@@ -2020,6 +2028,8 @@ function foetoAjouter(id){
   /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
   var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
   if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
+  var vr = FUSION && VARIANTES.filter(function(v){ return v.foeto === id; })[0];
+  if (vr){ E.variantes[vr.k] = true; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
     if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
@@ -2071,6 +2081,17 @@ function codesPresents(){
   return SIGNES.filter(function(x){ return E.signes[x.k] === POS && codesDe(x).length; })
                .map(function(x){ return { k:x.k, l:x.l, foeto:x.foeto || null, hpo:x.hpo || null }; });
 }
+/* Codes du reste de la lecture : variante vue, critère de rétention présent, stade retenu,
+   mesure saisie (avec sa valeur). Exportés à part (codes_lecture), champ additif. */
+function codesLecture(){
+  var c = [];
+  VARIANTES.forEach(function(v){ if (v.foeto && E.variantes[v.k]) c.push({ type:"variante", k:v.k, l:v.l, foeto:v.foeto }); });
+  RETENTION.forEach(function(r){ if (r.foeto && E.retention[r.k] === "present") c.push({ type:"rétention", k:r.k, l:r.l, foeto:r.foeto }); });
+  STADES.forEach(function(s){ if (s.foeto && E.stade === s.k) c.push({ type:"stade", k:s.k, l:s.l, foeto:s.foeto }); });
+  if (MESURE) MESURE.champs.forEach(function(m){
+    if (m.foeto && E.mesure.v[m.id] != null) c.push({ type:"mesure", k:m.id, l:m.label, foeto:m.foeto, valeur:E.mesure.v[m.id] }); });
+  return c;
+}
 /* Grille branchée sur FOETO : un signe porte fv (terme tagué « verbatim ») ; son
    libellé et son HPO arbitré viennent de la base, le code exporté est l'id FOETO. */
 function resoudreFV(){
@@ -2081,7 +2102,15 @@ function resoudreFV(){
     else if (!x.fiche) x.horsFiche = true;   // aucun terme de fiche derrière : non sourcé par la biblio
     /* fiche:"[keeling]" : constat sourcé dans la fiche que FOETO ne porte pas (encore) en terme */
   });
-  DIAGS.forEach(function(d){ if (d.fv && FOETOV[d.fv]) d.foeto = [d.fv]; });
+  /* Une association peut porter plusieurs termes maladie (fv:["FOETO:…", …]) : affichés, jamais exportés. */
+  DIAGS.forEach(function(d){
+    var ids = [].concat(d.fv || []).filter(function(i){ return FOETOV[i]; });
+    if (ids.length) d.foeto = ids;
+  });
+  /* Variantes, rétention, stades, champs de mesure portent aussi leur terme (NOR, RET, AXE, MES).
+     Seul le code s'y attache : variantes, rétention, stades et mesures gardent leur libellé. */
+  /* une variante GARDE son libellé : il porte des avertissements (« ne jamais énoncer en négatif ») */
+  VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).forEach(function(x){ if (x.fv && FOETOV[x.fv]) x.foeto = x.fv; });
 }
 
 /* ── Mode présence : rétention en liste, signes en paragraphes ─────────────── */
@@ -2124,7 +2153,21 @@ function variantesDe(g){ return VARIANTES.filter(function(v){ return v.g === g; 
    technique (mag:"technique") ni un signe de polarité normale (bloc:false, ex.
    « tubes collecteurs normaux » : absent y voudrait dire anormal). Ces signes restent
    visibles, paragraphe replié, et se répondent un par un. */
-function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false; }
+/* Un signe qui dépend du terme ne se répond pas en bloc hors de sa fenêtre : terme:[min, max]
+   en SA (une borne peut être null), bornes recopiées du verbatim de la fiche ; terme non saisi
+   = hors fenêtre. seul:true : dépend du terme sans borne écrite, il se répond un par un.
+   Dans les deux cas, présent reste une lésion. */
+function dansTerme(x){
+  if (!x.terme) return true;
+  var sa = num("sa");
+  return sa != null && (x.terme[0] == null || sa >= x.terme[0]) && (x.terme[1] == null || sa <= x.terme[1]);
+}
+/* toujours visible, paragraphe replié : ce que le « Non » en bloc peut ne pas répondre */
+function horsBloc(x){ return !!(x.auto || x.mag === "technique" || x.bloc === false || x.seul || x.terme); }
+function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false && !x.seul && dansTerme(x); }
+function fenetreTxt(t){
+  return t[0] != null && t[1] != null ? "de " + t[0] + " à " + t[1] + " SA" : t[0] != null ? "à partir de " + t[0] + " SA" : "jusqu'à " + t[1] + " SA";
+}
 /* Un signe bloc:false présent (méconium dans la lumière, collecteurs normaux) s'écrit au
    CR mais n'ouvre pas le paragraphe et ne bloque pas son « Non » : ce n'est pas une lésion. */
 function lesionPresente(x){ return E.signes[x.k] === POS && x.bloc !== false; }
@@ -2459,6 +2502,12 @@ function composer(){
     L.push("CODES DES SIGNES PRÉSENTS");
     cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
   }
+  var cl = codesLecture();
+  if (cl.length){
+    L.push("");
+    L.push("CODES DE LA LECTURE");
+    cl.forEach(function(c){ L.push("  " + c.type + " · " + c.l + (c.valeur != null ? " = " + c.valeur : "") + " [" + c.foeto + "]"); });
+  }
 
   var fo = Object.keys(E.foeto);
   if (fo.length){
@@ -2657,6 +2706,7 @@ function collecter(){
     terme_sa: num("sa"),
     grille: JSON.parse(JSON.stringify(E)),
     codes: codesPresents(),
+    codes_lecture: codesLecture(),
     compte_rendu: composer()
   };
 }
@@ -2958,7 +3008,7 @@ async function autotest(){
     clic("grp", iA, "non");
     chk("paragraphe non → signes absents", sA.every(function(x){ return E.signes[x.k] === NEG; }) &&
         etatGroupe(gA) === "non" && crTient(gA + " : non."));
-    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA; })[0];
+    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA && blocable(par(SIGNES, n.signe)); })[0];
     if (lie) chk("paragraphe non → négatif lié énoncé", etatNegatif(lie) === "ok");
     clic("grp", iA, "non");
     chk("second non → non regardé", sA.every(function(x){ return !E.signes[x.k]; }) && etatGroupe(gA) === null);
@@ -2992,6 +3042,18 @@ async function autotest(){
     chk("codes : lisibles (FOETO:/HP:)", SIGNES.every(function(x){
       return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)); }));
   }
+
+  /* Codes de la lecture : une variante vue exporte son terme (NOR), pas une variante non cochée */
+  var vc = VARIANTES.filter(function(v){ return v.foeto; })[0];
+  if (vc){
+    chk("codes lecture : rien sans variante vue", !codesLecture().some(function(c){ return c.k === vc.k; }));
+    clic("var", vc.k);
+    chk("codes lecture : la variante vue exporte son terme", collecter().codes_lecture.some(function(c){ return c.k === vc.k && c.foeto === vc.foeto; }) &&
+        crTient("CODES DE LA LECTURE") && crTient("[" + vc.foeto + "]"));
+    clic("var", vc.k);
+  }
+  chk("codes lecture : lisibles (FOETO:)", VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).every(function(x){
+    return !x.foeto || /^FOETO:/.test(x.foeto); }));
 
   /* Signes et associations */
   var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
@@ -3102,6 +3164,22 @@ async function autotest(){
           E.signes[xF.k] === POS && crTient(gF + " : non") && crTient(xF.l + " — PRÉSENT"));
       clic("grp", iF, "non");
       clic("les", xF.k, POS);
+    }
+    /* Fenêtre de terme : le « Non » en bloc ne répond un signe daté que dans sa fenêtre */
+    var xS = SIGNES.filter(function(x){ return x.terme && !x.auto; })[0];
+    if (xS){
+      var gS = xS.g, iS = groupes().indexOf(gS), t0 = xS.terme[0], t1 = xS.terme[1];
+      var dedans = t0 != null ? t0 : t1, dehors = t0 != null ? t0 - 1 : t1 + 1;
+      signesDe(gS).forEach(function(x){ if (!x.auto) delete E.signes[x.k]; }); delete E.groupes[gS];
+      set("sa", String(dehors));
+      clic("grp", iS, "non");
+      chk("terme : hors fenêtre, le « Non » ne répond pas « " + xS.k + " »", !E.signes[xS.k] && etatGroupe(gS) === "non");
+      clic("grp", iS, "non");
+      set("sa", String(dedans));
+      clic("grp", iS, "non");
+      chk("terme : dans la fenêtre, le « Non » le répond absent", E.signes[xS.k] === NEG);
+      clic("grp", iS, "non");
+      set("sa", "");
     }
     /* Rédaction proposée : la phrase du cadre « Non », celle du signe présent, rien sinon */
     if (REDIGE){

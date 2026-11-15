@@ -17,11 +17,16 @@
    Fond : ~/Bureau/fiches_lecture/diffusion/fiche_placenta.md (§1 à §9).
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 1.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 0 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 0 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 0 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "placenta_marges";
 var TITRE   = "placenta — marges";
 var SOURCE  = "fiche_placenta.md";
 var MODULE  = "grille_placenta_marges";
-var VERSION = "1.0.0";
+var VERSION = "1.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var PAIR    = false;

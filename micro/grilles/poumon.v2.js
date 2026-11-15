@@ -34,11 +34,16 @@
    Fond : ~/Bureau/fiches_lecture/fiche_poumon.md (§1 à §9).
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 2.2.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 1 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 19 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 1 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "poumon";
 var TITRE   = "poumon";
 var SOURCE  = "fiche_poumon.md";
 var MODULE  = "grille_poumon";
-var VERSION = "2.1.0";
+var VERSION = "2.2.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -117,7 +122,7 @@ var MESURE = {
         { k:"term", l:"Bronchiole terminale",
           aide:"keeling — normales non superposables, ne pas y appliquer le 2,2" }],
   opts:[{ k:"sec", l:"Pas d'anasarque" }, { k:"anasarque", l:"Anasarque" }],
-  champs:[{ id:"rac_d", label:"RAC droit",  min:0, max:20, step:0.1 },
+  champs:[{ id:"rac_d", fv:"FOETO:PF.POU-MAL-084", label:"RAC droit",  min:0, max:20, step:0.1 },
           { id:"rac_g", label:"RAC gauche", min:0, max:20, step:0.1 },
           { id:"poids_poumons", label:"Poids des poumons (g)", min:0, max:200, step:0.01 },
           { id:"poids_foetal",  label:"Poids du corps (g)",    min:0, max:6000, step:1 }]
@@ -172,18 +177,18 @@ function verdictMesure(){
 
 /* ── 05 · Variantes normales ──────────────────────────────────────────────── */
 var VARIANTES = [
-  { k:"caryo", g:"Inflammation et infection",   l:"Matériel caryorrhectique abondant" },
-  { k:"squames", g:"Contenu des espaces aériens", l:"Quelques squames éparses" },
-  { k:"repli", g:"Architecture et lobule",   l:"Repliement de l'épithélium des voies aériennes" },
-  { k:"asym", g:"Architecture et lobule",    l:"Asymétrie droite/gauche de maturation" },
-  { k:"anneaux", g:"Architecture et lobule", l:"Demi-anneaux trachéaux" },
-  { k:"media", g:"Vaisseaux",   l:"Média artériolaire fœtale épaisse" },
-  { k:"veinesSepta", g:"Vaisseaux", l:"Veines dans les septa interlobulaires, artères avec les bronches" },
-  { k:"surfactant", g:"Poumon ventilé — né vivant",  l:"Masses éosinophiles amorphes distales : résidu d'instillation de surfactant" },
-  { k:"artefacts", g:"Contenu des espaces aériens",   l:"Blue blobs, mulberries, yellow starbursts (macération)" },
-  { k:"detachBronchiol", g:"Contenu des espaces aériens", l:"Détachement de l'épithélium bronchiolaire (macération)" },
-  { k:"epanchement", g:"Contexte hors lame — macro, clinique", l:"Épanchement pleural de macération" },
-  { k:"poussiere", g:"Inflammation et infection",   l:"Poussière basophile autour des viscères" }
+  { k:"caryo", fv:"FOETO:PF.POU-CLA-003", g:"Inflammation et infection",   l:"Matériel caryorrhectique abondant" },
+  { k:"squames", fv:"FOETO:PF.POU-NOR-063", g:"Contenu des espaces aériens", l:"Quelques squames éparses" },
+  { k:"repli", fv:"FOETO:PF.POU-NOR-062", g:"Architecture et lobule",   l:"Repliement de l'épithélium des voies aériennes" },
+  { k:"asym", fv:"FOETO:PF.POU-NOR-053", g:"Architecture et lobule",    l:"Asymétrie droite/gauche de maturation" },
+  { k:"anneaux", fv:"FOETO:PF.POU-NOR-056", g:"Architecture et lobule", l:"Demi-anneaux trachéaux" },
+  { k:"media", fv:"FOETO:PF.POU-NOR-060", g:"Vaisseaux",   l:"Média artériolaire fœtale épaisse" },
+  { k:"veinesSepta", fv:"FOETO:PF.POU-NOR-065", g:"Vaisseaux", l:"Veines dans les septa interlobulaires, artères avec les bronches" },
+  { k:"surfactant", fv:"FOETO:PF.POU-NOR-064", g:"Poumon ventilé — né vivant",  l:"Masses éosinophiles amorphes distales : résidu d'instillation de surfactant" },
+  { k:"artefacts", fv:"FOETO:PF.POU-NOR-052", g:"Contenu des espaces aériens",   l:"Blue blobs, mulberries, yellow starbursts (macération)" },
+  { k:"detachBronchiol", fv:"FOETO:PF.POU-NOR-057", g:"Contenu des espaces aériens", l:"Détachement de l'épithélium bronchiolaire (macération)" },
+  { k:"epanchement", fv:"FOETO:PF.POU-NOR-058", g:"Contexte hors lame — macro, clinique", l:"Épanchement pleural de macération" },
+  { k:"poussiere", fv:"FOETO:PF.POU-NOR-061", g:"Inflammation et infection",   l:"Poussière basophile autour des viscères" }
 ];
 
 var CADRES = [
@@ -241,7 +246,7 @@ var SIGNES = [
     meta:"dans la lumière SEULE, ne fait pas une pneumopathie ; le matériel caryorrhectique les mime" },
   { k:"abcesGranulo",   fv:"FOETO:PF.POU-INF-016", g:"Inflammation et infection", mag:"moyen" },
   { k:"onion",          fv:"FOETO:PF.POU-INF-017", g:"Inflammation et infection", mag:"moyen" },
-  { k:"hyphes", fiche:"[keeling]", g:"Inflammation et infection", mag:"fort", l:"Hyphes dans une bronchopneumonie floride" },
+  { k:"hyphes", fv:"FOETO:PF.POU-INF-024", fiche:"[keeling]", g:"Inflammation et infection", mag:"fort", l:"Hyphes dans une bronchopneumonie floride" },
   { k:"inclusions",     fv:"FOETO:PF.POU-INF-005", g:"Inflammation et infection", mag:"fort",
     meta:"gardent leur valeur sous macération" },
   /* — Vaisseaux — */
@@ -252,7 +257,7 @@ var SIGNES = [
   { k:"malalignVeines",  fv:"FOETO:PF.POU-VAS-005", g:"Vaisseaux", mag:"moyen" },
   { k:"densiteVasc",     fv:"FOETO:PF.POU-VAS-004", g:"Vaisseaux", mag:"moyen" },
   { k:"cerveauEmbolise", fv:"FOETO:PF.POU-MAL-085", g:"Vaisseaux", mag:"moyen", meta:"GFAP ou CD56" },
-  { k:"capillairesRares", fv:"FOETO:PF.POU-VAS-003", g:"Vaisseaux", mag:"fort" },
+  { k:"capillairesRares", seul:true, fv:"FOETO:PF.POU-VAS-003", g:"Vaisseaux", mag:"fort" },
   /* — Poumon ventilé — né vivant — */
   { k:"membranesBleues", fv:"FOETO:PF.POU-MAL-068", g:"Poumon ventilé — né vivant", mag:"moyen" },
   { k:"membranesHyalines", fv:"FOETO:PF.POU-MAL-069", g:"Poumon ventilé — né vivant", mag:"moyen" },
@@ -280,7 +285,7 @@ var DIAGS = [
          "épaisse. soffoet tient toute muscularisation intra-acineuse pour pathologique, ernst la dit problématique " +
          "sans quantification étendue — divergence d'assertivité à écrire, pas à arbitrer." },
 
-  { k:"cpam", l:"CPAM / MAKP (Stocker)", min:1,
+  { k:"cpam", fv:["FOETO:PF.POU-MAL-008","FOETO:PF.POU-MAL-009","FOETO:PF.POU-MAL-010","FOETO:PF.POU-MAL-011","FOETO:PF.POU-MAL-014"], l:"CPAM / MAKP (Stocker)", min:1,
     signes:["sacsBronchiques","kystesGrands","kystesPetits","kystesInfra5","kystesPneumocytes","mucigene","fibresStriees","cartilageKyste"],
     stop:" — la classification est difficile à appliquer en vie fœtale, et jusqu'à un quart des lésions sont " +
          "hybrides avec la séquestration. Le cartilage du type 1 : « sans cartilage » et datation avant la 10e " +
@@ -317,7 +322,7 @@ var DIAGS = [
          "ou vasculaire est requise pour la prouver. Le matériel caryorrhectique normal mime les polynucléaires. " +
          "Un épanchement peut tenir à la macération." },
 
-  { k:"aspiration", l:"Aspiration — squames, méconium", min:1,
+  { k:"aspiration", fv:"FOETO:PF.POU-INF-020", l:"Aspiration — squames, méconium", min:1,
     signes:["squamesNombreuses","bouchonsSquames","meconiumAlv"],
     stop:" — le critère est quantitatif : quelques squames éparses sont normales. Un infiltrat inflammatoire aigu " +
          "étendu est inhabituel — chez le mort-né, l'aspiration méconiale est le plus souvent un événement " +

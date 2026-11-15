@@ -21,11 +21,16 @@
    Fond : ~/Bureau/fiches_lecture/diffusion/fiche_placenta.md (§1 à §9).
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 1.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 2 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 0 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 17 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "placenta_membranes";
 var TITRE   = "placenta — membranes libres";
 var SOURCE  = "fiche_placenta.md";
 var MODULE  = "grille_placenta_membranes";
-var VERSION = "1.0.0";
+var VERSION = "1.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var PAIR    = false;
@@ -85,9 +90,9 @@ var INF = "Inflammation aiguë — réponse maternelle", CAD = "Caduque — vais
 
 var SIGNES = [
   /* — Contexte hors lame — */
-  { k:"travailProlonge", g:H, l:"Travail de plus de 12 h", meta:"11 % d'infection amniotique si < 6 h, 75 % si > 12 h",
+  { k:"travailProlonge", fv:"FOETO:PP.PLA-MAL-055", g:H, l:"Travail de plus de 12 h", meta:"11 % d'infection amniotique si < 6 h, 75 % si > 12 h",
     cr:"Le travail a duré plus de 12 heures" },
-  { k:"rpmProlongee", g:H, l:"Rupture des membranes depuis plus d'une semaine",
+  { k:"rpmProlongee", fv:"FOETO:PP.PLA-MAL-056", g:H, l:"Rupture des membranes depuis plus d'une semaine",
     meta:"l'inflammation n'est plus présente, la fibrose reste [vogel, ch. 9]",
     cr:"Les membranes étaient rompues depuis plus d'une semaine" },
   { k:"meconiumMacro", g:H, l:"Membranes teintées ou liquide méconial (macroscopie)",
@@ -97,7 +102,7 @@ var SIGNES = [
   /* — Amnios et chorion — */
   { k:"brides", g:"Amnios et chorion", mag:"faible", l:"Brides ou feuillets amniotiques ; chorion nodosum",
     cr:"On note des brides ou des feuillets amniotiques, ou un chorion nodosum" },
-  { k:"collageneDense", g:"Amnios et chorion", mag:"faible", l:"Dépôt collagène dense sans inflammation",
+  { k:"collageneDense", fv:"FOETO:PP.PLA-INF-046", g:"Amnios et chorion", mag:"faible", l:"Dépôt collagène dense sans inflammation",
     meta:"RPM > 1 semaine : l'inflammation est partie, la fibrose reste",
     cr:"Le chorion est le siège d'un dépôt collagène dense, sans inflammation" },
   { k:"pseudokyste", g:"Amnios et chorion", mag:"faible", l:"Pseudokyste du chorion lisse, îlots de fibrinoïde à cellules X",
@@ -106,7 +111,7 @@ var SIGNES = [
   { k:"hemorragieMembranes", g:"Amnios et chorion", mag:"faible",
     l:"Effusions de sang frais disséquant le chorion cellulaire du chorion fibreux",
     cr:"Le chorion cellulaire est souvent disséqué du chorion fibreux par de multiples effusions de sang frais." },
-  { k:"amniosNodosum", g:"Amnios et chorion", mag:"moyen",
+  { k:"amniosNodosum", seul:true, g:"Amnios et chorion", mag:"moyen",
     l:"Amnios nodosum : nodules de vernix PAS et bleu alcian positifs, non kératinisés",
     cr:"On note un amnios nodosum : nodules de vernix non kératinisés" },
   { k:"amniosDegenere", g:"Amnios et chorion", mag:"moyen",
@@ -114,54 +119,54 @@ var SIGNES = [
     cr:"L'amnios est vacuolisé, hérissé, par places nécrosé" },
 
   /* — Inflammation aiguë — réponse maternelle — */
-  { k:"microabces", g:INF, mag:"faible", l:"Polynucléaires confluents ou microabcès sous-choriaux", meta:"MIR grade 2",
+  { k:"microabces", fv:"FOETO:PP.PLA-INF-047", g:INF, mag:"faible", l:"Polynucléaires confluents ou microabcès sous-choriaux", meta:"MIR grade 2",
     cr:"On note des polynucléaires confluents, en microabcès sous-choriaux" },
-  { k:"ruptureFoyer", g:INF, mag:"faible", l:"Foyer intense de polynucléaires au site de rupture",
+  { k:"ruptureFoyer", fv:"FOETO:PP.PLA-INF-048", g:INF, mag:"faible", l:"Foyer intense de polynucléaires au site de rupture",
     meta:"ne signe pas une infection ascendante",
     cr:"On note un foyer intense de polynucléaires au site de rupture" },
   { k:"pnnDecidue", g:INF, mag:"moyen", l:"Polynucléaires dans la caduque, sans extension au chorion ni nécrose de l'amnios",
     meta:"stade 1 du gabarit de CR ; le stade 1 d'Amsterdam (sous-chorionite, chorionite) et celui de Blanc " +
          "(intervillite sous-choriale) commencent ailleurs",
     cr:"Les membranes présentent un infiltrat inflammatoire principalement polynucléaire neutrophile non altéré de la décidue sans extension au chorion ni nécrose de l'amnios (chorioamniotite stade 1)." },
-  { k:"sousChorionite", g:INF, mag:"moyen", l:"Polynucléaires maternels dans le fibrinoïde sous-chorial / chorionite",
+  { k:"sousChorionite", fv:"FOETO:PP.PLA-INF-049", g:INF, mag:"moyen", l:"Polynucléaires maternels dans le fibrinoïde sous-chorial / chorionite",
     meta:"MIR stade 1 Amsterdam = stade 1–2 de Blanc",
     cr:"On note des polynucléaires maternels dans le fibrinoïde sous-chorial ou le chorion (chorionite)" },
-  { k:"chorioamniotite", g:INF, mag:"moyen", l:"Polynucléaires dans le chorion fibreux et/ou l'amnios",
+  { k:"chorioamniotite", fv:"FOETO:PP.PLA-INF-050", g:INF, mag:"moyen", l:"Polynucléaires dans le chorion fibreux et/ou l'amnios",
     meta:"MIR stade 2 Amsterdam = stade 3 de Blanc ; stade 2 du gabarit de CR",
     cr:"Les membranes présentent un infiltrat inflammatoire principalement polynucléaire neutrophile non altéré de la décidue avec de multiples extensions au chorion sans nécrose de l'amnios (chorioamniotite stade 2)." },
-  { k:"necrosante", g:INF, mag:"moyen",
+  { k:"necrosante", fv:"FOETO:PP.PLA-INF-051", g:INF, mag:"moyen",
     l:"Chorioamniotite nécrosante : caryorrhexis des polynucléaires, nécrose amniocytaire, membrane basale hyperéosinophile",
     meta:"MIR stade 3 — n'existe pas chez Blanc ; stade 3 du gabarit de CR",
     cr:"Les membranes présentent un infiltrat inflammatoire principalement polynucléaire neutrophile non altéré de la décidue et du chorion avec de multiples plages de nécrose de l'amnios (chorioamniotite stade 3)." },
-  { k:"migrationAmnios", g:INF, mag:"fort", l:"Polynucléaires en migration vers l'amnios (sens de la chimiotaxie)",
+  { k:"migrationAmnios", fv:"FOETO:PP.PLA-INF-052", g:INF, mag:"fort", l:"Polynucléaires en migration vers l'amnios (sens de la chimiotaxie)",
     meta:"un foyer au site de rupture n'est pas une ascension",
     cr:"Les polynucléaires migrent vers l'amnios" },
 
   /* — Caduque — vaisseaux et inflammation chronique — */
-  { k:"thromboseDeciduale", g:CAD, mag:"faible", l:"Thrombose récente d'une artère déciduale", meta:"item francophone de l'athérose",
+  { k:"thromboseDeciduale", fv:"FOETO:PP.PLA-VAS-063", g:CAD, mag:"faible", l:"Thrombose récente d'une artère déciduale", meta:"item francophone de l'athérose",
     cr:"On note une thrombose récente d'une artère déciduale" },
-  { k:"necroseDeciduale", g:CAD, mag:"faible", l:"Nécrose déciduale membraneuse", meta:"preuve insuffisante pour la MVM [amsterdam]",
+  { k:"necroseDeciduale", fv:"FOETO:PP.PLA-VAS-064", g:CAD, mag:"faible", l:"Nécrose déciduale membraneuse", meta:"preuve insuffisante pour la MVM [amsterdam]",
     cr:"La décidue capsulaire présente de multiples plages de nécrose basale." },
-  { k:"atherose", g:CAD, mag:"moyen", l:"Athérose aiguë déciduale : nécrose fibrinoïde, macrophages spumeux, vaisseau dilaté",
+  { k:"atherose", fv:"FOETO:PP.PLA-VAS-065", g:CAD, mag:"moyen", l:"Athérose aiguë déciduale : nécrose fibrinoïde, macrophages spumeux, vaisseau dilaté",
     cr:"On note une athérose aiguë des vaisseaux déciduaux : nécrose fibrinoïde, macrophages spumeux" },
-  { k:"muscularisation", g:CAD, mag:"moyen", l:"Muscularisation persistante des artérioles spiralées (défaut de remodelage)",
+  { k:"muscularisation", fv:"FOETO:PP.PLA-VAS-066", seul:true, g:CAD, mag:"moyen", l:"Muscularisation persistante des artérioles spiralées (défaut de remodelage)",
     meta:"en caduque pariétale le muscle lisse est normal (§ 4.2) : c'est son épaisseur relative qui devient lésionnelle",
     cr:"Les artérioles spiralées gardent une musculature (défaut de remodelage)" },
   { k:"hypertrophieMurale", g:CAD, mag:"moyen",
     l:"Hypertrophie murale des vaisseaux déciduaux, paroi > 1/3 de la circonférence",
     meta:"formulation dimensionnellement fautive, partagée par deux sources",
     cr:"Les vaisseaux déciduaux ont une paroi épaissie (hypertrophie murale)" },
-  { k:"lymphocytesT", g:CAD, mag:"moyen", l:"Infiltrat lymphocytaire T péri-artériel décidual",
+  { k:"lymphocytesT", fv:"FOETO:PP.PLA-INF-053", g:CAD, mag:"moyen", l:"Infiltrat lymphocytaire T péri-artériel décidual",
     cr:"On note un infiltrat lymphocytaire péri-artériel dans la caduque" },
-  { k:"deciduitePlasmo", g:CAD, mag:"fort", l:"Plasmocytes dans la caduque (déciduite plasmocytaire)",
+  { k:"deciduitePlasmo", fv:"FOETO:PP.PLA-MAL-057", g:CAD, mag:"fort", l:"Plasmocytes dans la caduque (déciduite plasmocytaire)",
     cr:"On note la présence de quelques plasmocytes au sein de la décidue basale (déciduite chronique)." },
   { k:"deciduitePlasmoNombreux", g:CAD, mag:"fort", l:"Plasmocytes nombreux dans la caduque",
     cr:"On note la présence de nombreux plasmocytes au sein de la décidue basale (déciduite chronique marquée)." },
-  { k:"hemosiderine", g:CAD, mag:"technique", l:"Hémosidérine dans les membranes (bleu de Prusse positif)",
+  { k:"hemosiderine", fv:"FOETO:PP.PLA-MET-033", g:CAD, mag:"technique", l:"Hémosidérine dans les membranes (bleu de Prusse positif)",
     cr:"La décidue capsulaire présente de multiples sidérophages." },
 
   /* — Méconium — */
-  { k:"meconiumAmnios", g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans l'amnios",
+  { k:"meconiumAmnios", fv:"FOETO:PP.PLA-MAL-058", g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans l'amnios",
     cr:"On note des macrophages chargés de méconium dans l'amnios" },
   { k:"meconiumChorion", g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans le chorion et la caduque capsulaire",
     cr:"Les membranes présentent quelques macrophages chargés de méconium épars au chorion (MFM)." },
@@ -309,5 +314,6 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 
   chk("aucun bouton ne porte un diagnostic",
       DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
-  chk("FOETO : aucun signe branché", FOETOV === null && SIGNES.every(function(x){ return !x.fv && !x.foeto; }));
+  /* 1.1.0 : codes créés depuis le verbatim de la fiche (lot FOETO) — les signes branchés exportent leur code */
+  chk("FOETO 1.1 : 17 signe(s) codé(s) depuis le verbatim", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 17);
 }

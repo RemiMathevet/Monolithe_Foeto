@@ -382,11 +382,16 @@ var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
    tous les deux : celui du sexe non lu reste non regardé au CR.
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 0 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 18 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 4 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "gonades";
 var TITRE   = "gonades et tractus génitaux internes";
 var SOURCE  = "fiche_gonades.md";
 var MODULE  = "grille_gonades";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -505,7 +510,7 @@ var RETENTION = [
          "couronne — donc la maturation tombe en même temps que le diagnostic, et ce qui survit (stroma, " +
          "épithélium de surface) ne date rien. Sur un ovaire macéré : ni stade ni dysgénésie, « non " +
          "analysable »" },
-  { k:"germSertoli", l:"Cellules germinales et de Sertoli indistinctes",
+  { k:"germSertoli", fv:"FOETO:PF.GEN-NOR-202", l:"Cellules germinales et de Sertoli indistinctes",
     b:"—", d:"normal en autopsie, pas un signe", h:0, q:"mauvais",
     note:"« Even in this well-preserved specimen, the germ cells are difficult to differentiate from " +
          "Sertoli cells » [ernst, ch. 10] — l'indistinction ne signe ni la rétention ni une hypoplasie " +
@@ -515,7 +520,7 @@ var RETENTION = [
     note:"« Identification of subtypes of germ cells is impossible in most autopsy specimens » ; la " +
          "distinction exige « very fresh tissue obtained within an hour of death » [ernst, ch. 10]. Ce " +
          "n'est donc pas un seuil de macération mais un délai d'autopsie qu'aucun fœtus ne satisfait" },
-  { k:"stereocils", l:"Desquamation des stéréocils du déférent, perte de la barre terminale éosinophile",
+  { k:"stereocils", fv:"FOETO:PF.GEN-NOR-195", l:"Desquamation des stéréocils du déférent, perte de la barre terminale éosinophile",
     b:"—", d:"artéfact post-mortem pur", h:0, q:"mauvais",
     note:"« not easily seen in sections from autopsy material, as preservation is typically suboptimal » " +
          "[ernst, ch. 12] — à ne pas lire comme une anomalie épithéliale" },
@@ -624,9 +629,9 @@ var MESURE = {
        "à les typer [ernst, ch. 10]. Kyste : grand axe en cm, seuil 3 cm [ernst, ch. 15]. " +
        "Diamètre tubulaire : aucune norme par terme (§ 9.5).",
   defs:SEXES, opts:CONSERV,
-  champs:[{ id:"germ",    label:"Cellules germinales par section transversale de tube", min:0, max:60, step:1 },
-          { id:"kyste",   label:"Grand axe du plus grand kyste ovarien (cm)", min:0, max:20, step:0.1 },
-          { id:"diamTub", label:"Diamètre tubulaire médian (µm)", min:0, max:300, step:1 }]
+  champs:[{ id:"germ",    fv:"FOETO:PF.GEN-NOR-190", label:"Cellules germinales par section transversale de tube", min:0, max:60, step:1 },
+          { id:"kyste",   fv:"FOETO:PF.GEN-NOR-191", label:"Grand axe du plus grand kyste ovarien (cm)", min:0, max:20, step:0.1 },
+          { id:"diamTub", fv:"FOETO:PF.GEN-NOR-189", label:"Diamètre tubulaire médian (µm)", min:0, max:300, step:1 }]
 };
 
 function verdictMesure(){
@@ -780,21 +785,21 @@ function verdictMesure(){
    dans le cadre dont elle mime un signe ; deux pièges de la fiche ajoutés (les
    deux dernières lignes). */
 var VARIANTES = [
-  { k:"blastemeAlbuginee", g:"Testicule — capsule, tubes, interstitium", l:"Restes de blastème testiculaire dans l'albuginée — « should not be mistaken for testicular dysgenesis »" },
-  { k:"gonadoblastomeLike", g:"Ovaire — cortex, follicules, kystes", l:"Nodules gonadoblastome-like ou SCTAT dans des follicules atrétiques — jusqu'à 35 % des fœtus normaux, à NE JAMAIS énoncer en négatif" },
-  { k:"plapOct4", g:"Testicule — capsule, tubes, interstitium", l:"Cellules PLAP+, OCT-4+, CD117+ avant 6 mois de vie" },
-  { k:"hematoTerme", g:"Hématopoïèse intra-gonadique", l:"Nids d'hématopoïèse extramédullaire testiculaire au terme" },
-  { k:"marchand", g:"Testicule — capsule, tubes, interstitium", l:"Résidus corticaux surrénaliens de Marchand au contact du cordon" },
-  { k:"nidsGerminaux", g:"Testicule — capsule, tubes, interstitium", l:"Nids de cellules germinales dans l'épithélium de surface testiculaire" },
-  { k:"cellulesHilaires", g:"Compartiments, latéralité, tractus", l:"Cellules hilaires ovariennes, éosinophiles polygonales, « morphologically identical to Leydig cells »" },
-  { k:"atresie", g:"Ovaire — cortex, follicules, kystes", l:"Atrésie folliculaire active, pyknose ovocytaire, corpus fibrosum" },
+  { k:"blastemeAlbuginee", fv:"FOETO:PF.GEN-NOR-137", g:"Testicule — capsule, tubes, interstitium", l:"Restes de blastème testiculaire dans l'albuginée — « should not be mistaken for testicular dysgenesis »" },
+  { k:"gonadoblastomeLike", fv:"FOETO:PF.GEN-TUM-001", g:"Ovaire — cortex, follicules, kystes", l:"Nodules gonadoblastome-like ou SCTAT dans des follicules atrétiques — jusqu'à 35 % des fœtus normaux, à NE JAMAIS énoncer en négatif" },
+  { k:"plapOct4", fv:"FOETO:PF.GEN-MAL-053", g:"Testicule — capsule, tubes, interstitium", l:"Cellules PLAP+, OCT-4+, CD117+ avant 6 mois de vie" },
+  { k:"hematoTerme", fv:"FOETO:PF.GEN-NOR-200", g:"Hématopoïèse intra-gonadique", l:"Nids d'hématopoïèse extramédullaire testiculaire au terme" },
+  { k:"marchand", fv:"FOETO:PF.GEN-MAL-008", g:"Testicule — capsule, tubes, interstitium", l:"Résidus corticaux surrénaliens de Marchand au contact du cordon" },
+  { k:"nidsGerminaux", fv:"FOETO:PF.GEN-NOR-199", g:"Testicule — capsule, tubes, interstitium", l:"Nids de cellules germinales dans l'épithélium de surface testiculaire" },
+  { k:"cellulesHilaires", fv:"FOETO:PF.GEN-NOR-196", g:"Compartiments, latéralité, tractus", l:"Cellules hilaires ovariennes, éosinophiles polygonales, « morphologically identical to Leydig cells »" },
+  { k:"atresie", fv:"FOETO:PF.GEN-NOR-194", g:"Ovaire — cortex, follicules, kystes", l:"Atrésie folliculaire active, pyknose ovocytaire, corpus fibrosum" },
   { k:"stromaFusiforme", g:"Ovaire — cortex, follicules, kystes", l:"Stroma ovarien fusiforme peu développé" },
-  { k:"albugineeOvaire", g:"Testicule — capsule, tubes, interstitium", l:"Tunica albuginea ovarienne peu ou pas individualisée" },
+  { k:"albugineeOvaire", fv:"FOETO:PF.GEN-NOR-192", g:"Testicule — capsule, tubes, interstitium", l:"Tunica albuginea ovarienne peu ou pas individualisée" },
   { k:"germSertoliVar", g:"Testicule — capsule, tubes, interstitium", l:"Cellules germinales et de Sertoli difficiles à distinguer" },
-  { k:"appendices", g:"Compartiments, latéralité, tractus", l:"Appendice pédiculé au pôle supérieur — appendix testis et epididymis non départageables sur la lame" },
-  { k:"hyperplasieVaginale", g:"Compartiments, latéralité, tractus", l:"Hyperplasie de l'épithélium malpighien vaginal, imprégnation œstrogénique" },
-  { k:"epididymeVariable", g:"Compartiments, latéralité, tractus", l:"Épididyme peu développé, sans muscle lisse, à terme avancé — le tractus ne date pas" },
-  { k:"follAtretiqueKystique", g:"Ovaire — cortex, follicules, kystes", l:"Follicule atrétique kystique de moins de 3 cm — pas un kyste folliculaire" }
+  { k:"appendices", fv:"FOETO:PF.GEN-NOR-193", g:"Compartiments, latéralité, tractus", l:"Appendice pédiculé au pôle supérieur — appendix testis et epididymis non départageables sur la lame" },
+  { k:"hyperplasieVaginale", fv:"FOETO:PF.GEN-NOR-201", g:"Compartiments, latéralité, tractus", l:"Hyperplasie de l'épithélium malpighien vaginal, imprégnation œstrogénique" },
+  { k:"epididymeVariable", fv:"FOETO:PF.GEN-NOR-197", g:"Compartiments, latéralité, tractus", l:"Épididyme peu développé, sans muscle lisse, à terme avancé — le tractus ne date pas" },
+  { k:"follAtretiqueKystique", fv:"FOETO:PF.GEN-NOR-198", g:"Ovaire — cortex, follicules, kystes", l:"Follicule atrétique kystique de moins de 3 cm — pas un kyste folliculaire" }
 ];
 
 /* ── Cadres de lecture — dans l'ordre où la lame se lit ───────────────────────
@@ -835,9 +840,9 @@ var SIGNES = [
     meta:"la forme, scindée du signe gonadeFibreuse de la v1 ; le tissu est le signe suivant" },
   { k:"gonadeFibreuse", fv:"FOETO:PF.GEN-MAL-049", g:"Bandelette — gonade fibreuse", mag:"faible",
     meta:"« being composed entirely of fibrous tissue in poorly organized fascicles and whorls of spindle cells »" },
-  { k:"aucuneStructure", fiche:"[keeling, ch. 25]", g:"Bandelette — gonade fibreuse", mag:"faible", l:"Aucune structure différenciée identifiable — ni cordon ou tube, ni follicule" },
+  { k:"aucuneStructure", fv:"FOETO:PF.GEN-MAL-057", fiche:"[keeling, ch. 25]", g:"Bandelette — gonade fibreuse", mag:"faible", l:"Aucune structure différenciée identifiable — ni cordon ou tube, ni follicule" },
   { k:"gonadeAtrophique", fiche:"[soffoet, ch. 23]", g:"Bandelette — gonade fibreuse", mag:"faible", l:"Gonade atrophique" },
-  { k:"aucuneGerminale", fiche:"[keeling, ch. 25]", g:"Bandelette — gonade fibreuse", mag:"fort", l:"Aucune cellule germinale identifiable",
+  { k:"aucuneGerminale", fv:"FOETO:PF.GEN-MAL-058", fiche:"[keeling, ch. 25]", g:"Bandelette — gonade fibreuse", mag:"fort", l:"Aucune cellule germinale identifiable",
     meta:"exactement ce que produit l'autolyse ovarienne — le différentiel qui compte est la macération" },
   /* — Compartiments, latéralité, tractus — */
   { k:"deuxCompartiments", fv:"FOETO:PF.GEN-MAL-040", g:"Compartiments, latéralité, tractus", mag:"faible",
@@ -862,7 +867,7 @@ var SIGNES = [
   { k:"calcifsIntraluminales", fiche:"[corpus CR]", g:"Testicule — capsule, tubes, interstitium", mag:"moyen", l:"Calcifications intraluminales de tubes séminifères",
     meta:"« calcifications intraluminales concernant quelques tubules séminifères » — absentes de la base ET des livres" },
   { k:"noyauxGerminauxElargis", fv:"FOETO:PF.GEN-MAL-047", g:"Testicule — capsule, tubes, interstitium", mag:"fort" },
-  { k:"moinsDe6Germinales", auto:function(){ var n = E.mesure.v.germ; return n == null ? null : n < 6; },
+  { k:"moinsDe6Germinales", fv:"FOETO:PF.GEN-MAL-059", auto:function(){ var n = E.mesure.v.germ; return n == null ? null : n < 6; },
     fiche:"[ernst, ch. 10]", g:"Testicule — capsule, tubes, interstitium", mag:"fort", l:"Moins de 6 cellules germinales par section transversale de tube",
     meta:"déduit du compte germinal du §04 — compter, jamais typer" },
   /* — Ovaire — cortex, follicules, kystes — */
@@ -874,7 +879,7 @@ var SIGNES = [
   { k:"fibroseStromale", fv:"FOETO:PF.GEN-MAL-042", g:"Ovaire — cortex, follicules, kystes", mag:"moyen" },
   { k:"pasDeFolliculeProfond", bloc:false, fv:"FOETO:PF.GEN-MAL-043", g:"Ovaire — cortex, follicules, kystes", mag:"moyen",
     meta:"avant 20 SA l'absence n'est pas un signe : à répondre seul, avec le terme" },
-  { k:"folliculesPrimairesReduits", fiche:"[ernst, ch. 15]", g:"Ovaire — cortex, follicules, kystes", mag:"moyen", l:"Follicules primaires réduits en nombre" },
+  { k:"folliculesPrimairesReduits", fv:"FOETO:PF.GEN-MAL-060", fiche:"[ernst, ch. 15]", g:"Ovaire — cortex, follicules, kystes", mag:"moyen", l:"Follicules primaires réduits en nombre" },
   { k:"coquesCanalaires", fiche:"[corpus CR]", g:"Ovaire — cortex, follicules, kystes", mag:"technique", l:"Structures canalaires régulières dans les coques du kyste (WT1)" },
   { k:"inhibineNeg", fiche:"[corpus CR]", g:"Ovaire — cortex, follicules, kystes", mag:"technique", l:"Inhibine α négative dans la coque du kyste" },
   /* — Albuginée, péri-gonade, hémorragie — */
@@ -1675,8 +1680,8 @@ async function testsOrgane(chk, clic, set, crTient, pause){
   /* ── v2 · Branchement FOETO ──────────────────────────────────────────────── */
   chk("v2 : libellé venu de FOETO", par(SIGNES, "gonadeFibreuse").l ===
       "Tissu fibreux fasciculé en tourbillons de cellules fusiformes, sans cellule germinale ni structure différenciée");
-  chk("v2 : les dix constats FOETO de la fiche sont branchés",
-      SIGNES.filter(function(x){ return /^FOETO:/.test(x.foeto); }).length === 10);
+  chk("v2.1 : les dix constats FOETO de la fiche + les 4 du lot sont branchés",
+      SIGNES.filter(function(x){ return /^FOETO:/.test(x.foeto); }).length === 14);
   chk("v2 : code FOETO du terme verbatim", codesDe(par(SIGNES, "distribGerminale"))[0] === "FOETO:PF.GEN-MAL-044");
   pose("distribGerminale", POS);
   chk("v2 : le code du signe présent part au CR", crTient("[FOETO:PF.GEN-MAL-044]"));
@@ -1704,8 +1709,8 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 }
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
-var FOETO = {"sections":[],"formes":{"FOETO:PF.GEN-MAL-043":["Absence de follicules primordiaux à la profondeur du cortex, ovaire ≥ 20 SA"],"FOETO:PF.GEN-NOR-193":["Appendix testis / appendix epididymis indistinguables sur la lame"],"FOETO:PF.GEN-NOR-194":["Atrésie folliculaire active (pyknose ovocytaire, corpus fibrosum)"],"FOETO:PF.GEN-MAL-046":["Cellules de Leydig très abondantes, confrontées au terme"],"FOETO:PF.GEN-MAL-053":["Cellules germinales PLAP+ / OCT-4+ / CD117+"],"FOETO:PF.GEN-MAL-044":["Cellules germinales anormalement distribuées"],"FOETO:PF.GEN-NOR-202":["Cellules germinales et de Sertoli indistinctes"],"FOETO:PF.GEN-NOR-190":["Cellules germinales par section transversale de tube séminifère (normal ≥ 6)"],"FOETO:PF.GEN-NOR-196":["Cellules hilaires ovariennes, parfois en amas dans le cortex interne"],"FOETO:PF.GEN-MAL-040":["Compartiments testiculaire et ovarien distincts dans la même gonade"],"FOETO:PF.GEN-MAL-008":["Cortex surrénalien hétérotopique — testicule/épididyme"],"FOETO:PF.GEN-NOR-189":["Diamètre tubulaire médian"],"FOETO:PF.GEN-MAL-050":["Dysgénésie gonadique mixte"],"FOETO:PF.GEN-MAL-014":["Dysgénésie gonadique — testicule dysgénétique"],"FOETO:PF.GEN-MAL-051":["Dysgénésie ovarienne"],"FOETO:PF.GEN-MAL-041":["Dérivés mésonéphrotiques et paramésonéphrotiques présents ou absents, côté par côté"],"FOETO:PF.GEN-MAL-042":["Fibrose stromale diffuse de l'ovaire"],"FOETO:PF.GEN-NOR-198":["Follicule atrétique kystique de moins de 3 cm"],"FOETO:PF.GEN-MAL-022":["Gonade en bandelette (streak gonad)"],"FOETO:PF.GEN-MAL-045":["Gonade petite, mince et plate"],"FOETO:PF.GEN-TUM-003":["Gonadoblastome sur gonade dysgénétique"],"FOETO:PF.GEN-NOR-191":["Grand axe d'un kyste ovarien, en cm (seuil 3 cm)"],"FOETO:PF.GEN-NOR-201":["Hyperplasie de l'épithélium malpighien vaginal"],"FOETO:PF.GEN-MAL-052":["Kyste folliculaire ovarien (> 3 cm)"],"FOETO:PF.GEN-NOR-200":["Nids d'hématopoïèse extramédullaire érythroïde intertubulaire"],"FOETO:PF.GEN-NOR-199":["Nids de cellules germinales dans l'épithélium de surface (tunica vaginalis)"],"FOETO:PF.GEN-MAL-047":["Noyaux germinaux élargis"],"FOETO:PF.GEN-TUM-002":["Néoplasie germinale in situ (GCNIS)"],"FOETO:PF.GEN-MAL-031":["Ovotestis — compartiments testiculaire et ovarien distincts"],"FOETO:PF.GEN-NOR-195":["Perte de la barre terminale éosinophile du canal déférent (desquamation des stéréocils)"],"FOETO:PF.GEN-NOR-137":["Restes de blastème testiculaire dans la tunica albuginea"],"FOETO:PF.GEN-MAL-048":["Sexe gonadique histologique, confronté au sexe phénotypique et au caryotype"],"FOETO:PF.GEN-TUM-001":["Structure gonadoblastome-like intrafolliculaire"],"FOETO:PF.GEN-MAL-049":["Tissu fibreux fasciculé en tourbillons de cellules fusiformes, sans cellule germinale ni structure différenciée"],"FOETO:PF.GEN-NOR-192":["Tunica albuginea ovarienne peu ou pas individualisée"],"FOETO:PF.GEN-NOR-197":["Épididyme peu développé, sans muscle lisse, à terme avancé"]}};
-var FOETOV = {"FOETO:PF.GEN-MAL-052":{"l":"Kyste folliculaire ovarien (> 3 cm)","hpo":null},"FOETO:PF.GEN-MAL-014":{"l":"Dysgénésie gonadique — testicule dysgénétique","hpo":null},"FOETO:PF.GEN-MAL-042":{"l":"Fibrose stromale diffuse de l'ovaire","hpo":null},"FOETO:PF.GEN-MAL-047":{"l":"Noyaux germinaux élargis","hpo":null},"FOETO:PF.GEN-MAL-045":{"l":"Gonade petite, mince et plate","hpo":null},"FOETO:PF.GEN-MAL-031":{"l":"Ovotestis — compartiments testiculaire et ovarien distincts","hpo":"HP:0010459"},"FOETO:PF.GEN-MAL-041":{"l":"Dérivés mésonéphrotiques et paramésonéphrotiques présents ou absents, côté par côté","hpo":null},"FOETO:PF.GEN-MAL-044":{"l":"Cellules germinales anormalement distribuées","hpo":null},"FOETO:PF.GEN-MAL-022":{"l":"Gonade en bandelette (streak gonad)","hpo":null},"FOETO:PF.GEN-MAL-040":{"l":"Compartiments testiculaire et ovarien distincts dans la même gonade","hpo":null},"FOETO:PF.GEN-MAL-051":{"l":"Dysgénésie ovarienne","hpo":null},"FOETO:PF.GEN-MAL-049":{"l":"Tissu fibreux fasciculé en tourbillons de cellules fusiformes, sans cellule germinale ni structure différenciée","hpo":null},"FOETO:PF.GEN-MAL-043":{"l":"Absence de follicules primordiaux à la profondeur du cortex, ovaire ≥ 20 SA","hpo":null},"FOETO:PF.GEN-MAL-050":{"l":"Dysgénésie gonadique mixte","hpo":null},"FOETO:PF.GEN-MAL-046":{"l":"Cellules de Leydig très abondantes, confrontées au terme","hpo":null},"FOETO:PF.GEN-MAL-048":{"l":"Sexe gonadique histologique, confronté au sexe phénotypique et au caryotype","hpo":null}};
+var FOETO = {"sections":[],"formes":{"FOETO:PF.GEN-MAL-043":["Absence de follicules primordiaux à la profondeur du cortex, ovaire ≥ 20 SA"],"FOETO:PF.GEN-NOR-193":["Appendix testis / appendix epididymis indistinguables sur la lame"],"FOETO:PF.GEN-NOR-194":["Atrésie folliculaire active (pyknose ovocytaire, corpus fibrosum)"],"FOETO:PF.GEN-MAL-058":["Aucune cellule germinale identifiable"],"FOETO:PF.GEN-MAL-057":["Aucune structure différenciée identifiable — ni cordon ou tube, ni follicule"],"FOETO:PF.GEN-MAL-046":["Cellules de Leydig très abondantes, confrontées au terme"],"FOETO:PF.GEN-MAL-053":["Cellules germinales PLAP+ / OCT-4+ / CD117+"],"FOETO:PF.GEN-MAL-044":["Cellules germinales anormalement distribuées"],"FOETO:PF.GEN-NOR-202":["Cellules germinales et de Sertoli indistinctes"],"FOETO:PF.GEN-NOR-190":["Cellules germinales par section transversale de tube séminifère (normal ≥ 6)"],"FOETO:PF.GEN-NOR-196":["Cellules hilaires ovariennes, parfois en amas dans le cortex interne"],"FOETO:PF.GEN-MAL-040":["Compartiments testiculaire et ovarien distincts dans la même gonade"],"FOETO:PF.GEN-MAL-008":["Cortex surrénalien hétérotopique — testicule/épididyme"],"FOETO:PF.GEN-NOR-189":["Diamètre tubulaire médian"],"FOETO:PF.GEN-MAL-050":["Dysgénésie gonadique mixte"],"FOETO:PF.GEN-MAL-014":["Dysgénésie gonadique — testicule dysgénétique"],"FOETO:PF.GEN-MAL-051":["Dysgénésie ovarienne"],"FOETO:PF.GEN-MAL-041":["Dérivés mésonéphrotiques et paramésonéphrotiques présents ou absents, côté par côté"],"FOETO:PF.GEN-MAL-042":["Fibrose stromale diffuse de l'ovaire"],"FOETO:PF.GEN-NOR-198":["Follicule atrétique kystique de moins de 3 cm"],"FOETO:PF.GEN-MAL-060":["Follicules primaires réduits en nombre"],"FOETO:PF.GEN-MAL-022":["Gonade en bandelette (streak gonad)"],"FOETO:PF.GEN-MAL-045":["Gonade petite, mince et plate"],"FOETO:PF.GEN-TUM-003":["Gonadoblastome sur gonade dysgénétique"],"FOETO:PF.GEN-NOR-191":["Grand axe d'un kyste ovarien, en cm (seuil 3 cm)"],"FOETO:PF.GEN-NOR-201":["Hyperplasie de l'épithélium malpighien vaginal"],"FOETO:PF.GEN-MAL-052":["Kyste folliculaire ovarien (> 3 cm)"],"FOETO:PF.GEN-MAL-059":["Moins de 6 cellules germinales par section transversale de tube"],"FOETO:PF.GEN-NOR-200":["Nids d'hématopoïèse extramédullaire érythroïde intertubulaire"],"FOETO:PF.GEN-NOR-199":["Nids de cellules germinales dans l'épithélium de surface (tunica vaginalis)"],"FOETO:PF.GEN-MAL-047":["Noyaux germinaux élargis"],"FOETO:PF.GEN-TUM-002":["Néoplasie germinale in situ (GCNIS)"],"FOETO:PF.GEN-MAL-031":["Ovotestis — compartiments testiculaire et ovarien distincts"],"FOETO:PF.GEN-NOR-195":["Perte de la barre terminale éosinophile du canal déférent (desquamation des stéréocils)"],"FOETO:PF.GEN-NOR-137":["Restes de blastème testiculaire dans la tunica albuginea"],"FOETO:PF.GEN-MAL-048":["Sexe gonadique histologique, confronté au sexe phénotypique et au caryotype"],"FOETO:PF.GEN-TUM-001":["Structure gonadoblastome-like intrafolliculaire"],"FOETO:PF.GEN-MAL-049":["Tissu fibreux fasciculé en tourbillons de cellules fusiformes, sans cellule germinale ni structure différenciée"],"FOETO:PF.GEN-NOR-192":["Tunica albuginea ovarienne peu ou pas individualisée"],"FOETO:PF.GEN-NOR-197":["Épididyme peu développé, sans muscle lisse, à terme avancé"]}};
+var FOETOV = {"FOETO:PF.GEN-MAL-050":{"l":"Dysgénésie gonadique mixte","hpo":null},"FOETO:PF.GEN-NOR-197":{"l":"Épididyme peu développé, sans muscle lisse, à terme avancé","hpo":null},"FOETO:PF.GEN-MAL-052":{"l":"Kyste folliculaire ovarien (> 3 cm)","hpo":null},"FOETO:PF.GEN-NOR-137":{"l":"Restes de blastème testiculaire dans la tunica albuginea","hpo":null},"FOETO:PF.GEN-MAL-022":{"l":"Gonade en bandelette (streak gonad)","hpo":null},"FOETO:PF.GEN-TUM-001":{"l":"Structure gonadoblastome-like intrafolliculaire","hpo":null},"FOETO:PF.GEN-MAL-040":{"l":"Compartiments testiculaire et ovarien distincts dans la même gonade","hpo":null},"FOETO:PF.GEN-MAL-031":{"l":"Ovotestis — compartiments testiculaire et ovarien distincts","hpo":"HP:0010459"},"FOETO:PF.GEN-MAL-008":{"l":"Cortex surrénalien hétérotopique — testicule/épididyme","hpo":null},"FOETO:PF.GEN-NOR-193":{"l":"Appendix testis / appendix epididymis indistinguables sur la lame","hpo":null},"FOETO:PF.GEN-NOR-201":{"l":"Hyperplasie de l'épithélium malpighien vaginal","hpo":null},"FOETO:PF.GEN-MAL-060":{"l":"Follicules primaires réduits en nombre","hpo":null},"FOETO:PF.GEN-MAL-043":{"l":"Absence de follicules primordiaux à la profondeur du cortex, ovaire ≥ 20 SA","hpo":null},"FOETO:PF.GEN-NOR-191":{"l":"Grand axe d'un kyste ovarien, en cm (seuil 3 cm)","hpo":null},"FOETO:PF.GEN-NOR-189":{"l":"Diamètre tubulaire médian","hpo":null},"FOETO:PF.GEN-MAL-053":{"l":"Cellules germinales PLAP+ / OCT-4+ / CD117+","hpo":null},"FOETO:PF.GEN-NOR-202":{"l":"Cellules germinales et de Sertoli indistinctes","hpo":null},"FOETO:PF.GEN-NOR-198":{"l":"Follicule atrétique kystique de moins de 3 cm","hpo":null},"FOETO:PF.GEN-MAL-051":{"l":"Dysgénésie ovarienne","hpo":null},"FOETO:PF.GEN-NOR-196":{"l":"Cellules hilaires ovariennes, parfois en amas dans le cortex interne","hpo":null},"FOETO:PF.GEN-MAL-042":{"l":"Fibrose stromale diffuse de l'ovaire","hpo":null},"FOETO:PF.GEN-MAL-045":{"l":"Gonade petite, mince et plate","hpo":null},"FOETO:PF.GEN-MAL-059":{"l":"Moins de 6 cellules germinales par section transversale de tube","hpo":null},"FOETO:PF.GEN-MAL-046":{"l":"Cellules de Leydig très abondantes, confrontées au terme","hpo":null},"FOETO:PF.GEN-MAL-049":{"l":"Tissu fibreux fasciculé en tourbillons de cellules fusiformes, sans cellule germinale ni structure différenciée","hpo":null},"FOETO:PF.GEN-MAL-041":{"l":"Dérivés mésonéphrotiques et paramésonéphrotiques présents ou absents, côté par côté","hpo":null},"FOETO:PF.GEN-NOR-195":{"l":"Perte de la barre terminale éosinophile du canal déférent (desquamation des stéréocils)","hpo":null},"FOETO:PF.GEN-MAL-047":{"l":"Noyaux germinaux élargis","hpo":null},"FOETO:PF.GEN-MAL-014":{"l":"Dysgénésie gonadique — testicule dysgénétique","hpo":null},"FOETO:PF.GEN-NOR-200":{"l":"Nids d'hématopoïèse extramédullaire érythroïde intertubulaire","hpo":null},"FOETO:PF.GEN-NOR-194":{"l":"Atrésie folliculaire active (pyknose ovocytaire, corpus fibrosum)","hpo":null},"FOETO:PF.GEN-NOR-199":{"l":"Nids de cellules germinales dans l'épithélium de surface (tunica vaginalis)","hpo":null},"FOETO:PF.GEN-NOR-192":{"l":"Tunica albuginea ovarienne peu ou pas individualisée","hpo":null},"FOETO:PF.GEN-MAL-048":{"l":"Sexe gonadique histologique, confronté au sexe phénotypique et au caryotype","hpo":null},"FOETO:PF.GEN-MAL-057":{"l":"Aucune structure différenciée identifiable — ni cordon ou tube, ni follicule","hpo":null},"FOETO:PF.GEN-MAL-058":{"l":"Aucune cellule germinale identifiable","hpo":null},"FOETO:PF.GEN-MAL-044":{"l":"Cellules germinales anormalement distribuées","hpo":null},"FOETO:PF.GEN-NOR-190":{"l":"Cellules germinales par section transversale de tube séminifère (normal ≥ 6)","hpo":null}};
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
@@ -1895,8 +1900,8 @@ function batir(){
             return '<button type="button" class="chip" data-act="etendue" data-k="' + i + '" data-v="' + e + '">' +
                    '<span class="k">étendue</span>' + e + '</button>';
           }).join("") + '</div>') +
-        sig.filter(blocable).map(ligneSigne).join("") + '</div>' +
-        sig.filter(function(x){ return !blocable(x); }).map(ligneSigne).join("") + '</div>';
+        sig.filter(function(x){ return !horsBloc(x); }).map(ligneSigne).join("") + '</div>' +
+        sig.filter(horsBloc).map(ligneSigne).join("") + '</div>';
     });
     $("signes").innerHTML = html.signes;
     $("contexte").innerHTML = html.contexte;
@@ -1978,8 +1983,11 @@ function ligneSigne(x){
       (x.horsFiche ? '<span class="meta">hors fiche — non sourcé par la biblio</span>' : "") +
       (x.fiche && !x.foeto ? '<span class="meta">dans la fiche ' + esc(x.fiche) + ', sans terme FOETO</span>' : "") +
       (oblig ? '<span class="meta">négatif à énoncer : répondre présent ou absent</span>' : "") +
-      (PRESENCE && !blocable(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
-        : "hors du « Non » en bloc : " + (x.mag === "technique" ? "se répond après la technique" : "polarité normale, à répondre seul")) +
+      (PRESENCE && horsBloc(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
+        : x.mag === "technique" ? "hors du « Non » en bloc : se répond après la technique"
+        : x.bloc === false ? "hors du « Non » en bloc : polarité normale, à répondre seul"
+        : x.seul ? "hors du « Non » en bloc : dépend du terme, à répondre seul"
+        : "« Non » en bloc seulement " + fenetreTxt(x.terme) + " — hors de là, à répondre seul") +
         '</span>' : "") +
       '</div>' +
       (x.auto ? '<span class="chip" data-auto="' + x.k + '" style="cursor:default"></span>' :
@@ -2001,6 +2009,8 @@ function foetoAjouter(id){
   /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
   var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
   if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
+  var vr = FUSION && VARIANTES.filter(function(v){ return v.foeto === id; })[0];
+  if (vr){ E.variantes[vr.k] = true; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
     if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
@@ -2052,6 +2062,17 @@ function codesPresents(){
   return SIGNES.filter(function(x){ return E.signes[x.k] === POS && codesDe(x).length; })
                .map(function(x){ return { k:x.k, l:x.l, foeto:x.foeto || null, hpo:x.hpo || null }; });
 }
+/* Codes du reste de la lecture : variante vue, critère de rétention présent, stade retenu,
+   mesure saisie (avec sa valeur). Exportés à part (codes_lecture), champ additif. */
+function codesLecture(){
+  var c = [];
+  VARIANTES.forEach(function(v){ if (v.foeto && E.variantes[v.k]) c.push({ type:"variante", k:v.k, l:v.l, foeto:v.foeto }); });
+  RETENTION.forEach(function(r){ if (r.foeto && E.retention[r.k] === "present") c.push({ type:"rétention", k:r.k, l:r.l, foeto:r.foeto }); });
+  STADES.forEach(function(s){ if (s.foeto && E.stade === s.k) c.push({ type:"stade", k:s.k, l:s.l, foeto:s.foeto }); });
+  if (MESURE) MESURE.champs.forEach(function(m){
+    if (m.foeto && E.mesure.v[m.id] != null) c.push({ type:"mesure", k:m.id, l:m.label, foeto:m.foeto, valeur:E.mesure.v[m.id] }); });
+  return c;
+}
 /* Grille branchée sur FOETO : un signe porte fv (terme tagué « verbatim ») ; son
    libellé et son HPO arbitré viennent de la base, le code exporté est l'id FOETO. */
 function resoudreFV(){
@@ -2062,7 +2083,15 @@ function resoudreFV(){
     else if (!x.fiche) x.horsFiche = true;   // aucun terme de fiche derrière : non sourcé par la biblio
     /* fiche:"[keeling]" : constat sourcé dans la fiche que FOETO ne porte pas (encore) en terme */
   });
-  DIAGS.forEach(function(d){ if (d.fv && FOETOV[d.fv]) d.foeto = [d.fv]; });
+  /* Une association peut porter plusieurs termes maladie (fv:["FOETO:…", …]) : affichés, jamais exportés. */
+  DIAGS.forEach(function(d){
+    var ids = [].concat(d.fv || []).filter(function(i){ return FOETOV[i]; });
+    if (ids.length) d.foeto = ids;
+  });
+  /* Variantes, rétention, stades, champs de mesure portent aussi leur terme (NOR, RET, AXE, MES).
+     Seul le code s'y attache : variantes, rétention, stades et mesures gardent leur libellé. */
+  /* une variante GARDE son libellé : il porte des avertissements (« ne jamais énoncer en négatif ») */
+  VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).forEach(function(x){ if (x.fv && FOETOV[x.fv]) x.foeto = x.fv; });
 }
 
 /* ── Mode présence : rétention en liste, signes en paragraphes ─────────────── */
@@ -2105,7 +2134,21 @@ function variantesDe(g){ return VARIANTES.filter(function(v){ return v.g === g; 
    technique (mag:"technique") ni un signe de polarité normale (bloc:false, ex.
    « tubes collecteurs normaux » : absent y voudrait dire anormal). Ces signes restent
    visibles, paragraphe replié, et se répondent un par un. */
-function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false; }
+/* Un signe qui dépend du terme ne se répond pas en bloc hors de sa fenêtre : terme:[min, max]
+   en SA (une borne peut être null), bornes recopiées du verbatim de la fiche ; terme non saisi
+   = hors fenêtre. seul:true : dépend du terme sans borne écrite, il se répond un par un.
+   Dans les deux cas, présent reste une lésion. */
+function dansTerme(x){
+  if (!x.terme) return true;
+  var sa = num("sa");
+  return sa != null && (x.terme[0] == null || sa >= x.terme[0]) && (x.terme[1] == null || sa <= x.terme[1]);
+}
+/* toujours visible, paragraphe replié : ce que le « Non » en bloc peut ne pas répondre */
+function horsBloc(x){ return !!(x.auto || x.mag === "technique" || x.bloc === false || x.seul || x.terme); }
+function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false && !x.seul && dansTerme(x); }
+function fenetreTxt(t){
+  return t[0] != null && t[1] != null ? "de " + t[0] + " à " + t[1] + " SA" : t[0] != null ? "à partir de " + t[0] + " SA" : "jusqu'à " + t[1] + " SA";
+}
 /* Un signe bloc:false présent (méconium dans la lumière, collecteurs normaux) s'écrit au
    CR mais n'ouvre pas le paragraphe et ne bloque pas son « Non » : ce n'est pas une lésion. */
 function lesionPresente(x){ return E.signes[x.k] === POS && x.bloc !== false; }
@@ -2440,6 +2483,12 @@ function composer(){
     L.push("CODES DES SIGNES PRÉSENTS");
     cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
   }
+  var cl = codesLecture();
+  if (cl.length){
+    L.push("");
+    L.push("CODES DE LA LECTURE");
+    cl.forEach(function(c){ L.push("  " + c.type + " · " + c.l + (c.valeur != null ? " = " + c.valeur : "") + " [" + c.foeto + "]"); });
+  }
 
   var fo = Object.keys(E.foeto);
   if (fo.length){
@@ -2638,6 +2687,7 @@ function collecter(){
     terme_sa: num("sa"),
     grille: JSON.parse(JSON.stringify(E)),
     codes: codesPresents(),
+    codes_lecture: codesLecture(),
     compte_rendu: composer()
   };
 }
@@ -2939,7 +2989,7 @@ async function autotest(){
     clic("grp", iA, "non");
     chk("paragraphe non → signes absents", sA.every(function(x){ return E.signes[x.k] === NEG; }) &&
         etatGroupe(gA) === "non" && crTient(gA + " : non."));
-    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA; })[0];
+    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA && blocable(par(SIGNES, n.signe)); })[0];
     if (lie) chk("paragraphe non → négatif lié énoncé", etatNegatif(lie) === "ok");
     clic("grp", iA, "non");
     chk("second non → non regardé", sA.every(function(x){ return !E.signes[x.k]; }) && etatGroupe(gA) === null);
@@ -2973,6 +3023,18 @@ async function autotest(){
     chk("codes : lisibles (FOETO:/HP:)", SIGNES.every(function(x){
       return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)); }));
   }
+
+  /* Codes de la lecture : une variante vue exporte son terme (NOR), pas une variante non cochée */
+  var vc = VARIANTES.filter(function(v){ return v.foeto; })[0];
+  if (vc){
+    chk("codes lecture : rien sans variante vue", !codesLecture().some(function(c){ return c.k === vc.k; }));
+    clic("var", vc.k);
+    chk("codes lecture : la variante vue exporte son terme", collecter().codes_lecture.some(function(c){ return c.k === vc.k && c.foeto === vc.foeto; }) &&
+        crTient("CODES DE LA LECTURE") && crTient("[" + vc.foeto + "]"));
+    clic("var", vc.k);
+  }
+  chk("codes lecture : lisibles (FOETO:)", VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).every(function(x){
+    return !x.foeto || /^FOETO:/.test(x.foeto); }));
 
   /* Signes et associations */
   var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
@@ -3083,6 +3145,22 @@ async function autotest(){
           E.signes[xF.k] === POS && crTient(gF + " : non") && crTient(xF.l + " — PRÉSENT"));
       clic("grp", iF, "non");
       clic("les", xF.k, POS);
+    }
+    /* Fenêtre de terme : le « Non » en bloc ne répond un signe daté que dans sa fenêtre */
+    var xS = SIGNES.filter(function(x){ return x.terme && !x.auto; })[0];
+    if (xS){
+      var gS = xS.g, iS = groupes().indexOf(gS), t0 = xS.terme[0], t1 = xS.terme[1];
+      var dedans = t0 != null ? t0 : t1, dehors = t0 != null ? t0 - 1 : t1 + 1;
+      signesDe(gS).forEach(function(x){ if (!x.auto) delete E.signes[x.k]; }); delete E.groupes[gS];
+      set("sa", String(dehors));
+      clic("grp", iS, "non");
+      chk("terme : hors fenêtre, le « Non » ne répond pas « " + xS.k + " »", !E.signes[xS.k] && etatGroupe(gS) === "non");
+      clic("grp", iS, "non");
+      set("sa", String(dedans));
+      clic("grp", iS, "non");
+      chk("terme : dans la fenêtre, le « Non » le répond absent", E.signes[xS.k] === NEG);
+      clic("grp", iS, "non");
+      set("sa", "");
     }
     /* Rédaction proposée : la phrase du cadre « Non », celle du signe présent, rien sinon */
     if (REDIGE){

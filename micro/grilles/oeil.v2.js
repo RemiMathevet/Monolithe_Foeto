@@ -73,11 +73,16 @@
    Fond : ~/Bureau/fiches_lecture/fiche_oeil.md (§1 à §9).
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 3 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 12 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 21 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "oeil";
 var TITRE   = "œil fœtal";
 var SOURCE  = "fiche_oeil.md";
 var MODULE  = "grille_oeil";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -199,7 +204,7 @@ var RETENTION = [
          "autant : l'axe vasculaire (rang 6) tient",
     alerte:MODIF },
 
-  { k:"cristallinArtefacts", l:"Cristallin : globules, vacuoles, fentes, décollement capsulaire",
+  { k:"cristallinArtefacts", fv:"FOETO:PF.ORL-NOR-045", l:"Cristallin : globules, vacuoles, fentes, décollement capsulaire",
     b:"rang 2/7 de l'ordre interne", d:"« Lens artifacts are present in nearly all fetal and neonatal eyes »",
     h:2, q:"mauvais",
     note:"prédicteur MAUVAIS par construction : la base est ~100 %, donc l'artefact n'est pas " +
@@ -335,8 +340,8 @@ var MESURE = {
     { k:"aucun",     l:"Aucun axe utilisable — non évaluable pour autolyse" }
   ],
   champs:[
-    { id:"dap",        label:"DAP — diamètre antéropostérieur (mm)", min:0, max:30, step:0.1 },
-    { id:"dc",         label:"DC — diamètre cornéen (mm)",           min:0, max:20, step:0.1 },
+    { id:"dap",        fv:"FOETO:PF.ORL-NOR-041", label:"DAP — diamètre antéropostérieur (mm)", min:0, max:30, step:0.1 },
+    { id:"dc",         fv:"FOETO:PF.ORL-NOR-042", label:"DC — diamètre cornéen (mm)",           min:0, max:20, step:0.1 },
     { id:"dapAdelphe", label:"DAP de l'œil adelphe (mm)",            min:0, max:30, step:0.1 }
   ]
 };
@@ -482,23 +487,23 @@ function verdictMesure(){
    qui sont, eux, la même image lue à un autre âge. Chacune vit dans le cadre
    dont elle mime un signe. */
 var VARIANTES = [
-  { k:"embryotoxon",      g:"Segment antérieur — cornée, angle, iris",
+  { k:"embryotoxon",      fv:"FOETO:PF.ORL-NOR-049", g:"Segment antérieur — cornée, angle, iris",
     l:"Embryotoxon postérieur (ligne de Schwalbe proéminente, nodule collagène PAS-négatif)" },
-  { k:"chrpe",            g:"Infection et inflammation",           l:"Hypertrophie congénitale de l'EPR (CHRPE)" },
+  { k:"chrpe",            fv:"FOETO:PF.ORL-NOR-046", g:"Infection et inflammation",           l:"Hypertrophie congénitale de l'EPR (CHRPE)" },
   { k:"hemIntraoculaire", g:"Infection et inflammation",           l:"Hématopoïèse extramédullaire intraoculaire ou orbitaire" },
-  { k:"pliDeLange",       g:"Rétine",                              l:"Pli de Lange — pli circulaire à l'ora serrata, architecture inchangée" },
-  { k:"reliquatsTVL",     g:"Vitré et système hyaloïdien",
+  { k:"pliDeLange",       fv:"FOETO:PF.ORL-NOR-056", g:"Rétine",                              l:"Pli de Lange — pli circulaire à l'ora serrata, architecture inchangée" },
+  { k:"reliquatsTVL",     fv:"FOETO:PF.ORL-NOR-059", g:"Vitré et système hyaloïdien",
     l:"Reliquats de TVL antérieure (taches étoilées sur le cristallin, brides de la collerette irienne)" },
-  { k:"mittendorf",       g:"Vitré et système hyaloïdien",         l:"Point de Mittendorf (tache blanchâtre à la capsule postérieure)" },
-  { k:"bergmeister",      g:"Vitré et système hyaloïdien",         l:"Papille de Bergmeister" },
+  { k:"mittendorf",       fv:"FOETO:PF.ORL-NOR-058", g:"Vitré et système hyaloïdien",         l:"Point de Mittendorf (tache blanchâtre à la capsule postérieure)" },
+  { k:"bergmeister",      fv:"FOETO:PF.ORL-NOR-054", g:"Vitré et système hyaloïdien",         l:"Papille de Bergmeister" },
   { k:"hyaloidePresente", g:"Vitré et système hyaloïdien",         l:"Artère hyaloïde présente AVANT 36 SA" },
   { k:"tvlPresente",      g:"Vitré et système hyaloïdien",         l:"TVL antérieure présente AVANT 37 SA" },
-  { k:"peripherieNonVasc",g:"Rétine",                              l:"Rétine périphérique temporale non vascularisée avant la naissance" },
+  { k:"peripherieNonVasc",fv:"FOETO:PF.ORL-NOR-060", g:"Rétine",                              l:"Rétine périphérique temporale non vascularisée avant la naissance" },
   { k:"ganglionnairePeriph", g:"Nerf optique et couche ganglionnaire", l:"Raréfaction ganglionnaire à prédominance PÉRIPHÉRIQUE depuis 21 SA" },
   { k:"mesenchymeAngle",  g:"Segment antérieur — cornée, angle, iris", l:"Trabéculum encore recouvert de mésenchyme avant ~28 SA" },
   { k:"nerfPeuMyelinise", g:"Nerf optique et couche ganglionnaire", l:"Nerf optique peu myélinisé et uvée peu pigmentée au terme" },
-  { k:"foveaPlate",       g:"Rétine",                              l:"Fovéa sans dépression franche au terme" },
-  { k:"dilatateurIncomplet", g:"Segment antérieur — cornée, angle, iris", l:"Muscle dilatateur de l'iris incomplet avant 34 SA" },
+  { k:"foveaPlate",       fv:"FOETO:PF.ORL-NOR-050", g:"Rétine",                              l:"Fovéa sans dépression franche au terme" },
+  { k:"dilatateurIncomplet", fv:"FOETO:PF.ORL-NOR-048", g:"Segment antérieur — cornée, angle, iris", l:"Muscle dilatateur de l'iris incomplet avant 34 SA" },
   { k:"paupiereNasale",   g:"Contexte hors lame — examen externe et macroscopie du globe",
     l:"Paupière séparée en nasal, encore fusionnée en temporal" }
 ];
@@ -534,7 +539,7 @@ var SIGNES = [
     l:"DAP sous la norme du terme (ou nettement inférieur à l'œil adelphe)" },
   { k:"dapHaut", fv:"FOETO:PF.ORL-MAL-055", g:"Contexte hors lame — examen externe et macroscopie du globe",
     meta:"DAP au-dessus de la norme du terme" },   /* Globe entier agrandi */
-  { k:"dcBas", fv:"FOETO:PF.ORL-MAL-064", g:"Contexte hors lame — examen externe et macroscopie du globe",
+  { k:"dcBas", seul:true, fv:"FOETO:PF.ORL-MAL-064", g:"Contexte hors lame — examen externe et macroscopie du globe",
     meta:"globe par ailleurs de taille conservée — seuil défini chez le nouveau-né, pas chez le fœtus" },   /* Microcornée */
   { k:"megalocornee", fv:"FOETO:PF.ORL-MAL-062", g:"Contexte hors lame — examen externe et macroscopie du globe",
     meta:"à distinguer de la buphtalmie — même réserve d'âge" },   /* Mégalocornée > 13 mm */
@@ -555,15 +560,15 @@ var SIGNES = [
   { k:"typeHemorragie", bloc:false, fiche:"[verdijk, ch. 6]", g:"Contexte hors lame — examen externe et macroscopie du globe",
     l:"Type d'hémorragie décrit (en flammèche · punctiforme · en tache)",
     meta:"sur la pièce ou la photographie au grossage — n'est plus ré-observable ensuite ; présent = décrit" },
-  { k:"masseRetinienne", fiche:"[verdijk, ch. 8]", g:"Contexte hors lame — examen externe et macroscopie du globe",
+  { k:"masseRetinienne", fv:"FOETO:PF.ORL-MAL-146", fiche:"[verdijk, ch. 8]", g:"Contexte hors lame — examen externe et macroscopie du globe",
     l:"Masse rétinienne blanche exophytique derrière le cristallin", meta:"macroscopie" },
   /* — Contexte hors lame — autres organes et caryotype — */
-  { k:"nerfNAtteintPasForamen", fiche:"[verdijk, ch. 5]", g:"Contexte hors lame — autres organes et caryotype",
+  { k:"nerfNAtteintPasForamen", fv:"FOETO:PF.ORL-MAL-147", fiche:"[verdijk, ch. 5]", g:"Contexte hors lame — autres organes et caryotype",
     l:"Nerfs optiques n'atteignant pas le foramen optique" },
   { k:"chiasmaAbsent", fv:"FOETO:PF.ORL-MAL-042", g:"Contexte hors lame — autres organes et caryotype" },
-  { k:"anomExtraoculaires", fiche:"[verdijk, ch. 5]", g:"Contexte hors lame — autres organes et caryotype",
+  { k:"anomExtraoculaires", fv:"FOETO:PF.ORL-MAL-148", fiche:"[verdijk, ch. 5]", g:"Contexte hors lame — autres organes et caryotype",
     l:"Anomalies extra-oculaires associées (dents, os de la face)" },
-  { k:"placentaCMV", fiche:"[verdijk, ch. 7]", g:"Contexte hors lame — autres organes et caryotype",
+  { k:"placentaCMV", fv:"FOETO:PF.ORL-INF-018", fiche:"[verdijk, ch. 7]", g:"Contexte hors lame — autres organes et caryotype",
     l:"Placenta porteur des mêmes inclusions cytomégaliques" },
   { k:"t21", fiche:"[verdijk, ch. 4]", g:"Contexte hors lame — autres organes et caryotype",
     l:"Trisomie 21 au caryotype",
@@ -576,12 +581,12 @@ var SIGNES = [
     meta:"ne contredit pas l'anophtalmie" },
   { k:"residusGlobe", fiche:"[verdijk, ch. 5] · forme [corpus CR]", g:"Orbite et globe", mag:"faible",
     l:"Résidus ou ébauches de globe : structures scléro-adipeuses à amas pigmentés" },
-  { k:"globeSymetriquePetit", fiche:"[verdijk, ch. 5]", g:"Orbite et globe", mag:"faible",
+  { k:"globeSymetriquePetit", fv:"FOETO:PF.ORL-MAL-149", fiche:"[verdijk, ch. 5]", g:"Orbite et globe", mag:"faible",
     l:"Œil symétriquement petit avec choroïde ET sclère épaissies",
     meta:"nanophtalmie — à ne pas confondre avec la microphtalmie relative" },
   { k:"kysteScleralPost", fv:"FOETO:PF.ORL-MAL-058", g:"Orbite et globe", mag:"faible",
     meta:"microphtalmie avec kyste" },
-  { k:"muscleLisseChoristome", fiche:"[verdijk, ch. 5]", g:"Orbite et globe", mag:"technique",
+  { k:"muscleLisseChoristome", fv:"FOETO:PF.ORL-MAL-150", fiche:"[verdijk, ch. 5]", g:"Orbite et globe", mag:"technique",
     l:"Muscle lisse choristomateux dans la paroi du kyste (IHC)" },
 
   /* — Paroi et colobome — */
@@ -591,10 +596,10 @@ var SIGNES = [
     meta:"à l'inverse des brèches mécaniques du prélèvement" },   /* Défect choroïdien à bords nets */
   { k:"progressifEtage", fv:"FOETO:PF.ORL-MAL-038", g:"Paroi et colobome", mag:"faible",
     meta:"critère de colobome vrai, pas d'artefact (§ 5.2, verbatim) — § 7.3 et § 8.3 de la fiche disent l'inverse : divergence interne portée" },
-  { k:"pasPerforation", bloc:false, fiche:"[verdijk, ch. 5]", g:"Paroi et colobome", mag:"faible",
+  { k:"pasPerforation", fv:"FOETO:PF.ORL-NOR-098", bloc:false, fiche:"[verdijk, ch. 5]", g:"Paroi et colobome", mag:"faible",
     l:"Aucune perforation mécanique ailleurs sur le globe",
     meta:"polarité normale : présent = aucune perforation" },
-  { k:"globePerfore", fiche:"[verdijk, ch. 5]", g:"Paroi et colobome", mag:"faible",
+  { k:"globePerfore", fv:"FOETO:PF.ORL-MAL-151", fiche:"[verdijk, ch. 5]", g:"Paroi et colobome", mag:"faible",
     l:"Globe perforé au prélèvement" },
   { k:"scleraAmincie", fv:"FOETO:PF.ORL-MAL-043", g:"Paroi et colobome", mag:"faible" },
   { k:"colobomePapille", fv:"FOETO:PF.ORL-MAL-008", g:"Paroi et colobome", mag:"faible",
@@ -610,14 +615,14 @@ var SIGNES = [
     meta:"opacité à prédominance périphérique" },   /* Cornée vascularisée à lamelles collagènes anormales */
   { k:"stromaPostAbsent", fv:"FOETO:PF.ORL-MAL-079", g:"Segment antérieur — cornée, angle, iris", mag:"moyen" },
   { k:"synechiesIridoCorn", fv:"FOETO:PF.ORL-MAL-030", g:"Segment antérieur — cornée, angle, iris", mag:"moyen" },
-  { k:"tvlAttacheeCornee", fiche:"[verdijk, ch. 5]", g:"Segment antérieur — cornée, angle, iris", mag:"moyen",
+  { k:"tvlAttacheeCornee", fv:"FOETO:PF.ORL-MAL-152", fiche:"[verdijk, ch. 5]", g:"Segment antérieur — cornée, angle, iris", mag:"moyen",
     l:"TVL antérieure attachée à la face postérieure de la cornée",
     meta:"indice indirect de fixation lenticulaire quand la synéchie a été lysée" },
   { k:"angleRudimentaire", fv:"FOETO:PF.ORL-MAL-037", g:"Segment antérieur — cornée, angle, iris", mag:"moyen",
     meta:"au terme — un angle rempli de mésenchyme est normal avant ~28 SA" },
   { k:"schwalbeAnteposee", fv:"FOETO:PF.ORL-MAL-076", g:"Segment antérieur — cornée, angle, iris", mag:"moyen" },
   { k:"descemetEnroulee", fv:"FOETO:PF.ORL-MAL-078", g:"Segment antérieur — cornée, angle, iris", mag:"moyen" },   /* Stries de Haab */
-  { k:"perteDilatateur", fv:"FOETO:PF.ORL-MET-002", g:"Segment antérieur — cornée, angle, iris", mag:"moyen",
+  { k:"perteDilatateur", terme:[34, null], fv:"FOETO:PF.ORL-MET-002", g:"Segment antérieur — cornée, angle, iris", mag:"moyen",
     meta:"aussi un rang 3 d'autolyse : inutilisable sur œil macéré" },
   { k:"descemetEpaissie", fv:"FOETO:PF.ORL-MAL-033", g:"Segment antérieur — cornée, angle, iris", mag:"fort",
     meta:"avec endothélium anormal — CHED : « has not yet been reported in a fetus » : hors périmètre fœtal" },
@@ -636,7 +641,7 @@ var SIGNES = [
   { k:"lenticone", fv:"FOETO:PF.ORL-MAL-059", g:"Cristallin", mag:"moyen" },
   { k:"fibreuxSousCapsulaire", fv:"FOETO:PF.ORL-MAL-053", g:"Cristallin", mag:"moyen" },
   { k:"liquefaction", fv:"FOETO:PF.ORL-MAL-060", g:"Cristallin", mag:"moyen" },
-  { k:"epithCristallinNecrose", fiche:"[verdijk, ch. 5]", g:"Cristallin", mag:"fort",
+  { k:"epithCristallinNecrose", fv:"FOETO:PF.ORL-VAS-014", fiche:"[verdijk, ch. 5]", g:"Cristallin", mag:"fort",
     l:"Nécrose ou prolifération de l'épithélium cristallinien" },
   { k:"oxalate", fv:"FOETO:PF.ORL-MAL-046", g:"Cristallin", mag:"technique" },
 
@@ -644,12 +649,12 @@ var SIGNES = [
   { k:"cordonFibrovasc", fv:"FOETO:PF.ORL-MAL-044", g:"Vitré et système hyaloïdien", mag:"faible" },
   { k:"rotationIridoCiliaire", fv:"FOETO:PF.ORL-MAL-075", g:"Vitré et système hyaloïdien", mag:"faible",
     meta:"signe indirect, à faible grossissement" },
-  { k:"hyaloideApres36", fiche:"[verdijk, ch. 1]", g:"Vitré et système hyaloïdien", mag:"faible",
+  { k:"hyaloideApres36", fv:"FOETO:PF.ORL-MAL-153", terme:[36, null], fiche:"[verdijk, ch. 1]", g:"Vitré et système hyaloïdien", mag:"faible",
     l:"Système hyaloïdien encore présent APRÈS 36 SA" },
   { k:"metaplasieChondroide", fv:"FOETO:PF.ORL-MAL-063", g:"Vitré et système hyaloïdien", mag:"moyen" },
 
   /* — Rétine — */
-  { k:"retineDysplasiqueColobome", fiche:"[verdijk, ch. 5]", g:"Rétine", mag:"faible",
+  { k:"retineDysplasiqueColobome", fv:"FOETO:PF.ORL-MAL-154", fiche:"[verdijk, ch. 5]", g:"Rétine", mag:"faible",
     l:"Tissu rétinien dysplasique comblant un colobome" },
   { k:"neNeQuePli", fv:"FOETO:PF.ORL-NOR-057", g:"Rétine", mag:"faible",
     meta:"artefact de fixation : le pli n'est pas la lésion — v1 : pli isolé, sans prolifération" },
@@ -661,7 +666,7 @@ var SIGNES = [
   { k:"proliferationFusiforme", fv:"FOETO:PF.ORL-VAS-006", g:"Rétine", mag:"moyen" },
   { k:"neovaisseauxCD34", fv:"FOETO:PF.ORL-MAL-023", g:"Rétine", mag:"fort",
     meta:"CD34+ franchissant la limitante interne, dans un mésenchyme CD34−" },   /* Néovascularisation rétinienne */
-  { k:"cd34CentralSeul", fiche:"[verdijk, ch. 3]", g:"Rétine", mag:"technique",
+  { k:"cd34CentralSeul", fv:"FOETO:PF.ORL-NOR-099", fiche:"[verdijk, ch. 3]", g:"Rétine", mag:"technique",
     l:"CD34 : vaisseaux rétiniens présents seulement du côté CENTRAL du pli",
     meta:"la preuve objective du pli de Lange" },
 
@@ -670,9 +675,9 @@ var SIGNES = [
   { k:"nerfAminci", fv:"FOETO:PF.ORL-MAL-066", g:"Nerf optique et couche ganglionnaire", mag:"faible" },
   { k:"ganglionnaireCentrale", fv:"FOETO:PF.ORL-MAL-069", g:"Nerf optique et couche ganglionnaire", mag:"moyen",
     meta:"la topographie tranche, pas le compte" },
-  { k:"fibresOptiquesPerdues", fiche:"[verdijk, ch. 5]", g:"Nerf optique et couche ganglionnaire", mag:"moyen",
+  { k:"fibresOptiquesPerdues", fv:"FOETO:PF.ORL-MAL-155", fiche:"[verdijk, ch. 5]", g:"Nerf optique et couche ganglionnaire", mag:"moyen",
     l:"Perte de la couche des fibres optiques" },
-  { k:"protuberanceVasculaire", fiche:"[verdijk, ch. 5]", g:"Nerf optique et couche ganglionnaire", mag:"moyen",
+  { k:"protuberanceVasculaire", fv:"FOETO:PF.ORL-VAS-015", fiche:"[verdijk, ch. 5]", g:"Nerf optique et couche ganglionnaire", mag:"moyen",
     l:"Prolifération vasculaire de la rétine et du vitré dans un contexte anencéphalique" },
 
   /* — Hémorragies — */
@@ -682,19 +687,19 @@ var SIGNES = [
     meta:"mesure de SURFACE, pas un compte de foyers" },
   { k:"hemGaineNerf", fv:"FOETO:PF.ORL-VAS-002", g:"Hémorragies", mag:"faible",
     meta:"préciser uni- ou bilatérale : OR 5,1 contre 7,6" },
-  { k:"toutesCouches", fiche:"[verdijk, ch. 6]", g:"Hémorragies", mag:"moyen",
+  { k:"toutesCouches", fv:"FOETO:PF.ORL-NOR-100", fiche:"[verdijk, ch. 6]", g:"Hémorragies", mag:"moyen",
     l:"Toutes les couches rétiniennes intéressées par l'hémorragie" },
   { k:"hemIntrasclerale", fv:"FOETO:PF.ORL-VAS-003", g:"Hémorragies", mag:"moyen",
     meta:"« highly suspect for AHT »" },
   { k:"hemosiderine", fv:"FOETO:PF.ORL-MET-001", g:"Hémorragies", mag:"technique" },
-  { k:"lesionAxonale", fiche:"[verdijk, ch. 6]", g:"Hémorragies", mag:"technique",
+  { k:"lesionAxonale", fv:"FOETO:PF.ORL-MAL-156", fiche:"[verdijk, ch. 6]", g:"Hémorragies", mag:"technique",
     l:"Lésion axonale du nerf optique (β-APP, ubiquitine)" },
 
   /* — Infection et inflammation — */
   { k:"chorioretiniteCicatricielle", fv:"FOETO:PF.ORL-MAL-007", g:"Infection et inflammation", mag:"faible",
     meta:"atrophiques et pigmentées, en cratère" },
   { k:"necroseHemorragiqueCalcifiee", fv:"FOETO:PF.ORL-VAS-005", g:"Infection et inflammation", mag:"faible" },
-  { k:"necroseRetinienne", fiche:"[verdijk, ch. 7]", g:"Infection et inflammation", mag:"moyen",
+  { k:"necroseRetinienne", fv:"FOETO:PF.ORL-VAS-016", fiche:"[verdijk, ch. 7]", g:"Infection et inflammation", mag:"moyen",
     l:"Nécrose rétinienne" },
   { k:"infiltratChoroidien", fv:"FOETO:PF.ORL-INF-002", g:"Infection et inflammation", mag:"moyen",
     meta:"détectable malgré l'autolyse — son négatif a de la valeur" },
@@ -705,7 +710,7 @@ var SIGNES = [
     meta:"4–7 μm ; regarder le NERF OPTIQUE même si la rétine est négative, site souvent oublié — la v1 séparait rétine et nerf, le terme FOETO les réunit : préciser le site en remarque" },
   { k:"owlsEye", fv:"FOETO:PF.ORL-MAL-057", g:"Infection et inflammation", mag:"fort" },
   { k:"cowdryB", fv:"FOETO:PF.ORL-INF-001", g:"Infection et inflammation", mag:"fort" },
-  { k:"ihcToxo", fiche:"[verdijk, ch. 7]", g:"Infection et inflammation", mag:"technique",
+  { k:"ihcToxo", fv:"FOETO:PF.ORL-INF-019", fiche:"[verdijk, ch. 7]", g:"Infection et inflammation", mag:"technique",
     l:"IHC anti-Toxoplasma positive alors que l'HES ne montrait rien" },
   { k:"gramPositif", fv:"FOETO:PF.ORL-MAL-039", g:"Infection et inflammation", mag:"technique" },
 
@@ -719,14 +724,14 @@ var SIGNES = [
     meta:"mitoses fréquentes — la v1 portait la nécrose à manchons en signe séparé, le terme FOETO la réunit" },
   { k:"infiltrationNerf", fv:"FOETO:PF.ORL-INF-003", g:"Tumeurs", mag:"faible" },
   { k:"essaimageVitreen", fv:"FOETO:PF.ORL-MAL-050", g:"Tumeurs", mag:"faible" },
-  { k:"extensionExtraoculaire", fiche:"[verdijk, ch. 8]", g:"Tumeurs", mag:"faible",
+  { k:"extensionExtraoculaire", fv:"FOETO:PF.ORL-TUM-009", fiche:"[verdijk, ch. 8]", g:"Tumeurs", mag:"faible",
     l:"Extension extra-oculaire de la tumeur" },
   { k:"envahissementChoroidien", fv:"FOETO:PF.ORL-MAL-049", g:"Tumeurs", mag:"moyen" },
   { k:"medullaryEpithelium", fiche:"[verdijk, ch. 8]", g:"Tumeurs", mag:"moyen",
     l:"Prolifération reproduisant l'épithélium médullaire de la cupule optique embryonnaire, au corps ciliaire" },
   { k:"heteroplasiques", fv:"FOETO:PF.ORL-MAL-048", g:"Tumeurs", mag:"moyen",
     meta:"rhabdomyoblastes compris" },
-  { k:"macrophagesSpumeux", fiche:"[verdijk, ch. 8]", g:"Tumeurs", mag:"moyen",
+  { k:"macrophagesSpumeux", fv:"FOETO:PF.ORL-MAL-157", fiche:"[verdijk, ch. 8]", g:"Tumeurs", mag:"moyen",
     l:"Vaisseaux télangiectasiques à macrophages spumeux dans la paroi",
     meta:"maladie de Coats — pseudorétinoblastome clinique, pas histologique" },
   { k:"flexnerWintersteiner", fv:"FOETO:PF.ORL-MAL-073", g:"Tumeurs", mag:"fort",

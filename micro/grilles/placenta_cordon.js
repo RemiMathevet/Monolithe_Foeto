@@ -23,11 +23,16 @@
    Fond : ~/Bureau/fiches_lecture/diffusion/fiche_placenta.md (§1 à §9).
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 1.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 1 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 0 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 4 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "placenta_cordon";
 var TITRE   = "placenta — cordon ombilical";
 var SOURCE  = "fiche_placenta.md";
 var MODULE  = "grille_placenta_cordon";
-var VERSION = "1.0.0";
+var VERSION = "1.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var PAIR    = false;
@@ -103,15 +108,15 @@ var SIGNES = [
     l:"Artère ombilicale unique sur coupe à circonférence complète, ≥ 5 cm de l'insertion",
     meta:"Hyrtl dans 92 % des cordons",
     cr:"Le cordon ne compte que deux vaisseaux sur chacune de ses coupes (artère ombilicale unique)." },
-  { k:"variceOmb", g:"Vaisseaux ombilicaux", mag:"faible", l:"Varice ou ectasie d'un vaisseau ombilical",
+  { k:"variceOmb", fv:"FOETO:PP.PLA-MAL-053", g:"Vaisseaux ombilicaux", mag:"faible", l:"Varice ou ectasie d'un vaisseau ombilical",
     cr:"On note une varice (ectasie) d'un vaisseau ombilical" },
-  { k:"thromboseOmb", g:"Vaisseaux ombilicaux", mag:"faible", l:"Thrombose d'un vaisseau ombilical",
+  { k:"thromboseOmb", fv:"FOETO:PP.PLA-VAS-061", g:"Vaisseaux ombilicaux", mag:"faible", l:"Thrombose d'un vaisseau ombilical",
     cr:"On note une thrombose d'un vaisseau ombilical" },
 
   /* — Gelée de Wharton — */
-  { k:"striction", g:"Gelée de Wharton", mag:"faible", l:"Striction : gelée absente ou subtotale, cordon extrêmement spiralé",
+  { k:"striction", fv:"FOETO:PP.PLA-MAL-054", g:"Gelée de Wharton", mag:"faible", l:"Striction : gelée absente ou subtotale, cordon extrêmement spiralé",
     cr:"On note une striction : gelée de Wharton absente ou subtotale sur un segment extrêmement spiralé" },
-  { k:"cordonGrele", g:"Gelée de Wharton", mag:"faible",
+  { k:"cordonGrele", fv:"FOETO:PP.PLA-VAS-062", g:"Gelée de Wharton", mag:"faible",
     l:"Gelée de Wharton condensée en liseré, ± microcalcifications diffuses (cordon grêle)",
     meta:"diamètre < 8 mm ; biaisé par la rétention",
     cr:"La gelée de Wharton est condensée en liseré (cordon grêle)" },
@@ -140,7 +145,7 @@ var SIGNES = [
     cr:"On note une funisite nécrosante, étendue à la gelée de Wharton" },
 
   /* — Méconium — */
-  { k:"meconiumWharton", g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans la gelée de Wharton",
+  { k:"meconiumWharton", seul:true, g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans la gelée de Wharton",
     meta:"plus tardif que les membranes ; « many hours »",
     cr:"La gelée de Wharton contient des macrophages chargés de méconium" },
   { k:"myonecrose", g:"Méconium", mag:"fort", l:"Nécrose de la paroi vasculaire, périphérique, adjacente à la gelée",
@@ -258,5 +263,6 @@ async function testsOrgane(chk, clic, set, crTient, pause){
   chk("aucun bouton ne porte un diagnostic",
       DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
   /* FOETO : aucun terme tagué verbatim pour le placenta — rien de branché */
-  chk("FOETO : aucun signe branché", FOETOV === null && SIGNES.every(function(x){ return !x.fv && !x.foeto; }));
+  /* 1.1.0 : codes créés depuis le verbatim de la fiche (lot FOETO) — les signes branchés exportent leur code */
+  chk("FOETO 1.1 : 4 signe(s) codé(s) depuis le verbatim", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 4);
 }

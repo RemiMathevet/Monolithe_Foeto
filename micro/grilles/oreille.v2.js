@@ -58,11 +58,16 @@
      variante entre : quelques cellules muco-sécrétantes (§4.7, NOR-075), qui
      mime la métaplasie. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 4 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 16 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 6 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "oreille";
 var TITRE   = "oreille — rocher, caisse du tympan et conduit auditif externe";
 var SOURCE  = "fiche_oreille.md";
 var MODULE  = "grille_oreille";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -164,29 +169,29 @@ var RETENTION = [
     d:"l'oreille est absente des trois barèmes", h:1, q:"bon",
     note:INTERDIT,
     alerte:"une coupe lisible atteste que la lecture est possible, elle n'atteste d'aucun délai" },
-  { k:"cortiFragmente", l:"Organe de Corti fragmenté, en miettes ou absent", b:"non datable",
+  { k:"cortiFragmente", fv:"FOETO:PF.ORL-NOR-078", l:"Organe de Corti fragmenté, en miettes ou absent", b:"non datable",
     d:"mécanique OU autolytique, non départagé", h:0, q:"mauvais",
     note:"la source écrit dans le même chapitre « typically severely fragmented » en coupes de routine et " +
          "« often autolyzed in routine sections even in otherwise well-preserved specimens » — les deux " +
          "imputations coexistent et ne sont pas hiérarchisées : divergence non arbitrée. La conséquence " +
          "pratique diffère pourtant : si c'est mécanique, un fœtus frais justifie une recoupe ; si c'est " +
          "autolytique, la recoupe ne servira à rien" },
-  { k:"sacculeDetruit", l:"Saccule et utricule introuvables dans le vestibule", b:"non datable",
+  { k:"sacculeDetruit", fv:"FOETO:PF.ORL-NOR-095", l:"Saccule et utricule introuvables dans le vestibule", b:"non datable",
     d:"détruits au prélèvement dans presque tous les cas", h:0, q:"mauvais",
     note:"« usually destroyed in routine sections of even well-preserved specimens » et « destroyed during " +
          "removal and sectioning of the specimen as almost always occurs » : ce n'est pas une agénésie " +
          "vestibulaire, c'est le régime normal de la lame" },
-  { k:"tympanNu", l:"Membrane tympanique réduite à ses deux plans conjonctifs", b:"non datable",
+  { k:"tympanNu", fv:"FOETO:PF.ORL-NOR-097", l:"Membrane tympanique réduite à ses deux plans conjonctifs", b:"non datable",
     d:"épiderme et endoderme tombés", h:0, q:"mauvais",
     note:"« has fallen off » des deux surfaces, décrit à 15 semaines (unité source) sur une pièce normale — " +
          "artefact, pas agénésie épithéliale" },
-  { k:"caisseDesquamee", l:"Revêtement de la caisse absent par plaques", b:"non datable",
+  { k:"caisseDesquamee", fv:"FOETO:PF.ORL-NOR-093", l:"Revêtement de la caisse absent par plaques", b:"non datable",
     d:"autolyse légère", h:0, q:"mauvais",
     note:"« often falls off owing to mild autolysis » — ne pas lire une desquamation inflammatoire" },
-  { k:"reissnerEffondree", l:"Membrane de Reissner effondrée sur le plancher", b:"non datable",
+  { k:"reissnerEffondree", fv:"FOETO:PF.ORL-NOR-091", l:"Membrane de Reissner effondrée sur le plancher", b:"non datable",
     d:"décrite sur un cas normal", h:0, q:"mauvais",
     note:"« almost completely collapsed » sur une coupe donnée pour normale à 24 semaines (unité source)" },
-  { k:"blocDetruit", l:"Anneau tympanique, tympan et oreille moyenne absents en bloc", b:"non datable",
+  { k:"blocDetruit", fv:"FOETO:PF.ORL-NOR-080", l:"Anneau tympanique, tympan et oreille moyenne absents en bloc", b:"non datable",
     d:"signature de la coupe au ras interdite", h:0, q:"mauvais",
     note:"avant de conclure à une malformation majeure, exclure le geste : c'est exactement ce que produit " +
          "l'incision au ras de la face interne du temporal (§ prélèvement)" }
@@ -404,18 +409,18 @@ var GROUPES_SANS_ETENDUE = [C_CAE, C_MALF];
    c'est le paragraphe qui empêche de lire une normalité comme une maladie.
    Chacune vit dans le cadre dont elle mime un signe. */
 var VARIANTES = [
-  { k:"hem", g:C_PAROI,       l:"Hématopoïèse extramédullaire dans le mésenchyme de la caisse" },
+  { k:"hem", fv:"FOETO:PF.ORL-NOR-083", g:C_PAROI,       l:"Hématopoïèse extramédullaire dans le mésenchyme de la caisse" },
   { k:"debrisPeu", g:C_LUM,   l:"Faible quantité de débris amniotiques dans la caisse" },
-  { k:"keratineCae", g:C_CAE, l:"Kératine libre dans le conduit auditif externe" },
+  { k:"keratineCae", fv:"FOETO:PF.ORL-NOR-084", g:C_CAE, l:"Kératine libre dans le conduit auditif externe" },
   { k:"cilieCoins", g:C_PAROI, l:"Épithélium cilié pseudostratifié dans les coins et anfractuosités de la caisse" },
-  { k:"reticulum", g:C_COCH,  l:"Réticulum périlymphatique résiduel du vestibule ou des canaux semi-circulaires" },
-  { k:"maculeSansOtolithe", g:C_VEST, l:"Macule sans otolithe visible" },
-  { k:"cerumineusesImmatures", g:C_CAE, l:"Glandes cérumineuses immatures" },
-  { k:"sacFjord", g:C_VEST,   l:"Sac endolymphatique à paroi hérissée dans la dure-mère postérieure" },
-  { k:"tectoriale", g:C_COCH, l:"Membrane tectoriale conservée au-dessus d'un organe de Corti fragmenté" },
-  { k:"membraneInconnue", g:C_VEST, l:"Membrane fragmentée entre utricule et saccule, d'origine indéterminée" },
+  { k:"reticulum", fv:"FOETO:PF.ORL-NOR-092", g:C_COCH,  l:"Réticulum périlymphatique résiduel du vestibule ou des canaux semi-circulaires" },
+  { k:"maculeSansOtolithe", fv:"FOETO:PF.ORL-NOR-088", g:C_VEST, l:"Macule sans otolithe visible" },
+  { k:"cerumineusesImmatures", fv:"FOETO:PF.ORL-NOR-076", g:C_CAE, l:"Glandes cérumineuses immatures" },
+  { k:"sacFjord", fv:"FOETO:PF.ORL-NOR-094", g:C_VEST,   l:"Sac endolymphatique à paroi hérissée dans la dure-mère postérieure" },
+  { k:"tectoriale", fv:"FOETO:PF.ORL-NOR-087", g:C_COCH, l:"Membrane tectoriale conservée au-dessus d'un organe de Corti fragmenté" },
+  { k:"membraneInconnue", fv:"FOETO:PF.ORL-NOR-086", g:C_VEST, l:"Membrane fragmentée entre utricule et saccule, d'origine indéterminée" },
   { k:"liquideCaisse", g:C_LUM, l:"Caisse remplie de liquide amniotique" },
-  { k:"mucoRares", g:C_PAROI, l:"Quelques cellules muco-sécrétantes dans l'épithélium de la caisse" }
+  { k:"mucoRares", fv:"FOETO:PF.ORL-NOR-075", g:C_PAROI, l:"Quelques cellules muco-sécrétantes dans l'épithélium de la caisse" }
 ];
 
 /* ── Signes ───────────────────────────────────────────────────────────────────
@@ -432,14 +437,14 @@ var SIGNES = [
   { k:"anomAssociees", fiche:"[keeling, ch. 34]", g:C_HORS,
     l:"Anomalies associées : cardiovasculaires, fentes faciales, anophtalmie ou microphtalmie" },
   { k:"cmvAutre",      g:C_HORS, l:"Inclusions de type CMV sur un autre organe du même fœtus" },
-  { k:"hemoFossePost", fiche:"[ernst, ch. 31]", g:C_HORS, l:"Hémorragie sous-arachnoïdienne de la fosse postérieure documentée" },
+  { k:"hemoFossePost", fv:"FOETO:PF.ORL-VAS-017", fiche:"[ernst, ch. 31]", g:C_HORS, l:"Hémorragie sous-arachnoïdienne de la fosse postérieure documentée" },
   { k:"hemoIntracranienne", fv:"FOETO:PF.ORL-VAS-009", g:C_HORS },
   { k:"abruptio",      fiche:"[ernst, ch. 31]", g:C_HORS, l:"Décollement placentaire aigu documenté" },
   /* — Conduit auditif externe et tympan — la règle des annexes, le bouchon — */
   { k:"atresieCae",    fv:"FOETO:PF.ORL-MAL-096", g:C_CAE, mag:"faible" },
-  { k:"bouchonPersistant", fiche:"[ernst, ch. 31]", g:C_CAE, mag:"faible", l:"Bouchon méatique encore plein" },
-  { k:"tympanImmature", fiche:"[ernst, ch. 31]", g:C_CAE, mag:"moyen", l:"Membrane tympanique immature, plans conjonctifs peu développés" },
-  { k:"cerumineuseInterne", fiche:"[ernst, ch. 31]", g:C_CAE, mag:"moyen", l:"Glande cérumineuse dans la moitié INTERNE du conduit" },
+  { k:"bouchonPersistant", fv:"FOETO:PF.ORL-MAL-158", seul:true, fiche:"[ernst, ch. 31]", g:C_CAE, mag:"faible", l:"Bouchon méatique encore plein" },
+  { k:"tympanImmature", seul:true, fiche:"[ernst, ch. 31]", g:C_CAE, mag:"moyen", l:"Membrane tympanique immature, plans conjonctifs peu développés" },
+  { k:"cerumineuseInterne", fv:"FOETO:PF.ORL-MAL-159", fiche:"[ernst, ch. 31]", g:C_CAE, mag:"moyen", l:"Glande cérumineuse dans la moitié INTERNE du conduit" },
   { k:"glandeSudorale", fv:"FOETO:PF.ORL-MAL-097", g:C_CAE, mag:"moyen",
     meta:"absolu de la source : il n'y en a nulle part" },
   /* — Caisse et osselets — malformation — */
@@ -450,12 +455,12 @@ var SIGNES = [
   /* — Contenu de la caisse — le continuum amniotique, le sang — */
   { k:"debrisExces",   fiche:"[ernst, ch. 31]", g:C_LUM, mag:"faible", l:"Débris amniotiques en EXCÈS dans la caisse",
     meta:"seule la quantité porte l'information" },
-  { k:"nodulesPolypoides", fiche:"[ernst, ch. 31]", g:C_LUM, mag:"faible", l:"Nodules polypoïdes sur les osselets ou la paroi de la caisse",
+  { k:"nodulesPolypoides", fv:"FOETO:PF.ORL-MAL-160", fiche:"[ernst, ch. 31]", g:C_LUM, mag:"faible", l:"Nodules polypoïdes sur les osselets ou la paroi de la caisse",
     meta:"réaction à corps étranger — plus probable chez le nouveau-né que chez le fœtus" },
   { k:"hemoCaisse",    fv:"FOETO:PF.ORL-VAS-008", g:C_LUM, mag:"faible" },
   { k:"hyrtlOuverte",  fiche:"[ernst, ch. 31]", bloc:false, g:C_LUM, mag:"moyen", l:"Fissure de Hyrtl encore ouverte sur la coupe",
     meta:"se ferme à 24 semaines, unité source — présente avant, elle est normale" },
-  { k:"pnLumiere",     fiche:"[ernst, ch. 31]", g:C_LUM, mag:"moyen", l:"Polynucléaires dans la LUMIÈRE de la caisse",
+  { k:"pnLumiere",     fv:"FOETO:PF.ORL-INF-020", fiche:"[ernst, ch. 31]", g:C_LUM, mag:"moyen", l:"Polynucléaires dans la LUMIÈRE de la caisse",
     meta:"degré 4 du continuum, pas une otite" },
   { k:"germes",        fv:"FOETO:PF.ORL-INF-011", g:C_LUM, mag:"fort" },
   /* — Mésenchyme, muqueuse et os de la caisse — le seuil topographique — */
@@ -463,16 +468,16 @@ var SIGNES = [
     meta:"seuil de l'otite moyenne invasive — topographique, pas quantitatif" },
   { k:"metaplasieGlandes", fv:"FOETO:PF.ORL-MAL-098", g:C_PAROI, mag:"moyen",
     meta:"seule règle binaire du chapitre" },
-  { k:"cilieBosses",   fiche:"[ernst, ch. 31]", g:C_PAROI, mag:"moyen", l:"Épithélium cylindrique cilié pseudostratifié sur une BOSSE de mésenchyme",
+  { k:"cilieBosses",   fv:"FOETO:PF.ORL-MAL-161", fiche:"[ernst, ch. 31]", g:C_PAROI, mag:"moyen", l:"Épithélium cylindrique cilié pseudostratifié sur une BOSSE de mésenchyme",
     meta:"normal dans les creux, pas sur les reliefs" },
   { k:"hemAbondante",  fiche:"[ernst, ch. 31]", g:C_PAROI, mag:"moyen", l:"Hématopoïèse extramédullaire au-delà de l'abondance attendue" },
   { k:"infiltratMonomorphe", fiche:"[ernst, ch. 31]", g:C_PAROI, mag:"moyen", l:"Infiltrat cellulaire monomorphe inattendu dans la caisse ou le rocher" },
   { k:"mitoses",       g:C_PAROI, mag:"fort", l:"Mitoses nombreuses dans l'infiltrat" },
   /* — Cochlée — Corti, strie, rampes — */
   { k:"hemoLabyrinthe", fv:"FOETO:PF.ORL-VAS-010", g:C_COCH, mag:"faible" },
-  { k:"reticulumRampes", fiche:"[ernst, ch. 31]", g:C_COCH, mag:"moyen", l:"Réticulum périlymphatique persistant dans les RAMPES cochléaires",
+  { k:"reticulumRampes", terme:[14, null], fiche:"[ernst, ch. 31]", g:C_COCH, mag:"moyen", l:"Réticulum périlymphatique persistant dans les RAMPES cochléaires",
     meta:"les rampes en sont vides dès la 12e semaine post-fertilisation ; au-delà, la source ne dit rien" },
-  { k:"cortiImmature", fiche:"[ernst, ch. 31]", g:C_COCH, mag:"fort", l:"Organe de Corti immature : cellules ciliées indifférenciées, tunnel non ouvert",
+  { k:"cortiImmature", seul:true, fiche:"[ernst, ch. 31]", g:C_COCH, mag:"fort", l:"Organe de Corti immature : cellules ciliées indifférenciées, tunnel non ouvert",
     meta:"ne date rien sans la position de la coupe sur la spirale" },
   { k:"inclusionsStrie", fiche:"[ernst, ch. 31]", g:C_COCH, mag:"fort", l:"Inclusions virales dans la strie vasculaire" },
   /* — Vestibule, canaux et sac endolymphatique — */
@@ -534,7 +539,7 @@ var DIAGS = [
          "intraventricular, and subarachnoid hemorrhage is especially likely to be associated with severe " +
          "hemorrhage of the middle and inner ears »." },
 
-  { k:"malformation", l:"Malformation d'arc branchial ou de poche pharyngée", fv:"FOETO:PF.ORL-MAL-106", min:2,
+  { k:"malformation", l:"Malformation d'arc branchial ou de poche pharyngée", fv:["FOETO:PF.ORL-MAL-106","FOETO:PF.ORL-MAL-110"], min:2,
     signes:["atresieCae","osseletsMalformes","platineAnormale","caisseMalformee","microtie","anotie",
             "appendices","tubercule","oreillesBasses","anomAssociees"],
     stop:" — la source histologique ne donne AUCUNE description microscopique de malformation, seulement " +

@@ -386,11 +386,16 @@ var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
       RAPPORT entre deux cortex — et aucune source ouverte ne le donne par
       semaine. Le champ existe, la norme par terme n'existe pas. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 0 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 12 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 13 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "surrenales";
 var TITRE   = "surrénales fœtales";
 var SOURCE  = "fiche_surrenales.md";
 var MODULE  = "grille_surrenales";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -515,12 +520,12 @@ var RETENTION = [
          "definitive cortex » sur un fœtus dont la mort est estimée « less than 2 days » avant la " +
          "délivrance [ernst, ch. 37]. Conséquence : à ce stade la cytologie est encore lisible et le " +
          "rapport CF/CP ne l'est déjà plus — la glande est DATANTE MAIS NON MESURABLE" },
-  { k:"mulberry", l:"Masses basophiles sphérulaires intravasculaires (aspect en mûre)",
+  { k:"mulberry", fv:"FOETO:PF.END-NOR-088", l:"Masses basophiles sphérulaires intravasculaires (aspect en mûre)",
     b:"≈ 2–3 jours", d:"« usually apparent at 2–3 days after intrauterine death »", h:60, q:"moyen",
     note:"artefact de coloration des hématies, « basophilic masses apparently comprising multiple small " +
          "spherules, which are seen in fetal blood vessels » [keeling, ch. 15] — et collision de " +
          "vocabulaire : la calcification en mûre du syndrome néphrotique finlandais porte le même mot" },
-  { k:"debrisGranuleux", l:"Débris granuleux péri-surrénaliens", b:"—",
+  { k:"debrisGranuleux", fv:"FOETO:PF.END-NOR-083", l:"Débris granuleux péri-surrénaliens", b:"—",
     d:"artefact qui mime une colonisation bactérienne", h:0, q:"mauvais",
     note:"« Degeneration of soft tissues results in granular debris which may be mistaken for bacterial " +
          "colonisation » [keeling, ch. 15] ; le discriminant est « evidence of an inflammatory response " +
@@ -531,7 +536,7 @@ var RETENTION = [
     note:"« La surrénale a perdu toute sa basophilie nucléaire, on note de fréquentes et nombreuses " +
          "vacuoles claires dans le cytoplasme des fantômes cellulaires » [corpus CR] : chercher les " +
          "noyaux — la stéatose vraie en a" },
-  { k:"cerveauRefoule", l:"Masse à petites cellules dans le rétropéritoine", b:"—",
+  { k:"cerveauRefoule", fv:"FOETO:PF.END-NOR-079", l:"Masse à petites cellules dans le rétropéritoine", b:"—",
     d:"cerveau liquéfié refoulé — ne date rien", h:0, q:"mauvais",
     note:"« should not be confused with a neuroblastic tumor in the retroperitoneum » [ernst, ch. 37] — " +
          "se tranche en GFAP / CD56, pas à l'œil" },
@@ -613,10 +618,10 @@ var MESURE = {
   defLabel:"lisibilité du rapport CF/CP — à déclarer AVANT tout stade",
   optLabel:"axe médullaire, coté SÉPARÉMENT de l'axe cortical",
   defs:LISIBILITE, opts:MEDULLAIRE,
-  champs:[{ id:"cf",     label:"Part du cortex fœtal (%)",                min:0, max:100, step:1 },
-          { id:"cp",     label:"Épaisseur du cortex définitif (cellules)", min:0, max:100, step:1 },
-          { id:"poids",  label:"Poids combiné des surrénales (g)",        min:0, max:40,  step:0.01 },
-          { id:"nodule", label:"Plus grand nodule neuroblastique (mm)",   min:0, max:50,  step:0.1 }]
+  champs:[{ id:"cf",     fv:"FOETO:PF.END-NOR-072", label:"Part du cortex fœtal (%)",                min:0, max:100, step:1 },
+          { id:"cp",     fv:"FOETO:PF.END-NOR-071", label:"Épaisseur du cortex définitif (cellules)", min:0, max:100, step:1 },
+          { id:"poids",  fv:"FOETO:PF.END-NOR-073", label:"Poids combiné des surrénales (g)",        min:0, max:40,  step:0.01 },
+          { id:"nodule", fv:"FOETO:PF.END-NOR-076", label:"Plus grand nodule neuroblastique (mm)",   min:0, max:50,  step:0.1 }]
 };
 
 function verdictMesure(){
@@ -783,11 +788,11 @@ var CADRES = [
    explicitement désignées comme non pathologiques par les sources. Chacune vit
    dans le cadre dont elle mime un signe. */
 var VARIANTES = [
-  { k:"nodulesPeri", g:"Les deux cortex — hypoplasie, hyperplasie", l:"Nodules corticaux péri-surrénaliens — « frequently seen adjacent to the adrenal gland and are generally not considered to represent an abnormality »" },
-  { k:"heterotopie", g:"Contexte hors lame — autres organes, clinique, geste", l:"Hétérotopie surrénalienne à distance (gonades, épididyme, foie) — « usually consists only of cortical tissue »" },
-  { k:"neuroIsoles", g:"Médullaire et amas neuroblastiques", l:"Cellules neuroblastiques isolées dans le cortex fœtal — « throughout fetal life and even into the neonatal period »" },
+  { k:"nodulesPeri", fv:"FOETO:PF.END-NOR-090", g:"Les deux cortex — hypoplasie, hyperplasie", l:"Nodules corticaux péri-surrénaliens — « frequently seen adjacent to the adrenal gland and are generally not considered to represent an abnormality »" },
+  { k:"heterotopie", fv:"FOETO:PF.END-MAL-021", g:"Contexte hors lame — autres organes, clinique, geste", l:"Hétérotopie surrénalienne à distance (gonades, épididyme, foie) — « usually consists only of cortical tissue »" },
+  { k:"neuroIsoles", fv:"FOETO:PF.END-NOR-089", g:"Médullaire et amas neuroblastiques", l:"Cellules neuroblastiques isolées dans le cortex fœtal — « throughout fetal life and even into the neonatal period »" },
   { k:"nodulesTerme", g:"Médullaire et amas neuroblastiques", l:"Nodules neuroblastiques persistant au terme — « deep groups are seen throughout gestation »" },
-  { k:"adenoide", g:"Les deux cortex — hypoplasie, hyperplasie", l:"Aspect adénoïde / pseudo-folliculaire du cortex définitif — « may represent a normal developmental process, especially in very immature fetuses »" },
+  { k:"adenoide", fv:"FOETO:PF.END-MAL-113", g:"Les deux cortex — hypoplasie, hyperplasie", l:"Aspect adénoïde / pseudo-folliculaire du cortex définitif — « may represent a normal developmental process, especially in very immature fetuses »" },
   { k:"hematopoiese", g:"Infection et inflammation", l:"Foyers d'hématopoïèse — « Foci of hemopoietic activity may be present in the adrenals of infants with no clinical evidence of increased hemopoiesis »" },
   { k:"lobulees", g:"Contexte hors lame — macro et pesée des surrénales", l:"« Surrénales lobulées » — décrites telles quelles en macro, sans commentaire lésionnel" },
   { k:"medullairePetite", g:"Médullaire et amas neuroblastiques", l:"Médullaire peu développée — « La médullosurrénale reste peu développée pendant la vie fœtale »" },
@@ -813,7 +818,7 @@ var SIGNES = [
     meta:"surrénale en galette, glande aplatie" },
   { k:"poidsBas", fv:"FOETO:PF.END-MAL-101", g:"Contexte hors lame — macro et pesée des surrénales",
     meta:"poids en dessous du repère, glande pesée — « the glands typically weigh only 10 % of normal at term » ; la vraie hypoplasie se pèse avant de se voir" },
-  { k:"poidsNormal", bloc:false, fiche:"[soffoet, ch. 8]", g:"Contexte hors lame — macro et pesée des surrénales",
+  { k:"poidsNormal", fv:"FOETO:PF.END-NOR-111", bloc:false, fiche:"[soffoet, ch. 8]", g:"Contexte hors lame — macro et pesée des surrénales",
     l:"Poids normal malgré une forme anormale",
     meta:"« mais leur poids reste normal » — une galette ne se conclut pas hypoplasie" },
   /* — Contexte hors lame — autres organes, clinique, geste — */
@@ -821,9 +826,9 @@ var SIGNES = [
     l:"Agénésie rénale homolatérale ou bilatérale" },
   { k:"snc", fv:"FOETO:PF.END-MAL-091", g:"Contexte hors lame — autres organes, clinique, geste",
     meta:"anomalie du SNC constatée (anencéphalie, NTD)" },
-  { k:"sncNormal", bloc:false, fiche:"[keeling, ch. 26] [soffoet, ch. 8]", g:"Contexte hors lame — autres organes, clinique, geste",
+  { k:"sncNormal", fv:"FOETO:PF.END-NOR-112", bloc:false, fiche:"[keeling, ch. 26] [soffoet, ch. 8]", g:"Contexte hors lame — autres organes, clinique, geste",
     l:"Examen du SNC normal malgré une glande minuscule" },
-  { k:"atteinteMultiorgane", fiche:"[soffoet, ch. 8]", g:"Contexte hors lame — autres organes, clinique, geste",
+  { k:"atteinteMultiorgane", fv:"FOETO:PF.END-MET-011", fiche:"[soffoet, ch. 8]", g:"Contexte hors lame — autres organes, clinique, geste",
     l:"Même surcharge retrouvée sur un autre organe (foie, cellules de Leydig)",
     meta:"« L'atteinte multi-organe est le critère » — rien de chiffré dans les sources" },
   { k:"ambiguite", fv:"FOETO:PF.END-MAL-090", g:"Contexte hors lame — autres organes, clinique, geste",
@@ -841,9 +846,9 @@ var SIGNES = [
     meta:"cortex PERMANENT « pratiquement absent » — « The DZ fails to develop »" },
   { k:"cfEtCpReduits", fv:"FOETO:PF.END-MAL-095", g:"Les deux cortex — hypoplasie, hyperplasie", mag:"faible",
     meta:"« both the FZ and DZ are severely reduced or absent »" },
-  { k:"cortexDesorganise", fiche:"[keeling, ch. 26]", g:"Les deux cortex — hypoplasie, hyperplasie", mag:"faible",
+  { k:"cortexDesorganise", fv:"FOETO:PF.END-MAL-147", fiche:"[keeling, ch. 26]", g:"Les deux cortex — hypoplasie, hyperplasie", mag:"faible",
     l:"« the adrenal cortex to be disorganized »" },
-  { k:"cortexEpais", fiche:"[soffoet, ch. 8]", g:"Les deux cortex — hypoplasie, hyperplasie", mag:"faible",
+  { k:"cortexEpais", fv:"FOETO:PF.END-MAL-148", fiche:"[soffoet, ch. 8]", g:"Les deux cortex — hypoplasie, hyperplasie", mag:"faible",
     l:"Cortex épais avec « l'architecture générale est conservée »" },
   { k:"hyperplasieNodulaire", fv:"FOETO:PF.END-MAL-015", g:"Les deux cortex — hypoplasie, hyperplasie", mag:"faible",
     meta:"« nodular hyperplasia of the cortex » avec cellules compactes qui « stream outward toward the surface » — divergence avec soffoet, qui décrit au contraire une architecture conservée — non tranchée" },
@@ -862,7 +867,7 @@ var SIGNES = [
     meta:"siège de l'hémorragie de fœticide et de l'hémorragie « habituelle » du corpus — disqualifiée par défaut" },
   { k:"hemoSousCapsulaire", fv:"FOETO:PF.END-VAS-002", g:"Hémorragie, nécrose, calcification", mag:"faible",
     meta:"hémorragie « subcapsular or predominantly periadrenal »" },
-  { k:"unilateral", fiche:"[keeling, ch. 26]", g:"Hémorragie, nécrose, calcification", mag:"faible",
+  { k:"unilateral", fv:"FOETO:PF.END-VAS-004", fiche:"[keeling, ch. 26]", g:"Hémorragie, nécrose, calcification", mag:"faible",
     l:"Atteinte hémorragique UNILATÉRALE",
     meta:"« often unilateral » — vaut pour le contexte obstétrical comme pour le geste" },
   { k:"necroseGlandulaire", fv:"FOETO:PF.END-MAL-097", g:"Hémorragie, nécrose, calcification", mag:"faible",
@@ -871,15 +876,15 @@ var SIGNES = [
     meta:"« Diffuse necrosis with hemorrhage is typical of echovirus infection »" },
   { k:"calcifInterne", fv:"FOETO:PF.END-MAL-003", g:"Hémorragie, nécrose, calcification", mag:"faible",
     meta:"calcifications de la corticale interne et de la médullaire — « the outer cortex being well preserved » ; « This dystrophic calcification can be apparent as early as 9 days post hemorrhage »" },
-  { k:"calcifMure", fiche:"[keeling, ch. 26]", g:"Hémorragie, nécrose, calcification", mag:"moyen",
+  { k:"calcifMure", fv:"FOETO:PF.END-VAS-005", fiche:"[keeling, ch. 26]", g:"Hémorragie, nécrose, calcification", mag:"moyen",
     l:"Calcification en mûre — « an unusual mulberry shape »",
     meta:"forme du syndrome néphrotique congénital finlandais, à ne pas confondre avec les mulberry-like bodies de macération" },
 
   /* — Médullaire et amas neuroblastiques — */
-  { k:"nodulesCentraux", bloc:false, fiche:"[ernst, ch. 20]", g:"Médullaire et amas neuroblastiques", mag:"faible",
+  { k:"nodulesCentraux", fv:"FOETO:PF.END-NOR-113", bloc:false, fiche:"[ernst, ch. 20]", g:"Médullaire et amas neuroblastiques", mag:"faible",
     l:"Amas neuroblastiques centraux, autour des veines médullaires",
     meta:"attendus chez tous les fœtus vers 16–20 SA ; une coupe périphérique ne les montre pas" },
-  { k:"nodulePlus35", auto:function(){ var n = E.mesure.v.nodule; return n == null ? null : n > 3.5; },
+  { k:"nodulePlus35", fv:"FOETO:PF.END-NOR-114", auto:function(){ var n = E.mesure.v.nodule; return n == null ? null : n > 3.5; },
     fiche:"[keeling, ch. 26]", g:"Médullaire et amas neuroblastiques", mag:"faible",
     l:"Nodule dépassant 3,5 mm",
     meta:"« typically measuring less than 3,5 mm in maximum size » — seule borne qui sépare l'incidentel du reste ; déduit du plus grand nodule saisi en Maturation" },
@@ -891,7 +896,7 @@ var SIGNES = [
     meta:"peut être du cerveau liquéfié refoulé — « should not be confused with a neuroblastic tumor in the retroperitoneum »" },
   { k:"amasDenses", bloc:false, fv:"FOETO:PF.END-NOR-091", g:"Médullaire et amas neuroblastiques", mag:"moyen",
     meta:"« unencapsulated groups of densely packed cells with high nuclear/cytoplasmic ratios » — normaux à leur âge" },
-  { k:"rosettes", fiche:"[keeling, ch. 26]", g:"Médullaire et amas neuroblastiques", mag:"moyen",
+  { k:"rosettes", fv:"FOETO:PF.END-MAL-149", fiche:"[keeling, ch. 26]", g:"Médullaire et amas neuroblastiques", mag:"moyen",
     l:"« Some are quite large aggregates with rosette formation »" },
   { k:"medullaireMature", fv:"FOETO:PF.END-MAL-096", g:"Médullaire et amas neuroblastiques", mag:"moyen",
     meta:"médullaire « un peu plus mature pour l'âge, avec des phéochromocytes bien visibles » ; paradoxe de l'anencéphalie — la médullaire peut être en avance quand le cortex est en retard" },
@@ -921,10 +926,10 @@ var SIGNES = [
   /* — Cytomégalie du cortex fœtal : trois choses portent ce mot (§ 8.d-1) — */
   { k:"plurifocal", fiche:"[corpus CR]", g:"Cytomégalie du cortex fœtal", mag:"moyen",
     l:"Atteinte plurifocale du cortex fœtal" },
-  { k:"taille3a4", fiche:"[soffoet, ch. 8]", g:"Cytomégalie du cortex fœtal", mag:"moyen",
+  { k:"taille3a4", fv:"FOETO:PF.END-MAL-150", fiche:"[soffoet, ch. 8]", g:"Cytomégalie du cortex fœtal", mag:"moyen",
     l:"Cellules « 3 à 4 fois plus volumineuses que la moyenne »",
     meta:"seule valeur chiffrée disponible pour cette lésion" },
-  { k:"cytomegalieEosino", fiche:"[keeling, ch. 26]", g:"Cytomégalie du cortex fœtal", mag:"moyen",
+  { k:"cytomegalieEosino", fv:"FOETO:PF.END-MAL-151", fiche:"[keeling, ch. 26]", g:"Cytomégalie du cortex fœtal", mag:"moyen",
     l:"« marked cytomegaly of intensely eosinophilic FZ cortical cells »" },
   { k:"noyauxGeants", fv:"FOETO:PF.END-MAL-006", g:"Cytomégalie du cortex fœtal", mag:"fort",
     meta:"« nuclear gigantism » avec « occasional nuclear pseudoinclusions » — gros noyaux ; à noyaux de taille normale, c'est le cytoplasme vitreux" },
@@ -947,7 +952,7 @@ var SIGNES = [
     meta:"« kyste (cellule ballonnisée), à distance de l'infiltrat inflammatoire »" },
   { k:"inclusionsVraies", fv:"FOETO:PF.END-MAL-027", g:"Infection et inflammation", mag:"fort",
     meta:"inclusions « nucléaires et cytoplasmiques, spécifiques » de ce virus — vraies inclusions ≠ pseudo-inclusions ; elles survivent à la macération" },
-  { k:"gramPositif", fiche:"[soffoet, ch. 8]", g:"Infection et inflammation", mag:"technique",
+  { k:"gramPositif", fv:"FOETO:PF.END-MAL-152", fiche:"[soffoet, ch. 8]", g:"Infection et inflammation", mag:"technique",
     l:"Bâtonnets Gram (+) vus sur la coupe",
     meta:"« rarement visibles » sur les coupes histologiques — un Gram négatif n'exclut pas" }
 ];
@@ -1090,7 +1095,7 @@ var DIAGS = [
          "la vraie bactériémie étant « very dense and predominantly limited to vessels ». Un Gram négatif " +
          "n'exclut rien : les bacilles sont « rarement visibles » sur les coupes." },
 
-  { k:"dViral", l:"Aspect évocateur d'une infection virale", fv:"FOETO:PF.END-INF-006", cle:"inclusionsVraies", min:2,
+  { k:"dViral", l:"Aspect évocateur d'une infection virale", fv:["FOETO:PF.END-INF-006","FOETO:PF.END-INF-007"], cle:"inclusionsVraies", min:2,
     signes:["inclusionsVraies","necroseMultifocale","infiltrat","kysteToxo","calcifInterne","necroseDiffuseHemo"],
     stop:" — une surrénale à inclusions sans infiltrat n'exclut rien, la réaction inflammatoire venant dans " +
          "un second temps. Ne pas nommer l'agent sur la seule morphologie ; le kyste toxoplasmique et " +
@@ -1509,8 +1514,8 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 }
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
-var FOETO = {"sections":[],"formes":{"FOETO:PF.END-MAL-002":["Absence du cortex permanent surrénalien"],"FOETO:PF.END-MAL-102":["Adrénoleucodystrophie néonatale"],"FOETO:PF.END-MAL-090":["Ambiguïté génitale d'un fœtus 46,XX"],"FOETO:PF.END-MAL-091":["Anencéphalie / anomalie de fermeture du tube neural"],"FOETO:PF.END-MAL-113":["Aspect adénoïde / pseudo-folliculaire du cortex définitif"],"FOETO:PF.END-NOR-078":["Blue blobs, basophilic dust, yellow starbursts péri-viscéraux"],"FOETO:PF.END-MAL-003":["Calcifications surrénaliennes"],"FOETO:PF.END-MAL-092":["Cellules corticales d'aspect ballonnisé"],"FOETO:PF.END-MET-004":["Cellules lipidiques de la zone fasciculée très réduites"],"FOETO:PF.END-NOR-089":["Cellules neuroblastiques isolées ou en petits groupes dans le cortex fœtal"],"FOETO:PF.END-NOR-079":["Cerveau liquéfié refoulé dans le rétropéritoine"],"FOETO:PF.END-NOR-081":["Cortex définitif sous-capsulaire : cellules polygonales à noyau rond, cytoplasme rare"],"FOETO:PF.END-NOR-082":["Cortex fœtal en colonnes séparées par des sinusoïdes (CD31)"],"FOETO:PF.END-MAL-095":["Cortex fœtal et cortex définitif tous deux très réduits ou absents"],"FOETO:PF.END-NOR-080":["Cortex fœtal pauvre en lipide à l'état normal"],"FOETO:PF.END-MAL-093":["Cortex fœtal pratiquement absent"],"FOETO:PF.END-MAL-006":["Cytomégalie du cortex fœtal surrénalien"],"FOETO:PF.END-MAL-094":["Cytomégalie à cytoplasme vitreux abondant et noyaux de taille normale"],"FOETO:PF.END-NOR-084":["Destruction tissulaire accélérée d'un organe abdominal après KCl de fœticide"],"FOETO:PF.END-MAL-098":["Disparition de l'architecture générale du cortex fœtal"],"FOETO:PF.END-NOR-083":["Débris granuleux péri-surrénaliens de macération"],"FOETO:PF.END-MET-003":["Dépôts de lipide et de cholestérol dans des surrénales hyperplasiques"],"FOETO:PF.END-NOR-085":["Foyers d'hématopoïèse surrénaliens"],"FOETO:PF.END-MAL-101":["Glandes très hypoplasiques pesées (≈ 10 % du normal au terme)"],"FOETO:PF.END-MAL-104":["Hyperplasie congénitale des surrénales"],"FOETO:PF.END-MAL-013":["Hyperplasie du cortex permanent surrénalien"],"FOETO:PF.END-MAL-015":["Hyperplasie nodulaire corticosurrénalienne"],"FOETO:PF.END-MAL-019":["Hypoplasie du cortex fœtal surrénalien"],"FOETO:PF.END-MAL-106":["Hypoplasie idiopathique, forme « anencéphalique »"],"FOETO:PF.END-MAL-108":["Hypoplasie partielle du cortex fœtal (trisomie 18, RCIU sévère, hypoxie / toxémie, triploïdie)"],"FOETO:PF.END-MAL-105":["Hypoplasie surrénalienne autosomique récessive (hypoadrénocorticisme familial)"],"FOETO:PF.END-MAL-020":["Hypoplasie surrénalienne congénitale cytomégalique"],"FOETO:PF.END-MAL-107":["Hypoplasie surrénalienne de forme « miniature »"],"FOETO:PF.END-MAL-109":["Hypoplasie surrénalienne secondaire (anencéphalie / anomalie du tube neural)"],"FOETO:PF.END-VAS-001":["Hémorragie du cortex fœtal"],"FOETO:PF.END-NOR-086":["Hémorragie du cortex fœtal pendant son involution"],"FOETO:PF.END-VAS-002":["Hémorragie sous-capsulaire ou péri-surrénalienne"],"FOETO:PF.END-VAS-003":["Hémorragie surrénalienne"],"FOETO:PF.END-MAL-021":["Hétérotopie surrénalienne"],"FOETO:PF.END-MAL-022":["Inclusions lamellaires dans les cellules corticosurrénaliennes"],"FOETO:PF.END-MAL-027":["Inclusions virales nucléaires et cytoplasmiques à CMV dans la surrénale"],"FOETO:PF.END-INF-006":["Infection congénitale à cytomégalovirus"],"FOETO:PF.END-INF-008":["Infection herpétique"],"FOETO:PF.END-INF-007":["Infection à échovirus"],"FOETO:PF.END-MAL-028":["Infiltrat inflammatoire surrénalien"],"FOETO:PF.END-MAL-033":["Kyste à toxoplasme dans la surrénale"],"FOETO:PF.END-INF-009":["Listériose"],"FOETO:PF.END-MAL-111":["Maladie de Wolman"],"FOETO:PF.END-NOR-088":["Masses basophiles sphérulaires intravasculaires (mulberry-like bodies)"],"FOETO:PF.END-MAL-035":["Microabcès listériens surrénaliens"],"FOETO:PF.END-MAL-110":["Mode de décès chronique (intervalle d'au moins 3 semaines)"],"FOETO:PF.END-NOR-087":["Médullaire peu développée, amas épars de cellules chromaffines"],"FOETO:PF.END-MAL-096":["Médullaire plus mature que le cortex pour l'âge"],"FOETO:PF.END-TUM-001":["Neuroblastome congénital"],"FOETO:PF.END-TUM-002":["Neuroblastome in situ"],"FOETO:PF.END-NOR-091":["Nodules neuroblastiques non encapsulés, cellules denses à haut rapport N/C"],"FOETO:PF.END-MAL-039":["Nécrose corticale multifocale surrénalienne"],"FOETO:PF.END-MAL-041":["Nécrose diffuse avec hémorragie de la surrénale"],"FOETO:PF.END-MAL-097":["Nécrose glandulaire étendue associée à l'hémorragie"],"FOETO:PF.END-NOR-072":["Part du cortex fœtal dans l'épaisseur / le volume cortical"],"FOETO:PF.END-NOR-090":["Petits nodules corticaux adjacents à la glande"],"FOETO:PF.END-NOR-074":["Poids d'une tumeur corticosurrénalienne"],"FOETO:PF.END-NOR-073":["Poids des surrénales rapporté au terme"],"FOETO:PF.END-NOR-075":["Rapport surrénale / rein"],"FOETO:PF.END-MAL-051":["Stéatose du cortex surrénalien"],"FOETO:PF.END-MAL-052":["Surcharge en esters de cholestérol dans les cellules surrénaliennes"],"FOETO:PF.END-MAL-053":["Surcharge lipidique striée du cortex surrénalien"],"FOETO:PF.END-MAL-054":["Surrénale en galette (aplatie)"],"FOETO:PF.END-MAL-100":["Surrénales anormalement petites et blanches"],"FOETO:PF.END-MAL-099":["Surrénales très augmentées de volume, cérébriformes, à tranche brune"],"FOETO:PF.END-MAL-103":["Syndrome de Beckwith-Wiedemann"],"FOETO:PF.END-MAL-112":["Syndrome de Zellweger"],"FOETO:PF.END-NOR-076":["Taille maximale du plus grand nodule neuroblastique"],"FOETO:PF.END-NOR-077":["Taille nucléaire des neuroblastes"],"FOETO:PF.END-INF-010":["Toxoplasmose congénitale"],"FOETO:PF.END-TUM-003":["Tumeur corticosurrénalienne"],"FOETO:PF.END-NOR-092":["Zone transitionnelle en cordons serrés à la partie externe du cortex fœtal"],"FOETO:PF.END-NOR-071":["Épaisseur du cortex définitif en nombre de cellules"]}};
-var FOETOV = {"FOETO:PF.END-MAL-003":{"l":"Calcifications surrénaliennes","hpo":"HP:0010512"},"FOETO:PF.END-NOR-085":{"l":"Foyers d'hématopoïèse surrénaliens","hpo":null},"FOETO:PF.END-MAL-052":{"l":"Surcharge en esters de cholestérol dans les cellules surrénaliennes","hpo":null},"FOETO:PF.END-MAL-105":{"l":"Hypoplasie surrénalienne autosomique récessive (hypoadrénocorticisme familial)","hpo":null},"FOETO:PF.END-NOR-091":{"l":"Nodules neuroblastiques non encapsulés, cellules denses à haut rapport N/C","hpo":null},"FOETO:PF.END-MAL-107":{"l":"Hypoplasie surrénalienne de forme « miniature »","hpo":null},"FOETO:PF.END-MAL-013":{"l":"Hyperplasie du cortex permanent surrénalien","hpo":null},"FOETO:PF.END-MAL-098":{"l":"Disparition de l'architecture générale du cortex fœtal","hpo":null},"FOETO:PF.END-MAL-112":{"l":"Syndrome de Zellweger","hpo":null},"FOETO:PF.END-MAL-027":{"l":"Inclusions virales nucléaires et cytoplasmiques à CMV dans la surrénale","hpo":null},"FOETO:PF.END-MET-003":{"l":"Dépôts de lipide et de cholestérol dans des surrénales hyperplasiques","hpo":null},"FOETO:PF.END-MAL-051":{"l":"Stéatose du cortex surrénalien","hpo":null},"FOETO:PF.END-MAL-104":{"l":"Hyperplasie congénitale des surrénales","hpo":"HP:0008258"},"FOETO:PF.END-MAL-091":{"l":"Anencéphalie / anomalie de fermeture du tube neural","hpo":null},"FOETO:PF.END-MAL-109":{"l":"Hypoplasie surrénalienne secondaire (anencéphalie / anomalie du tube neural)","hpo":null},"FOETO:PF.END-INF-009":{"l":"Listériose","hpo":null},"FOETO:PF.END-MAL-041":{"l":"Nécrose diffuse avec hémorragie de la surrénale","hpo":null},"FOETO:PF.END-MAL-006":{"l":"Cytomégalie du cortex fœtal surrénalien","hpo":"HP:0008186"},"FOETO:PF.END-MAL-022":{"l":"Inclusions lamellaires dans les cellules corticosurrénaliennes","hpo":null},"FOETO:PF.END-MAL-020":{"l":"Hypoplasie surrénalienne congénitale cytomégalique","hpo":"HP:0000835"},"FOETO:PF.END-MAL-096":{"l":"Médullaire plus mature que le cortex pour l'âge","hpo":null},"FOETO:PF.END-INF-008":{"l":"Infection herpétique","hpo":null},"FOETO:PF.END-MAL-039":{"l":"Nécrose corticale multifocale surrénalienne","hpo":null},"FOETO:PF.END-INF-010":{"l":"Toxoplasmose congénitale","hpo":null},"FOETO:PF.END-MAL-095":{"l":"Cortex fœtal et cortex définitif tous deux très réduits ou absents","hpo":null},"FOETO:PF.END-VAS-001":{"l":"Hémorragie du cortex fœtal","hpo":null},"FOETO:PF.END-VAS-003":{"l":"Hémorragie surrénalienne","hpo":null},"FOETO:PF.END-MAL-111":{"l":"Maladie de Wolman","hpo":null},"FOETO:PF.END-MAL-015":{"l":"Hyperplasie nodulaire corticosurrénalienne","hpo":null},"FOETO:PF.END-MAL-019":{"l":"Hypoplasie du cortex fœtal surrénalien","hpo":null},"FOETO:PF.END-MET-004":{"l":"Cellules lipidiques de la zone fasciculée très réduites","hpo":null},"FOETO:PF.END-MAL-033":{"l":"Kyste à toxoplasme dans la surrénale","hpo":null},"FOETO:PF.END-MAL-097":{"l":"Nécrose glandulaire étendue associée à l'hémorragie","hpo":null},"FOETO:PF.END-MAL-094":{"l":"Cytomégalie à cytoplasme vitreux abondant et noyaux de taille normale","hpo":null},"FOETO:PF.END-MAL-053":{"l":"Surcharge lipidique striée du cortex surrénalien","hpo":null},"FOETO:PF.END-TUM-001":{"l":"Neuroblastome congénital","hpo":null},"FOETO:PF.END-MAL-093":{"l":"Cortex fœtal pratiquement absent","hpo":null},"FOETO:PF.END-MAL-092":{"l":"Cellules corticales d'aspect ballonnisé","hpo":null},"FOETO:PF.END-MAL-090":{"l":"Ambiguïté génitale d'un fœtus 46,XX","hpo":null},"FOETO:PF.END-MAL-102":{"l":"Adrénoleucodystrophie néonatale","hpo":null},"FOETO:PF.END-MAL-106":{"l":"Hypoplasie idiopathique, forme « anencéphalique »","hpo":null},"FOETO:PF.END-MAL-099":{"l":"Surrénales très augmentées de volume, cérébriformes, à tranche brune","hpo":null},"FOETO:PF.END-MAL-101":{"l":"Glandes très hypoplasiques pesées (≈ 10 % du normal au terme)","hpo":null},"FOETO:PF.END-MAL-054":{"l":"Surrénale en galette (aplatie)","hpo":null},"FOETO:PF.END-VAS-002":{"l":"Hémorragie sous-capsulaire ou péri-surrénalienne","hpo":null},"FOETO:PF.END-MAL-035":{"l":"Microabcès listériens surrénaliens","hpo":null},"FOETO:PF.END-INF-006":{"l":"Infection congénitale à cytomégalovirus","hpo":null},"FOETO:PF.END-MAL-028":{"l":"Infiltrat inflammatoire surrénalien","hpo":null},"FOETO:PF.END-MAL-100":{"l":"Surrénales anormalement petites et blanches","hpo":null},"FOETO:PF.END-MAL-002":{"l":"Absence du cortex permanent surrénalien","hpo":null}};
+var FOETO = {"sections":[],"formes":{"FOETO:PF.END-MAL-002":["Absence du cortex permanent surrénalien"],"FOETO:PF.END-MAL-102":["Adrénoleucodystrophie néonatale"],"FOETO:PF.END-NOR-113":["Amas neuroblastiques centraux, autour des veines médullaires"],"FOETO:PF.END-MAL-090":["Ambiguïté génitale d'un fœtus 46,XX"],"FOETO:PF.END-MAL-091":["Anencéphalie / anomalie de fermeture du tube neural"],"FOETO:PF.END-MAL-113":["Aspect adénoïde / pseudo-folliculaire du cortex définitif"],"FOETO:PF.END-VAS-004":["Atteinte hémorragique UNILATÉRALE"],"FOETO:PF.END-NOR-078":["Blue blobs, basophilic dust, yellow starbursts péri-viscéraux"],"FOETO:PF.END-MAL-152":["Bâtonnets Gram (+) vus sur la coupe"],"FOETO:PF.END-VAS-005":["Calcification en mûre — « an unusual mulberry shape »"],"FOETO:PF.END-MAL-003":["Calcifications surrénaliennes"],"FOETO:PF.END-MAL-092":["Cellules corticales d'aspect ballonnisé"],"FOETO:PF.END-MET-004":["Cellules lipidiques de la zone fasciculée très réduites"],"FOETO:PF.END-NOR-089":["Cellules neuroblastiques isolées ou en petits groupes dans le cortex fœtal"],"FOETO:PF.END-MAL-150":["Cellules « 3 à 4 fois plus volumineuses que la moyenne »"],"FOETO:PF.END-NOR-079":["Cerveau liquéfié refoulé dans le rétropéritoine"],"FOETO:PF.END-NOR-081":["Cortex définitif sous-capsulaire : cellules polygonales à noyau rond, cytoplasme rare"],"FOETO:PF.END-NOR-082":["Cortex fœtal en colonnes séparées par des sinusoïdes (CD31)"],"FOETO:PF.END-MAL-095":["Cortex fœtal et cortex définitif tous deux très réduits ou absents"],"FOETO:PF.END-NOR-080":["Cortex fœtal pauvre en lipide à l'état normal"],"FOETO:PF.END-MAL-093":["Cortex fœtal pratiquement absent"],"FOETO:PF.END-MAL-148":["Cortex épais avec « l'architecture générale est conservée »"],"FOETO:PF.END-MAL-006":["Cytomégalie du cortex fœtal surrénalien"],"FOETO:PF.END-MAL-094":["Cytomégalie à cytoplasme vitreux abondant et noyaux de taille normale"],"FOETO:PF.END-NOR-084":["Destruction tissulaire accélérée d'un organe abdominal après KCl de fœticide"],"FOETO:PF.END-MAL-098":["Disparition de l'architecture générale du cortex fœtal"],"FOETO:PF.END-NOR-083":["Débris granuleux péri-surrénaliens de macération"],"FOETO:PF.END-MET-003":["Dépôts de lipide et de cholestérol dans des surrénales hyperplasiques"],"FOETO:PF.END-NOR-112":["Examen du SNC normal malgré une glande minuscule"],"FOETO:PF.END-NOR-085":["Foyers d'hématopoïèse surrénaliens"],"FOETO:PF.END-MAL-101":["Glandes très hypoplasiques pesées (≈ 10 % du normal au terme)"],"FOETO:PF.END-MAL-104":["Hyperplasie congénitale des surrénales"],"FOETO:PF.END-MAL-013":["Hyperplasie du cortex permanent surrénalien"],"FOETO:PF.END-MAL-015":["Hyperplasie nodulaire corticosurrénalienne"],"FOETO:PF.END-MAL-019":["Hypoplasie du cortex fœtal surrénalien"],"FOETO:PF.END-MAL-106":["Hypoplasie idiopathique, forme « anencéphalique »"],"FOETO:PF.END-MAL-108":["Hypoplasie partielle du cortex fœtal (trisomie 18, RCIU sévère, hypoxie / toxémie, triploïdie)"],"FOETO:PF.END-MAL-105":["Hypoplasie surrénalienne autosomique récessive (hypoadrénocorticisme familial)"],"FOETO:PF.END-MAL-020":["Hypoplasie surrénalienne congénitale cytomégalique"],"FOETO:PF.END-MAL-107":["Hypoplasie surrénalienne de forme « miniature »"],"FOETO:PF.END-MAL-109":["Hypoplasie surrénalienne secondaire (anencéphalie / anomalie du tube neural)"],"FOETO:PF.END-VAS-001":["Hémorragie du cortex fœtal"],"FOETO:PF.END-NOR-086":["Hémorragie du cortex fœtal pendant son involution"],"FOETO:PF.END-VAS-002":["Hémorragie sous-capsulaire ou péri-surrénalienne"],"FOETO:PF.END-VAS-003":["Hémorragie surrénalienne"],"FOETO:PF.END-MAL-021":["Hétérotopie surrénalienne"],"FOETO:PF.END-MAL-022":["Inclusions lamellaires dans les cellules corticosurrénaliennes"],"FOETO:PF.END-MAL-027":["Inclusions virales nucléaires et cytoplasmiques à CMV dans la surrénale"],"FOETO:PF.END-INF-006":["Infection congénitale à cytomégalovirus"],"FOETO:PF.END-INF-008":["Infection herpétique"],"FOETO:PF.END-INF-007":["Infection à échovirus"],"FOETO:PF.END-MAL-028":["Infiltrat inflammatoire surrénalien"],"FOETO:PF.END-MAL-033":["Kyste à toxoplasme dans la surrénale"],"FOETO:PF.END-INF-009":["Listériose"],"FOETO:PF.END-MAL-111":["Maladie de Wolman"],"FOETO:PF.END-NOR-088":["Masses basophiles sphérulaires intravasculaires (mulberry-like bodies)"],"FOETO:PF.END-MAL-035":["Microabcès listériens surrénaliens"],"FOETO:PF.END-MAL-110":["Mode de décès chronique (intervalle d'au moins 3 semaines)"],"FOETO:PF.END-NOR-087":["Médullaire peu développée, amas épars de cellules chromaffines"],"FOETO:PF.END-MAL-096":["Médullaire plus mature que le cortex pour l'âge"],"FOETO:PF.END-MET-011":["Même surcharge retrouvée sur un autre organe (foie, cellules de Leydig)"],"FOETO:PF.END-TUM-001":["Neuroblastome congénital"],"FOETO:PF.END-TUM-002":["Neuroblastome in situ"],"FOETO:PF.END-NOR-114":["Nodule dépassant 3,5 mm"],"FOETO:PF.END-NOR-091":["Nodules neuroblastiques non encapsulés, cellules denses à haut rapport N/C"],"FOETO:PF.END-MAL-039":["Nécrose corticale multifocale surrénalienne"],"FOETO:PF.END-MAL-041":["Nécrose diffuse avec hémorragie de la surrénale"],"FOETO:PF.END-MAL-097":["Nécrose glandulaire étendue associée à l'hémorragie"],"FOETO:PF.END-NOR-072":["Part du cortex fœtal dans l'épaisseur / le volume cortical"],"FOETO:PF.END-NOR-090":["Petits nodules corticaux adjacents à la glande"],"FOETO:PF.END-NOR-074":["Poids d'une tumeur corticosurrénalienne"],"FOETO:PF.END-NOR-073":["Poids des surrénales rapporté au terme"],"FOETO:PF.END-NOR-111":["Poids normal malgré une forme anormale"],"FOETO:PF.END-NOR-075":["Rapport surrénale / rein"],"FOETO:PF.END-MAL-051":["Stéatose du cortex surrénalien"],"FOETO:PF.END-MAL-052":["Surcharge en esters de cholestérol dans les cellules surrénaliennes"],"FOETO:PF.END-MAL-053":["Surcharge lipidique striée du cortex surrénalien"],"FOETO:PF.END-MAL-054":["Surrénale en galette (aplatie)"],"FOETO:PF.END-MAL-100":["Surrénales anormalement petites et blanches"],"FOETO:PF.END-MAL-099":["Surrénales très augmentées de volume, cérébriformes, à tranche brune"],"FOETO:PF.END-MAL-103":["Syndrome de Beckwith-Wiedemann"],"FOETO:PF.END-MAL-112":["Syndrome de Zellweger"],"FOETO:PF.END-NOR-076":["Taille maximale du plus grand nodule neuroblastique"],"FOETO:PF.END-NOR-077":["Taille nucléaire des neuroblastes"],"FOETO:PF.END-INF-010":["Toxoplasmose congénitale"],"FOETO:PF.END-TUM-003":["Tumeur corticosurrénalienne"],"FOETO:PF.END-NOR-092":["Zone transitionnelle en cordons serrés à la partie externe du cortex fœtal"],"FOETO:PF.END-MAL-149":["« Some are quite large aggregates with rosette formation »"],"FOETO:PF.END-MAL-151":["« marked cytomegaly of intensely eosinophilic FZ cortical cells »"],"FOETO:PF.END-MAL-147":["« the adrenal cortex to be disorganized »"],"FOETO:PF.END-NOR-071":["Épaisseur du cortex définitif en nombre de cellules"]}};
+var FOETOV = {"FOETO:PF.END-VAS-001":{"l":"Hémorragie du cortex fœtal","hpo":null},"FOETO:PF.END-MAL-090":{"l":"Ambiguïté génitale d'un fœtus 46,XX","hpo":null},"FOETO:PF.END-NOR-114":{"l":"Nodule dépassant 3,5 mm","hpo":null},"FOETO:PF.END-MAL-041":{"l":"Nécrose diffuse avec hémorragie de la surrénale","hpo":null},"FOETO:PF.END-MAL-094":{"l":"Cytomégalie à cytoplasme vitreux abondant et noyaux de taille normale","hpo":null},"FOETO:PF.END-MAL-109":{"l":"Hypoplasie surrénalienne secondaire (anencéphalie / anomalie du tube neural)","hpo":null},"FOETO:PF.END-NOR-112":{"l":"Examen du SNC normal malgré une glande minuscule","hpo":null},"FOETO:PF.END-MAL-152":{"l":"Bâtonnets Gram (+) vus sur la coupe","hpo":null},"FOETO:PF.END-NOR-090":{"l":"Petits nodules corticaux adjacents à la glande","hpo":null},"FOETO:PF.END-MAL-095":{"l":"Cortex fœtal et cortex définitif tous deux très réduits ou absents","hpo":null},"FOETO:PF.END-INF-009":{"l":"Listériose","hpo":null},"FOETO:PF.END-MAL-035":{"l":"Microabcès listériens surrénaliens","hpo":null},"FOETO:PF.END-MAL-028":{"l":"Infiltrat inflammatoire surrénalien","hpo":null},"FOETO:PF.END-VAS-002":{"l":"Hémorragie sous-capsulaire ou péri-surrénalienne","hpo":null},"FOETO:PF.END-MAL-104":{"l":"Hyperplasie congénitale des surrénales","hpo":"HP:0008258"},"FOETO:PF.END-MAL-149":{"l":"« Some are quite large aggregates with rosette formation »","hpo":null},"FOETO:PF.END-MAL-100":{"l":"Surrénales anormalement petites et blanches","hpo":null},"FOETO:PF.END-NOR-111":{"l":"Poids normal malgré une forme anormale","hpo":null},"FOETO:PF.END-MET-003":{"l":"Dépôts de lipide et de cholestérol dans des surrénales hyperplasiques","hpo":null},"FOETO:PF.END-MAL-150":{"l":"Cellules « 3 à 4 fois plus volumineuses que la moyenne »","hpo":null},"FOETO:PF.END-VAS-003":{"l":"Hémorragie surrénalienne","hpo":null},"FOETO:PF.END-MET-011":{"l":"Même surcharge retrouvée sur un autre organe (foie, cellules de Leydig)","hpo":null},"FOETO:PF.END-MAL-101":{"l":"Glandes très hypoplasiques pesées (≈ 10 % du normal au terme)","hpo":null},"FOETO:PF.END-VAS-005":{"l":"Calcification en mûre — « an unusual mulberry shape »","hpo":null},"FOETO:PF.END-NOR-073":{"l":"Poids des surrénales rapporté au terme","hpo":null},"FOETO:PF.END-NOR-113":{"l":"Amas neuroblastiques centraux, autour des veines médullaires","hpo":null},"FOETO:PF.END-MAL-099":{"l":"Surrénales très augmentées de volume, cérébriformes, à tranche brune","hpo":null},"FOETO:PF.END-MAL-033":{"l":"Kyste à toxoplasme dans la surrénale","hpo":null},"FOETO:PF.END-MET-004":{"l":"Cellules lipidiques de la zone fasciculée très réduites","hpo":null},"FOETO:PF.END-NOR-088":{"l":"Masses basophiles sphérulaires intravasculaires (mulberry-like bodies)","hpo":null},"FOETO:PF.END-MAL-039":{"l":"Nécrose corticale multifocale surrénalienne","hpo":null},"FOETO:PF.END-MAL-111":{"l":"Maladie de Wolman","hpo":null},"FOETO:PF.END-MAL-093":{"l":"Cortex fœtal pratiquement absent","hpo":null},"FOETO:PF.END-MAL-107":{"l":"Hypoplasie surrénalienne de forme « miniature »","hpo":null},"FOETO:PF.END-MAL-102":{"l":"Adrénoleucodystrophie néonatale","hpo":null},"FOETO:PF.END-MAL-091":{"l":"Anencéphalie / anomalie de fermeture du tube neural","hpo":null},"FOETO:PF.END-NOR-071":{"l":"Épaisseur du cortex définitif en nombre de cellules","hpo":null},"FOETO:PF.END-MAL-052":{"l":"Surcharge en esters de cholestérol dans les cellules surrénaliennes","hpo":null},"FOETO:PF.END-MAL-006":{"l":"Cytomégalie du cortex fœtal surrénalien","hpo":"HP:0008186"},"FOETO:PF.END-MAL-113":{"l":"Aspect adénoïde / pseudo-folliculaire du cortex définitif","hpo":null},"FOETO:PF.END-MAL-020":{"l":"Hypoplasie surrénalienne congénitale cytomégalique","hpo":"HP:0000835"},"FOETO:PF.END-TUM-001":{"l":"Neuroblastome congénital","hpo":null},"FOETO:PF.END-MAL-054":{"l":"Surrénale en galette (aplatie)","hpo":null},"FOETO:PF.END-MAL-106":{"l":"Hypoplasie idiopathique, forme « anencéphalique »","hpo":null},"FOETO:PF.END-MAL-148":{"l":"Cortex épais avec « l'architecture générale est conservée »","hpo":null},"FOETO:PF.END-MAL-015":{"l":"Hyperplasie nodulaire corticosurrénalienne","hpo":null},"FOETO:PF.END-MAL-019":{"l":"Hypoplasie du cortex fœtal surrénalien","hpo":null},"FOETO:PF.END-MAL-051":{"l":"Stéatose du cortex surrénalien","hpo":null},"FOETO:PF.END-MAL-151":{"l":"« marked cytomegaly of intensely eosinophilic FZ cortical cells »","hpo":null},"FOETO:PF.END-MAL-092":{"l":"Cellules corticales d'aspect ballonnisé","hpo":null},"FOETO:PF.END-NOR-083":{"l":"Débris granuleux péri-surrénaliens de macération","hpo":null},"FOETO:PF.END-NOR-079":{"l":"Cerveau liquéfié refoulé dans le rétropéritoine","hpo":null},"FOETO:PF.END-NOR-091":{"l":"Nodules neuroblastiques non encapsulés, cellules denses à haut rapport N/C","hpo":null},"FOETO:PF.END-INF-006":{"l":"Infection congénitale à cytomégalovirus","hpo":null},"FOETO:PF.END-NOR-085":{"l":"Foyers d'hématopoïèse surrénaliens","hpo":null},"FOETO:PF.END-INF-010":{"l":"Toxoplasmose congénitale","hpo":null},"FOETO:PF.END-MAL-096":{"l":"Médullaire plus mature que le cortex pour l'âge","hpo":null},"FOETO:PF.END-MAL-002":{"l":"Absence du cortex permanent surrénalien","hpo":null},"FOETO:PF.END-MAL-098":{"l":"Disparition de l'architecture générale du cortex fœtal","hpo":null},"FOETO:PF.END-MAL-147":{"l":"« the adrenal cortex to be disorganized »","hpo":null},"FOETO:PF.END-MAL-027":{"l":"Inclusions virales nucléaires et cytoplasmiques à CMV dans la surrénale","hpo":null},"FOETO:PF.END-MAL-112":{"l":"Syndrome de Zellweger","hpo":null},"FOETO:PF.END-MAL-053":{"l":"Surcharge lipidique striée du cortex surrénalien","hpo":null},"FOETO:PF.END-MAL-105":{"l":"Hypoplasie surrénalienne autosomique récessive (hypoadrénocorticisme familial)","hpo":null},"FOETO:PF.END-MAL-003":{"l":"Calcifications surrénaliennes","hpo":"HP:0010512"},"FOETO:PF.END-INF-008":{"l":"Infection herpétique","hpo":null},"FOETO:PF.END-MAL-097":{"l":"Nécrose glandulaire étendue associée à l'hémorragie","hpo":null},"FOETO:PF.END-NOR-072":{"l":"Part du cortex fœtal dans l'épaisseur / le volume cortical","hpo":null},"FOETO:PF.END-MAL-013":{"l":"Hyperplasie du cortex permanent surrénalien","hpo":null},"FOETO:PF.END-MAL-022":{"l":"Inclusions lamellaires dans les cellules corticosurrénaliennes","hpo":null},"FOETO:PF.END-INF-007":{"l":"Infection à échovirus","hpo":null},"FOETO:PF.END-NOR-089":{"l":"Cellules neuroblastiques isolées ou en petits groupes dans le cortex fœtal","hpo":null},"FOETO:PF.END-MAL-021":{"l":"Hétérotopie surrénalienne","hpo":null},"FOETO:PF.END-NOR-076":{"l":"Taille maximale du plus grand nodule neuroblastique","hpo":null},"FOETO:PF.END-VAS-004":{"l":"Atteinte hémorragique UNILATÉRALE","hpo":null}};
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
@@ -1700,8 +1705,8 @@ function batir(){
             return '<button type="button" class="chip" data-act="etendue" data-k="' + i + '" data-v="' + e + '">' +
                    '<span class="k">étendue</span>' + e + '</button>';
           }).join("") + '</div>') +
-        sig.filter(blocable).map(ligneSigne).join("") + '</div>' +
-        sig.filter(function(x){ return !blocable(x); }).map(ligneSigne).join("") + '</div>';
+        sig.filter(function(x){ return !horsBloc(x); }).map(ligneSigne).join("") + '</div>' +
+        sig.filter(horsBloc).map(ligneSigne).join("") + '</div>';
     });
     $("signes").innerHTML = html.signes;
     $("contexte").innerHTML = html.contexte;
@@ -1783,8 +1788,11 @@ function ligneSigne(x){
       (x.horsFiche ? '<span class="meta">hors fiche — non sourcé par la biblio</span>' : "") +
       (x.fiche && !x.foeto ? '<span class="meta">dans la fiche ' + esc(x.fiche) + ', sans terme FOETO</span>' : "") +
       (oblig ? '<span class="meta">négatif à énoncer : répondre présent ou absent</span>' : "") +
-      (PRESENCE && !blocable(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
-        : "hors du « Non » en bloc : " + (x.mag === "technique" ? "se répond après la technique" : "polarité normale, à répondre seul")) +
+      (PRESENCE && horsBloc(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
+        : x.mag === "technique" ? "hors du « Non » en bloc : se répond après la technique"
+        : x.bloc === false ? "hors du « Non » en bloc : polarité normale, à répondre seul"
+        : x.seul ? "hors du « Non » en bloc : dépend du terme, à répondre seul"
+        : "« Non » en bloc seulement " + fenetreTxt(x.terme) + " — hors de là, à répondre seul") +
         '</span>' : "") +
       '</div>' +
       (x.auto ? '<span class="chip" data-auto="' + x.k + '" style="cursor:default"></span>' :
@@ -1806,6 +1814,8 @@ function foetoAjouter(id){
   /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
   var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
   if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
+  var vr = FUSION && VARIANTES.filter(function(v){ return v.foeto === id; })[0];
+  if (vr){ E.variantes[vr.k] = true; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
     if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
@@ -1857,6 +1867,17 @@ function codesPresents(){
   return SIGNES.filter(function(x){ return E.signes[x.k] === POS && codesDe(x).length; })
                .map(function(x){ return { k:x.k, l:x.l, foeto:x.foeto || null, hpo:x.hpo || null }; });
 }
+/* Codes du reste de la lecture : variante vue, critère de rétention présent, stade retenu,
+   mesure saisie (avec sa valeur). Exportés à part (codes_lecture), champ additif. */
+function codesLecture(){
+  var c = [];
+  VARIANTES.forEach(function(v){ if (v.foeto && E.variantes[v.k]) c.push({ type:"variante", k:v.k, l:v.l, foeto:v.foeto }); });
+  RETENTION.forEach(function(r){ if (r.foeto && E.retention[r.k] === "present") c.push({ type:"rétention", k:r.k, l:r.l, foeto:r.foeto }); });
+  STADES.forEach(function(s){ if (s.foeto && E.stade === s.k) c.push({ type:"stade", k:s.k, l:s.l, foeto:s.foeto }); });
+  if (MESURE) MESURE.champs.forEach(function(m){
+    if (m.foeto && E.mesure.v[m.id] != null) c.push({ type:"mesure", k:m.id, l:m.label, foeto:m.foeto, valeur:E.mesure.v[m.id] }); });
+  return c;
+}
 /* Grille branchée sur FOETO : un signe porte fv (terme tagué « verbatim ») ; son
    libellé et son HPO arbitré viennent de la base, le code exporté est l'id FOETO. */
 function resoudreFV(){
@@ -1867,7 +1888,15 @@ function resoudreFV(){
     else if (!x.fiche) x.horsFiche = true;   // aucun terme de fiche derrière : non sourcé par la biblio
     /* fiche:"[keeling]" : constat sourcé dans la fiche que FOETO ne porte pas (encore) en terme */
   });
-  DIAGS.forEach(function(d){ if (d.fv && FOETOV[d.fv]) d.foeto = [d.fv]; });
+  /* Une association peut porter plusieurs termes maladie (fv:["FOETO:…", …]) : affichés, jamais exportés. */
+  DIAGS.forEach(function(d){
+    var ids = [].concat(d.fv || []).filter(function(i){ return FOETOV[i]; });
+    if (ids.length) d.foeto = ids;
+  });
+  /* Variantes, rétention, stades, champs de mesure portent aussi leur terme (NOR, RET, AXE, MES).
+     Seul le code s'y attache : variantes, rétention, stades et mesures gardent leur libellé. */
+  /* une variante GARDE son libellé : il porte des avertissements (« ne jamais énoncer en négatif ») */
+  VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).forEach(function(x){ if (x.fv && FOETOV[x.fv]) x.foeto = x.fv; });
 }
 
 /* ── Mode présence : rétention en liste, signes en paragraphes ─────────────── */
@@ -1910,7 +1939,21 @@ function variantesDe(g){ return VARIANTES.filter(function(v){ return v.g === g; 
    technique (mag:"technique") ni un signe de polarité normale (bloc:false, ex.
    « tubes collecteurs normaux » : absent y voudrait dire anormal). Ces signes restent
    visibles, paragraphe replié, et se répondent un par un. */
-function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false; }
+/* Un signe qui dépend du terme ne se répond pas en bloc hors de sa fenêtre : terme:[min, max]
+   en SA (une borne peut être null), bornes recopiées du verbatim de la fiche ; terme non saisi
+   = hors fenêtre. seul:true : dépend du terme sans borne écrite, il se répond un par un.
+   Dans les deux cas, présent reste une lésion. */
+function dansTerme(x){
+  if (!x.terme) return true;
+  var sa = num("sa");
+  return sa != null && (x.terme[0] == null || sa >= x.terme[0]) && (x.terme[1] == null || sa <= x.terme[1]);
+}
+/* toujours visible, paragraphe replié : ce que le « Non » en bloc peut ne pas répondre */
+function horsBloc(x){ return !!(x.auto || x.mag === "technique" || x.bloc === false || x.seul || x.terme); }
+function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false && !x.seul && dansTerme(x); }
+function fenetreTxt(t){
+  return t[0] != null && t[1] != null ? "de " + t[0] + " à " + t[1] + " SA" : t[0] != null ? "à partir de " + t[0] + " SA" : "jusqu'à " + t[1] + " SA";
+}
 /* Un signe bloc:false présent (méconium dans la lumière, collecteurs normaux) s'écrit au
    CR mais n'ouvre pas le paragraphe et ne bloque pas son « Non » : ce n'est pas une lésion. */
 function lesionPresente(x){ return E.signes[x.k] === POS && x.bloc !== false; }
@@ -2245,6 +2288,12 @@ function composer(){
     L.push("CODES DES SIGNES PRÉSENTS");
     cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
   }
+  var cl = codesLecture();
+  if (cl.length){
+    L.push("");
+    L.push("CODES DE LA LECTURE");
+    cl.forEach(function(c){ L.push("  " + c.type + " · " + c.l + (c.valeur != null ? " = " + c.valeur : "") + " [" + c.foeto + "]"); });
+  }
 
   var fo = Object.keys(E.foeto);
   if (fo.length){
@@ -2443,6 +2492,7 @@ function collecter(){
     terme_sa: num("sa"),
     grille: JSON.parse(JSON.stringify(E)),
     codes: codesPresents(),
+    codes_lecture: codesLecture(),
     compte_rendu: composer()
   };
 }
@@ -2744,7 +2794,7 @@ async function autotest(){
     clic("grp", iA, "non");
     chk("paragraphe non → signes absents", sA.every(function(x){ return E.signes[x.k] === NEG; }) &&
         etatGroupe(gA) === "non" && crTient(gA + " : non."));
-    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA; })[0];
+    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA && blocable(par(SIGNES, n.signe)); })[0];
     if (lie) chk("paragraphe non → négatif lié énoncé", etatNegatif(lie) === "ok");
     clic("grp", iA, "non");
     chk("second non → non regardé", sA.every(function(x){ return !E.signes[x.k]; }) && etatGroupe(gA) === null);
@@ -2778,6 +2828,18 @@ async function autotest(){
     chk("codes : lisibles (FOETO:/HP:)", SIGNES.every(function(x){
       return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)); }));
   }
+
+  /* Codes de la lecture : une variante vue exporte son terme (NOR), pas une variante non cochée */
+  var vc = VARIANTES.filter(function(v){ return v.foeto; })[0];
+  if (vc){
+    chk("codes lecture : rien sans variante vue", !codesLecture().some(function(c){ return c.k === vc.k; }));
+    clic("var", vc.k);
+    chk("codes lecture : la variante vue exporte son terme", collecter().codes_lecture.some(function(c){ return c.k === vc.k && c.foeto === vc.foeto; }) &&
+        crTient("CODES DE LA LECTURE") && crTient("[" + vc.foeto + "]"));
+    clic("var", vc.k);
+  }
+  chk("codes lecture : lisibles (FOETO:)", VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).every(function(x){
+    return !x.foeto || /^FOETO:/.test(x.foeto); }));
 
   /* Signes et associations */
   var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
@@ -2888,6 +2950,22 @@ async function autotest(){
           E.signes[xF.k] === POS && crTient(gF + " : non") && crTient(xF.l + " — PRÉSENT"));
       clic("grp", iF, "non");
       clic("les", xF.k, POS);
+    }
+    /* Fenêtre de terme : le « Non » en bloc ne répond un signe daté que dans sa fenêtre */
+    var xS = SIGNES.filter(function(x){ return x.terme && !x.auto; })[0];
+    if (xS){
+      var gS = xS.g, iS = groupes().indexOf(gS), t0 = xS.terme[0], t1 = xS.terme[1];
+      var dedans = t0 != null ? t0 : t1, dehors = t0 != null ? t0 - 1 : t1 + 1;
+      signesDe(gS).forEach(function(x){ if (!x.auto) delete E.signes[x.k]; }); delete E.groupes[gS];
+      set("sa", String(dehors));
+      clic("grp", iS, "non");
+      chk("terme : hors fenêtre, le « Non » ne répond pas « " + xS.k + " »", !E.signes[xS.k] && etatGroupe(gS) === "non");
+      clic("grp", iS, "non");
+      set("sa", String(dedans));
+      clic("grp", iS, "non");
+      chk("terme : dans la fenêtre, le « Non » le répond absent", E.signes[xS.k] === NEG);
+      clic("grp", iS, "non");
+      set("sa", "");
     }
     /* Rédaction proposée : la phrase du cadre « Non », celle du signe présent, rien sinon */
     if (REDIGE){

@@ -374,11 +374,16 @@ var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
    Fond : ~/Bureau/fiches_lecture/fiche_coeur.md (§1 à §9).
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 2 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 18 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 21 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "coeur";
 var TITRE   = "cœur, péricarde et artères coronaires";
 var SOURCE  = "fiche_coeur.md";
 var MODULE  = "grille_coeur";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -479,7 +484,7 @@ var RETENTION = [
   { k:"inflamPolymorphePM", l:"Inflammation polymorphe diffuse sans nécrose myocytaire",
     b:"aucune borne", d:"—", h:0, q:"mauvais",
     note:"Le corpus l'écrit “discrète inflammation polymorphe post mortem diffuse” et “inflammation de signification inconnue, mineure, probablement artéfactuelle”. Ne pas la lire comme une myocardite ni comme un délai." },
-  { k:"liquidePericarde", l:"Liquide séro-sanglant abondant dans le sac péricardique",
+  { k:"liquidePericarde", fv:"FOETO:PF.COE-NOR-105", l:"Liquide séro-sanglant abondant dans le sac péricardique",
     b:"aucune borne", d:"—", h:0, q:"mauvais",
     note:"« in macerated fetuses, it may contain abundant serosanguineous fluid » : conséquence de la macération, pas un épanchement pathologique et pas une horloge." },
   { k:"cytoarchitectureTient", l:"Cytoarchitecture conservée malgré une macération franche",
@@ -497,9 +502,9 @@ var STADES = [
     note:"« By approximately 12 weeks of development, the AV and outflow tract valve structures are complete, but they continue to undergo maturation » et « By approximately 12 weeks of gestation, the fibrous annulus is mostly complete » — un repère acquis, pas une graduation" },
   { k:"vacuolisationMax", l:"Vacuolisation glycogénique myocytaire physiologique, encore marquée", max:30,
     note:"la clarté cytoplasmique du myocyte fœtal est NORMALE à ce terme ; elle ne se cote pas et ne se compte pas" },
-  { k:"coussinetsCanal", l:"Coussinets intimaux du canal artériel du troisième trimestre", max:37,
+  { k:"coussinetsCanal", fv:"FOETO:PF.COE-NOR-092", l:"Coussinets intimaux du canal artériel du troisième trimestre", max:37,
     note:"« small areas of intimal thickening with some disruption of the underlying internal elastic lamina are present even in late fetal life » — normal, ne pas lire une lésion" },
-  { k:"cytoplasmeEosinophile", l:"Cytoplasme myocytaire plus abondant et plus éosinophile", max:99,
+  { k:"cytoplasmeEosinophile", fv:"FOETO:PF.COE-NOR-098", l:"Cytoplasme myocytaire plus abondant et plus éosinophile", max:99,
     note:"« As the fetus approaches term, the clearing of the fetal myocyte cytoplasm is generally less prominent. » — tendance de fin de grossesse, pas un stade" }
 ];
 
@@ -525,7 +530,7 @@ var MESURE = {
   champs:[
     { id:"vg",    label:"Paroi VG (micromètres)", min:0, max:20000, step:10 },
     { id:"vd",    label:"Paroi VD (micromètres)", min:0, max:20000, step:10 },
-    { id:"endo",  label:"Endocarde, épaisseur maximale (micromètres)", min:0, max:5000, step:10 },
+    { id:"endo",  fv:"FOETO:PF.COE-NOR-090", label:"Endocarde, épaisseur maximale (micromètres)", min:0, max:5000, step:10 },
     { id:"ratio", label:"Rapport trabéculé / compact", min:0, max:20, step:0.1 }
   ]
 };
@@ -584,19 +589,19 @@ function verdictMesure(){
 
 /* ── 05 · Variantes normales — chacune dans le cadre dont elle mime un signe ── */
 var VARIANTES = [
-  { k:"vacuolisationPhysio", g:"Vacuoles et surcharge", l:"Clarté vacuolaire du cytoplasme myocytaire",
+  { k:"vacuolisationPhysio", fv:"FOETO:PF.COE-MET-045", g:"Vacuoles et surcharge", l:"Clarté vacuolaire du cytoplasme myocytaire",
     note:"normale au fœtus ; « If more extensive vacuolar change is seen, however, it is likely to represent pathologic change » — c'est l'étendue, non la présence, qui interroge" },
-  { k:"graisseMyocyte", g:"Vacuoles et surcharge", l:"Graisse dans le cardiomyocyte",
+  { k:"graisseMyocyte", fv:"FOETO:PF.COE-NOR-101", g:"Vacuoles et surcharge", l:"Graisse dans le cardiomyocyte",
     note:"« fat is a normal constituent of the cardiomyocyte » ; « This should not be confused with a disorder of fatty acid oxidation. »" },
-  { k:"mitoses", g:"Myocytes — architecture et taille", l:"Mitoses myocytaires",
+  { k:"mitoses", fv:"FOETO:PF.COE-DYS-027", g:"Myocytes — architecture et taille", l:"Mitoses myocytaires",
     note:"le myocarde fœtal se divise ; le corpus ne cite « numerous mitotic figures in myocytes » que dans un contexte déjà constitué. Des mitoses éparses ne se cochent pas comme signe" },
   { k:"endocardeCellulaire", g:"Endocarde et valves", l:"Endocarde riche en cellules",
     note:"« The younger the tissue, the more likely it is to be cellular. » — fonction du terme, pas une lésion" },
-  { k:"endocardeOG", g:"Endocarde et valves", l:"Endocarde auriculaire gauche épaissi",
+  { k:"endocardeOG", fv:"FOETO:PF.COE-RET-028", g:"Endocarde et valves", l:"Endocarde auriculaire gauche épaissi",
     note:"physiologique ; « This should not be mistaken for a pathological change. »" },
-  { k:"stromaMyxoide", g:"Endocarde et valves", l:"Stroma valvulaire myxoïde diffus",
+  { k:"stromaMyxoide", fv:"FOETO:PF.COE-NOR-109", g:"Endocarde et valves", l:"Stroma valvulaire myxoïde diffus",
     note:"« Fetal valve stroma is frequently focally myxoid in character » ; seul le caractère NODULAIRE fait sortir de la variante" },
-  { k:"kystesSanguins", g:"Endocarde et valves", l:"Kystes sanguins du bord libre des valves AV, versant atrial",
+  { k:"kystesSanguins", fv:"FOETO:PF.COE-NOR-102", g:"Endocarde et valves", l:"Kystes sanguins du bord libre des valves AV, versant atrial",
     note:"« a very frequent finding », jusqu'à 3 mm, « of no significance » — ni végétation ni kyste tumoral" },
   { k:"trabeculesGrossieresVD", g:"Paroi, compaction et piliers", l:"Trabéculations grossières du ventricule droit",
     note:"« Les parois ventriculaires comportent des trabéculations grossières, caractéristiques d'un ventricule de type droit »" },
@@ -604,23 +609,23 @@ var VARIANTES = [
     note:"« Le VG se caractérise par l'extrême finesse des trabéculations » ; « Si l'examen des valves AV est douteux, la comparaison des trabéculations tranchera. »" },
   { k:"coussinetsIntimaux", g:"Vaisseaux — coronaires, artères, lymphatiques", l:"Épaississements intimaux focaux des artères",
     note:"« small areas of intimal thickening with some disruption of the underlying internal elastic lamina are present even in late fetal life »" },
-  { k:"dysplasieMineurePiliers", g:"Vaisseaux — coronaires, artères, lymphatiques", l:"Traits dysplasiques mineurs des artères intramurales des piliers",
+  { k:"dysplasieMineurePiliers", fv:"FOETO:PF.COE-DYS-024", g:"Vaisseaux — coronaires, artères, lymphatiques", l:"Traits dysplasiques mineurs des artères intramurales des piliers",
     note:"« Even in the normal heart, the intramural arteries located in the papillary muscles of the atrioventricular valves may show minor dysplastic features. »" },
   { k:"disarrayJonctionPhysio", g:"Myocytes — architecture et taille", l:"Disarray à la jonction paroi libre / septum",
     note:"« Myofibre disarray occurs in the normal heart at the junction of the free wall of the ventricles with the interventricular septum »" },
-  { k:"ilotsMyocardeAuriculaire", g:"Tissu de conduction", l:"Faisceau de His fragmenté en arcs et îlots (dispersion, archipels)",
+  { k:"ilotsMyocardeAuriculaire", fv:"FOETO:PF.COE-NOR-096", g:"Tissu de conduction", l:"Faisceau de His fragmenté en arcs et îlots (dispersion, archipels)",
     note:"« These should not be taken as evidence of aberrant conduction pathways. » — libellé v1 : îlots myocardiques dispersés dans le tissu fibreux auriculaire, relibellé d'après sa citation" },
   { k:"remodelageNodal", g:"Tissu de conduction", l:"Remodelage du tissu nodal sans dégénérescence",
     note:"acceptable « without any evidence of active degeneration, necrosis, phagocytosis, inflammation, or replacement fibrosis » ; dès que l'un de ces éléments paraît, sortir de la variante" },
-  { k:"liquidePericardiqueMinime", g:"Péricarde et épicarde", l:"Petite quantité de liquide péricardique",
+  { k:"liquidePericardiqueMinime", fv:"FOETO:PF.COE-MAL-184", g:"Péricarde et épicarde", l:"Petite quantité de liquide péricardique",
     note:"« A small amount of fluid is a feature of the normal pericardial sac »" },
-  { k:"heterotopiePericarde", g:"Masses et nodules", l:"Tissu thymique ou thyroïdien hétérotopique dans le péricarde",
+  { k:"heterotopiePericarde", fv:"FOETO:PF.COE-MAL-130", g:"Masses et nodules", l:"Tissu thymique ou thyroïdien hétérotopique dans le péricarde",
     note:"hétérotopie normale [ernst, ch. 1] — ni métastase ni tératome" },
-  { k:"anitschkow", g:"Inflammation", l:"Noyaux d'Anitschkow (en chenille, en hibou sur coupe transversale)",
+  { k:"anitschkow", fv:"FOETO:PF.COE-INF-009", g:"Inflammation", l:"Noyaux d'Anitschkow (en chenille, en hibou sur coupe transversale)",
     note:"« described to occur commonly in fetal and neonatal hearts » ; signification inconnue — ni inclusion virale ni cellule inflammatoire" },
-  { k:"lymphocytesResidents", g:"Inflammation", l:"Lymphocytes myocardiques épars (densité normale, pics à 24 et 39 SA)",
+  { k:"lymphocytesResidents", fv:"FOETO:PF.COE-DYS-026", g:"Inflammation", l:"Lymphocytes myocardiques épars (densité normale, pics à 24 et 39 SA)",
     note:"densité bimodale, comptes comparables VD / VG / SIV [ernst, ch. 1] — un infiltrat lymphocytaire n'est pas en soi anormal" },
-  { k:"infiltratEpicardiqueAV", g:"Inflammation", l:"Infiltrat lymphocytaire épicardique focal au sillon AV (aneuploïdie)",
+  { k:"infiltratEpicardiqueAV", fv:"FOETO:PF.COE-INF-018", g:"Inflammation", l:"Infiltrat lymphocytaire épicardique focal au sillon AV (aneuploïdie)",
     note:"« A focal ventricular epicardial lymphocytic infiltrate that extends into the superficial myocardium, particularly at the AV groove » — décrit avec la trisomie 21 et la triploïdie : ne fait pas une myocardite" },
   { k:"hematopoieseEpicardique", g:"Inflammation", l:"Îlots d'hématopoïèse épicardique autour des coronaires et des gros troncs",
     note:"13 % des mort-nés [ernst, ch. 1] — ni infiltrat inflammatoire ni tumeur" },
@@ -656,7 +661,7 @@ var SIGNES = [
     meta:"anticorps traversant le placenta à partir de 18 SA ; risque de BAV congénital 3 % [ashworth, ch. 12] contre ≈ 2 % [keeling, ch. 20] — divergence portée" },
   { k:"defectPericarde", fv:"FOETO:PF.COE-MAL-042", g:"Contexte hors lame — dissection, clinique",
     meta:"plus souvent à gauche ; 30–50 % ont des anomalies associées [ashworth, ch. 11]" },
-  { k:"defectSeptal", fiche:"[soffoet, ch. 5]", g:"Contexte hors lame — dissection, clinique", l:"Défect du septum interventriculaire",
+  { k:"defectSeptal", terme:[9.5, null], fiche:"[soffoet, ch. 5]", g:"Contexte hors lame — dissection, clinique", l:"Défect du septum interventriculaire",
     meta:"porte le négatif v1 de septation. « Si l'examen du cœur n'a décelé aucun défect, on ne peut plus désormais parler de cœur normal sans pratiquer une coupe complémentaire » ; une CIV musculaire punctiforme se voit à la transillumination et se manque sur lame" },
   { k:"situsAnormal", fiche:"[ashworth, ch. 3]", g:"Contexte hors lame — dissection, clinique", l:"Situs autre que solitus",
     meta:"porte le négatif v1 de situs. Il se lit sur les auricules et les rapports veineux, que le bloc détruit : « in the atria it is possible to develop isomerism – it is impossible for this to occur in the ventricles »" },
@@ -664,7 +669,7 @@ var SIGNES = [
   { k:"trabeculesGrossieres", bloc:false, fv:"FOETO:PF.COE-NOR-112", g:"Repérage de la coupe et des cavités", mag:"faible", l:"Trabéculations grossières sur la coupe" },
   { k:"trabeculesFines", bloc:false, fv:"FOETO:PF.COE-NOR-111", g:"Repérage de la coupe et des cavités", mag:"faible", l:"Trabéculations très fines sur la coupe" },
   { k:"caviteNonIdentifiable", fiche:"[soffoet, ch. 5]", g:"Repérage de la coupe et des cavités", mag:"faible", l:"Cavité d'origine non identifiable sur la coupe" },
-  { k:"coupeOG", fiche:"[ashworth, ch. 1]", g:"Repérage de la coupe et des cavités", mag:"faible", l:"Coupe passant par l'oreillette gauche",
+  { k:"coupeOG", fv:"FOETO:PF.COE-MAL-188", fiche:"[ashworth, ch. 1]", g:"Repérage de la coupe et des cavités", mag:"faible", l:"Coupe passant par l'oreillette gauche",
     meta:"signe de LOCALISATION, coché dès que la mesure ou l'épaississement porte sur l'OG" },
   { k:"cavitesEffondrees", fiche:"[keeling, ch. 20]", g:"Repérage de la coupe et des cavités", mag:"faible", l:"Cavités effondrées ou déformées par la fixation" },
   { k:"hemorragieIntraVentriculaire", fiche:"[corpus CR]", g:"Repérage de la coupe et des cavités", mag:"faible", l:"Hémorragie intra-ventriculaire" },
@@ -672,8 +677,8 @@ var SIGNES = [
     meta:"« oblique or tangential sectioning » ; les fibres sont « organised as geodesic curves around toroid nested layers », une coupe hors axe fabrique un faux disarray" },
   /* — Paroi, compaction et piliers — */
   { k:"trabeculesEpais", fv:"FOETO:PF.COE-RET-030", g:"Paroi, compaction et piliers", mag:"faible", l:"Couche trabéculée épaisse au regard de la couche compacte" },
-  { k:"compacteMince", fiche:"[keeling, ch. 20]", g:"Paroi, compaction et piliers", mag:"faible", l:"Couche compacte amincie" },
-  { k:"cavitePresqueEpicarde", fiche:"[keeling, ch. 20]", g:"Paroi, compaction et piliers", mag:"faible", l:"Cavité ventriculaire s'étendant presque jusqu'à l'épicarde",
+  { k:"compacteMince", fv:"FOETO:PF.COE-MAL-189", fiche:"[keeling, ch. 20]", g:"Paroi, compaction et piliers", mag:"faible", l:"Couche compacte amincie" },
+  { k:"cavitePresqueEpicarde", fv:"FOETO:PF.COE-MAL-190", fiche:"[keeling, ch. 20]", g:"Paroi, compaction et piliers", mag:"faible", l:"Cavité ventriculaire s'étendant presque jusqu'à l'épicarde",
     meta:"« The left ventricular cavity extends almost to the epicardial surface among a myriad of thin muscular trabeculations »" },
   { k:"recessusEndocardes", fv:"FOETO:PF.COE-MAL-167", g:"Paroi, compaction et piliers", mag:"faible", l:"Récessus intertrabéculaires profonds, tapissés d'endocarde" },
   { k:"piliersMalDeveloppes", fv:"FOETO:PF.COE-MAL-164", g:"Paroi, compaction et piliers", mag:"faible", l:"Piliers mal individualisés ou mal développés" },
@@ -684,16 +689,16 @@ var SIGNES = [
   /* — Endocarde et valves — */
   { k:"endoLamellaire", fv:"FOETO:PF.COE-CLA-012", g:"Endocarde et valves", mag:"faible", l:"Endocarde épaissi, fibro-élastique lamellaire dense",
     meta:"« dense laminar fibroelastic tissue that usually does not show increased vascularity or inflammatory cell infiltration »" },
-  { k:"endoVG", fiche:"[ashworth, ch. 7]", g:"Endocarde et valves", mag:"faible", l:"Épaississement endocardique portant sur le ventricule gauche",
+  { k:"endoVG", fv:"FOETO:PF.COE-MAL-191", fiche:"[ashworth, ch. 7]", g:"Endocarde et valves", mag:"faible", l:"Épaississement endocardique portant sur le ventricule gauche",
     meta:"« The right ventricle usually does not show significant endocardial fibrosis. »" },
   { k:"endoPiliers", fiche:"[ashworth, ch. 7]", g:"Endocarde et valves", mag:"faible", l:"Épaississement endocardique s'étendant aux piliers et cordages" },
-  { k:"endoBiventriculaire", fiche:"[keeling, ch. 20]", g:"Endocarde et valves", mag:"faible", l:"Épaississement endocardique des deux ventricules",
+  { k:"endoBiventriculaire", fv:"FOETO:PF.COE-MAL-192", fiche:"[keeling, ch. 20]", g:"Endocarde et valves", mag:"faible", l:"Épaississement endocardique des deux ventricules",
     meta:"répartition inhabituelle : le VD n'est pas le siège attendu, vérifier l'orientation du bloc" },
   { k:"endoFocalPeriLesionnel", fiche:"[keeling, ch. 20]", g:"Endocarde et valves", mag:"faible", l:"Épaississement endocardique focal au contact d'une lésion myocardique" },
   { k:"valveEpaissie", fiche:"[ashworth, ch. 1]", g:"Endocarde et valves", mag:"faible", l:"Valve globalement épaissie" },
   { k:"endoSansVascul", fiche:"[ashworth, ch. 7]", g:"Endocarde et valves", mag:"moyen", l:"Épaississement endocardique sans néovascularisation ni infiltrat",
     meta:"le corollaire du critère précédent : la pauvreté cellulaire fait partie de la description" },
-  { k:"endoCellulaire", fiche:"[ashworth, ch. 1]", g:"Endocarde et valves", mag:"moyen", l:"Endocarde épaissi et riche en cellules",
+  { k:"endoCellulaire", fv:"FOETO:PF.COE-MAL-193", seul:true, fiche:"[ashworth, ch. 1]", g:"Endocarde et valves", mag:"moyen", l:"Endocarde épaissi et riche en cellules",
     meta:"« The younger the tissue, the more likely it is to be cellular. » — à confronter au terme avant d'en faire une lésion" },
   { k:"myxoideNodulaire", fv:"FOETO:PF.COE-DYS-022", g:"Endocarde et valves", mag:"moyen", l:"Structures myxoïdes NODULAIRES dans le stroma valvulaire",
     meta:"« Fetal valve stroma is frequently focally myxoid in character, but nodular myxoid structures are considered a sign of valvular dysplasia. » ; la valve normale « may be rather myxoid, but should not be nodular »" },
@@ -702,12 +707,12 @@ var SIGNES = [
   { k:"reactionPericardique", fv:"FOETO:PF.COE-MAL-166", g:"Péricarde et épicarde", mag:"faible",
     meta:"terme générique, hors association : « these consist of haemorrhage, exudation of fluid, fibrin or inflammatory cells, or fibrous proliferation. » — répondre laquelle ci-dessous" },
   { k:"hemorragiePericarde", fv:"FOETO:PF.COE-MAL-077", g:"Péricarde et épicarde", mag:"faible", l:"Hémorragie dans le sac péricardique" },
-  { k:"pericardeFibrose", fiche:"[ashworth, ch. 11]", g:"Péricarde et épicarde", mag:"faible", l:"Fibrose du péricarde" },
+  { k:"pericardeFibrose", fv:"FOETO:PF.COE-MAL-194", fiche:"[ashworth, ch. 11]", g:"Péricarde et épicarde", mag:"faible", l:"Fibrose du péricarde" },
   { k:"kysteMesothelial", fv:"FOETO:PF.COE-MAL-088", g:"Péricarde et épicarde", mag:"faible",
     meta:"angles cardio-phréniques, revêtu de mésothélium — incident, sans traitement [ashworth, ch. 11]" },
-  { k:"pointPonction", fiche:"[ashworth, ch. 12]", g:"Péricarde et épicarde", mag:"faible", l:"Effraction épicardique focale d'allure traumatique" },
-  { k:"pericarditeFibrine", fiche:"[ashworth, ch. 11]", g:"Péricarde et épicarde", mag:"moyen", l:"Dépôt de fibrine à la surface du péricarde" },
-  { k:"amasEosinoPericarde", fiche:"[ashworth, ch. 11]", g:"Péricarde et épicarde", mag:"moyen", l:"Infiltrat inflammatoire du péricarde",
+  { k:"pointPonction", fv:"FOETO:PF.COE-NOR-108", fiche:"[ashworth, ch. 12]", g:"Péricarde et épicarde", mag:"faible", l:"Effraction épicardique focale d'allure traumatique" },
+  { k:"pericarditeFibrine", fv:"FOETO:PF.COE-MET-055", fiche:"[ashworth, ch. 11]", g:"Péricarde et épicarde", mag:"moyen", l:"Dépôt de fibrine à la surface du péricarde" },
+  { k:"amasEosinoPericarde", fv:"FOETO:PF.COE-INF-019", fiche:"[ashworth, ch. 11]", g:"Péricarde et épicarde", mag:"moyen", l:"Infiltrat inflammatoire du péricarde",
     meta:"« The pericardium has a very restricted repertoire of reactions to injury » — l'aspect ne désigne pas la cause" },
   /* — Vaisseaux — coronaires, artères, lymphatiques — */
   { k:"thromboseCoronaire", fiche:"[corpus CR]", g:"Vaisseaux — coronaires, artères, lymphatiques", mag:"faible", l:"Thrombose d'une artère coronaire" },
@@ -726,14 +731,14 @@ var SIGNES = [
   { k:"noduleCirconscrit", fv:"FOETO:PF.COE-TUM-033", g:"Masses et nodules", mag:"faible", l:"Nodule bien circonscrit dans le myocarde",
     meta:"« well circumscribed within the myocardium »" },
   { k:"nodulesMultiples", fv:"FOETO:PF.COE-MAL-168", g:"Masses et nodules", mag:"faible", l:"Nodules multiples" },
-  { k:"noduleUnique", fiche:"[keeling, ch. 20]", g:"Masses et nodules", mag:"faible", l:"Nodule unique" },
-  { k:"siegeSIV", fiche:"[keeling, ch. 20]", g:"Masses et nodules", mag:"faible", l:"Masse siégeant dans le septum interventriculaire" },
+  { k:"noduleUnique", fv:"FOETO:PF.COE-MAL-195", fiche:"[keeling, ch. 20]", g:"Masses et nodules", mag:"faible", l:"Nodule unique" },
+  { k:"siegeSIV", fv:"FOETO:PF.COE-MAL-196", fiche:"[keeling, ch. 20]", g:"Masses et nodules", mag:"faible", l:"Masse siégeant dans le septum interventriculaire" },
   { k:"masseIntrapericardique", fiche:"[keeling, ch. 20]", g:"Masses et nodules", mag:"faible", l:"Masse intrapéricardique refoulant le cœur" },
-  { k:"calcificationTumorale", fiche:"[keeling, ch. 20]", g:"Masses et nodules", mag:"moyen", l:"Calcification au sein de la masse",
+  { k:"calcificationTumorale", fv:"FOETO:PF.COE-VAS-014", fiche:"[keeling, ch. 20]", g:"Masses et nodules", mag:"moyen", l:"Calcification au sein de la masse",
     meta:"« Calcification is common. »" },
   { k:"collageneFusiforme", fv:"FOETO:PF.COE-VAS-008", g:"Masses et nodules", mag:"moyen", l:"Prolifération de cellules fusiformes uniformes dans un collagène abondant",
     meta:"« abundant collagen that contains uniform spindle cells »" },
-  { k:"elementsTeratomateux", fiche:"[keeling, ch. 20]", g:"Masses et nodules", mag:"moyen", l:"Tissus de plusieurs feuillets embryonnaires dans la masse" },
+  { k:"elementsTeratomateux", fv:"FOETO:PF.COE-MAL-197", fiche:"[keeling, ch. 20]", g:"Masses et nodules", mag:"moyen", l:"Tissus de plusieurs feuillets embryonnaires dans la masse" },
   { k:"elementsImmatures", fv:"FOETO:PF.COE-TUM-031", g:"Masses et nodules", mag:"moyen",
     meta:"éléments tératomateux habituels, y compris immatures, ± éléments vitellins [keeling, ch. 20]" },
   { k:"cellulesAraignee", fv:"FOETO:PF.COE-TUM-003", g:"Masses et nodules", mag:"fort", l:"Grandes cellules claires à expansions cytoplasmiques radiaires",
@@ -763,7 +768,7 @@ var SIGNES = [
   { k:"necroseRegionale", fiche:"[ashworth, ch. 6]", g:"Nécrose et souffrance ischémique", mag:"faible", l:"Nécrose myocardique limitée à un territoire" },
   { k:"necrosePanDiffuse", fiche:"[corpus CR]", g:"Nécrose et souffrance ischémique", mag:"faible", l:"Nécrose myocardique diffuse, sans systématisation",
     meta:"“discrète nécrose pan myocardique post-mortem” — à lire comme un artefact avant toute autre chose" },
-  { k:"cytoarchitecturePreservee", bloc:false, fiche:"[ashworth, ch. 12]", g:"Nécrose et souffrance ischémique", mag:"faible", l:"Cytoarchitecture d'ensemble conservée malgré l'altération",
+  { k:"cytoarchitecturePreservee", fv:"FOETO:PF.COE-NOR-113", bloc:false, fiche:"[ashworth, ch. 12]", g:"Nécrose et souffrance ischémique", mag:"faible", l:"Cytoarchitecture d'ensemble conservée malgré l'altération",
     meta:"« Despite the obvious maceration, the morphology … is still visible. » ; coché pour PONDÉRER une nécrose diffuse, jamais pour affirmer un délai" },
   { k:"myocytesHypereosinophiles", fv:"FOETO:PF.COE-INF-001", g:"Nécrose et souffrance ischémique", mag:"moyen", l:"Myocytes hyperéosinophiles",
     meta:"« The first tissue change that is evident by light microscopy is that the myocytes become hypereosinophilic. »" },
@@ -776,10 +781,10 @@ var SIGNES = [
   /* — Myocytes — architecture et taille — */
   { k:"disarray", fv:"FOETO:PF.COE-DYS-008", g:"Myocytes — architecture et taille", mag:"moyen",
     meta:"constat générique, hors association : répondre ensuite le SIÈGE — c'est lui qui fait le sens (jonction normale ; septum, paroi latérale, oreillette anormaux)" },
-  { k:"disarraySIV", fiche:"[ashworth, ch. 7]", g:"Myocytes — architecture et taille", mag:"moyen", l:"Désorganisation des myofibres dans le septum interventriculaire",
+  { k:"disarraySIV", fv:"FOETO:PF.COE-MAL-198", fiche:"[ashworth, ch. 7]", g:"Myocytes — architecture et taille", mag:"moyen", l:"Désorganisation des myofibres dans le septum interventriculaire",
     meta:"« disarray should not be seen in the normal heart in the interventricular septum or lateral ventricular walls »" },
-  { k:"disarrayLateral", fiche:"[ashworth, ch. 7]", g:"Myocytes — architecture et taille", mag:"moyen", l:"Désorganisation des myofibres dans une paroi ventriculaire latérale" },
-  { k:"disarrayAuriculaire", fiche:"[keeling, ch. 20]", g:"Myocytes — architecture et taille", mag:"moyen", l:"Désorganisation des myofibres dans le myocarde auriculaire" },
+  { k:"disarrayLateral", fv:"FOETO:PF.COE-MAL-199", fiche:"[ashworth, ch. 7]", g:"Myocytes — architecture et taille", mag:"moyen", l:"Désorganisation des myofibres dans une paroi ventriculaire latérale" },
+  { k:"disarrayAuriculaire", fv:"FOETO:PF.COE-MAL-200", fiche:"[keeling, ch. 20]", g:"Myocytes — architecture et taille", mag:"moyen", l:"Désorganisation des myofibres dans le myocarde auriculaire" },
   { k:"disarrayJonction", bloc:false, fv:"FOETO:PF.COE-NOR-095", g:"Myocytes — architecture et taille", mag:"moyen", l:"Désorganisation limitée à la jonction paroi libre / septum",
     meta:"NORMAL : « Myofibre disarray occurs in the normal heart at the junction of the free wall of the ventricles with the interventricular septum ». Coché pour écarter, jamais pour retenir" },
   { k:"hypertrophieMyocytaire", fv:"FOETO:PF.COE-DYS-013", g:"Myocytes — architecture et taille", mag:"moyen", l:"Myocytes élargis à noyau volumineux, aspect étalé",
@@ -818,9 +823,9 @@ var SIGNES = [
     meta:"au contact de l'infiltrat : « Myocyte necrosis or damage must also be present for the diagnosis. »" },
   { k:"toxoplasme", fv:"FOETO:PF.COE-INF-014", g:"Inflammation", mag:"fort",
     meta:"nécrose, cicatrice, calcification, pseudokystes possibles dans le myocarde et le placenta [keeling, ch. 20]" },
-  { k:"phenotypeT", fiche:"[ashworth, ch. 8]", g:"Inflammation", mag:"technique", l:"Infiltrat à prédominance lymphocytaire T documentée",
+  { k:"phenotypeT", fv:"FOETO:PF.COE-INF-020", fiche:"[ashworth, ch. 8]", g:"Inflammation", mag:"technique", l:"Infiltrat à prédominance lymphocytaire T documentée",
     meta:"seuil cité : « a value of > 14 leukocytes per mm² with > 7 T-cells per mm² » — établi sur biopsie endomyocardique, jamais validé sur cœur fœtal (fiche § 9.10)" },
-  { k:"agentViral", fiche:"[ashworth, ch. 12]", g:"Inflammation", mag:"technique", l:"Agent viral mis en évidence dans le myocarde" },
+  { k:"agentViral", fv:"FOETO:PF.COE-INF-021", fiche:"[ashworth, ch. 12]", g:"Inflammation", mag:"technique", l:"Agent viral mis en évidence dans le myocarde" },
   { k:"parvovirus", fv:"FOETO:PF.COE-INF-010", g:"Inflammation", mag:"technique",
     meta:"« Parvovirus may be demonstrated in myocyte nuclei by in situ hybridisation or immunohistochemistry »" },
   /* — Tissu de conduction — */
@@ -830,8 +835,8 @@ var SIGNES = [
   { k:"infiltratSillonAV", fiche:"[keeling, ch. 20]", g:"Tissu de conduction", mag:"moyen", l:"Infiltrat centré sur le sillon auriculo-ventriculaire",
     meta:"« not just of the conduction tissue, but also of much of the atrioventricular junction and the surrounding myocardium »" },
   { k:"fibroseNodale", fv:"FOETO:PF.COE-VAS-009", g:"Tissu de conduction", mag:"moyen", l:"Fibrose du tissu nodal ou de la jonction auriculo-ventriculaire" },
-  { k:"calcificationNodale", fiche:"[ashworth, ch. 12]", g:"Tissu de conduction", mag:"moyen", l:"Calcification au sein du tissu de conduction" },
-  { k:"infiltratPauvre", fiche:"[ashworth, ch. 12]", g:"Tissu de conduction", mag:"moyen", l:"Lésion de conduction avec très peu de cellules inflammatoires",
+  { k:"calcificationNodale", fv:"FOETO:PF.COE-VAS-015", fiche:"[ashworth, ch. 12]", g:"Tissu de conduction", mag:"moyen", l:"Calcification au sein du tissu de conduction" },
+  { k:"infiltratPauvre", fv:"FOETO:PF.COE-INF-022", fiche:"[ashworth, ch. 12]", g:"Tissu de conduction", mag:"moyen", l:"Lésion de conduction avec très peu de cellules inflammatoires",
     meta:"« it is striking how frequently there is minimal inflammatory cell infiltration » et « remarkably little inflammatory cell infiltration »" },
   { k:"perteMyocytesNodaux", fiche:"[ashworth, ch. 12]", g:"Tissu de conduction", mag:"fort", l:"Perte des myocytes du tissu nodal" },
   { k:"depotsCalciques", fv:"FOETO:PF.COE-MET-037", g:"Tissu de conduction", mag:"technique",
@@ -1314,8 +1319,8 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 }
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
-var FOETO = {"sections":[],"formes":{"FOETO:PF.COE-NOR-104":["Absence de lipofuscine myocytaire"],"FOETO:PF.COE-MET-004":["Accumulation lipidique intramyocytaire (stéatose myocardique)"],"FOETO:PF.COE-MAL-170":["Anomalie d'Uhl"],"FOETO:PF.COE-MAL-153":["Anticorps maternels anti-SSA/Ro – SSB/La"],"FOETO:PF.COE-DYS-024":["Artères intramurales des piliers à discrets traits dysplasiques"],"FOETO:PF.COE-MAL-179":["Atteinte du tissu de conduction du lupus maternel (anti-Ro)"],"FOETO:PF.COE-NOR-004":["Bandes de contraction myocardiques"],"FOETO:PF.COE-MET-006":["Calcification artérielle idiopathique (myocarde et artères)"],"FOETO:PF.COE-MAL-154":["Calcification dans et entre les lames élastiques artérielles"],"FOETO:PF.COE-MET-008":["Calcification myocardique"],"FOETO:PF.COE-MAL-173":["Cardiomyopathie dilatée"],"FOETO:PF.COE-MAL-172":["Cardiomyopathie histiocytoïde"],"FOETO:PF.COE-MAL-174":["Cardiomyopathie hypertrophique (sarcomérique)"],"FOETO:PF.COE-MET-043":["Cardiomyopathie mitochondriale"],"FOETO:PF.COE-TUM-003":["Cellules en araignée (rhabdomyome)"],"FOETO:PF.COE-NOR-094":["Cellules nodales pâles, petites, compactes, autour d'une artère centrale"],"FOETO:PF.COE-DYS-003":["Clairance périnucléaire et granules mitochondriaux myocytaires"],"FOETO:PF.COE-VAS-008":["Collagène abondant à cellules fusiformes uniformes, calcifications"],"FOETO:PF.COE-NOR-099":["Conjonctif épicardique s'épaississant avec le terme"],"FOETO:PF.COE-MAL-155":["Coronaires épicardiques dilatées à prolifération intimale élastique (communications ventriculo-coronaires)"],"FOETO:PF.COE-RET-030":["Couche trabéculée interne disproportionnée, cavité VG s'étendant presque à l'épicarde"],"FOETO:PF.COE-NOR-092":["Coussinets intimaux du canal artériel (3ᵉ trimestre)"],"FOETO:PF.COE-MET-045":["Cytoplasme myocytaire clair et vacuolé (glycogène physiologique)"],"FOETO:PF.COE-NOR-098":["Cytoplasme myocytaire plus abondant et plus éosinophile vers le terme"],"FOETO:PF.COE-MAL-175":["Cœur gauche hypoplasique"],"FOETO:PF.COE-NOR-089":["Densité leucocytaire myocardique (Padova)"],"FOETO:PF.COE-VAS-009":["Destruction, fibrose et calcification du tissu de conduction et de la jonction AV"],"FOETO:PF.COE-VAS-001":["Dilatation capillaire myocardique"],"FOETO:PF.COE-NOR-095":["Disarray à la jonction paroi libre / septum interventriculaire"],"FOETO:PF.COE-NOR-096":["Dispersion (archipels) du faisceau de His"],"FOETO:PF.COE-MAL-036":["Dysplasie fibromusculaire coronaire"],"FOETO:PF.COE-MAL-177":["Dysplasie valvulaire"],"FOETO:PF.COE-MAL-042":["Défect congénital du péricarde pariétal"],"FOETO:PF.COE-MAL-176":["Déficit de β-oxydation des acides gras"],"FOETO:PF.COE-MET-037":["Dépôts calciques sous la valve aortique et sous l'endocarde du VD (von Kossa)"],"FOETO:PF.COE-DYS-008":["Désorganisation des myocytes (disarray)"],"FOETO:PF.COE-NOR-097":["Effets du KCl mimant la macération sur l'organe injecté"],"FOETO:PF.COE-MAL-156":["Enzymes oxydatives réduites sur coupe congelée"],"FOETO:PF.COE-NOR-100":["Faux disarray d'une coupe oblique, davantage à droite"],"FOETO:PF.COE-TUM-010":["Fibrome cardiaque"],"FOETO:PF.COE-CLA-013":["Fibrose de remplacement avec liseré de myocytes sous-endocardiques survivants"],"FOETO:PF.COE-CLA-002":["Fibrose de remplacement myocardique aux pointes des muscles papillaires"],"FOETO:PF.COE-MAL-157":["Fibrose des piliers mitraux"],"FOETO:PF.COE-DYS-009":["Fibrose interstitielle myocardique"],"FOETO:PF.COE-MET-016":["Fibrose myocardique méso-pariétale (couches moyennes du myocarde)"],"FOETO:PF.COE-MAL-062":["Fibroélastose endocardique"],"FOETO:PF.COE-DYS-027":["Figures mitotiques myocytaires"],"FOETO:PF.COE-MET-044":["Glycogénose de type II (Pompe)"],"FOETO:PF.COE-MET-041":["Glycogénose de type XV"],"FOETO:PF.COE-NOR-101":["Graisse intramyocytaire en petite quantité"],"FOETO:PF.COE-DYS-013":["Hypertrophie des myocytes cardiaques"],"FOETO:PF.COE-MET-042":["Hypertrophie sans disarray — diabète maternel, mitochondriopathie, corticoïdes"],"FOETO:PF.COE-INF-001":["Hyperéosinophilie des myocytes"],"FOETO:PF.COE-RET-012":["Hématopoïèse extramédullaire myocardique"],"FOETO:PF.COE-MAL-077":["Hémopéricarde"],"FOETO:PF.COE-MET-018":["Inclusions intracytoplasmiques PAS-positives résistantes à la diastase dans les myocytes"],"FOETO:PF.COE-MET-019":["Inclusions lamellaires lysosomales dans les cardiomyocytes (inclusions myélinoïdes)"],"FOETO:PF.COE-INF-015":["Infection à parvovirus B19"],"FOETO:PF.COE-INF-004":["Infiltrat de polynucléaires neutrophiles dans le myocarde"],"FOETO:PF.COE-INF-011":["Infiltrat inflammatoire myocardique (CD3, CD68)"],"FOETO:PF.COE-INF-018":["Infiltrat lymphocytaire épicardique focal au sillon AV"],"FOETO:PF.COE-MAL-088":["Kyste mésothélial du péricarde"],"FOETO:PF.COE-NOR-102":["Kystes sanguins du bord libre des valves AV, versant atrial"],"FOETO:PF.COE-NOR-103":["Lamelles élastiques fragmentées du tronc pulmonaire, continues de l'aorte"],"FOETO:PF.COE-INF-012":["Lipide intracytoplasmique myocytaire abondant au cours d'une myocardite"],"FOETO:PF.COE-NOR-105":["Liquide séro-sanglant péricardique abondant sur fœtus macéré"],"FOETO:PF.COE-DYS-026":["Lymphocytes myocardiques résidents, densité bimodale (pics 24 et 39 SA)"],"FOETO:PF.COE-MAL-158":["Macrophages bleu alcian positifs dans la fibrosa valvulaire"],"FOETO:PF.COE-MAL-178":["Maladie de Fabry"],"FOETO:PF.COE-MAL-159":["Marquage C9 du complément / troponines T et I des myocytes lésés"],"FOETO:PF.COE-NOR-106":["Mastocytes interstitiels"],"FOETO:PF.COE-INF-013":["Microabcès multiples, surtout VG"],"FOETO:PF.COE-MET-039":["Mitochondries anormales en microscopie électronique"],"FOETO:PF.COE-MET-021":["Mitochondries géantes dans les cardiomyocytes"],"FOETO:PF.COE-MAL-160":["Mitoses myocytaires nombreuses"],"FOETO:PF.COE-MAL-180":["Mucopolysaccharidose"],"FOETO:PF.COE-MAL-164":["Muscles papillaires mitraux mal développés"],"FOETO:PF.COE-MAL-163":["Muscles papillaires étirés et amincis"],"FOETO:PF.COE-NOR-093":["Myocarde fœtal très cellulaire (myocytes ≈ 30 % des cellules)"],"FOETO:PF.COE-INF-016":["Myocardite"],"FOETO:PF.COE-DYS-017":["Myocytes cardiaques étirés et ondulants"],"FOETO:PF.COE-DYS-018":["Myocytes histiocytoïdes (cardiomyopathie histiocytoïde)"],"FOETO:PF.COE-MAL-161":["Myocytes à noyaux volumineux, hyperchromatiques et irréguliers"],"FOETO:PF.COE-TUM-033":["Nodule bien circonscrit de grandes cellules à cytoplasme clair"],"FOETO:PF.COE-MAL-168":["Nodules multiples — nombre à compter"],"FOETO:PF.COE-MAL-099":["Non-compaction du myocarde ventriculaire"],"FOETO:PF.COE-NOR-107":["Noyaux de mégacaryocytes dans les capillaires myocardiques"],"FOETO:PF.COE-MAL-181":["Nécrose ischémique myocardique"],"FOETO:PF.COE-DYS-019":["Nécrose ischémique sous-endocardique focale"],"FOETO:PF.COE-CLA-007":["Nécrose myocardique avec calcification dystrophique"],"FOETO:PF.COE-RET-017":["Nécrose myocytaire"],"FOETO:PF.COE-INF-014":["Nécrose, cicatrice, calcification et pseudokystes toxoplasmiques"],"FOETO:PF.COE-MAL-162":["Paroi VD parcheminée : endocarde et épicarde accolés sans graisse interposée"],"FOETO:PF.COE-VAS-010":["Paroi artérielle désorganisée, amincie et épaissie irrégulièrement, empiétant sur la lumière"],"FOETO:PF.COE-INF-010":["Parvovirus B19 dans les noyaux myocytaires (IHC / ISH)"],"FOETO:PF.COE-MAL-184":["Petite quantité de liquide péricardique"],"FOETO:PF.COE-MET-038":["Petits foyers de fibrose multiples dispersés dans les ventricules"],"FOETO:PF.COE-NOR-091":["Poids du cœur"],"FOETO:PF.COE-NOR-108":["Point de ponction épicardique du fœticide (KCl)"],"FOETO:PF.COE-MAL-165":["Prolifération intimale fibreuse artérielle"],"FOETO:PF.COE-INF-017":["Péricardite"],"FOETO:PF.COE-RET-022":["Rhabdomyome cardiaque"],"FOETO:PF.COE-CLA-009":["Rupture du muscle papillaire"],"FOETO:PF.COE-MAL-166":["Réaction péricardique : hémorragie, exsudat, fibrine, cellules inflammatoires ou fibrose"],"FOETO:PF.COE-MAL-167":["Récessus bordés d'endocarde, anastomosés, profonds"],"FOETO:PF.COE-MAL-182":["Sclérose tubéreuse"],"FOETO:PF.COE-MAL-169":["Septum membraneux anormalement large"],"FOETO:PF.COE-NOR-109":["Stroma valvulaire focalement myxoïde, non nodulaire"],"FOETO:PF.COE-INF-009":["Structure nucléaire d'Anitschkow"],"FOETO:PF.COE-MAL-171":["Syndrome de Barth"],"FOETO:PF.COE-VAS-011":["Thrombose murale sur cathéter"],"FOETO:PF.COE-NOR-110":["Tissu de conduction en conjonctif lâche, sans dégénérescence, nécrose, phagocytose, inflammation ni fibrose"],"FOETO:PF.COE-MAL-130":["Tissu thyroïdien ou thymique hétérotopique dans le péricarde"],"FOETO:PF.COE-NOR-112":["Trabéculations grossières — ventricule de type droit"],"FOETO:PF.COE-NOR-111":["Trabéculations très fines — ventricule de type gauche"],"FOETO:PF.COE-TUM-029":["Tératome cardiaque"],"FOETO:PF.COE-MET-040":["Vacuolisation myocytaire plus étendue que le normal fœtal"],"FOETO:PF.COE-CLA-010":["Vacuolisation pathologique des cardiomyocytes (myocytolyse)"],"FOETO:PF.COE-DYS-022":["Valve myxoïde et nodulaire (valve dysplasique)"],"FOETO:PF.COE-TUM-031":["Éléments tissulaires immatures dans tératome"],"FOETO:PF.COE-MAL-183":["Épaisseur des parois VG et VD, saisies en paire"],"FOETO:PF.COE-NOR-090":["Épaisseur endocardique maximale, avec la cavité où elle est mesurée"],"FOETO:PF.COE-RET-028":["Épaississement de l'endocarde atrial gauche"],"FOETO:PF.COE-CLA-012":["Épaississement fibro-élastique lamellaire dense de l'endocarde"],"FOETO:PF.COE-DYS-025":["Épaississement intimal coronaire focal avec rupture de la limitante élastique interne"],"FOETO:PF.COE-VAS-007":["Œdème interstitiel myocardique"]}};
-var FOETOV = {"FOETO:PF.COE-MET-039":{"l":"Mitochondries anormales en microscopie électronique","hpo":null},"FOETO:PF.COE-CLA-009":{"l":"Rupture du muscle papillaire","hpo":null},"FOETO:PF.COE-NOR-111":{"l":"Trabéculations très fines — ventricule de type gauche","hpo":null},"FOETO:PF.COE-CLA-002":{"l":"Fibrose de remplacement myocardique aux pointes des muscles papillaires","hpo":null},"FOETO:PF.COE-MAL-155":{"l":"Coronaires épicardiques dilatées à prolifération intimale élastique (communications ventriculo-coronaires)","hpo":null},"FOETO:PF.COE-MET-008":{"l":"Calcification myocardique","hpo":null},"FOETO:PF.COE-VAS-011":{"l":"Thrombose murale sur cathéter","hpo":null},"FOETO:PF.COE-CLA-007":{"l":"Nécrose myocardique avec calcification dystrophique","hpo":null},"FOETO:PF.COE-RET-022":{"l":"Rhabdomyome cardiaque","hpo":null},"FOETO:PF.COE-DYS-018":{"l":"Myocytes histiocytoïdes (cardiomyopathie histiocytoïde)","hpo":null},"FOETO:PF.COE-MAL-099":{"l":"Non-compaction du myocarde ventriculaire","hpo":"HP:0012817"},"FOETO:PF.COE-TUM-031":{"l":"Éléments tissulaires immatures dans tératome","hpo":null},"FOETO:PF.COE-MAL-154":{"l":"Calcification dans et entre les lames élastiques artérielles","hpo":null},"FOETO:PF.COE-VAS-008":{"l":"Collagène abondant à cellules fusiformes uniformes, calcifications","hpo":null},"FOETO:PF.COE-VAS-010":{"l":"Paroi artérielle désorganisée, amincie et épaissie irrégulièrement, empiétant sur la lumière","hpo":null},"FOETO:PF.COE-TUM-029":{"l":"Tératome cardiaque","hpo":null},"FOETO:PF.COE-CLA-010":{"l":"Vacuolisation pathologique des cardiomyocytes (myocytolyse)","hpo":null},"FOETO:PF.COE-MAL-156":{"l":"Enzymes oxydatives réduites sur coupe congelée","hpo":null},"FOETO:PF.COE-MET-037":{"l":"Dépôts calciques sous la valve aortique et sous l'endocarde du VD (von Kossa)","hpo":null},"FOETO:PF.COE-MAL-168":{"l":"Nodules multiples — nombre à compter","hpo":null},"FOETO:PF.COE-INF-017":{"l":"Péricardite","hpo":"HP:0001701"},"FOETO:PF.COE-TUM-010":{"l":"Fibrome cardiaque","hpo":"HP:0010617"},"FOETO:PF.COE-TUM-003":{"l":"Cellules en araignée (rhabdomyome)","hpo":null},"FOETO:PF.COE-MET-016":{"l":"Fibrose myocardique méso-pariétale (couches moyennes du myocarde)","hpo":null},"FOETO:PF.COE-DYS-009":{"l":"Fibrose interstitielle myocardique","hpo":"HP:0001685"},"FOETO:PF.COE-VAS-001":{"l":"Dilatation capillaire myocardique","hpo":null},"FOETO:PF.COE-VAS-009":{"l":"Destruction, fibrose et calcification du tissu de conduction et de la jonction AV","hpo":null},"FOETO:PF.COE-MAL-158":{"l":"Macrophages bleu alcian positifs dans la fibrosa valvulaire","hpo":null},"FOETO:PF.COE-NOR-100":{"l":"Faux disarray d'une coupe oblique, davantage à droite","hpo":null},"FOETO:PF.COE-MAL-161":{"l":"Myocytes à noyaux volumineux, hyperchromatiques et irréguliers","hpo":null},"FOETO:PF.COE-MAL-042":{"l":"Défect congénital du péricarde pariétal","hpo":null},"FOETO:PF.COE-CLA-013":{"l":"Fibrose de remplacement avec liseré de myocytes sous-endocardiques survivants","hpo":null},"FOETO:PF.COE-DYS-022":{"l":"Valve myxoïde et nodulaire (valve dysplasique)","hpo":null},"FOETO:PF.COE-INF-014":{"l":"Nécrose, cicatrice, calcification et pseudokystes toxoplasmiques","hpo":null},"FOETO:PF.COE-MET-038":{"l":"Petits foyers de fibrose multiples dispersés dans les ventricules","hpo":null},"FOETO:PF.COE-INF-013":{"l":"Microabcès multiples, surtout VG","hpo":null},"FOETO:PF.COE-DYS-013":{"l":"Hypertrophie des myocytes cardiaques","hpo":null},"FOETO:PF.COE-MAL-162":{"l":"Paroi VD parcheminée : endocarde et épicarde accolés sans graisse interposée","hpo":null},"FOETO:PF.COE-MAL-036":{"l":"Dysplasie fibromusculaire coronaire","hpo":null},"FOETO:PF.COE-INF-010":{"l":"Parvovirus B19 dans les noyaux myocytaires (IHC / ISH)","hpo":null},"FOETO:PF.COE-MAL-159":{"l":"Marquage C9 du complément / troponines T et I des myocytes lésés","hpo":null},"FOETO:PF.COE-MAL-181":{"l":"Nécrose ischémique myocardique","hpo":null},"FOETO:PF.COE-NOR-112":{"l":"Trabéculations grossières — ventricule de type droit","hpo":null},"FOETO:PF.COE-VAS-007":{"l":"Œdème interstitiel myocardique","hpo":null},"FOETO:PF.COE-CLA-012":{"l":"Épaississement fibro-élastique lamellaire dense de l'endocarde","hpo":null},"FOETO:PF.COE-INF-004":{"l":"Infiltrat de polynucléaires neutrophiles dans le myocarde","hpo":null},"FOETO:PF.COE-NOR-095":{"l":"Disarray à la jonction paroi libre / septum interventriculaire","hpo":null},"FOETO:PF.COE-TUM-033":{"l":"Nodule bien circonscrit de grandes cellules à cytoplasme clair","hpo":null},"FOETO:PF.COE-MET-019":{"l":"Inclusions lamellaires lysosomales dans les cardiomyocytes (inclusions myélinoïdes)","hpo":null},"FOETO:PF.COE-MAL-160":{"l":"Mitoses myocytaires nombreuses","hpo":null},"FOETO:PF.COE-INF-011":{"l":"Infiltrat inflammatoire myocardique (CD3, CD68)","hpo":null},"FOETO:PF.COE-MAL-163":{"l":"Muscles papillaires étirés et amincis","hpo":null},"FOETO:PF.COE-MAL-167":{"l":"Récessus bordés d'endocarde, anastomosés, profonds","hpo":null},"FOETO:PF.COE-MAL-164":{"l":"Muscles papillaires mitraux mal développés","hpo":null},"FOETO:PF.COE-MAL-062":{"l":"Fibroélastose endocardique","hpo":null},"FOETO:PF.COE-DYS-019":{"l":"Nécrose ischémique sous-endocardique focale","hpo":null},"FOETO:PF.COE-MET-004":{"l":"Accumulation lipidique intramyocytaire (stéatose myocardique)","hpo":null},"FOETO:PF.COE-MAL-077":{"l":"Hémopéricarde","hpo":null},"FOETO:PF.COE-INF-012":{"l":"Lipide intracytoplasmique myocytaire abondant au cours d'une myocardite","hpo":null},"FOETO:PF.COE-INF-016":{"l":"Myocardite","hpo":"HP:0012819"},"FOETO:PF.COE-DYS-003":{"l":"Clairance périnucléaire et granules mitochondriaux myocytaires","hpo":null},"FOETO:PF.COE-MAL-157":{"l":"Fibrose des piliers mitraux","hpo":null},"FOETO:PF.COE-MAL-169":{"l":"Septum membraneux anormalement large","hpo":null},"FOETO:PF.COE-DYS-017":{"l":"Myocytes cardiaques étirés et ondulants","hpo":null},"FOETO:PF.COE-MAL-172":{"l":"Cardiomyopathie histiocytoïde","hpo":null},"FOETO:PF.COE-NOR-004":{"l":"Bandes de contraction myocardiques","hpo":null},"FOETO:PF.COE-MET-018":{"l":"Inclusions intracytoplasmiques PAS-positives résistantes à la diastase dans les myocytes","hpo":null},"FOETO:PF.COE-DYS-008":{"l":"Désorganisation des myocytes (disarray)","hpo":null},"FOETO:PF.COE-MAL-179":{"l":"Atteinte du tissu de conduction du lupus maternel (anti-Ro)","hpo":null},"FOETO:PF.COE-MET-006":{"l":"Calcification artérielle idiopathique (myocarde et artères)","hpo":null},"FOETO:PF.COE-MET-040":{"l":"Vacuolisation myocytaire plus étendue que le normal fœtal","hpo":null},"FOETO:PF.COE-MAL-165":{"l":"Prolifération intimale fibreuse artérielle","hpo":null},"FOETO:PF.COE-MET-021":{"l":"Mitochondries géantes dans les cardiomyocytes","hpo":null},"FOETO:PF.COE-RET-017":{"l":"Nécrose myocytaire","hpo":null},"FOETO:PF.COE-MAL-173":{"l":"Cardiomyopathie dilatée","hpo":"HP:0001644"},"FOETO:PF.COE-MET-044":{"l":"Glycogénose de type II (Pompe)","hpo":null},"FOETO:PF.COE-MAL-166":{"l":"Réaction péricardique : hémorragie, exsudat, fibrine, cellules inflammatoires ou fibrose","hpo":null},"FOETO:PF.COE-MAL-153":{"l":"Anticorps maternels anti-SSA/Ro – SSB/La","hpo":null},"FOETO:PF.COE-MAL-177":{"l":"Dysplasie valvulaire","hpo":null},"FOETO:PF.COE-RET-030":{"l":"Couche trabéculée interne disproportionnée, cavité VG s'étendant presque à l'épicarde","hpo":null},"FOETO:PF.COE-INF-001":{"l":"Hyperéosinophilie des myocytes","hpo":null},"FOETO:PF.COE-MAL-088":{"l":"Kyste mésothélial du péricarde","hpo":null}};
+var FOETO = {"sections":[],"formes":{"FOETO:PF.COE-NOR-104":["Absence de lipofuscine myocytaire"],"FOETO:PF.COE-MET-004":["Accumulation lipidique intramyocytaire (stéatose myocardique)"],"FOETO:PF.COE-INF-021":["Agent viral mis en évidence dans le myocarde"],"FOETO:PF.COE-MAL-170":["Anomalie d'Uhl"],"FOETO:PF.COE-MAL-153":["Anticorps maternels anti-SSA/Ro – SSB/La"],"FOETO:PF.COE-DYS-024":["Artères intramurales des piliers à discrets traits dysplasiques"],"FOETO:PF.COE-MAL-179":["Atteinte du tissu de conduction du lupus maternel (anti-Ro)"],"FOETO:PF.COE-NOR-004":["Bandes de contraction myocardiques"],"FOETO:PF.COE-MET-006":["Calcification artérielle idiopathique (myocarde et artères)"],"FOETO:PF.COE-VAS-014":["Calcification au sein de la masse"],"FOETO:PF.COE-VAS-015":["Calcification au sein du tissu de conduction"],"FOETO:PF.COE-MAL-154":["Calcification dans et entre les lames élastiques artérielles"],"FOETO:PF.COE-MET-008":["Calcification myocardique"],"FOETO:PF.COE-MAL-173":["Cardiomyopathie dilatée"],"FOETO:PF.COE-MAL-172":["Cardiomyopathie histiocytoïde"],"FOETO:PF.COE-MAL-174":["Cardiomyopathie hypertrophique (sarcomérique)"],"FOETO:PF.COE-MET-043":["Cardiomyopathie mitochondriale"],"FOETO:PF.COE-MAL-190":["Cavité ventriculaire s'étendant presque jusqu'à l'épicarde"],"FOETO:PF.COE-TUM-003":["Cellules en araignée (rhabdomyome)"],"FOETO:PF.COE-NOR-094":["Cellules nodales pâles, petites, compactes, autour d'une artère centrale"],"FOETO:PF.COE-DYS-003":["Clairance périnucléaire et granules mitochondriaux myocytaires"],"FOETO:PF.COE-VAS-008":["Collagène abondant à cellules fusiformes uniformes, calcifications"],"FOETO:PF.COE-NOR-099":["Conjonctif épicardique s'épaississant avec le terme"],"FOETO:PF.COE-MAL-155":["Coronaires épicardiques dilatées à prolifération intimale élastique (communications ventriculo-coronaires)"],"FOETO:PF.COE-MAL-189":["Couche compacte amincie"],"FOETO:PF.COE-RET-030":["Couche trabéculée interne disproportionnée, cavité VG s'étendant presque à l'épicarde"],"FOETO:PF.COE-MAL-188":["Coupe passant par l'oreillette gauche"],"FOETO:PF.COE-NOR-092":["Coussinets intimaux du canal artériel (3ᵉ trimestre)"],"FOETO:PF.COE-NOR-113":["Cytoarchitecture d'ensemble conservée malgré l'altération"],"FOETO:PF.COE-MET-045":["Cytoplasme myocytaire clair et vacuolé (glycogène physiologique)"],"FOETO:PF.COE-NOR-098":["Cytoplasme myocytaire plus abondant et plus éosinophile vers le terme"],"FOETO:PF.COE-MAL-175":["Cœur gauche hypoplasique"],"FOETO:PF.COE-NOR-089":["Densité leucocytaire myocardique (Padova)"],"FOETO:PF.COE-VAS-009":["Destruction, fibrose et calcification du tissu de conduction et de la jonction AV"],"FOETO:PF.COE-VAS-001":["Dilatation capillaire myocardique"],"FOETO:PF.COE-NOR-095":["Disarray à la jonction paroi libre / septum interventriculaire"],"FOETO:PF.COE-NOR-096":["Dispersion (archipels) du faisceau de His"],"FOETO:PF.COE-MAL-036":["Dysplasie fibromusculaire coronaire"],"FOETO:PF.COE-MAL-177":["Dysplasie valvulaire"],"FOETO:PF.COE-MAL-042":["Défect congénital du péricarde pariétal"],"FOETO:PF.COE-MAL-176":["Déficit de β-oxydation des acides gras"],"FOETO:PF.COE-MET-055":["Dépôt de fibrine à la surface du péricarde"],"FOETO:PF.COE-MET-037":["Dépôts calciques sous la valve aortique et sous l'endocarde du VD (von Kossa)"],"FOETO:PF.COE-DYS-008":["Désorganisation des myocytes (disarray)"],"FOETO:PF.COE-MAL-200":["Désorganisation des myofibres dans le myocarde auriculaire"],"FOETO:PF.COE-MAL-198":["Désorganisation des myofibres dans le septum interventriculaire"],"FOETO:PF.COE-MAL-199":["Désorganisation des myofibres dans une paroi ventriculaire latérale"],"FOETO:PF.COE-NOR-097":["Effets du KCl mimant la macération sur l'organe injecté"],"FOETO:PF.COE-MAL-193":["Endocarde épaissi et riche en cellules"],"FOETO:PF.COE-MAL-156":["Enzymes oxydatives réduites sur coupe congelée"],"FOETO:PF.COE-NOR-100":["Faux disarray d'une coupe oblique, davantage à droite"],"FOETO:PF.COE-TUM-010":["Fibrome cardiaque"],"FOETO:PF.COE-CLA-013":["Fibrose de remplacement avec liseré de myocytes sous-endocardiques survivants"],"FOETO:PF.COE-CLA-002":["Fibrose de remplacement myocardique aux pointes des muscles papillaires"],"FOETO:PF.COE-MAL-157":["Fibrose des piliers mitraux"],"FOETO:PF.COE-MAL-194":["Fibrose du péricarde"],"FOETO:PF.COE-DYS-009":["Fibrose interstitielle myocardique"],"FOETO:PF.COE-MET-016":["Fibrose myocardique méso-pariétale (couches moyennes du myocarde)"],"FOETO:PF.COE-MAL-062":["Fibroélastose endocardique"],"FOETO:PF.COE-DYS-027":["Figures mitotiques myocytaires"],"FOETO:PF.COE-MET-044":["Glycogénose de type II (Pompe)"],"FOETO:PF.COE-MET-041":["Glycogénose de type XV"],"FOETO:PF.COE-NOR-101":["Graisse intramyocytaire en petite quantité"],"FOETO:PF.COE-DYS-013":["Hypertrophie des myocytes cardiaques"],"FOETO:PF.COE-MET-042":["Hypertrophie sans disarray — diabète maternel, mitochondriopathie, corticoïdes"],"FOETO:PF.COE-INF-001":["Hyperéosinophilie des myocytes"],"FOETO:PF.COE-RET-012":["Hématopoïèse extramédullaire myocardique"],"FOETO:PF.COE-MAL-077":["Hémopéricarde"],"FOETO:PF.COE-MET-018":["Inclusions intracytoplasmiques PAS-positives résistantes à la diastase dans les myocytes"],"FOETO:PF.COE-MET-019":["Inclusions lamellaires lysosomales dans les cardiomyocytes (inclusions myélinoïdes)"],"FOETO:PF.COE-INF-015":["Infection à parvovirus B19"],"FOETO:PF.COE-INF-004":["Infiltrat de polynucléaires neutrophiles dans le myocarde"],"FOETO:PF.COE-INF-019":["Infiltrat inflammatoire du péricarde"],"FOETO:PF.COE-INF-011":["Infiltrat inflammatoire myocardique (CD3, CD68)"],"FOETO:PF.COE-INF-018":["Infiltrat lymphocytaire épicardique focal au sillon AV"],"FOETO:PF.COE-INF-020":["Infiltrat à prédominance lymphocytaire T documentée"],"FOETO:PF.COE-MAL-088":["Kyste mésothélial du péricarde"],"FOETO:PF.COE-NOR-102":["Kystes sanguins du bord libre des valves AV, versant atrial"],"FOETO:PF.COE-NOR-103":["Lamelles élastiques fragmentées du tronc pulmonaire, continues de l'aorte"],"FOETO:PF.COE-INF-012":["Lipide intracytoplasmique myocytaire abondant au cours d'une myocardite"],"FOETO:PF.COE-NOR-105":["Liquide séro-sanglant péricardique abondant sur fœtus macéré"],"FOETO:PF.COE-DYS-026":["Lymphocytes myocardiques résidents, densité bimodale (pics 24 et 39 SA)"],"FOETO:PF.COE-INF-022":["Lésion de conduction avec très peu de cellules inflammatoires"],"FOETO:PF.COE-MAL-158":["Macrophages bleu alcian positifs dans la fibrosa valvulaire"],"FOETO:PF.COE-MAL-178":["Maladie de Fabry"],"FOETO:PF.COE-MAL-159":["Marquage C9 du complément / troponines T et I des myocytes lésés"],"FOETO:PF.COE-MAL-196":["Masse siégeant dans le septum interventriculaire"],"FOETO:PF.COE-NOR-106":["Mastocytes interstitiels"],"FOETO:PF.COE-INF-013":["Microabcès multiples, surtout VG"],"FOETO:PF.COE-MET-039":["Mitochondries anormales en microscopie électronique"],"FOETO:PF.COE-MET-021":["Mitochondries géantes dans les cardiomyocytes"],"FOETO:PF.COE-MAL-160":["Mitoses myocytaires nombreuses"],"FOETO:PF.COE-MAL-180":["Mucopolysaccharidose"],"FOETO:PF.COE-MAL-164":["Muscles papillaires mitraux mal développés"],"FOETO:PF.COE-MAL-163":["Muscles papillaires étirés et amincis"],"FOETO:PF.COE-NOR-093":["Myocarde fœtal très cellulaire (myocytes ≈ 30 % des cellules)"],"FOETO:PF.COE-INF-016":["Myocardite"],"FOETO:PF.COE-DYS-017":["Myocytes cardiaques étirés et ondulants"],"FOETO:PF.COE-DYS-018":["Myocytes histiocytoïdes (cardiomyopathie histiocytoïde)"],"FOETO:PF.COE-MAL-161":["Myocytes à noyaux volumineux, hyperchromatiques et irréguliers"],"FOETO:PF.COE-TUM-033":["Nodule bien circonscrit de grandes cellules à cytoplasme clair"],"FOETO:PF.COE-MAL-195":["Nodule unique"],"FOETO:PF.COE-MAL-168":["Nodules multiples — nombre à compter"],"FOETO:PF.COE-MAL-099":["Non-compaction du myocarde ventriculaire"],"FOETO:PF.COE-NOR-107":["Noyaux de mégacaryocytes dans les capillaires myocardiques"],"FOETO:PF.COE-MAL-181":["Nécrose ischémique myocardique"],"FOETO:PF.COE-DYS-019":["Nécrose ischémique sous-endocardique focale"],"FOETO:PF.COE-CLA-007":["Nécrose myocardique avec calcification dystrophique"],"FOETO:PF.COE-RET-017":["Nécrose myocytaire"],"FOETO:PF.COE-INF-014":["Nécrose, cicatrice, calcification et pseudokystes toxoplasmiques"],"FOETO:PF.COE-MAL-162":["Paroi VD parcheminée : endocarde et épicarde accolés sans graisse interposée"],"FOETO:PF.COE-VAS-010":["Paroi artérielle désorganisée, amincie et épaissie irrégulièrement, empiétant sur la lumière"],"FOETO:PF.COE-INF-010":["Parvovirus B19 dans les noyaux myocytaires (IHC / ISH)"],"FOETO:PF.COE-MAL-184":["Petite quantité de liquide péricardique"],"FOETO:PF.COE-MET-038":["Petits foyers de fibrose multiples dispersés dans les ventricules"],"FOETO:PF.COE-NOR-091":["Poids du cœur"],"FOETO:PF.COE-NOR-108":["Point de ponction épicardique du fœticide (KCl)"],"FOETO:PF.COE-MAL-165":["Prolifération intimale fibreuse artérielle"],"FOETO:PF.COE-INF-017":["Péricardite"],"FOETO:PF.COE-RET-022":["Rhabdomyome cardiaque"],"FOETO:PF.COE-CLA-009":["Rupture du muscle papillaire"],"FOETO:PF.COE-MAL-166":["Réaction péricardique : hémorragie, exsudat, fibrine, cellules inflammatoires ou fibrose"],"FOETO:PF.COE-MAL-167":["Récessus bordés d'endocarde, anastomosés, profonds"],"FOETO:PF.COE-MAL-182":["Sclérose tubéreuse"],"FOETO:PF.COE-MAL-169":["Septum membraneux anormalement large"],"FOETO:PF.COE-NOR-109":["Stroma valvulaire focalement myxoïde, non nodulaire"],"FOETO:PF.COE-INF-009":["Structure nucléaire d'Anitschkow"],"FOETO:PF.COE-MAL-171":["Syndrome de Barth"],"FOETO:PF.COE-VAS-011":["Thrombose murale sur cathéter"],"FOETO:PF.COE-NOR-110":["Tissu de conduction en conjonctif lâche, sans dégénérescence, nécrose, phagocytose, inflammation ni fibrose"],"FOETO:PF.COE-MAL-130":["Tissu thyroïdien ou thymique hétérotopique dans le péricarde"],"FOETO:PF.COE-MAL-197":["Tissus de plusieurs feuillets embryonnaires dans la masse"],"FOETO:PF.COE-NOR-112":["Trabéculations grossières — ventricule de type droit"],"FOETO:PF.COE-NOR-111":["Trabéculations très fines — ventricule de type gauche"],"FOETO:PF.COE-TUM-029":["Tératome cardiaque"],"FOETO:PF.COE-MET-040":["Vacuolisation myocytaire plus étendue que le normal fœtal"],"FOETO:PF.COE-CLA-010":["Vacuolisation pathologique des cardiomyocytes (myocytolyse)"],"FOETO:PF.COE-DYS-022":["Valve myxoïde et nodulaire (valve dysplasique)"],"FOETO:PF.COE-TUM-031":["Éléments tissulaires immatures dans tératome"],"FOETO:PF.COE-MAL-183":["Épaisseur des parois VG et VD, saisies en paire"],"FOETO:PF.COE-NOR-090":["Épaisseur endocardique maximale, avec la cavité où elle est mesurée"],"FOETO:PF.COE-RET-028":["Épaississement de l'endocarde atrial gauche"],"FOETO:PF.COE-MAL-192":["Épaississement endocardique des deux ventricules"],"FOETO:PF.COE-MAL-191":["Épaississement endocardique portant sur le ventricule gauche"],"FOETO:PF.COE-CLA-012":["Épaississement fibro-élastique lamellaire dense de l'endocarde"],"FOETO:PF.COE-DYS-025":["Épaississement intimal coronaire focal avec rupture de la limitante élastique interne"],"FOETO:PF.COE-VAS-007":["Œdème interstitiel myocardique"]}};
+var FOETOV = {"FOETO:PF.COE-NOR-098":{"l":"Cytoplasme myocytaire plus abondant et plus éosinophile vers le terme","hpo":null},"FOETO:PF.COE-NOR-105":{"l":"Liquide séro-sanglant péricardique abondant sur fœtus macéré","hpo":null},"FOETO:PF.COE-MAL-077":{"l":"Hémopéricarde","hpo":null},"FOETO:PF.COE-MET-045":{"l":"Cytoplasme myocytaire clair et vacuolé (glycogène physiologique)","hpo":null},"FOETO:PF.COE-DYS-017":{"l":"Myocytes cardiaques étirés et ondulants","hpo":null},"FOETO:PF.COE-MET-016":{"l":"Fibrose myocardique méso-pariétale (couches moyennes du myocarde)","hpo":null},"FOETO:PF.COE-NOR-090":{"l":"Épaisseur endocardique maximale, avec la cavité où elle est mesurée","hpo":null},"FOETO:PF.COE-MAL-189":{"l":"Couche compacte amincie","hpo":null},"FOETO:PF.COE-INF-011":{"l":"Infiltrat inflammatoire myocardique (CD3, CD68)","hpo":null},"FOETO:PF.COE-INF-021":{"l":"Agent viral mis en évidence dans le myocarde","hpo":null},"FOETO:PF.COE-INF-016":{"l":"Myocardite","hpo":"HP:0012819"},"FOETO:PF.COE-MAL-159":{"l":"Marquage C9 du complément / troponines T et I des myocytes lésés","hpo":null},"FOETO:PF.COE-NOR-102":{"l":"Kystes sanguins du bord libre des valves AV, versant atrial","hpo":null},"FOETO:PF.COE-DYS-022":{"l":"Valve myxoïde et nodulaire (valve dysplasique)","hpo":null},"FOETO:PF.COE-MET-039":{"l":"Mitochondries anormales en microscopie électronique","hpo":null},"FOETO:PF.COE-DYS-024":{"l":"Artères intramurales des piliers à discrets traits dysplasiques","hpo":null},"FOETO:PF.COE-MAL-157":{"l":"Fibrose des piliers mitraux","hpo":null},"FOETO:PF.COE-MAL-195":{"l":"Nodule unique","hpo":null},"FOETO:PF.COE-CLA-012":{"l":"Épaississement fibro-élastique lamellaire dense de l'endocarde","hpo":null},"FOETO:PF.COE-INF-004":{"l":"Infiltrat de polynucléaires neutrophiles dans le myocarde","hpo":null},"FOETO:PF.COE-MET-006":{"l":"Calcification artérielle idiopathique (myocarde et artères)","hpo":null},"FOETO:PF.COE-INF-020":{"l":"Infiltrat à prédominance lymphocytaire T documentée","hpo":null},"FOETO:PF.COE-VAS-009":{"l":"Destruction, fibrose et calcification du tissu de conduction et de la jonction AV","hpo":null},"FOETO:PF.COE-MET-037":{"l":"Dépôts calciques sous la valve aortique et sous l'endocarde du VD (von Kossa)","hpo":null},"FOETO:PF.COE-MAL-188":{"l":"Coupe passant par l'oreillette gauche","hpo":null},"FOETO:PF.COE-MAL-160":{"l":"Mitoses myocytaires nombreuses","hpo":null},"FOETO:PF.COE-RET-030":{"l":"Couche trabéculée interne disproportionnée, cavité VG s'étendant presque à l'épicarde","hpo":null},"FOETO:PF.COE-MAL-130":{"l":"Tissu thyroïdien ou thymique hétérotopique dans le péricarde","hpo":null},"FOETO:PF.COE-MAL-190":{"l":"Cavité ventriculaire s'étendant presque jusqu'à l'épicarde","hpo":null},"FOETO:PF.COE-NOR-113":{"l":"Cytoarchitecture d'ensemble conservée malgré l'altération","hpo":null},"FOETO:PF.COE-INF-010":{"l":"Parvovirus B19 dans les noyaux myocytaires (IHC / ISH)","hpo":null},"FOETO:PF.COE-MET-044":{"l":"Glycogénose de type II (Pompe)","hpo":null},"FOETO:PF.COE-MAL-099":{"l":"Non-compaction du myocarde ventriculaire","hpo":"HP:0012817"},"FOETO:PF.COE-MAL-179":{"l":"Atteinte du tissu de conduction du lupus maternel (anti-Ro)","hpo":null},"FOETO:PF.COE-MAL-042":{"l":"Défect congénital du péricarde pariétal","hpo":null},"FOETO:PF.COE-MET-021":{"l":"Mitochondries géantes dans les cardiomyocytes","hpo":null},"FOETO:PF.COE-MAL-168":{"l":"Nodules multiples — nombre à compter","hpo":null},"FOETO:PF.COE-MAL-200":{"l":"Désorganisation des myofibres dans le myocarde auriculaire","hpo":null},"FOETO:PF.COE-INF-013":{"l":"Microabcès multiples, surtout VG","hpo":null},"FOETO:PF.COE-CLA-009":{"l":"Rupture du muscle papillaire","hpo":null},"FOETO:PF.COE-TUM-010":{"l":"Fibrome cardiaque","hpo":"HP:0010617"},"FOETO:PF.COE-MAL-191":{"l":"Épaississement endocardique portant sur le ventricule gauche","hpo":null},"FOETO:PF.COE-VAS-015":{"l":"Calcification au sein du tissu de conduction","hpo":null},"FOETO:PF.COE-TUM-033":{"l":"Nodule bien circonscrit de grandes cellules à cytoplasme clair","hpo":null},"FOETO:PF.COE-DYS-008":{"l":"Désorganisation des myocytes (disarray)","hpo":null},"FOETO:PF.COE-CLA-007":{"l":"Nécrose myocardique avec calcification dystrophique","hpo":null},"FOETO:PF.COE-MAL-172":{"l":"Cardiomyopathie histiocytoïde","hpo":null},"FOETO:PF.COE-CLA-002":{"l":"Fibrose de remplacement myocardique aux pointes des muscles papillaires","hpo":null},"FOETO:PF.COE-MAL-153":{"l":"Anticorps maternels anti-SSA/Ro – SSB/La","hpo":null},"FOETO:PF.COE-DYS-026":{"l":"Lymphocytes myocardiques résidents, densité bimodale (pics 24 et 39 SA)","hpo":null},"FOETO:PF.COE-VAS-001":{"l":"Dilatation capillaire myocardique","hpo":null},"FOETO:PF.COE-INF-017":{"l":"Péricardite","hpo":"HP:0001701"},"FOETO:PF.COE-MET-055":{"l":"Dépôt de fibrine à la surface du péricarde","hpo":null},"FOETO:PF.COE-MAL-199":{"l":"Désorganisation des myofibres dans une paroi ventriculaire latérale","hpo":null},"FOETO:PF.COE-RET-022":{"l":"Rhabdomyome cardiaque","hpo":null},"FOETO:PF.COE-VAS-011":{"l":"Thrombose murale sur cathéter","hpo":null},"FOETO:PF.COE-RET-017":{"l":"Nécrose myocytaire","hpo":null},"FOETO:PF.COE-INF-001":{"l":"Hyperéosinophilie des myocytes","hpo":null},"FOETO:PF.COE-MAL-158":{"l":"Macrophages bleu alcian positifs dans la fibrosa valvulaire","hpo":null},"FOETO:PF.COE-INF-012":{"l":"Lipide intracytoplasmique myocytaire abondant au cours d'une myocardite","hpo":null},"FOETO:PF.COE-MAL-062":{"l":"Fibroélastose endocardique","hpo":null},"FOETO:PF.COE-DYS-013":{"l":"Hypertrophie des myocytes cardiaques","hpo":null},"FOETO:PF.COE-MAL-156":{"l":"Enzymes oxydatives réduites sur coupe congelée","hpo":null},"FOETO:PF.COE-MAL-167":{"l":"Récessus bordés d'endocarde, anastomosés, profonds","hpo":null},"FOETO:PF.COE-VAS-008":{"l":"Collagène abondant à cellules fusiformes uniformes, calcifications","hpo":null},"FOETO:PF.COE-VAS-014":{"l":"Calcification au sein de la masse","hpo":null},"FOETO:PF.COE-MAL-197":{"l":"Tissus de plusieurs feuillets embryonnaires dans la masse","hpo":null},"FOETO:PF.COE-NOR-095":{"l":"Disarray à la jonction paroi libre / septum interventriculaire","hpo":null},"FOETO:PF.COE-TUM-031":{"l":"Éléments tissulaires immatures dans tératome","hpo":null},"FOETO:PF.COE-DYS-027":{"l":"Figures mitotiques myocytaires","hpo":null},"FOETO:PF.COE-MAL-163":{"l":"Muscles papillaires étirés et amincis","hpo":null},"FOETO:PF.COE-MAL-184":{"l":"Petite quantité de liquide péricardique","hpo":null},"FOETO:PF.COE-MET-040":{"l":"Vacuolisation myocytaire plus étendue que le normal fœtal","hpo":null},"FOETO:PF.COE-MAL-166":{"l":"Réaction péricardique : hémorragie, exsudat, fibrine, cellules inflammatoires ou fibrose","hpo":null},"FOETO:PF.COE-NOR-101":{"l":"Graisse intramyocytaire en petite quantité","hpo":null},"FOETO:PF.COE-MAL-192":{"l":"Épaississement endocardique des deux ventricules","hpo":null},"FOETO:PF.COE-NOR-004":{"l":"Bandes de contraction myocardiques","hpo":null},"FOETO:PF.COE-MAL-196":{"l":"Masse siégeant dans le septum interventriculaire","hpo":null},"FOETO:PF.COE-MET-018":{"l":"Inclusions intracytoplasmiques PAS-positives résistantes à la diastase dans les myocytes","hpo":null},"FOETO:PF.COE-NOR-111":{"l":"Trabéculations très fines — ventricule de type gauche","hpo":null},"FOETO:PF.COE-CLA-010":{"l":"Vacuolisation pathologique des cardiomyocytes (myocytolyse)","hpo":null},"FOETO:PF.COE-MET-038":{"l":"Petits foyers de fibrose multiples dispersés dans les ventricules","hpo":null},"FOETO:PF.COE-MAL-173":{"l":"Cardiomyopathie dilatée","hpo":"HP:0001644"},"FOETO:PF.COE-NOR-108":{"l":"Point de ponction épicardique du fœticide (KCl)","hpo":null},"FOETO:PF.COE-NOR-092":{"l":"Coussinets intimaux du canal artériel (3ᵉ trimestre)","hpo":null},"FOETO:PF.COE-DYS-019":{"l":"Nécrose ischémique sous-endocardique focale","hpo":null},"FOETO:PF.COE-DYS-003":{"l":"Clairance périnucléaire et granules mitochondriaux myocytaires","hpo":null},"FOETO:PF.COE-MAL-161":{"l":"Myocytes à noyaux volumineux, hyperchromatiques et irréguliers","hpo":null},"FOETO:PF.COE-NOR-100":{"l":"Faux disarray d'une coupe oblique, davantage à droite","hpo":null},"FOETO:PF.COE-MET-008":{"l":"Calcification myocardique","hpo":null},"FOETO:PF.COE-MAL-088":{"l":"Kyste mésothélial du péricarde","hpo":null},"FOETO:PF.COE-MAL-169":{"l":"Septum membraneux anormalement large","hpo":null},"FOETO:PF.COE-MAL-162":{"l":"Paroi VD parcheminée : endocarde et épicarde accolés sans graisse interposée","hpo":null},"FOETO:PF.COE-INF-018":{"l":"Infiltrat lymphocytaire épicardique focal au sillon AV","hpo":null},"FOETO:PF.COE-NOR-096":{"l":"Dispersion (archipels) du faisceau de His","hpo":null},"FOETO:PF.COE-MAL-193":{"l":"Endocarde épaissi et riche en cellules","hpo":null},"FOETO:PF.COE-MAL-177":{"l":"Dysplasie valvulaire","hpo":null},"FOETO:PF.COE-TUM-029":{"l":"Tératome cardiaque","hpo":null},"FOETO:PF.COE-VAS-007":{"l":"Œdème interstitiel myocardique","hpo":null},"FOETO:PF.COE-NOR-109":{"l":"Stroma valvulaire focalement myxoïde, non nodulaire","hpo":null},"FOETO:PF.COE-MAL-165":{"l":"Prolifération intimale fibreuse artérielle","hpo":null},"FOETO:PF.COE-MAL-036":{"l":"Dysplasie fibromusculaire coronaire","hpo":null},"FOETO:PF.COE-NOR-112":{"l":"Trabéculations grossières — ventricule de type droit","hpo":null},"FOETO:PF.COE-CLA-013":{"l":"Fibrose de remplacement avec liseré de myocytes sous-endocardiques survivants","hpo":null},"FOETO:PF.COE-MAL-155":{"l":"Coronaires épicardiques dilatées à prolifération intimale élastique (communications ventriculo-coronaires)","hpo":null},"FOETO:PF.COE-INF-014":{"l":"Nécrose, cicatrice, calcification et pseudokystes toxoplasmiques","hpo":null},"FOETO:PF.COE-INF-022":{"l":"Lésion de conduction avec très peu de cellules inflammatoires","hpo":null},"FOETO:PF.COE-INF-009":{"l":"Structure nucléaire d'Anitschkow","hpo":null},"FOETO:PF.COE-RET-028":{"l":"Épaississement de l'endocarde atrial gauche","hpo":null},"FOETO:PF.COE-MET-019":{"l":"Inclusions lamellaires lysosomales dans les cardiomyocytes (inclusions myélinoïdes)","hpo":null},"FOETO:PF.COE-MAL-181":{"l":"Nécrose ischémique myocardique","hpo":null},"FOETO:PF.COE-MAL-154":{"l":"Calcification dans et entre les lames élastiques artérielles","hpo":null},"FOETO:PF.COE-TUM-003":{"l":"Cellules en araignée (rhabdomyome)","hpo":null},"FOETO:PF.COE-INF-019":{"l":"Infiltrat inflammatoire du péricarde","hpo":null},"FOETO:PF.COE-MAL-194":{"l":"Fibrose du péricarde","hpo":null},"FOETO:PF.COE-MET-004":{"l":"Accumulation lipidique intramyocytaire (stéatose myocardique)","hpo":null},"FOETO:PF.COE-DYS-018":{"l":"Myocytes histiocytoïdes (cardiomyopathie histiocytoïde)","hpo":null},"FOETO:PF.COE-DYS-009":{"l":"Fibrose interstitielle myocardique","hpo":"HP:0001685"},"FOETO:PF.COE-MAL-164":{"l":"Muscles papillaires mitraux mal développés","hpo":null},"FOETO:PF.COE-VAS-010":{"l":"Paroi artérielle désorganisée, amincie et épaissie irrégulièrement, empiétant sur la lumière","hpo":null},"FOETO:PF.COE-MAL-198":{"l":"Désorganisation des myofibres dans le septum interventriculaire","hpo":null}};
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
@@ -1505,8 +1510,8 @@ function batir(){
             return '<button type="button" class="chip" data-act="etendue" data-k="' + i + '" data-v="' + e + '">' +
                    '<span class="k">étendue</span>' + e + '</button>';
           }).join("") + '</div>') +
-        sig.filter(blocable).map(ligneSigne).join("") + '</div>' +
-        sig.filter(function(x){ return !blocable(x); }).map(ligneSigne).join("") + '</div>';
+        sig.filter(function(x){ return !horsBloc(x); }).map(ligneSigne).join("") + '</div>' +
+        sig.filter(horsBloc).map(ligneSigne).join("") + '</div>';
     });
     $("signes").innerHTML = html.signes;
     $("contexte").innerHTML = html.contexte;
@@ -1588,8 +1593,11 @@ function ligneSigne(x){
       (x.horsFiche ? '<span class="meta">hors fiche — non sourcé par la biblio</span>' : "") +
       (x.fiche && !x.foeto ? '<span class="meta">dans la fiche ' + esc(x.fiche) + ', sans terme FOETO</span>' : "") +
       (oblig ? '<span class="meta">négatif à énoncer : répondre présent ou absent</span>' : "") +
-      (PRESENCE && !blocable(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
-        : "hors du « Non » en bloc : " + (x.mag === "technique" ? "se répond après la technique" : "polarité normale, à répondre seul")) +
+      (PRESENCE && horsBloc(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
+        : x.mag === "technique" ? "hors du « Non » en bloc : se répond après la technique"
+        : x.bloc === false ? "hors du « Non » en bloc : polarité normale, à répondre seul"
+        : x.seul ? "hors du « Non » en bloc : dépend du terme, à répondre seul"
+        : "« Non » en bloc seulement " + fenetreTxt(x.terme) + " — hors de là, à répondre seul") +
         '</span>' : "") +
       '</div>' +
       (x.auto ? '<span class="chip" data-auto="' + x.k + '" style="cursor:default"></span>' :
@@ -1611,6 +1619,8 @@ function foetoAjouter(id){
   /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
   var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
   if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
+  var vr = FUSION && VARIANTES.filter(function(v){ return v.foeto === id; })[0];
+  if (vr){ E.variantes[vr.k] = true; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
     if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
@@ -1662,6 +1672,17 @@ function codesPresents(){
   return SIGNES.filter(function(x){ return E.signes[x.k] === POS && codesDe(x).length; })
                .map(function(x){ return { k:x.k, l:x.l, foeto:x.foeto || null, hpo:x.hpo || null }; });
 }
+/* Codes du reste de la lecture : variante vue, critère de rétention présent, stade retenu,
+   mesure saisie (avec sa valeur). Exportés à part (codes_lecture), champ additif. */
+function codesLecture(){
+  var c = [];
+  VARIANTES.forEach(function(v){ if (v.foeto && E.variantes[v.k]) c.push({ type:"variante", k:v.k, l:v.l, foeto:v.foeto }); });
+  RETENTION.forEach(function(r){ if (r.foeto && E.retention[r.k] === "present") c.push({ type:"rétention", k:r.k, l:r.l, foeto:r.foeto }); });
+  STADES.forEach(function(s){ if (s.foeto && E.stade === s.k) c.push({ type:"stade", k:s.k, l:s.l, foeto:s.foeto }); });
+  if (MESURE) MESURE.champs.forEach(function(m){
+    if (m.foeto && E.mesure.v[m.id] != null) c.push({ type:"mesure", k:m.id, l:m.label, foeto:m.foeto, valeur:E.mesure.v[m.id] }); });
+  return c;
+}
 /* Grille branchée sur FOETO : un signe porte fv (terme tagué « verbatim ») ; son
    libellé et son HPO arbitré viennent de la base, le code exporté est l'id FOETO. */
 function resoudreFV(){
@@ -1672,7 +1693,15 @@ function resoudreFV(){
     else if (!x.fiche) x.horsFiche = true;   // aucun terme de fiche derrière : non sourcé par la biblio
     /* fiche:"[keeling]" : constat sourcé dans la fiche que FOETO ne porte pas (encore) en terme */
   });
-  DIAGS.forEach(function(d){ if (d.fv && FOETOV[d.fv]) d.foeto = [d.fv]; });
+  /* Une association peut porter plusieurs termes maladie (fv:["FOETO:…", …]) : affichés, jamais exportés. */
+  DIAGS.forEach(function(d){
+    var ids = [].concat(d.fv || []).filter(function(i){ return FOETOV[i]; });
+    if (ids.length) d.foeto = ids;
+  });
+  /* Variantes, rétention, stades, champs de mesure portent aussi leur terme (NOR, RET, AXE, MES).
+     Seul le code s'y attache : variantes, rétention, stades et mesures gardent leur libellé. */
+  /* une variante GARDE son libellé : il porte des avertissements (« ne jamais énoncer en négatif ») */
+  VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).forEach(function(x){ if (x.fv && FOETOV[x.fv]) x.foeto = x.fv; });
 }
 
 /* ── Mode présence : rétention en liste, signes en paragraphes ─────────────── */
@@ -1715,7 +1744,21 @@ function variantesDe(g){ return VARIANTES.filter(function(v){ return v.g === g; 
    technique (mag:"technique") ni un signe de polarité normale (bloc:false, ex.
    « tubes collecteurs normaux » : absent y voudrait dire anormal). Ces signes restent
    visibles, paragraphe replié, et se répondent un par un. */
-function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false; }
+/* Un signe qui dépend du terme ne se répond pas en bloc hors de sa fenêtre : terme:[min, max]
+   en SA (une borne peut être null), bornes recopiées du verbatim de la fiche ; terme non saisi
+   = hors fenêtre. seul:true : dépend du terme sans borne écrite, il se répond un par un.
+   Dans les deux cas, présent reste une lésion. */
+function dansTerme(x){
+  if (!x.terme) return true;
+  var sa = num("sa");
+  return sa != null && (x.terme[0] == null || sa >= x.terme[0]) && (x.terme[1] == null || sa <= x.terme[1]);
+}
+/* toujours visible, paragraphe replié : ce que le « Non » en bloc peut ne pas répondre */
+function horsBloc(x){ return !!(x.auto || x.mag === "technique" || x.bloc === false || x.seul || x.terme); }
+function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false && !x.seul && dansTerme(x); }
+function fenetreTxt(t){
+  return t[0] != null && t[1] != null ? "de " + t[0] + " à " + t[1] + " SA" : t[0] != null ? "à partir de " + t[0] + " SA" : "jusqu'à " + t[1] + " SA";
+}
 /* Un signe bloc:false présent (méconium dans la lumière, collecteurs normaux) s'écrit au
    CR mais n'ouvre pas le paragraphe et ne bloque pas son « Non » : ce n'est pas une lésion. */
 function lesionPresente(x){ return E.signes[x.k] === POS && x.bloc !== false; }
@@ -2050,6 +2093,12 @@ function composer(){
     L.push("CODES DES SIGNES PRÉSENTS");
     cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
   }
+  var cl = codesLecture();
+  if (cl.length){
+    L.push("");
+    L.push("CODES DE LA LECTURE");
+    cl.forEach(function(c){ L.push("  " + c.type + " · " + c.l + (c.valeur != null ? " = " + c.valeur : "") + " [" + c.foeto + "]"); });
+  }
 
   var fo = Object.keys(E.foeto);
   if (fo.length){
@@ -2248,6 +2297,7 @@ function collecter(){
     terme_sa: num("sa"),
     grille: JSON.parse(JSON.stringify(E)),
     codes: codesPresents(),
+    codes_lecture: codesLecture(),
     compte_rendu: composer()
   };
 }
@@ -2549,7 +2599,7 @@ async function autotest(){
     clic("grp", iA, "non");
     chk("paragraphe non → signes absents", sA.every(function(x){ return E.signes[x.k] === NEG; }) &&
         etatGroupe(gA) === "non" && crTient(gA + " : non."));
-    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA; })[0];
+    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA && blocable(par(SIGNES, n.signe)); })[0];
     if (lie) chk("paragraphe non → négatif lié énoncé", etatNegatif(lie) === "ok");
     clic("grp", iA, "non");
     chk("second non → non regardé", sA.every(function(x){ return !E.signes[x.k]; }) && etatGroupe(gA) === null);
@@ -2583,6 +2633,18 @@ async function autotest(){
     chk("codes : lisibles (FOETO:/HP:)", SIGNES.every(function(x){
       return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)); }));
   }
+
+  /* Codes de la lecture : une variante vue exporte son terme (NOR), pas une variante non cochée */
+  var vc = VARIANTES.filter(function(v){ return v.foeto; })[0];
+  if (vc){
+    chk("codes lecture : rien sans variante vue", !codesLecture().some(function(c){ return c.k === vc.k; }));
+    clic("var", vc.k);
+    chk("codes lecture : la variante vue exporte son terme", collecter().codes_lecture.some(function(c){ return c.k === vc.k && c.foeto === vc.foeto; }) &&
+        crTient("CODES DE LA LECTURE") && crTient("[" + vc.foeto + "]"));
+    clic("var", vc.k);
+  }
+  chk("codes lecture : lisibles (FOETO:)", VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).every(function(x){
+    return !x.foeto || /^FOETO:/.test(x.foeto); }));
 
   /* Signes et associations */
   var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
@@ -2693,6 +2755,22 @@ async function autotest(){
           E.signes[xF.k] === POS && crTient(gF + " : non") && crTient(xF.l + " — PRÉSENT"));
       clic("grp", iF, "non");
       clic("les", xF.k, POS);
+    }
+    /* Fenêtre de terme : le « Non » en bloc ne répond un signe daté que dans sa fenêtre */
+    var xS = SIGNES.filter(function(x){ return x.terme && !x.auto; })[0];
+    if (xS){
+      var gS = xS.g, iS = groupes().indexOf(gS), t0 = xS.terme[0], t1 = xS.terme[1];
+      var dedans = t0 != null ? t0 : t1, dehors = t0 != null ? t0 - 1 : t1 + 1;
+      signesDe(gS).forEach(function(x){ if (!x.auto) delete E.signes[x.k]; }); delete E.groupes[gS];
+      set("sa", String(dehors));
+      clic("grp", iS, "non");
+      chk("terme : hors fenêtre, le « Non » ne répond pas « " + xS.k + " »", !E.signes[xS.k] && etatGroupe(gS) === "non");
+      clic("grp", iS, "non");
+      set("sa", String(dedans));
+      clic("grp", iS, "non");
+      chk("terme : dans la fenêtre, le « Non » le répond absent", E.signes[xS.k] === NEG);
+      clic("grp", iS, "non");
+      set("sa", "");
     }
     /* Rédaction proposée : la phrase du cadre « Non », celle du signe présent, rien sinon */
     if (REDIGE){

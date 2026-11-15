@@ -44,11 +44,16 @@
    Fond : ~/Bureau/fiches_lecture/fiche_muscle.md (§1 à §9).
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 1 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 6 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 17 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "muscle";
 var TITRE   = "muscle squelettique";
 var SOURCE  = "fiche_muscle.md";
 var MODULE  = "grille_muscle";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -145,7 +150,7 @@ var RETENTION = [
          "jamais celle du muscle ; deux lectures restent ouvertes et aucune n'est sourcée (§ 9.2) : " +
          "soit le muscle n'a pas été étudié, soit il ne date pas",
     alerte:MODIF },
-  { k:"basophiliePerdue", l:"Perte de basophilie nucléaire des fibres", b:"—", d:"non situable au muscle",
+  { k:"basophiliePerdue", fv:"FOETO:PF.MUS-NOR-021", l:"Perte de basophilie nucléaire des fibres", b:"—", d:"non situable au muscle",
     h:0, q:"mauvais",
     note:"« There is a predictable pattern of loss of nuclear basophilia in the internal organs which " +
          "should not be mistaken for necrosis » [keeling, ch. 15] — mais le muscle n'est pas dans la " +
@@ -157,11 +162,11 @@ var RETENTION = [
          "dans AUCUNE source — ni Table 15.6, ni Table 37.1, ni keeling ch. 31, ni soffoet ch. 10 — et " +
          "l'expression contraction band n'est sourcée que pour le MYOCARDE [ashworth, ch. 6]. " +
          "Quatrième occurrence du même défaut dans la série (§ 9.3) : ne pas dater là-dessus" },
-  { k:"debrisGranulaire", l:"Débris granulaire des tissus mous", b:"—", d:"non datable seul", h:0, q:"mauvais",
+  { k:"debrisGranulaire", fv:"FOETO:PF.MUS-NOR-017", l:"Débris granulaire des tissus mous", b:"—", d:"non datable seul", h:0, q:"mauvais",
     note:"« Degeneration of soft tissues results in granular debris which may be mistaken for bacterial " +
          "colonisation » [keeling, ch. 15] ; le critère de discrimination est la présence d'une réponse " +
          "inflammatoire — faire un Gram tissulaire avant de conclure" },
-  { k:"mulberry", l:"Corps « mûre » (mulberry-like bodies) dans les vaisseaux", b:"≈ 2–3 jours",
+  { k:"mulberry", fv:"FOETO:PF.MUS-NOR-016", l:"Corps « mûre » (mulberry-like bodies) dans les vaisseaux", b:"≈ 2–3 jours",
     d:"lu hors muscle, [keeling, ch. 15]", h:60, q:"moyen",
     note:"« should not be mistaken for infective organisms » [keeling, ch. 15] — le muscle est richement " +
          "vascularisé donc il les porte, mais la borne est celle de l'artefact vasculaire général, elle " +
@@ -365,14 +370,14 @@ var CADRES = [
    dont elle mime un signe. (Termes FOETO de la fiche : PF.MUS-NOR-018 petites
    fibres rondes, PF.MUS-NOR-019 fuseau, PF.MUS-NOR-020 oculo-moteurs.) */
 var VARIANTES = [
-  { k:"petitesRondes", g:"Calibre des fibres", l:"Petites fibres rondes — normales chez le FŒTUS" },
+  { k:"petitesRondes", fv:"FOETO:PF.MUS-NOR-018", g:"Calibre des fibres", l:"Petites fibres rondes — normales chez le FŒTUS" },
   { k:"wohlfart",      g:"Calibre des fibres", l:"Bimodalité « a » / « b » de Wohlfart entre 18 et 35 SA" },
   { k:"myotubesJeune", g:"Noyaux et myotubes", l:"Myotubes avant 18 SA — stade, pas maladie" },
-  { k:"fuseau",        g:"Atrophie groupée et fibres hypertrophiques", l:"Fuseau neuromusculaire du périmysium, coupé en travers" },
+  { k:"fuseau",        fv:"FOETO:PF.MUS-NOR-019", g:"Atrophie groupée et fibres hypertrophiques", l:"Fuseau neuromusculaire du périmysium, coupé en travers" },
   { k:"noyauxInternesRares", g:"Noyaux et myotubes", l:"Quelques noyaux internes, moins de 5 % à terme" },
   { k:"glycogenePAS",  g:"Structures et inclusions", l:"Répartition inhomogène du glycogène au PAS" },
   { k:"muscleFoie",    g:"Architecture fasciculaire", l:"Muscle strié en bordure d'un bloc de foie ou de paroi" },
-  { k:"oculomoteurs",  g:"Calibre des fibres", l:"Muscles oculo-moteurs sur une lame d'orbite" }
+  { k:"oculomoteurs",  fv:"FOETO:PF.MUS-NOR-020", g:"Calibre des fibres", l:"Muscles oculo-moteurs sur une lame d'orbite" }
 ];
 
 /* ── 06 · Signes ──────────────────────────────────────────────────────────────
@@ -384,25 +389,25 @@ var VARIANTES = [
 var SIGNES = [
   /* — Contexte hors lame — macro, moelle, clinique — lu ailleurs, répondu ici
        parce qu'il commande la lecture — */
-  { k:"contractures", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Contractures multiples articulaires (macro)" },
+  { k:"contractures", fv:"FOETO:PF.MUS-MAL-039", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Contractures multiples articulaires (macro)" },
   { k:"contracturesDistales", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Contractures distales seulement (mains, pieds, poignets, chevilles)" },
   { k:"contracturesPoly", fv:"FOETO:PF.MUS-MAL-013", g:"Contexte hors lame — macro, moelle, clinique",
     meta:"ce qui sépare la SDAF de l'AMC [keeling, ch. 31] — redit trois signes de ce cadre, répondre aussi chacun" },
-  { k:"asymetrie", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Anomalies posturales ASYMÉTRIQUES" },
-  { k:"masseOsseuseNormale", bloc:false, fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Masse osseuse normale" },
+  { k:"asymetrie", fv:"FOETO:PF.MUS-MAL-040", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Anomalies posturales ASYMÉTRIQUES" },
+  { k:"masseOsseuseNormale", fv:"FOETO:PF.MUS-NOR-022", bloc:false, fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Masse osseuse normale" },
   { k:"micrognathieMoindre", bloc:false, fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Micrognathie peu marquée" },
-  { k:"ptergyium", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Ptérygia" },
+  { k:"ptergyium", fv:"FOETO:PF.MUS-MAL-041", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Ptérygia" },
   { k:"anasarquePrecoce", fv:"FOETO:PF.MUS-MAL-017", g:"Contexte hors lame — macro, moelle, clinique",
     meta:"« early-onset (first-trimester) hydrops leads to the formation of pterygia » [keeling, ch. 31]" },
-  { k:"hydramnios", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Polyhydramnios" },
-  { k:"oligoamnios", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Oligoamnios documenté" },
-  { k:"hypoplasiePulm", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Hypoplasie pulmonaire" },
-  { k:"fentePalatine", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Fente palatine" },
-  { k:"anasarque", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Œdème sous-cutané ou anasarque" },
-  { k:"diaphragmeSureleve", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Diaphragme surélevé ou éventré" },
-  { k:"peauRigide", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Peau rigide, bouche fixée ouverte en « O »" },
+  { k:"hydramnios", fv:"FOETO:PF.MUS-MAL-042", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Polyhydramnios" },
+  { k:"oligoamnios", fv:"FOETO:PF.MUS-MAL-043", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Oligoamnios documenté" },
+  { k:"hypoplasiePulm", fv:"FOETO:PF.MUS-MAL-044", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Hypoplasie pulmonaire" },
+  { k:"fentePalatine", fv:"FOETO:PF.MUS-MAL-045", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Fente palatine" },
+  { k:"anasarque", fv:"FOETO:PF.MUS-MAL-046", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Œdème sous-cutané ou anasarque" },
+  { k:"diaphragmeSureleve", fv:"FOETO:PF.MUS-MAL-047", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Diaphragme surélevé ou éventré" },
+  { k:"peauRigide", fv:"FOETO:PF.MUS-MAL-048", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Peau rigide, bouche fixée ouverte en « O »" },
   { k:"mortNeuronale", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Mort neuronale des cornes antérieures (moelle, 3 niveaux)" },
-  { k:"cornesNormales", bloc:false, fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Cornes antérieures SANS déplétion ni dégénérescence" },
+  { k:"cornesNormales", fv:"FOETO:PF.MUS-NOR-023", bloc:false, fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Cornes antérieures SANS déplétion ni dégénérescence" },
 
   /* — Architecture fasciculaire — le seul axe qui survit à la fixation — */
   { k:"fasciculesIncomplets", fv:"FOETO:PF.MUS-RET-019", g:"Architecture fasciculaire", mag:"faible", l:"Fascicules incomplets",
@@ -411,13 +416,13 @@ var SIGNES = [
     meta:"intrafasciculaire" },
   { k:"perimysiumFasc", bloc:false, fv:"FOETO:PF.MUS-MAL-020", g:"Architecture fasciculaire", mag:"faible", l:"Fascicules entourés de périmysium",
     meta:"« said to be a characteristic feature »" },
-  { k:"muscleNormal", bloc:false, fiche:"[keeling, ch. 31]", g:"Architecture fasciculaire", mag:"faible", l:"Muscle d'aspect essentiellement normal",
+  { k:"muscleNormal", fv:"FOETO:PF.MUS-NOR-024", bloc:false, fiche:"[keeling, ch. 31]", g:"Architecture fasciculaire", mag:"faible", l:"Muscle d'aspect essentiellement normal",
     meta:"n'exclut aucune maladie létale — se répond seul, en fin de lecture" },
 
   /* — Atrophie groupée et fibres hypertrophiques — */
   { k:"atrophieGroupee", fv:"FOETO:PF.MUS-MAL-002", g:"Atrophie groupée et fibres hypertrophiques", mag:"faible", l:"Atrophie groupée de larges groupes de fibres",
     meta:"« large group atrophy » [keeling, ch. 31] — groupes de fibres atrophiques" },
-  { k:"atrophieFasciculaire", fiche:"[soffoet, ch. 10]", g:"Atrophie groupée et fibres hypertrophiques", mag:"faible", l:"Atrophie fasciculaire",
+  { k:"atrophieFasciculaire", fv:"FOETO:PF.MUS-MAL-049", fiche:"[soffoet, ch. 10]", g:"Atrophie groupée et fibres hypertrophiques", mag:"faible", l:"Atrophie fasciculaire",
     meta:"le motif nommé par soffoet — deux sources, deux mots pour une image voisine" },
   { k:"fibresHypertrophiques", fv:"FOETO:PF.MUS-RET-022", g:"Atrophie groupée et fibres hypertrophiques", mag:"moyen", l:"Fibres hypertrophiques isolées, dispersées",
     meta:"isolées, dispersées — « scattered enlarged individual fibers » [keeling, ch. 31]" },
@@ -445,14 +450,14 @@ var SIGNES = [
     meta:"bimodale = Wohlfart si 18–35 SA ; anarchique = à coter" },
   { k:"petitesFibres", fv:"FOETO:PF.MUS-MAL-011", g:"Calibre des fibres", mag:"moyen", l:"Fibres de petite taille",
     meta:"« small and rounded as they are in arthrogryposis » chez le fœtus normal" },
-  { k:"hypotrophieGen", fiche:"[keeling, ch. 31]", g:"Calibre des fibres", mag:"moyen", l:"Hypotrophie généralisée des fibres" },
-  { k:"calibreHomogene", bloc:false, fiche:"[soffoet, ch. 10]", g:"Calibre des fibres", mag:"moyen", l:"Calibre uniforme, fibres « a » et « b » non reconnaissables",
+  { k:"hypotrophieGen", fv:"FOETO:PF.MUS-MAL-050", fiche:"[keeling, ch. 31]", g:"Calibre des fibres", mag:"moyen", l:"Hypotrophie généralisée des fibres" },
+  { k:"calibreHomogene", fv:"FOETO:PF.MUS-NOR-025", bloc:false, fiche:"[soffoet, ch. 10]", g:"Calibre des fibres", mag:"moyen", l:"Calibre uniforme, fibres « a » et « b » non reconnaissables",
     meta:"repère du stade 3, après 35 SA" },
 
   /* — Noyaux et myotubes — */
-  { k:"myotubes", fv:"FOETO:PF.MUS-MAL-010", g:"Noyaux et myotubes", mag:"moyen", l:"Myotubes présents — noyaux centraux en chaîne",
+  { k:"myotubes", terme:[18, null], fv:"FOETO:PF.MUS-MAL-010", g:"Noyaux et myotubes", mag:"moyen", l:"Myotubes présents — noyaux centraux en chaîne",
     meta:"noyaux centraux en chaîne ; normal avant 18 SA, signe après — le terme tranche, pas la lame" },
-  { k:"noyauxCentrauxPredom", fiche:"[keeling, ch. 31]", g:"Noyaux et myotubes", mag:"moyen", l:"Prédominance de noyaux centraux" },
+  { k:"noyauxCentrauxPredom", fv:"FOETO:PF.MUS-MAL-051", fiche:"[keeling, ch. 31]", g:"Noyaux et myotubes", mag:"moyen", l:"Prédominance de noyaux centraux" },
   { k:"morphoMyotubulaire", fiche:"[keeling, ch. 31]", g:"Noyaux et myotubes", mag:"moyen", l:"Morphologie myotubulaire diffuse" },
   { k:"noyauxInternes", fv:"FOETO:PF.MUS-RET-035", g:"Noyaux et myotubes", mag:"fort", l:"Noyaux internes au-delà de 5 %",
     meta:"au-delà de 5 % ; 5–75 % dans la myopathie myotubulaire — les seuils se touchent à 5 %" },

@@ -361,11 +361,16 @@ var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
    Fond : ~/Bureau/fiches_lecture/fiche_rate.md (§1 à §9).
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 8 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 5 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 10 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "rate";
 var TITRE   = "rate";
 var SOURCE  = "fiche_rate.md";
 var MODULE  = "grille_rate";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -573,7 +578,7 @@ var MESURE = {
   optLabel:"référentiel du poids déclaré",
   defs:SINUS,
   opts:REFS,
-  champs:[{ id:"poids",  label:"Poids splénique (g)",        min:0, max:60, step:0.01 },
+  champs:[{ id:"poids",  fv:"FOETO:PF.HEM-NOR-083", label:"Poids splénique (g)",        min:0, max:60, step:0.01 },
           { id:"ds",     label:"Z-score du poids (DS)",      min:-20, max:20, step:0.01 },
           { id:"masses", label:"Nombre de masses spléniques", min:0, max:20, step:1 }]
 };
@@ -663,14 +668,14 @@ function verdictMesure(){
    normale lue avec l'œil adulte (pas de centre germinatif, peu de lymphocytes)
    mime la déplétion : elle vit dans le cadre de la densité lymphoïde. */
 var VARIANTES = [
-  { k:"lobulation", g:"Contexte hors lame — macro, latéralité, autres organes",
+  { k:"lobulation", fv:"FOETO:PF.HEM-NOR-089", g:"Contexte hors lame — macro, latéralité, autres organes",
     l:"Lobulation splénique fœtale — macroscopique, perdue au terme, ce n'est pas une polysplénie" },
   { k:"accessoire", g:"Contexte hors lame — macro, latéralité, autres organes",
     l:"Rate accessoire (splénunculus) — vue dans 10 % des autopsies" },
   { k:"bilobee", g:"Contexte hors lame — macro, latéralité, autres organes", l:"Rate bilobée" },
-  { k:"normoblastes", g:"Pulpe rouge — hématopoïèse et congestion",
+  { k:"normoblastes", fv:"FOETO:PF.HEM-NOR-090", g:"Pulpe rouge — hématopoïèse et congestion",
     l:"Normoblastes intravasculaires et sinusaux — hématopoïèse fœtale normale" },
-  { k:"hemaPeuDense", g:"Pulpe rouge — hématopoïèse et congestion",
+  { k:"hemaPeuDense", fv:"FOETO:PF.HEM-NOR-087", g:"Pulpe rouge — hématopoïèse et congestion",
     l:"Hématopoïèse peu dense, présente à tous les termes fœtaux" },
   { k:"pasCentreGermNorm", g:"Pulpe blanche — densité lymphoïde et lyse",
     l:"Pas de centre germinatif, pas de manteau, pas de zone marginale — le normal fœtal" },
@@ -680,7 +685,7 @@ var VARIANTES = [
     l:"Pulpe blanche paraissant pauvre — énoncé ganglionnaire, transposition à la rate NON sourcée" },
   { k:"hemophagoVar", g:"Macrophages — surcharge et activation",
     l:"Hémophagocytose — énoncé ganglionnaire, « agonal event », transposition NON sourcée" },
-  { k:"capsuleMince", g:"Architecture — identité du tissu, plan de coupe, masse",
+  { k:"capsuleMince", fv:"FOETO:PF.HEM-NOR-085", g:"Architecture — identité du tissu, plan de coupe, masse",
     l:"Capsule mince, à peine « slightly thicker » avec l'âge — variation non chiffrée" },
   { k:"congestionVar", g:"Pulpe rouge — hématopoïèse et congestion",
     l:"Congestion de la pulpe rouge — la règle post-mortem sur un réservoir sanguin" }
@@ -720,11 +725,11 @@ var SIGNES = [
   /* — Contexte hors lame — macro, latéralité, autres organes (lus hors rate) — */
   { k:"rateNonRetrouveeMacro", fiche:"[corpus CR]", g:"Contexte hors lame — macro, latéralité, autres organes",
     l:"Rate non retrouvée à l'ouverture", meta:"lu hors rate" },
-  { k:"massesMultiples", fiche:"[keeling, ch. 27]", g:"Contexte hors lame — macro, latéralité, autres organes",
+  { k:"massesMultiples", fv:"FOETO:PF.HEM-MAL-051", fiche:"[keeling, ch. 27]", g:"Contexte hors lame — macro, latéralité, autres organes",
     l:"Masses spléniques multiples, de taille comparable", meta:"lu hors rate — comptées, pesées, situées" },
-  { k:"nodulesAutourRate", fiche:"[keeling, ch. 27]", g:"Contexte hors lame — macro, latéralité, autres organes",
+  { k:"nodulesAutourRate", fv:"FOETO:PF.HEM-NOR-123", fiche:"[keeling, ch. 27]", g:"Contexte hors lame — macro, latéralité, autres organes",
     l:"Nodules spléniques autour d'une rate de taille normale", meta:"lu hors rate" },
-  { k:"ratePositionAnormale", fiche:"[keeling, ch. 27]", g:"Contexte hors lame — macro, latéralité, autres organes",
+  { k:"ratePositionAnormale", fv:"FOETO:PF.HEM-MAL-052", fiche:"[keeling, ch. 27]", g:"Contexte hors lame — macro, latéralité, autres organes",
     l:"Rate hors de sa loge", meta:"lu hors rate" },
   { k:"surrenaleFerACheval", fv:"FOETO:PF.HEM-MET-007", g:"Contexte hors lame — macro, latéralité, autres organes",
     l:"Surrénale en fer à cheval",
@@ -750,23 +755,23 @@ var SIGNES = [
   { k:"capsuleAbsente", fiche:"[expérience]", g:"Architecture — identité du tissu, plan de coupe, masse", mag:"faible",
     l:"Pas de capsule sur la coupe",
     meta:"ni l'épaisseur capsulaire ni l'exclusion d'une masse accessoire capsulée ne se jugent plus" },
-  { k:"pasTissuSplenique", fiche:"[ernst, ch. 25]", g:"Architecture — identité du tissu, plan de coupe, masse", mag:"faible",
+  { k:"pasTissuSplenique", seul:true, fiche:"[ernst, ch. 25]", g:"Architecture — identité du tissu, plan de coupe, masse", mag:"faible",
     l:"Masse sans pulpe rouge ni pulpe blanche identifiable",
     meta:"ganglion, surrénale accessoire ou pancréas ectopique : la lame sert d'abord à ça" },
-  { k:"trabeculeLongue", fiche:"[ernst, ch. 25]", g:"Architecture — identité du tissu, plan de coupe, masse", mag:"faible",
+  { k:"trabeculeLongue", fv:"FOETO:PF.HEM-VAS-004", fiche:"[ernst, ch. 25]", g:"Architecture — identité du tissu, plan de coupe, masse", mag:"faible",
     l:"Trabécule longue et vascularisée", meta:"ce n'est pas la norme fœtale" },
   { k:"proliferationVasc", fiche:"[keeling, ch. 27]", g:"Architecture — identité du tissu, plan de coupe, masse", mag:"faible",
     l:"Prolifération vasculaire intrasplénique" },
 
   /* — Pulpe blanche — densité lymphoïde et lyse : la lyse se juge là où elle contrefait la déplétion — */
-  { k:"pulpeBlanchePauvre", fiche:"[corpus CR]", g:"Pulpe blanche — densité lymphoïde et lyse", mag:"faible",
+  { k:"pulpeBlanchePauvre", terme:[24, null], fiche:"[corpus CR]", g:"Pulpe blanche — densité lymphoïde et lyse", mag:"faible",
     l:"Pulpe blanche pauvre en lymphocytes pour le terme",
     meta:"la rate fœtale normale est pauvre en lymphocytes avant environ 24 SA" },
-  { k:"folliculesAbsents", fiche:"[ernst, ch. 25]", g:"Pulpe blanche — densité lymphoïde et lyse", mag:"faible",
+  { k:"folliculesAbsents", fv:"FOETO:PF.HEM-MAL-053", terme:[28, null], fiche:"[ernst, ch. 25]", g:"Pulpe blanche — densité lymphoïde et lyse", mag:"faible",
     l:"Aucun follicule primaire au terme" },
-  { k:"demarcationEffacee", fiche:"[expérience]", g:"Pulpe blanche — densité lymphoïde et lyse", mag:"faible",
+  { k:"demarcationEffacee", seul:true, fiche:"[expérience]", g:"Pulpe blanche — densité lymphoïde et lyse", mag:"faible",
     l:"Limite pulpe rouge / pulpe blanche effacée" },
-  { k:"palsAbsent", fiche:"[ernst, ch. 25]", g:"Pulpe blanche — densité lymphoïde et lyse", mag:"moyen",
+  { k:"palsAbsent", fv:"FOETO:PF.HEM-VAS-005", terme:[21, null], fiche:"[ernst, ch. 25]", g:"Pulpe blanche — densité lymphoïde et lyse", mag:"moyen",
     l:"Manchon périartériolaire non identifiable au terme" },
   { k:"basoLympho", fiche:"[expérience]", g:"Pulpe blanche — densité lymphoïde et lyse", mag:"fort",
     l:"Noyaux lymphocytaires non basophiles",
@@ -780,16 +785,16 @@ var SIGNES = [
   { k:"emhInterstitielle", fv:"FOETO:PF.HEM-RET-006", g:"Pulpe rouge — hématopoïèse et congestion", mag:"moyen",
     l:"Hématopoïèse interstitielle dense effaçant l'architecture",
     meta:"aucun seuil sourcé ; le basculement est interstitiel, pas intravasculaire" },
-  { k:"plusDenseQueFoie", fiche:"[ernst, ch. 25]", g:"Pulpe rouge — hématopoïèse et congestion", mag:"moyen",
+  { k:"plusDenseQueFoie", fv:"FOETO:PF.HEM-MAL-054", fiche:"[ernst, ch. 25]", g:"Pulpe rouge — hématopoïèse et congestion", mag:"moyen",
     l:"Rate plus riche en cellules hématopoïétiques que le foie du même fœtus",
     meta:"le seul critère opérationnel disponible, et il est relatif — lame de foie à côté" },
 
   /* — Réaction lymphoïde et infection : les structures normalement ABSENTES au terme — */
-  { k:"centreGerminatif", fv:"FOETO:PF.HEM-MAL-011", g:"Réaction lymphoïde et infection", mag:"moyen",
+  { k:"centreGerminatif", seul:true, fv:"FOETO:PF.HEM-MAL-011", g:"Réaction lymphoïde et infection", mag:"moyen",
     meta:"absent du fœtus normal : c'est un SIGNE, pas un stade de maturation" },
-  { k:"zoneManteau", fv:"FOETO:PF.HEM-MAL-014", g:"Réaction lymphoïde et infection", mag:"moyen",
+  { k:"zoneManteau", seul:true, fv:"FOETO:PF.HEM-MAL-014", g:"Réaction lymphoïde et infection", mag:"moyen",
     meta:"absente du fœtus normal" },
-  { k:"zoneMarginale", fv:"FOETO:PF.HEM-MAL-015", g:"Réaction lymphoïde et infection", mag:"moyen",
+  { k:"zoneMarginale", seul:true, fv:"FOETO:PF.HEM-MAL-015", g:"Réaction lymphoïde et infection", mag:"moyen",
     meta:"absente du fœtus normal" },
   { k:"infiltratInflam", fiche:"[corpus CR]", g:"Réaction lymphoïde et infection", mag:"moyen",
     l:"Infiltrat inflammatoire" },
@@ -797,7 +802,7 @@ var SIGNES = [
     l:"Inclusion virale" },
 
   /* — Macrophages — surcharge et activation — */
-  { k:"cellulesSpumeuses", fiche:"[saudubray, ch. 42]", g:"Macrophages — surcharge et activation", mag:"moyen",
+  { k:"cellulesSpumeuses", fv:"FOETO:PF.HEM-MAL-055", fiche:"[saudubray, ch. 42]", g:"Macrophages — surcharge et activation", mag:"moyen",
     l:"Cellules spumeuses de la pulpe rouge" },
   { k:"macrophagesSurcharge", fv:"FOETO:PF.HEM-MET-001", g:"Macrophages — surcharge et activation", mag:"fort",
     meta:"macrophages de la pulpe rouge" },
@@ -817,9 +822,9 @@ var SIGNES = [
   /* v2 : forme (3) de keeling, terme FOETO verbatim de la fiche — jusque-là dans le seul stop de l'association */
   { k:"fusionHile", fv:"FOETO:PF.HEM-MAL-012", g:"Hétérotopies et fusion spléno-pancréatiques", mag:"faible",
     meta:"deux tissus voisins dans un bloc n'en sont pas une : l'interpénétration et la capsule tranchent" },
-  { k:"interpenetration", fiche:"[keeling, ch. 27]", g:"Hétérotopies et fusion spléno-pancréatiques", mag:"faible",
+  { k:"interpenetration", fv:"FOETO:PF.HEM-MAL-056", fiche:"[keeling, ch. 27]", g:"Hétérotopies et fusion spléno-pancréatiques", mag:"faible",
     l:"Interpénétration des deux tissus, sans capsule interposée" },
-  { k:"nonEncapsule", fiche:"[keeling, ch. 27]", g:"Hétérotopies et fusion spléno-pancréatiques", mag:"moyen",
+  { k:"nonEncapsule", fv:"FOETO:PF.HEM-MAL-057", fiche:"[keeling, ch. 27]", g:"Hétérotopies et fusion spléno-pancréatiques", mag:"moyen",
     l:"Foyer hétérotopique mal ou non encapsulé",
     meta:"c'est l'encapsulation, ou son absence, qui est le critère décisif" },
   { k:"canauxCaliciformes", fv:"FOETO:PF.HEM-MAL-010", g:"Hétérotopies et fusion spléno-pancréatiques", mag:"fort",
@@ -1296,9 +1301,13 @@ async function testsOrgane(chk, clic, set, crTient, pause){
   var gR = "Réaction lymphoïde et infection", iR = groupes().indexOf(gR);
   propre(); delete E.groupes[gR]; peindre();
   clic("grp", iR, "non");
-  chk("v2 : Non sur la réaction énonce les trois normaux fœtaux",
+  /* lot FOETO : centre germinatif, manteau, zone marginale dépendent du terme (seul) */
+  var datesR = signesDe(gR).filter(function(x){ return (x.seul || x.terme) && !E.signes[x.k]; });
+  datesR.forEach(function(x){ clic("les", x.k, NEG); });
+  chk("v2 : Non sur la réaction + signes datés répondus énoncent les trois normaux fœtaux",
       ["pasCentreGerm", "pasManteau", "pasZoneMarginale", "pasInfiltrat"].every(function(k){
         return etatNegatif(par(NEGATIFS, k)) === "ok"; }) && crTient("  " + gR + " : non."));
+  datesR.forEach(function(x){ clic("les", x.k, NEG); });
   clic("grp", iR, "non");
   chk("v2 : second Non, négatifs rouverts", etatNegatif(par(NEGATIFS, "pasCentreGerm")) === null);
 
@@ -1358,7 +1367,7 @@ async function testsOrgane(chk, clic, set, crTient, pause){
       !/§ 0[4-8]/.test(JSON.stringify([STADES, RETENTION, DIAGS, NEGATIFS]) + RETARD_NOTE + AVANCE_NOTE));
 
   /* ── v2 · branchement FOETO ── */
-  chk("v2 : 13 constats de la fiche branchés", SIGNES.filter(function(x){ return x.foeto; }).length === 13);
+  chk("v2.1 : 13 constats de la fiche + 10 du lot branchés", SIGNES.filter(function(x){ return x.foeto; }).length === 23);
   chk("v2 : libellé venu de FOETO", par(SIGNES, "centreGerminatif").l === "Centre germinatif (follicule secondaire)");
   chk("v2 : code FOETO du terme verbatim",
       codesDe(par(SIGNES, "pancreasIntrasplenique"))[0] === "FOETO:PF.HEM-MAL-005");
@@ -1373,8 +1382,8 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 }
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
-var FOETO = {"sections":[],"formes":{"FOETO:PF.HEM-MET-001":["Accumulation de métabolites dans les macrophages spléniques"],"FOETO:PF.HEM-MAL-008":["Anomalies viscérales associées"],"FOETO:PF.HEM-NOR-084":["Artériole centrale sans veine d'accompagnement, adventice remplacée par du tissu lymphoïde"],"FOETO:PF.HEM-MAL-016":["Asplénie"],"FOETO:PF.HEM-MAL-009":["Atrésie ou sténose anale"],"FOETO:PF.HEM-MAL-010":["Canaux excréteurs pancréatiques bordés de cellules caliciformes"],"FOETO:PF.HEM-NOR-085":["Capsule collagène et élastique, s'épaississant avec l'âge gestationnel"],"FOETO:PF.HEM-MAL-011":["Centre germinatif (follicule secondaire)"],"FOETO:PF.HEM-NOR-092":["Densité réticulinique de la pulpe rouge"],"FOETO:PF.HEM-NOR-088":["Effets du KCl intracardiaque de fœticide, qui miment la macération"],"FOETO:PF.HEM-MAL-012":["Fusion de la queue du pancréas avec le hile splénique"],"FOETO:PF.HEM-MAL-017":["Fusion spléno-gonadique (type continu / discontinu)"],"FOETO:PF.HEM-MAL-018":["Fusion spléno-pancréatique / hétérotopie splénique intrapancréatique"],"FOETO:PF.HEM-TUM-005":["Hémangiome splénique"],"FOETO:PF.HEM-RET-006":["Hématopoïèse splénique exubérante avec effacement de l'architecture"],"FOETO:PF.HEM-NOR-087":["Hématopoïèse splénique physiologique, peu dense, présente à tous les termes"],"FOETO:PF.HEM-NOR-089":["Lobulation splénique fœtale"],"FOETO:PF.HEM-NOR-093":["Lymphocytes T autour des gros troncs artériolaires, B autour des branches périphériques"],"FOETO:PF.HEM-MET-008":["Maladie de surcharge (Gaucher, Niemann-Pick A/B, Wolman)"],"FOETO:PF.HEM-NOR-082":["Nombre et siège des masses spléniques, poids cumulé, taille de la rate principale"],"FOETO:PF.HEM-NOR-090":["Normoblastes polychromatophiles et orthochromatiques, surtout dans les vaisseaux et les sinus"],"FOETO:PF.HEM-NOR-091":["Perte de basophilie nucléaire post-mortem"],"FOETO:PF.HEM-NOR-083":["Poids splénique, après séparation de la queue du pancréas"],"FOETO:PF.HEM-MAL-019":["Polysplénie"],"FOETO:PF.HEM-NOR-086":["Pulpe rouge réticulaire (cordons de Billroth)"],"FOETO:PF.HEM-NOR-060":["Rate accessoire"],"FOETO:PF.HEM-MAL-020":["Rate ectopique / baladeuse"],"FOETO:PF.HEM-INF-011":["Réaction lymphoïde splénique — stimulation antigénique anténatale"],"FOETO:PF.HEM-MET-007":["Surrénales fusionnées en fer à cheval"],"FOETO:PF.HEM-MAL-005":["Tissu pancréatique intrasplénique"],"FOETO:PF.HEM-MAL-013":["Tissu splénique en continuité ou au contact de la gonade"],"FOETO:PF.HEM-MAL-007":["Tissu splénique intrapancréatique"],"FOETO:PF.HEM-NOR-094":["Trabécules courtes et avasculaires"],"FOETO:PF.HEM-MAL-014":["Zone du manteau"],"FOETO:PF.HEM-MAL-015":["Zone marginale"]}};
-var FOETOV = {"FOETO:PF.HEM-MET-008":{"l":"Maladie de surcharge (Gaucher, Niemann-Pick A/B, Wolman)","hpo":null},"FOETO:PF.HEM-MAL-009":{"l":"Atrésie ou sténose anale","hpo":null},"FOETO:PF.HEM-MAL-020":{"l":"Rate ectopique / baladeuse","hpo":null},"FOETO:PF.HEM-MAL-019":{"l":"Polysplénie","hpo":"HP:0001748"},"FOETO:PF.HEM-MAL-015":{"l":"Zone marginale","hpo":null},"FOETO:PF.HEM-RET-006":{"l":"Hématopoïèse splénique exubérante avec effacement de l'architecture","hpo":null},"FOETO:PF.HEM-TUM-005":{"l":"Hémangiome splénique","hpo":null},"FOETO:PF.HEM-MAL-013":{"l":"Tissu splénique en continuité ou au contact de la gonade","hpo":null},"FOETO:PF.HEM-MAL-012":{"l":"Fusion de la queue du pancréas avec le hile splénique","hpo":null},"FOETO:PF.HEM-MAL-010":{"l":"Canaux excréteurs pancréatiques bordés de cellules caliciformes","hpo":null},"FOETO:PF.HEM-MAL-007":{"l":"Tissu splénique intrapancréatique","hpo":null},"FOETO:PF.HEM-MAL-017":{"l":"Fusion spléno-gonadique (type continu / discontinu)","hpo":null},"FOETO:PF.HEM-MET-001":{"l":"Accumulation de métabolites dans les macrophages spléniques","hpo":null},"FOETO:PF.HEM-INF-011":{"l":"Réaction lymphoïde splénique — stimulation antigénique anténatale","hpo":null},"FOETO:PF.HEM-MAL-014":{"l":"Zone du manteau","hpo":null},"FOETO:PF.HEM-MAL-005":{"l":"Tissu pancréatique intrasplénique","hpo":null},"FOETO:PF.HEM-NOR-060":{"l":"Rate accessoire","hpo":null},"FOETO:PF.HEM-MET-007":{"l":"Surrénales fusionnées en fer à cheval","hpo":null},"FOETO:PF.HEM-MAL-016":{"l":"Asplénie","hpo":"HP:0001746"},"FOETO:PF.HEM-MAL-008":{"l":"Anomalies viscérales associées","hpo":null},"FOETO:PF.HEM-MAL-011":{"l":"Centre germinatif (follicule secondaire)","hpo":null},"FOETO:PF.HEM-MAL-018":{"l":"Fusion spléno-pancréatique / hétérotopie splénique intrapancréatique","hpo":null}};
+var FOETO = {"sections":[],"formes":{"FOETO:PF.HEM-MET-001":["Accumulation de métabolites dans les macrophages spléniques"],"FOETO:PF.HEM-MAL-008":["Anomalies viscérales associées"],"FOETO:PF.HEM-NOR-084":["Artériole centrale sans veine d'accompagnement, adventice remplacée par du tissu lymphoïde"],"FOETO:PF.HEM-MAL-016":["Asplénie"],"FOETO:PF.HEM-MAL-009":["Atrésie ou sténose anale"],"FOETO:PF.HEM-MAL-053":["Aucun follicule primaire au terme"],"FOETO:PF.HEM-MAL-010":["Canaux excréteurs pancréatiques bordés de cellules caliciformes"],"FOETO:PF.HEM-NOR-085":["Capsule collagène et élastique, s'épaississant avec l'âge gestationnel"],"FOETO:PF.HEM-MAL-055":["Cellules spumeuses de la pulpe rouge"],"FOETO:PF.HEM-MAL-011":["Centre germinatif (follicule secondaire)"],"FOETO:PF.HEM-NOR-092":["Densité réticulinique de la pulpe rouge"],"FOETO:PF.HEM-NOR-088":["Effets du KCl intracardiaque de fœticide, qui miment la macération"],"FOETO:PF.HEM-MAL-057":["Foyer hétérotopique mal ou non encapsulé"],"FOETO:PF.HEM-MAL-012":["Fusion de la queue du pancréas avec le hile splénique"],"FOETO:PF.HEM-MAL-017":["Fusion spléno-gonadique (type continu / discontinu)"],"FOETO:PF.HEM-MAL-018":["Fusion spléno-pancréatique / hétérotopie splénique intrapancréatique"],"FOETO:PF.HEM-TUM-005":["Hémangiome splénique"],"FOETO:PF.HEM-RET-006":["Hématopoïèse splénique exubérante avec effacement de l'architecture"],"FOETO:PF.HEM-NOR-087":["Hématopoïèse splénique physiologique, peu dense, présente à tous les termes"],"FOETO:PF.HEM-MAL-056":["Interpénétration des deux tissus, sans capsule interposée"],"FOETO:PF.HEM-NOR-089":["Lobulation splénique fœtale"],"FOETO:PF.HEM-NOR-093":["Lymphocytes T autour des gros troncs artériolaires, B autour des branches périphériques"],"FOETO:PF.HEM-MET-008":["Maladie de surcharge (Gaucher, Niemann-Pick A/B, Wolman)"],"FOETO:PF.HEM-VAS-005":["Manchon périartériolaire non identifiable au terme"],"FOETO:PF.HEM-MAL-051":["Masses spléniques multiples, de taille comparable"],"FOETO:PF.HEM-NOR-123":["Nodules spléniques autour d'une rate de taille normale"],"FOETO:PF.HEM-NOR-082":["Nombre et siège des masses spléniques, poids cumulé, taille de la rate principale"],"FOETO:PF.HEM-NOR-090":["Normoblastes polychromatophiles et orthochromatiques, surtout dans les vaisseaux et les sinus"],"FOETO:PF.HEM-NOR-091":["Perte de basophilie nucléaire post-mortem"],"FOETO:PF.HEM-NOR-083":["Poids splénique, après séparation de la queue du pancréas"],"FOETO:PF.HEM-MAL-019":["Polysplénie"],"FOETO:PF.HEM-NOR-086":["Pulpe rouge réticulaire (cordons de Billroth)"],"FOETO:PF.HEM-NOR-060":["Rate accessoire"],"FOETO:PF.HEM-MAL-020":["Rate ectopique / baladeuse"],"FOETO:PF.HEM-MAL-052":["Rate hors de sa loge"],"FOETO:PF.HEM-MAL-054":["Rate plus riche en cellules hématopoïétiques que le foie du même fœtus"],"FOETO:PF.HEM-INF-011":["Réaction lymphoïde splénique — stimulation antigénique anténatale"],"FOETO:PF.HEM-MET-007":["Surrénales fusionnées en fer à cheval"],"FOETO:PF.HEM-MAL-005":["Tissu pancréatique intrasplénique"],"FOETO:PF.HEM-MAL-013":["Tissu splénique en continuité ou au contact de la gonade"],"FOETO:PF.HEM-MAL-007":["Tissu splénique intrapancréatique"],"FOETO:PF.HEM-VAS-004":["Trabécule longue et vascularisée"],"FOETO:PF.HEM-NOR-094":["Trabécules courtes et avasculaires"],"FOETO:PF.HEM-MAL-014":["Zone du manteau"],"FOETO:PF.HEM-MAL-015":["Zone marginale"]}};
+var FOETOV = {"FOETO:PF.HEM-MAL-010":{"l":"Canaux excréteurs pancréatiques bordés de cellules caliciformes","hpo":null},"FOETO:PF.HEM-VAS-005":{"l":"Manchon périartériolaire non identifiable au terme","hpo":null},"FOETO:PF.HEM-MAL-007":{"l":"Tissu splénique intrapancréatique","hpo":null},"FOETO:PF.HEM-NOR-060":{"l":"Rate accessoire","hpo":null},"FOETO:PF.HEM-MAL-020":{"l":"Rate ectopique / baladeuse","hpo":null},"FOETO:PF.HEM-MAL-054":{"l":"Rate plus riche en cellules hématopoïétiques que le foie du même fœtus","hpo":null},"FOETO:PF.HEM-MAL-015":{"l":"Zone marginale","hpo":null},"FOETO:PF.HEM-MET-008":{"l":"Maladie de surcharge (Gaucher, Niemann-Pick A/B, Wolman)","hpo":null},"FOETO:PF.HEM-VAS-004":{"l":"Trabécule longue et vascularisée","hpo":null},"FOETO:PF.HEM-MAL-057":{"l":"Foyer hétérotopique mal ou non encapsulé","hpo":null},"FOETO:PF.HEM-MAL-009":{"l":"Atrésie ou sténose anale","hpo":null},"FOETO:PF.HEM-MET-001":{"l":"Accumulation de métabolites dans les macrophages spléniques","hpo":null},"FOETO:PF.HEM-MAL-019":{"l":"Polysplénie","hpo":"HP:0001748"},"FOETO:PF.HEM-MET-007":{"l":"Surrénales fusionnées en fer à cheval","hpo":null},"FOETO:PF.HEM-RET-006":{"l":"Hématopoïèse splénique exubérante avec effacement de l'architecture","hpo":null},"FOETO:PF.HEM-MAL-056":{"l":"Interpénétration des deux tissus, sans capsule interposée","hpo":null},"FOETO:PF.HEM-MAL-053":{"l":"Aucun follicule primaire au terme","hpo":null},"FOETO:PF.HEM-NOR-090":{"l":"Normoblastes polychromatophiles et orthochromatiques, surtout dans les vaisseaux et les sinus","hpo":null},"FOETO:PF.HEM-MAL-008":{"l":"Anomalies viscérales associées","hpo":null},"FOETO:PF.HEM-MAL-016":{"l":"Asplénie","hpo":"HP:0001746"},"FOETO:PF.HEM-NOR-087":{"l":"Hématopoïèse splénique physiologique, peu dense, présente à tous les termes","hpo":null},"FOETO:PF.HEM-MAL-051":{"l":"Masses spléniques multiples, de taille comparable","hpo":null},"FOETO:PF.HEM-MAL-018":{"l":"Fusion spléno-pancréatique / hétérotopie splénique intrapancréatique","hpo":null},"FOETO:PF.HEM-TUM-005":{"l":"Hémangiome splénique","hpo":null},"FOETO:PF.HEM-MAL-005":{"l":"Tissu pancréatique intrasplénique","hpo":null},"FOETO:PF.HEM-MAL-012":{"l":"Fusion de la queue du pancréas avec le hile splénique","hpo":null},"FOETO:PF.HEM-MAL-055":{"l":"Cellules spumeuses de la pulpe rouge","hpo":null},"FOETO:PF.HEM-MAL-052":{"l":"Rate hors de sa loge","hpo":null},"FOETO:PF.HEM-NOR-123":{"l":"Nodules spléniques autour d'une rate de taille normale","hpo":null},"FOETO:PF.HEM-NOR-089":{"l":"Lobulation splénique fœtale","hpo":null},"FOETO:PF.HEM-INF-011":{"l":"Réaction lymphoïde splénique — stimulation antigénique anténatale","hpo":null},"FOETO:PF.HEM-MAL-013":{"l":"Tissu splénique en continuité ou au contact de la gonade","hpo":null},"FOETO:PF.HEM-MAL-017":{"l":"Fusion spléno-gonadique (type continu / discontinu)","hpo":null},"FOETO:PF.HEM-NOR-083":{"l":"Poids splénique, après séparation de la queue du pancréas","hpo":null},"FOETO:PF.HEM-NOR-085":{"l":"Capsule collagène et élastique, s'épaississant avec l'âge gestationnel","hpo":null},"FOETO:PF.HEM-MAL-014":{"l":"Zone du manteau","hpo":null},"FOETO:PF.HEM-MAL-011":{"l":"Centre germinatif (follicule secondaire)","hpo":null}};
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
@@ -1564,8 +1573,8 @@ function batir(){
             return '<button type="button" class="chip" data-act="etendue" data-k="' + i + '" data-v="' + e + '">' +
                    '<span class="k">étendue</span>' + e + '</button>';
           }).join("") + '</div>') +
-        sig.filter(blocable).map(ligneSigne).join("") + '</div>' +
-        sig.filter(function(x){ return !blocable(x); }).map(ligneSigne).join("") + '</div>';
+        sig.filter(function(x){ return !horsBloc(x); }).map(ligneSigne).join("") + '</div>' +
+        sig.filter(horsBloc).map(ligneSigne).join("") + '</div>';
     });
     $("signes").innerHTML = html.signes;
     $("contexte").innerHTML = html.contexte;
@@ -1647,8 +1656,11 @@ function ligneSigne(x){
       (x.horsFiche ? '<span class="meta">hors fiche — non sourcé par la biblio</span>' : "") +
       (x.fiche && !x.foeto ? '<span class="meta">dans la fiche ' + esc(x.fiche) + ', sans terme FOETO</span>' : "") +
       (oblig ? '<span class="meta">négatif à énoncer : répondre présent ou absent</span>' : "") +
-      (PRESENCE && !blocable(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
-        : "hors du « Non » en bloc : " + (x.mag === "technique" ? "se répond après la technique" : "polarité normale, à répondre seul")) +
+      (PRESENCE && horsBloc(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
+        : x.mag === "technique" ? "hors du « Non » en bloc : se répond après la technique"
+        : x.bloc === false ? "hors du « Non » en bloc : polarité normale, à répondre seul"
+        : x.seul ? "hors du « Non » en bloc : dépend du terme, à répondre seul"
+        : "« Non » en bloc seulement " + fenetreTxt(x.terme) + " — hors de là, à répondre seul") +
         '</span>' : "") +
       '</div>' +
       (x.auto ? '<span class="chip" data-auto="' + x.k + '" style="cursor:default"></span>' :
@@ -1670,6 +1682,8 @@ function foetoAjouter(id){
   /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
   var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
   if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
+  var vr = FUSION && VARIANTES.filter(function(v){ return v.foeto === id; })[0];
+  if (vr){ E.variantes[vr.k] = true; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
     if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
@@ -1721,6 +1735,17 @@ function codesPresents(){
   return SIGNES.filter(function(x){ return E.signes[x.k] === POS && codesDe(x).length; })
                .map(function(x){ return { k:x.k, l:x.l, foeto:x.foeto || null, hpo:x.hpo || null }; });
 }
+/* Codes du reste de la lecture : variante vue, critère de rétention présent, stade retenu,
+   mesure saisie (avec sa valeur). Exportés à part (codes_lecture), champ additif. */
+function codesLecture(){
+  var c = [];
+  VARIANTES.forEach(function(v){ if (v.foeto && E.variantes[v.k]) c.push({ type:"variante", k:v.k, l:v.l, foeto:v.foeto }); });
+  RETENTION.forEach(function(r){ if (r.foeto && E.retention[r.k] === "present") c.push({ type:"rétention", k:r.k, l:r.l, foeto:r.foeto }); });
+  STADES.forEach(function(s){ if (s.foeto && E.stade === s.k) c.push({ type:"stade", k:s.k, l:s.l, foeto:s.foeto }); });
+  if (MESURE) MESURE.champs.forEach(function(m){
+    if (m.foeto && E.mesure.v[m.id] != null) c.push({ type:"mesure", k:m.id, l:m.label, foeto:m.foeto, valeur:E.mesure.v[m.id] }); });
+  return c;
+}
 /* Grille branchée sur FOETO : un signe porte fv (terme tagué « verbatim ») ; son
    libellé et son HPO arbitré viennent de la base, le code exporté est l'id FOETO. */
 function resoudreFV(){
@@ -1731,7 +1756,15 @@ function resoudreFV(){
     else if (!x.fiche) x.horsFiche = true;   // aucun terme de fiche derrière : non sourcé par la biblio
     /* fiche:"[keeling]" : constat sourcé dans la fiche que FOETO ne porte pas (encore) en terme */
   });
-  DIAGS.forEach(function(d){ if (d.fv && FOETOV[d.fv]) d.foeto = [d.fv]; });
+  /* Une association peut porter plusieurs termes maladie (fv:["FOETO:…", …]) : affichés, jamais exportés. */
+  DIAGS.forEach(function(d){
+    var ids = [].concat(d.fv || []).filter(function(i){ return FOETOV[i]; });
+    if (ids.length) d.foeto = ids;
+  });
+  /* Variantes, rétention, stades, champs de mesure portent aussi leur terme (NOR, RET, AXE, MES).
+     Seul le code s'y attache : variantes, rétention, stades et mesures gardent leur libellé. */
+  /* une variante GARDE son libellé : il porte des avertissements (« ne jamais énoncer en négatif ») */
+  VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).forEach(function(x){ if (x.fv && FOETOV[x.fv]) x.foeto = x.fv; });
 }
 
 /* ── Mode présence : rétention en liste, signes en paragraphes ─────────────── */
@@ -1774,7 +1807,21 @@ function variantesDe(g){ return VARIANTES.filter(function(v){ return v.g === g; 
    technique (mag:"technique") ni un signe de polarité normale (bloc:false, ex.
    « tubes collecteurs normaux » : absent y voudrait dire anormal). Ces signes restent
    visibles, paragraphe replié, et se répondent un par un. */
-function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false; }
+/* Un signe qui dépend du terme ne se répond pas en bloc hors de sa fenêtre : terme:[min, max]
+   en SA (une borne peut être null), bornes recopiées du verbatim de la fiche ; terme non saisi
+   = hors fenêtre. seul:true : dépend du terme sans borne écrite, il se répond un par un.
+   Dans les deux cas, présent reste une lésion. */
+function dansTerme(x){
+  if (!x.terme) return true;
+  var sa = num("sa");
+  return sa != null && (x.terme[0] == null || sa >= x.terme[0]) && (x.terme[1] == null || sa <= x.terme[1]);
+}
+/* toujours visible, paragraphe replié : ce que le « Non » en bloc peut ne pas répondre */
+function horsBloc(x){ return !!(x.auto || x.mag === "technique" || x.bloc === false || x.seul || x.terme); }
+function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false && !x.seul && dansTerme(x); }
+function fenetreTxt(t){
+  return t[0] != null && t[1] != null ? "de " + t[0] + " à " + t[1] + " SA" : t[0] != null ? "à partir de " + t[0] + " SA" : "jusqu'à " + t[1] + " SA";
+}
 /* Un signe bloc:false présent (méconium dans la lumière, collecteurs normaux) s'écrit au
    CR mais n'ouvre pas le paragraphe et ne bloque pas son « Non » : ce n'est pas une lésion. */
 function lesionPresente(x){ return E.signes[x.k] === POS && x.bloc !== false; }
@@ -2109,6 +2156,12 @@ function composer(){
     L.push("CODES DES SIGNES PRÉSENTS");
     cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
   }
+  var cl = codesLecture();
+  if (cl.length){
+    L.push("");
+    L.push("CODES DE LA LECTURE");
+    cl.forEach(function(c){ L.push("  " + c.type + " · " + c.l + (c.valeur != null ? " = " + c.valeur : "") + " [" + c.foeto + "]"); });
+  }
 
   var fo = Object.keys(E.foeto);
   if (fo.length){
@@ -2307,6 +2360,7 @@ function collecter(){
     terme_sa: num("sa"),
     grille: JSON.parse(JSON.stringify(E)),
     codes: codesPresents(),
+    codes_lecture: codesLecture(),
     compte_rendu: composer()
   };
 }
@@ -2608,7 +2662,7 @@ async function autotest(){
     clic("grp", iA, "non");
     chk("paragraphe non → signes absents", sA.every(function(x){ return E.signes[x.k] === NEG; }) &&
         etatGroupe(gA) === "non" && crTient(gA + " : non."));
-    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA; })[0];
+    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA && blocable(par(SIGNES, n.signe)); })[0];
     if (lie) chk("paragraphe non → négatif lié énoncé", etatNegatif(lie) === "ok");
     clic("grp", iA, "non");
     chk("second non → non regardé", sA.every(function(x){ return !E.signes[x.k]; }) && etatGroupe(gA) === null);
@@ -2642,6 +2696,18 @@ async function autotest(){
     chk("codes : lisibles (FOETO:/HP:)", SIGNES.every(function(x){
       return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)); }));
   }
+
+  /* Codes de la lecture : une variante vue exporte son terme (NOR), pas une variante non cochée */
+  var vc = VARIANTES.filter(function(v){ return v.foeto; })[0];
+  if (vc){
+    chk("codes lecture : rien sans variante vue", !codesLecture().some(function(c){ return c.k === vc.k; }));
+    clic("var", vc.k);
+    chk("codes lecture : la variante vue exporte son terme", collecter().codes_lecture.some(function(c){ return c.k === vc.k && c.foeto === vc.foeto; }) &&
+        crTient("CODES DE LA LECTURE") && crTient("[" + vc.foeto + "]"));
+    clic("var", vc.k);
+  }
+  chk("codes lecture : lisibles (FOETO:)", VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).every(function(x){
+    return !x.foeto || /^FOETO:/.test(x.foeto); }));
 
   /* Signes et associations */
   var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
@@ -2752,6 +2818,22 @@ async function autotest(){
           E.signes[xF.k] === POS && crTient(gF + " : non") && crTient(xF.l + " — PRÉSENT"));
       clic("grp", iF, "non");
       clic("les", xF.k, POS);
+    }
+    /* Fenêtre de terme : le « Non » en bloc ne répond un signe daté que dans sa fenêtre */
+    var xS = SIGNES.filter(function(x){ return x.terme && !x.auto; })[0];
+    if (xS){
+      var gS = xS.g, iS = groupes().indexOf(gS), t0 = xS.terme[0], t1 = xS.terme[1];
+      var dedans = t0 != null ? t0 : t1, dehors = t0 != null ? t0 - 1 : t1 + 1;
+      signesDe(gS).forEach(function(x){ if (!x.auto) delete E.signes[x.k]; }); delete E.groupes[gS];
+      set("sa", String(dehors));
+      clic("grp", iS, "non");
+      chk("terme : hors fenêtre, le « Non » ne répond pas « " + xS.k + " »", !E.signes[xS.k] && etatGroupe(gS) === "non");
+      clic("grp", iS, "non");
+      set("sa", String(dedans));
+      clic("grp", iS, "non");
+      chk("terme : dans la fenêtre, le « Non » le répond absent", E.signes[xS.k] === NEG);
+      clic("grp", iS, "non");
+      set("sa", "");
     }
     /* Rédaction proposée : la phrase du cadre « Non », celle du signe présent, rien sinon */
     if (REDIGE){

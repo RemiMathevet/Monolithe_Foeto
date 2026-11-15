@@ -66,11 +66,16 @@
       contredit sur sa propre unité — donc une incertitude de ±2 semaines pèse sur
       toute la datation, et le SENS de cet écart est inconnu. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 6 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 5 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 11 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "cerveau_moelle";
 var TITRE   = "cerveau et moelle";
 var SOURCE  = "fiche_cerveau_moelle.md";
 var MODULE  = "grille_cerveau_moelle";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -245,14 +250,14 @@ var RETENTION = [
          "estimating gestational age » [keeling, ch. 15] — ce n'est pas une borne de rétention, c'est " +
          "l'inverse : sur un fœtus macéré, c'est la GYRATION qui date, pas la cytologie (Maturation)" },
 
-  { k:"massesRacines", l:"Tissu cérébral autolysé poussé dans la moelle, le long des racines ou hors des trous de conjugaison",
+  { k:"massesRacines", fv:"FOETO:PF.CER-NOR-105", l:"Tissu cérébral autolysé poussé dans la moelle, le long des racines ou hors des trous de conjugaison",
     b:"—", d:"artefact de geste, ne date rien", h:0, q:"mauvais",
     note:"c'est l'accouchement par voie basse qui presse le cerveau liquéfié — « Such masses of " +
          "autolysed brain tissue should not be mistaken for a neurogenic neoplasm or encephalocele » " +
          "[keeling, ch. 15] et « This finding should not be confused with a neuroblastic tumor in the " +
          "retroperitoneum » [ernst, ch. 37]. Parade nommée : GFAP ou CD56" },
 
-  { k:"tissuViscere", l:"Tissu cérébral dans la vascularisation du foie ou d'un autre viscère",
+  { k:"tissuViscere", fv:"FOETO:PF.CER-NOR-106", l:"Tissu cérébral dans la vascularisation du foie ou d'un autre viscère",
     b:"—", d:"artefact de geste, ne date rien", h:0, q:"mauvais",
     note:"le piège n'est pas confiné à la lame de cerveau : ernst ch. 37 signale du tissu cérébral " +
          "dans la vascularisation du foie et des autres organes — il peut surgir sur n'importe quelle " +
@@ -357,7 +362,7 @@ var MESURE = {
   defLabel:"niveaux médullaires — sans eux, “cornes antérieures normales” ne veut rien dire",
   optLabel:"gyration — le seul repère qui survive à la macération",
   defs:NIVEAUX, opts:GYRATION,
-  champs:[{ id:"egl", label:"Couche granuleuse externe cérébelleuse (nombre de cellules)",
+  champs:[{ id:"egl", fv:"FOETO:PF.CER-NOR-103", label:"Couche granuleuse externe cérébelleuse (nombre de cellules)",
             min:0, max:20, step:1 }]
 };
 
@@ -491,13 +496,13 @@ var VARIANTES = [
     l:"Hétérotopie cérébelleuse non proéminente, isolée, sans contexte syndromique" },
   { k:"grandsNeuronesInterstitiels", g:"Cortex — migration, lamination, ligne médiane",
     l:"Grands neurones interstitiels de la substance blanche — résidus probables de la sous-plaque" },
-  { k:"statusVerrucosus", g:"Cortex — migration, lamination, ligne médiane",
+  { k:"statusVerrucosus", fv:"FOETO:PF.CER-NOR-111", g:"Cortex — migration, lamination, ligne médiane",
     l:"Status verrucosus simplex, papilles de Retzius — avant 24 SA" },
   { k:"sillonCentralIrregulier", g:"Cortex — migration, lamination, ligne médiane",
     l:"Irrégularités du sillon central à 21 — formation précoce du sillon" },
   { k:"cajalRetzius", g:"Cortex — migration, lamination, ligne médiane",
     l:"Neurones de Cajal-Retzius sous-piaux bien visibles en HE" },
-  { k:"glieRadiaire", g:"Structures transitoires — maturation",
+  { k:"glieRadiaire", fv:"FOETO:PF.CER-NOR-108", g:"Structures transitoires — maturation",
     l:"Glie radiaire du raphé dorsal — persiste NORMALEMENT jusqu'au terme" },
   { k:"eglResiduelle", g:"Structures transitoires — maturation",
     l:"Couche granuleuse externe cérébelleuse résiduelle au terme" },
@@ -541,12 +546,12 @@ var CADRES = [
    répond pas, il se répond seul. */
 var SIGNES = [
   /* — Contexte hors lame — macro, autre organe, clinique — */
-  { k:"corpsCalleuxAbsent", fiche:"[§ 5.2]", g:"Contexte hors lame — macro, autre organe, clinique", l:"Corps calleux absent",
+  { k:"corpsCalleuxAbsent", fv:"FOETO:PF.CER-MAL-341", fiche:"[§ 5.2]", g:"Contexte hors lame — macro, autre organe, clinique", l:"Corps calleux absent",
     meta:"diagnostic MACROSCOPIQUE — la coupe n'ajoute que trois points : faisceaux de Probst, cortex adjacent, gliose" },
   { k:"commissureManquante", fiche:"[§ 4, § 6]", g:"Contexte hors lame — macro, autre organe, clinique",
     l:"Capsule interne ou commissure antérieure absente",
     meta:"v2 : pour que le négatif des commissures blanches ne dise pas plus que ce qui a été répondu" },
-  { k:"corticalHyperconvolute", fiche:"[devneuro, ch. 8]", g:"Contexte hors lame — macro, autre organe, clinique",
+  { k:"corticalHyperconvolute", fv:"FOETO:PF.CER-MAL-342", fiche:"[devneuro, ch. 8]", g:"Contexte hors lame — macro, autre organe, clinique",
     l:"Cortex macroscopiquement hyperconvoluté",
     meta:"seule la coupe tranche : lamination normale dessous = polygyrie, pas polymicrogyrie" },
   { k:"gyrationRetard", auto:function(){ var o = E.mesure.opt; return o === "harmonieuse" || o === "dysharmonieuse" ? true : o === "conforme" ? false : null; }, fv:"FOETO:PF.CER-MAL-289", g:"Contexte hors lame — macro, autre organe, clinique",
@@ -557,7 +562,7 @@ var SIGNES = [
     meta:"constat MACROSCOPIQUE — aucun seuil de microcéphalie en DS n'existe dans les six livres" },
   { k:"herniationCervelet", fv:"FOETO:PF.CER-MAL-290", g:"Contexte hors lame — macro, autre organe, clinique",
     meta:"lecture MACROSCOPIQUE — point commun des quatre types de Chiari" },
-  { k:"coneNiveau", fiche:"[ernst, ch. 29]", g:"Contexte hors lame — macro, autre organe, clinique",
+  { k:"coneNiveau", fv:"FOETO:PF.CER-MAL-343", seul:true, fiche:"[ernst, ch. 29]", g:"Contexte hors lame — macro, autre organe, clinique",
     l:"Moelle descendant plus bas que le rachis lombaire moyen au-delà de 27 semaines [non convertible]",
     meta:"repère d'ernst : à 27 semaines gestation, la moelle « extends only to the mid lumbar spine » — " +
          "semaines d'ernst, non convertibles en SA (§ 3.0). Seul repère médullaire daté de tout le corpus, " +
@@ -571,7 +576,7 @@ var SIGNES = [
   { k:"espaceSousArachnoidienOblitere", fv:"FOETO:PF.CER-MAL-223", g:"Cortex — migration, lamination, ligne médiane", mag:"faible" },
   { k:"vaguesAmasNeuronaux", fv:"FOETO:PF.CER-MAL-287", g:"Cortex — migration, lamination, ligne médiane", mag:"faible" },
   { k:"heterotopiesNodulairesProfondes", fv:"FOETO:PF.CER-MAL-292", g:"Cortex — migration, lamination, ligne médiane", mag:"faible" },
-  { k:"laminationNormaleSousGyri", bloc:false, fiche:"[devneuro, ch. 8]", g:"Cortex — migration, lamination, ligne médiane", mag:"faible",
+  { k:"laminationNormaleSousGyri", fv:"FOETO:PF.CER-NOR-112", bloc:false, fiche:"[devneuro, ch. 8]", g:"Cortex — migration, lamination, ligne médiane", mag:"faible",
     l:"Histologie et lamination NORMALES sous les circonvolutions surnuméraires",
     meta:"présent = lamination normale : c'est ce qui fait une polygyrie d'hydrocéphalie, pas une polymicrogyrie" },
   { k:"laminationDesorganisee", fiche:"[§ 6]", g:"Cortex — migration, lamination, ligne médiane", mag:"faible",
@@ -602,7 +607,7 @@ var SIGNES = [
     meta:"le négatif utile porte sur le caractère proéminent, jamais sur la présence" },
   { k:"vermisAplasieFusion", fv:"FOETO:PF.CER-MAL-296", g:"Fosse postérieure — cervelet, aqueduc, tronc", mag:"faible",
     meta:"diagnostic de coupe FRONTALE — fusion apparente des hémisphères cérébelleux (libellé v1)" },
-  { k:"dysplasieCerebelleuseExtensive", fiche:"[devneuro, ch. 15]", g:"Fosse postérieure — cervelet, aqueduc, tronc", mag:"faible",
+  { k:"dysplasieCerebelleuseExtensive", fv:"FOETO:PF.CER-MAL-344", fiche:"[devneuro, ch. 15]", g:"Fosse postérieure — cervelet, aqueduc, tronc", mag:"faible",
     l:"Dysplasie cérébelleuse extensive" },
   { k:"aqueducStenose", fiche:"[§ 5.5]", g:"Fosse postérieure — cervelet, aqueduc, tronc", mag:"faible",
     l:"Aqueduc de Sylvius rétréci ou non perméable" },
@@ -622,7 +627,7 @@ var SIGNES = [
   { k:"fermetureSousLesion", fiche:"[corpus CR]", g:"Tube neural et moelle — fermeture, clivage", mag:"faible",
     l:"Fermeture de la moelle sous le niveau lésionnel, malformative et hémorragique",
     meta:"second verbatim du même CR, et il décrit un étage SOUS la lésion — donc plusieurs niveaux" },
-  { k:"areaCerebrovasculosa", fiche:"[devneuro, ch. 2]", g:"Tube neural et moelle — fermeture, clivage", mag:"faible",
+  { k:"areaCerebrovasculosa", fv:"FOETO:PF.CER-VAS-012", fiche:"[devneuro, ch. 2]", g:"Tube neural et moelle — fermeture, clivage", mag:"faible",
     l:"Area cerebrovasculosa — tissu neuroglial désorganisé et vasculaire",
     meta:"l'anencéphalie n'est pas un défaut de fermeture mais une dégénérescence secondaire d'un tube " +
          "ouvert : on trouve un tissu désorganisé, pas un cerveau formé puis amputé" },
@@ -630,29 +635,29 @@ var SIGNES = [
     meta:"critère de coupe TRANSVERSALE : le sac dural, pas la moelle" },
   { k:"deuxSacsDuraux", fv:"FOETO:PF.CER-MAL-288", g:"Tube neural et moelle — fermeture, clivage", mag:"faible",
     meta:"critère de coupe TRANSVERSALE : le sac dural, pas la moelle" },
-  { k:"hydromyelie", fiche:"[devneuro, ch. 2]", g:"Tube neural et moelle — fermeture, clivage", mag:"faible",
+  { k:"hydromyelie", fv:"FOETO:PF.CER-MAL-345", fiche:"[devneuro, ch. 2]", g:"Tube neural et moelle — fermeture, clivage", mag:"faible",
     l:"Dilatation du canal médullaire (hydromyélie)" },
   { k:"clivageDuplicationPartielle", fv:"FOETO:PF.CER-MAL-286", g:"Tube neural et moelle — fermeture, clivage", mag:"faible",
     meta:"perineuro ch. 38 distingue le clivage de la vraie duplication" },
 
   /* — Structures transitoires — maturation anormale, par structure — */
-  { k:"matricePersistante", fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"matricePersistante", seul:true, fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Matrice germinative persistante au-delà de l'âge attendu",
     meta:"seule sa PERSISTANCE se coche : on ne sait pas dire à partir de quel âge son absence est anormale" },
-  { k:"sousPlaquePersistante", fiche:"[§ 3.4]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"sousPlaquePersistante", terme:[35, null], fiche:"[§ 3.4]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Sous-plaque persistante après 35" },
-  { k:"laminaVermis", bloc:false, fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"laminaVermis", fv:"FOETO:PF.CER-NOR-113", bloc:false, fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Lamina dissecans présente au vermis",
     meta:"observation : perineuro la donne disparue à 28 au vermis, ernst à 32 sans distinguer d'étage" },
-  { k:"laminaHemisphere", bloc:false, fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"laminaHemisphere", fv:"FOETO:PF.CER-NOR-114", bloc:false, fiche:"[perineuro, s2_nervous_development]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Lamina dissecans présente à l'hémisphère cérébelleux",
     meta:"observation : perineuro la donne disparue à 30 aux hémisphères, ernst à 32" },
-  { k:"laminaDissecansPersistante", fiche:"[ernst, ch. 29 ; perineuro]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"laminaDissecansPersistante", seul:true, fiche:"[ernst, ch. 29 ; perineuro]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Lamina dissecans persistante aux DEUX étages, vermis compris" },
-  { k:"dentelNonCrenele", fiche:"[§ 3.5]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"dentelNonCrenele", terme:[22, null], fiche:"[§ 3.5]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Noyau dentelé à contour lisse et mal délimité après 22",
     meta:"une FORME, lue à faible grossissement : survit à la macération" },
-  { k:"oliveNonCrenelee", fiche:"[§ 3.5]", g:"Structures transitoires — maturation", mag:"faible",
+  { k:"oliveNonCrenelee", seul:true, fiche:"[§ 3.5]", g:"Structures transitoires — maturation", mag:"faible",
     l:"Olive bulbaire inférieure à contour lisse au 3ᵉ trimestre" },
   { k:"granSousPialePersistante", fiche:"[§ 3.4]", g:"Structures transitoires — maturation", mag:"moyen",
     l:"Couche granulaire sous-piale persistante après 30",
@@ -664,7 +669,7 @@ var SIGNES = [
     meta:"1 seul CR sur 176 en mentionne une — et c'est le type de lésion qui part dans le rapport différé" },
   { k:"leucomalacie", fiche:"[devneuro, ch. 21]", g:"Destruction, hémorragie, substance blanche", mag:"faible",
     l:"Leucomalacie périventriculaire ou cavitation de la substance blanche" },
-  { k:"caviteSansGliose", fiche:"[devneuro, ch. 19]", g:"Destruction, hémorragie, substance blanche", mag:"faible",
+  { k:"caviteSansGliose", fv:"FOETO:PF.CER-MAL-346", fiche:"[devneuro, ch. 19]", g:"Destruction, hémorragie, substance blanche", mag:"faible",
     l:"Cavité ou perte de substance SANS gliose" },
   { k:"structurePetiteBienConstruite", fiche:"[§ 5.3]", g:"Destruction, hémorragie, substance blanche", mag:"faible",
     l:"Structure petite mais bien construite, sans gliose ni perte neuronale" },
@@ -673,7 +678,7 @@ var SIGNES = [
     l:"Raréfaction neuronale" },
   { k:"glioseReactionnelle", fv:"FOETO:PF.CER-RET-026", g:"Destruction, hémorragie, substance blanche", mag:"moyen",
     meta:"astrocytose réactionnelle (libellé v1) — n'apparaît que vers 20-23 semaines : avant, son absence ne prouve rien" },
-  { k:"sansMacrophagesMyeline", bloc:false, fiche:"[perineuro, s9_infections]", g:"Destruction, hémorragie, substance blanche", mag:"fort",
+  { k:"sansMacrophagesMyeline", fv:"FOETO:PF.CER-NOR-115", bloc:false, fiche:"[perineuro, s9_infections]", g:"Destruction, hémorragie, substance blanche", mag:"fort",
     l:"Pas de macrophages chargés de myéline — pas de démyélinisation active",
     meta:"polarité normale, à répondre seul : c'est l'ABSENCE qui est le critère différentiel du retard de " +
          "myélinisation infectieux (§ 5.9) ; absent = macrophages chargés de myéline vus (v1 : macrophagesMyeline)" },

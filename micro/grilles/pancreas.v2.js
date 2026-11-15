@@ -60,11 +60,16 @@
       présence, la liste déroulante de rétention les range par h : ce sont deux
       lectures, pas deux paliers. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 7 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 16 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 6 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "pancreas";
 var TITRE   = "pancréas";
 var SOURCE  = "fiche_pancreas.md";
 var MODULE  = "grille_pancreas";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -167,7 +172,7 @@ var RETENTION = [
   { k:"horsPancreas", l:"Rang de rétention établi sur les AUTRES organes du fœtus",
     b:"celle des autres organes", d:"lue hors pancréas, Table 15.6", h:1, q:"bon",
     note:HORS_TABLE, alerte:PLAFOND },
-  { k:"basoPancreas", l:"Perte de basophilie nucléaire pancréatique cotée dans la séquence du service",
+  { k:"basoPancreas", fv:"FOETO:PF.END-RET-009", l:"Perte de basophilie nucléaire pancréatique cotée dans la séquence du service",
     b:"36–48 h, usage du service", d:"borne sans source livre", h:0, q:"moyen",
     note:"DIVERGENCE DOMINANTE, portée et NON tranchée (§ 9.1) : le service date sur cette perte, avec " +
          "une borne de 36 à 48 h qu'aucun livre de ce corpus ne fournit, et cite le pancréas en tête de " +
@@ -282,7 +287,7 @@ var MESURE = {
   defLabel:"siège du bloc — le remplaçant de la latéralité, à nommer AVANT tout constat insulaire",
   optLabel:"échantillonnage — la seule parade proposée par les livres pour l'endocrine",
   defs:SIEGES, opts:ECHANT,
-  champs:[{ id:"poids",  label:"Poids pancréatique (g) — normale indexée sur le poids FŒTAL, pas sur le terme", min:0, max:20, step:0.1 },
+  champs:[{ id:"poids",  fv:"FOETO:PF.END-NOR-051", label:"Poids pancréatique (g) — normale indexée sur le poids FŒTAL, pas sur le terme", min:0, max:20, step:0.1 },
           { id:"pfoetal",label:"Poids fœtal (g) — dénominateur obligatoire du précédent", min:0, max:6000, step:10 },
           { id:"sieges", label:"Nombre de sièges pancréatiques réellement en bloc", min:0, max:4, step:1 }]
 };
@@ -449,21 +454,21 @@ function verdictMesure(){
    pancréas endocrine fœtal miment à eux seuls une hyperplasie, et les deux
    livres assortissent le tableau du même avertissement. */
 var VARIANTES = [
-  { k:"endocrineDiffus",   g:"Îlots — taille et disposition", l:"Cellules endocrines isolées ou en petits nids plutôt qu'en îlots compacts" },
-  { k:"dixPourCent",       g:"Îlots — taille et disposition", l:"Composante endocrine ≈ 10 % du volume — contre 1–2 % chez l'adulte" },
-  { k:"densiteVariable",   g:"Îlots — taille et disposition", l:"Densité insulaire variable d'un lobule à l'autre" },
-  { k:"tailleVariable",    g:"Îlots — taille et disposition", l:"Taille et forme des îlots variables" },
-  { k:"ilotsMalLimites",   g:"Îlots — taille et disposition", l:"Îlots mal circonscrits — « Fetal islets generally are not as compact and well circumscribed as islets in individuals who are several months old »" },
-  { k:"ilotsSeptaux",      g:"Îlots — taille et disposition", l:"Îlots septaux — « septal islets are not uncommon in the fetus and newborn »" },
-  { k:"bourgeonnement",    g:"Îlots — taille et disposition", l:"Bourgeonnement endocrine ducto-insulaire du développement — « The term nesidioblastosis was initially used to describe this normal developmental process »" },
-  { k:"centroAcineuses",   g:"Îlots au fort grossissement", l:"Cellules centro-acineuses proéminentes, qui miment les cellules endocrines" },
-  { k:"hematopoiese",      g:"Infiltrats interstitiels", l:"Hématopoïèse extramédullaire, parfois volumineuse, dissociant les acini — « ne doivent pas conduire à un faux diagnostic de pancréatite interstitielle »" },
-  { k:"infiltratLympho",   g:"Infiltrats interstitiels", l:"Infiltrat lymphocytaire — présent chez 50 % des fœtus (Liu and Potter)" },
-  { k:"agregatsLymphoides",g:"Infiltrats interstitiels", l:"Agrégats lymphoïdes péri-pancréatiques — « lymphoid heterotopias »" },
+  { k:"endocrineDiffus",   fv:"FOETO:PF.END-NOR-061", g:"Îlots — taille et disposition", l:"Cellules endocrines isolées ou en petits nids plutôt qu'en îlots compacts" },
+  { k:"dixPourCent",       fv:"FOETO:PF.END-NOR-062", g:"Îlots — taille et disposition", l:"Composante endocrine ≈ 10 % du volume — contre 1–2 % chez l'adulte" },
+  { k:"densiteVariable",   fv:"FOETO:PF.END-NOR-059", g:"Îlots — taille et disposition", l:"Densité insulaire variable d'un lobule à l'autre" },
+  { k:"tailleVariable",    fv:"FOETO:PF.END-NOR-066", g:"Îlots — taille et disposition", l:"Taille et forme des îlots variables" },
+  { k:"ilotsMalLimites",   fv:"FOETO:PF.END-NOR-064", g:"Îlots — taille et disposition", l:"Îlots mal circonscrits — « Fetal islets generally are not as compact and well circumscribed as islets in individuals who are several months old »" },
+  { k:"ilotsSeptaux",      fv:"FOETO:PF.END-NOR-065", g:"Îlots — taille et disposition", l:"Îlots septaux — « septal islets are not uncommon in the fetus and newborn »" },
+  { k:"bourgeonnement",    fv:"FOETO:PF.END-NOR-056", g:"Îlots — taille et disposition", l:"Bourgeonnement endocrine ducto-insulaire du développement — « The term nesidioblastosis was initially used to describe this normal developmental process »" },
+  { k:"centroAcineuses",   fv:"FOETO:PF.END-NOR-058", g:"Îlots au fort grossissement", l:"Cellules centro-acineuses proéminentes, qui miment les cellules endocrines" },
+  { k:"hematopoiese",      fv:"FOETO:PF.END-MAL-089", g:"Infiltrats interstitiels", l:"Hématopoïèse extramédullaire, parfois volumineuse, dissociant les acini — « ne doivent pas conduire à un faux diagnostic de pancréatite interstitielle »" },
+  { k:"infiltratLympho",   fv:"FOETO:PF.END-MAL-030", g:"Infiltrats interstitiels", l:"Infiltrat lymphocytaire — présent chez 50 % des fœtus (Liu and Potter)" },
+  { k:"agregatsLymphoides",fv:"FOETO:PF.DIG-INF-001", g:"Infiltrats interstitiels", l:"Agrégats lymphoïdes péri-pancréatiques — « lymphoid heterotopias »" },
   { k:"stromaMidtrimestre",g:"Kystes, trame et fibrose", l:"Stroma abondant dans ET entre les lobules avant le 3e trimestre" },
-  { k:"canalAccessoire",   g:"Kystes, trame et fibrose", l:"Canal accessoire atrophique ou absent — « undergoes varying degrees of atrophy and may be absent »" },
+  { k:"canalAccessoire",   fv:"FOETO:PF.END-NOR-057", g:"Kystes, trame et fibrose", l:"Canal accessoire atrophique ou absent — « undergoes varying degrees of atrophy and may be absent »" },
   { k:"heterotopieSplenique", g:"Position et interface splénique", l:"Hétérotopie splénique nodulaire de la queue, découverte fortuite isolée" },
-  { k:"amasAcineuxAntre",  g:"Position et interface splénique", l:"Amas de cellules acineuses ectopiques dans l'antre gastrique" }
+  { k:"amasAcineuxAntre",  fv:"FOETO:PF.END-NOR-054", g:"Position et interface splénique", l:"Amas de cellules acineuses ectopiques dans l'antre gastrique" }
 ];
 
 /* ── Cadres — dans l'ordre où on lit la lame ──────────────────────────────────
@@ -518,36 +523,36 @@ var SIGNES = [
     meta:"intralobulaires, acini et îlots entre les kystes — « cystic spaces lined by cuboidal to columnar epithelium »" },   // Espaces kystiques intralobulaires bordés d'un épithélium cubique à cylindrique
   { k:"canauxDilatesRamifies", fv:"FOETO:PF.END-MAL-071", g:"Kystes, trame et fibrose", mag:"faible",
     meta:"canaux ramifiés et kystiques, bordés d'un épithélium cubique, dans un mésenchyme primitif — « branching and cystically dilated duct-like structures »" },   // Structures canalaires ramifiées et kystiques dans un mésenchyme primitif contenant des acini
-  { k:"fibrosePancreatique", fv:"FOETO:PF.END-MAL-063", g:"Kystes, trame et fibrose", mag:"faible",
+  { k:"fibrosePancreatique", seul:true, fv:"FOETO:PF.END-MAL-063", g:"Kystes, trame et fibrose", mag:"faible",
     meta:"« La fibrose n'est pas visible avant le troisième trimestre » ; avec kystes, ou dans les infections et la surcharge ferrique" },   // Fibrose pancréatique
-  { k:"densificationTrame", fiche:"[ernst, ch. 6] · [soffoet, ch. 7]", g:"Kystes, trame et fibrose", mag:"faible",
+  { k:"densificationTrame", fv:"FOETO:PF.END-NOR-109", seul:true, fiche:"[ernst, ch. 6] · [soffoet, ch. 7]", g:"Kystes, trame et fibrose", mag:"faible",
     l:"Densification de la trame conjonctive",
     meta:"avant le 3e trimestre, c'est le stroma normal du 2e trimestre jusqu'à preuve du contraire" },
   { k:"cellulesCaliciformes", fv:"FOETO:PF.END-MAL-056", g:"Kystes, trame et fibrose", mag:"fort",
     meta:"caractère NON physiologique du pancréas — c'est le critère qui réunit les anomalies chromosomiques" },   // Cellules caliciformes dans les canaux pancréatiques
 
   /* — Acini et canaux — */
-  { k:"distensionCanalaire", fv:"FOETO:PF.END-MAL-061", g:"Acini et canaux", mag:"faible",
+  { k:"distensionCanalaire", seul:true, fv:"FOETO:PF.END-MAL-061", g:"Acini et canaux", mag:"faible",
     meta:"« La distension des canaux pancréatiques est plus nette au troisième trimestre »" },   // Distension des canaux pancréatiques
-  { k:"materielInspisse", fiche:"[keeling, ch. 22] · [soffoet, ch. 7]", g:"Acini et canaux", mag:"moyen",
+  { k:"materielInspisse", terme:[null, 20], fiche:"[keeling, ch. 22] · [soffoet, ch. 7]", g:"Acini et canaux", mag:"moyen",
     l:"Matériel éosinophile ou PAS+ inspissé dans les acini et les canaux",
     meta:"le signe est daté : « vers 20 SA », jamais avant la mi-gestation" },
-  { k:"atrophieAcineuse", fiche:"[keeling, ch. 22]", g:"Acini et canaux", mag:"moyen",
+  { k:"atrophieAcineuse", fv:"FOETO:PF.END-MAL-143", fiche:"[keeling, ch. 22]", g:"Acini et canaux", mag:"moyen",
     l:"Atrophie acineuse",
     meta:"ne compte que si elle est accompagnée de fibrose ; seule, c'est de la lyse" },
-  { k:"fibrosePeriCanalaire", fiche:"[keeling, ch. 22]", g:"Acini et canaux", mag:"moyen",
+  { k:"fibrosePeriCanalaire", fv:"FOETO:PF.END-MAL-144", seul:true, fiche:"[keeling, ch. 22]", g:"Acini et canaux", mag:"moyen",
     l:"Fibrose péri-canalaire et inter-acineuse",
     meta:"avec l'atrophie acineuse : « acinar atrophy and periductal and interacinar fibrosis are evidence of severe involvement »" },
-  { k:"aplatissementEpithelial", fiche:"[keeling, ch. 22]", g:"Acini et canaux", mag:"fort",
+  { k:"aplatissementEpithelial", fv:"FOETO:PF.END-MAL-145", fiche:"[keeling, ch. 22]", g:"Acini et canaux", mag:"fort",
     l:"Aplatissement de l'épithélium acineux ou canalaire" },
   { k:"inclusionOeilDeHibou", fv:"FOETO:PF.END-MAL-066", g:"Acini et canaux", mag:"fort",
     meta:"en CMV pancréatique, l'absence d'infiltrat n'exclut rien — « Les cellules cytomégaliques s'observent essentiellement dans le pancréas exocrine »" },   // Inclusions nucléaires virales en œil de hibou, sans réaction inflammatoire, surtout dans l'exocrine
 
   /* — Infiltrats interstitiels — */
-  { k:"infiltratDense", fiche:"[keeling, ch. 26] · [ernst, ch. 6]", g:"Infiltrats interstitiels", mag:"faible",
+  { k:"infiltratDense", seul:true, fiche:"[keeling, ch. 26] · [ernst, ch. 6]", g:"Infiltrats interstitiels", mag:"faible",
     l:"Infiltrat inflammatoire pancréatique dense",
     meta:"isolé, il est normal chez 50 % des fœtus : il ne bascule qu'avec plasmocytes ou destruction" },
-  { k:"erythropoieseInterstitielle", fiche:"[keeling, ch. 26]", g:"Infiltrats interstitiels", mag:"moyen",
+  { k:"erythropoieseInterstitielle", fv:"FOETO:PF.END-MAL-146", seul:true, fiche:"[keeling, ch. 26]", g:"Infiltrats interstitiels", mag:"moyen",
     l:"Interstitium infiltré de cellules érythropoïétiques",
     meta:"l'hématopoïèse extramédullaire pancréatique est une variante normale du 2e trimestre" },
   { k:"destructionParenchyme", fv:"FOETO:PF.END-MAL-060", g:"Infiltrats interstitiels", mag:"moyen" },   // Destruction du parenchyme ou des canaux
@@ -578,7 +583,7 @@ var SIGNES = [
     meta:"critère le plus fiable ET non spécifique ; dénominateur divergent selon la source (§ 9.11) : ×3–4 les voisins (ernst), ×3–5 les noyaux acineux (keeling)" },   // Nucléomégalie des cellules endocrines pancréatiques
   { k:"betaPleomorphisme", fv:"FOETO:PF.END-MAL-048", g:"Îlots au fort grossissement", mag:"fort",
     meta:"« β cells are increased in number and show nuclear pleomorphism and gigantism »" },   // Pléomorphisme et gigantisme nucléaire des cellules bêta pancréatiques
-  { k:"cellulesPalesNoyauCentral", fiche:"[ernst, ch. 6]", g:"Îlots au fort grossissement", mag:"fort",
+  { k:"cellulesPalesNoyauCentral", fv:"FOETO:PF.END-NOR-110", fiche:"[ernst, ch. 6]", g:"Îlots au fort grossissement", mag:"fort",
     l:"Cellules pâles à noyau central au sein des acini",
     meta:"centro-acineuses jusqu'à preuve kératine : « occasionally they can be prominent and can be mistakenly interpreted as endocrine cells »" },
 
@@ -639,7 +644,7 @@ var DIAGS = [
     min:2, cle:"ilotsVolumineux",
     stop:"l'érythropoïèse interstitielle est physiologique au 2e trimestre : elle ne devient un argument que rapportée à un âge déclaré. Le foie, la rate et la moelle décident avant le pancréas. Le discriminant est la topographie insuline / glucagon CONSERVÉE dans l'îlot, qui ne se lit qu'en IHC." },
 
-  { k:"agenesieAssoc", l:"Agénésie ou hypoplasie pancréatique", fv:"FOETO:PF.END-MAL-074",
+  { k:"agenesieAssoc", l:"Agénésie ou hypoplasie pancréatique", fv:["FOETO:PF.END-MAL-074","FOETO:PF.END-MAL-080"],
     signes:["pancreasPetit","pancreasNonRetrouve","rciuSevere"],
     min:1, cle:"pancreasPetit",
     stop:"non identifié à la dissection n'est pas absent : le pancréas fœtal est petit, mou, autolytique et se dissocie du rétropéritoine. Sans réserve de dissection levée, l'agénésie ne s'écrit pas. Un pancréas hypoplasique impose de regarder les reins (MODY5, HNF1B). Le diabète néonatal n'a pas d'autre substrat morphologique décrit que celui-ci." },
@@ -1020,7 +1025,12 @@ async function testsOrgane(chk, clic, set, crTient, pause){
   /* La formule globale ne s'écrit que si tous les cadres de lame sont « Non » */
   var lames = groupes().filter(function(g){ return !horsLame(g); });
   lames.forEach(function(g){ clic("grp", groupes().indexOf(g), "non"); });
-  chk("tous les cadres de lame « Non » : cytoarchitecture énoncée", neg("cytoarchitecture") === "ok");
+  /* lot FOETO : les signes datés (seul / terme) ne se répondent pas en bloc */
+  var dates = SIGNES.filter(function(x){ return !horsLame(x.g) && (x.seul || x.terme) && !E.signes[x.k]; });
+  chk("lot : signes datés laissés non regardés par le « Non »", dates.length > 0 && neg("cytoarchitecture") !== "ok");
+  dates.forEach(function(x){ clic("les", x.k, NEG); });
+  chk("tous les cadres « Non » + signes datés répondus : cytoarchitecture énoncée", neg("cytoarchitecture") === "ok");
+  dates.forEach(function(x){ clic("les", x.k, NEG); });
   lames.forEach(function(g){ clic("grp", groupes().indexOf(g), "non"); });
   pose("infiltratDense", POS);
   chk("un signe de lame présent : cytoarchitecture en défaut", neg("cytoarchitecture") === "ko");

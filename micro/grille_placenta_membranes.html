@@ -343,11 +343,16 @@ var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
    Fond : ~/Bureau/fiches_lecture/diffusion/fiche_placenta.md (§1 à §9).
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 1.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 2 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 0 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 17 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "placenta_membranes";
 var TITRE   = "placenta — membranes libres";
 var SOURCE  = "fiche_placenta.md";
 var MODULE  = "grille_placenta_membranes";
-var VERSION = "1.0.0";
+var VERSION = "1.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var PAIR    = false;
@@ -407,9 +412,9 @@ var INF = "Inflammation aiguë — réponse maternelle", CAD = "Caduque — vais
 
 var SIGNES = [
   /* — Contexte hors lame — */
-  { k:"travailProlonge", g:H, l:"Travail de plus de 12 h", meta:"11 % d'infection amniotique si < 6 h, 75 % si > 12 h",
+  { k:"travailProlonge", fv:"FOETO:PP.PLA-MAL-055", g:H, l:"Travail de plus de 12 h", meta:"11 % d'infection amniotique si < 6 h, 75 % si > 12 h",
     cr:"Le travail a duré plus de 12 heures" },
-  { k:"rpmProlongee", g:H, l:"Rupture des membranes depuis plus d'une semaine",
+  { k:"rpmProlongee", fv:"FOETO:PP.PLA-MAL-056", g:H, l:"Rupture des membranes depuis plus d'une semaine",
     meta:"l'inflammation n'est plus présente, la fibrose reste [vogel, ch. 9]",
     cr:"Les membranes étaient rompues depuis plus d'une semaine" },
   { k:"meconiumMacro", g:H, l:"Membranes teintées ou liquide méconial (macroscopie)",
@@ -419,7 +424,7 @@ var SIGNES = [
   /* — Amnios et chorion — */
   { k:"brides", g:"Amnios et chorion", mag:"faible", l:"Brides ou feuillets amniotiques ; chorion nodosum",
     cr:"On note des brides ou des feuillets amniotiques, ou un chorion nodosum" },
-  { k:"collageneDense", g:"Amnios et chorion", mag:"faible", l:"Dépôt collagène dense sans inflammation",
+  { k:"collageneDense", fv:"FOETO:PP.PLA-INF-046", g:"Amnios et chorion", mag:"faible", l:"Dépôt collagène dense sans inflammation",
     meta:"RPM > 1 semaine : l'inflammation est partie, la fibrose reste",
     cr:"Le chorion est le siège d'un dépôt collagène dense, sans inflammation" },
   { k:"pseudokyste", g:"Amnios et chorion", mag:"faible", l:"Pseudokyste du chorion lisse, îlots de fibrinoïde à cellules X",
@@ -428,7 +433,7 @@ var SIGNES = [
   { k:"hemorragieMembranes", g:"Amnios et chorion", mag:"faible",
     l:"Effusions de sang frais disséquant le chorion cellulaire du chorion fibreux",
     cr:"Le chorion cellulaire est souvent disséqué du chorion fibreux par de multiples effusions de sang frais." },
-  { k:"amniosNodosum", g:"Amnios et chorion", mag:"moyen",
+  { k:"amniosNodosum", seul:true, g:"Amnios et chorion", mag:"moyen",
     l:"Amnios nodosum : nodules de vernix PAS et bleu alcian positifs, non kératinisés",
     cr:"On note un amnios nodosum : nodules de vernix non kératinisés" },
   { k:"amniosDegenere", g:"Amnios et chorion", mag:"moyen",
@@ -436,54 +441,54 @@ var SIGNES = [
     cr:"L'amnios est vacuolisé, hérissé, par places nécrosé" },
 
   /* — Inflammation aiguë — réponse maternelle — */
-  { k:"microabces", g:INF, mag:"faible", l:"Polynucléaires confluents ou microabcès sous-choriaux", meta:"MIR grade 2",
+  { k:"microabces", fv:"FOETO:PP.PLA-INF-047", g:INF, mag:"faible", l:"Polynucléaires confluents ou microabcès sous-choriaux", meta:"MIR grade 2",
     cr:"On note des polynucléaires confluents, en microabcès sous-choriaux" },
-  { k:"ruptureFoyer", g:INF, mag:"faible", l:"Foyer intense de polynucléaires au site de rupture",
+  { k:"ruptureFoyer", fv:"FOETO:PP.PLA-INF-048", g:INF, mag:"faible", l:"Foyer intense de polynucléaires au site de rupture",
     meta:"ne signe pas une infection ascendante",
     cr:"On note un foyer intense de polynucléaires au site de rupture" },
   { k:"pnnDecidue", g:INF, mag:"moyen", l:"Polynucléaires dans la caduque, sans extension au chorion ni nécrose de l'amnios",
     meta:"stade 1 du gabarit de CR ; le stade 1 d'Amsterdam (sous-chorionite, chorionite) et celui de Blanc " +
          "(intervillite sous-choriale) commencent ailleurs",
     cr:"Les membranes présentent un infiltrat inflammatoire principalement polynucléaire neutrophile non altéré de la décidue sans extension au chorion ni nécrose de l'amnios (chorioamniotite stade 1)." },
-  { k:"sousChorionite", g:INF, mag:"moyen", l:"Polynucléaires maternels dans le fibrinoïde sous-chorial / chorionite",
+  { k:"sousChorionite", fv:"FOETO:PP.PLA-INF-049", g:INF, mag:"moyen", l:"Polynucléaires maternels dans le fibrinoïde sous-chorial / chorionite",
     meta:"MIR stade 1 Amsterdam = stade 1–2 de Blanc",
     cr:"On note des polynucléaires maternels dans le fibrinoïde sous-chorial ou le chorion (chorionite)" },
-  { k:"chorioamniotite", g:INF, mag:"moyen", l:"Polynucléaires dans le chorion fibreux et/ou l'amnios",
+  { k:"chorioamniotite", fv:"FOETO:PP.PLA-INF-050", g:INF, mag:"moyen", l:"Polynucléaires dans le chorion fibreux et/ou l'amnios",
     meta:"MIR stade 2 Amsterdam = stade 3 de Blanc ; stade 2 du gabarit de CR",
     cr:"Les membranes présentent un infiltrat inflammatoire principalement polynucléaire neutrophile non altéré de la décidue avec de multiples extensions au chorion sans nécrose de l'amnios (chorioamniotite stade 2)." },
-  { k:"necrosante", g:INF, mag:"moyen",
+  { k:"necrosante", fv:"FOETO:PP.PLA-INF-051", g:INF, mag:"moyen",
     l:"Chorioamniotite nécrosante : caryorrhexis des polynucléaires, nécrose amniocytaire, membrane basale hyperéosinophile",
     meta:"MIR stade 3 — n'existe pas chez Blanc ; stade 3 du gabarit de CR",
     cr:"Les membranes présentent un infiltrat inflammatoire principalement polynucléaire neutrophile non altéré de la décidue et du chorion avec de multiples plages de nécrose de l'amnios (chorioamniotite stade 3)." },
-  { k:"migrationAmnios", g:INF, mag:"fort", l:"Polynucléaires en migration vers l'amnios (sens de la chimiotaxie)",
+  { k:"migrationAmnios", fv:"FOETO:PP.PLA-INF-052", g:INF, mag:"fort", l:"Polynucléaires en migration vers l'amnios (sens de la chimiotaxie)",
     meta:"un foyer au site de rupture n'est pas une ascension",
     cr:"Les polynucléaires migrent vers l'amnios" },
 
   /* — Caduque — vaisseaux et inflammation chronique — */
-  { k:"thromboseDeciduale", g:CAD, mag:"faible", l:"Thrombose récente d'une artère déciduale", meta:"item francophone de l'athérose",
+  { k:"thromboseDeciduale", fv:"FOETO:PP.PLA-VAS-063", g:CAD, mag:"faible", l:"Thrombose récente d'une artère déciduale", meta:"item francophone de l'athérose",
     cr:"On note une thrombose récente d'une artère déciduale" },
-  { k:"necroseDeciduale", g:CAD, mag:"faible", l:"Nécrose déciduale membraneuse", meta:"preuve insuffisante pour la MVM [amsterdam]",
+  { k:"necroseDeciduale", fv:"FOETO:PP.PLA-VAS-064", g:CAD, mag:"faible", l:"Nécrose déciduale membraneuse", meta:"preuve insuffisante pour la MVM [amsterdam]",
     cr:"La décidue capsulaire présente de multiples plages de nécrose basale." },
-  { k:"atherose", g:CAD, mag:"moyen", l:"Athérose aiguë déciduale : nécrose fibrinoïde, macrophages spumeux, vaisseau dilaté",
+  { k:"atherose", fv:"FOETO:PP.PLA-VAS-065", g:CAD, mag:"moyen", l:"Athérose aiguë déciduale : nécrose fibrinoïde, macrophages spumeux, vaisseau dilaté",
     cr:"On note une athérose aiguë des vaisseaux déciduaux : nécrose fibrinoïde, macrophages spumeux" },
-  { k:"muscularisation", g:CAD, mag:"moyen", l:"Muscularisation persistante des artérioles spiralées (défaut de remodelage)",
+  { k:"muscularisation", fv:"FOETO:PP.PLA-VAS-066", seul:true, g:CAD, mag:"moyen", l:"Muscularisation persistante des artérioles spiralées (défaut de remodelage)",
     meta:"en caduque pariétale le muscle lisse est normal (§ 4.2) : c'est son épaisseur relative qui devient lésionnelle",
     cr:"Les artérioles spiralées gardent une musculature (défaut de remodelage)" },
   { k:"hypertrophieMurale", g:CAD, mag:"moyen",
     l:"Hypertrophie murale des vaisseaux déciduaux, paroi > 1/3 de la circonférence",
     meta:"formulation dimensionnellement fautive, partagée par deux sources",
     cr:"Les vaisseaux déciduaux ont une paroi épaissie (hypertrophie murale)" },
-  { k:"lymphocytesT", g:CAD, mag:"moyen", l:"Infiltrat lymphocytaire T péri-artériel décidual",
+  { k:"lymphocytesT", fv:"FOETO:PP.PLA-INF-053", g:CAD, mag:"moyen", l:"Infiltrat lymphocytaire T péri-artériel décidual",
     cr:"On note un infiltrat lymphocytaire péri-artériel dans la caduque" },
-  { k:"deciduitePlasmo", g:CAD, mag:"fort", l:"Plasmocytes dans la caduque (déciduite plasmocytaire)",
+  { k:"deciduitePlasmo", fv:"FOETO:PP.PLA-MAL-057", g:CAD, mag:"fort", l:"Plasmocytes dans la caduque (déciduite plasmocytaire)",
     cr:"On note la présence de quelques plasmocytes au sein de la décidue basale (déciduite chronique)." },
   { k:"deciduitePlasmoNombreux", g:CAD, mag:"fort", l:"Plasmocytes nombreux dans la caduque",
     cr:"On note la présence de nombreux plasmocytes au sein de la décidue basale (déciduite chronique marquée)." },
-  { k:"hemosiderine", g:CAD, mag:"technique", l:"Hémosidérine dans les membranes (bleu de Prusse positif)",
+  { k:"hemosiderine", fv:"FOETO:PP.PLA-MET-033", g:CAD, mag:"technique", l:"Hémosidérine dans les membranes (bleu de Prusse positif)",
     cr:"La décidue capsulaire présente de multiples sidérophages." },
 
   /* — Méconium — */
-  { k:"meconiumAmnios", g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans l'amnios",
+  { k:"meconiumAmnios", fv:"FOETO:PP.PLA-MAL-058", g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans l'amnios",
     cr:"On note des macrophages chargés de méconium dans l'amnios" },
   { k:"meconiumChorion", g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans le chorion et la caduque capsulaire",
     cr:"Les membranes présentent quelques macrophages chargés de méconium épars au chorion (MFM)." },
@@ -631,12 +636,13 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 
   chk("aucun bouton ne porte un diagnostic",
       DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
-  chk("FOETO : aucun signe branché", FOETOV === null && SIGNES.every(function(x){ return !x.fv && !x.foeto; }));
+  /* 1.1.0 : codes créés depuis le verbatim de la fiche (lot FOETO) — les signes branchés exportent leur code */
+  chk("FOETO 1.1 : 17 signe(s) codé(s) depuis le verbatim", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 17);
 }
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
 var FOETO = {"sections":[],"formes":{}};
-var FOETOV = null;
+var FOETOV = {"FOETO:PP.PLA-MET-033":{"l":"Hémosidérine dans les membranes (bleu de Prusse positif)","hpo":null},"FOETO:PP.PLA-VAS-064":{"l":"Nécrose déciduale membraneuse","hpo":null},"FOETO:PP.PLA-MAL-057":{"l":"Plasmocytes dans la caduque (déciduite plasmocytaire)","hpo":null},"FOETO:PP.PLA-INF-048":{"l":"Foyer intense de polynucléaires au site de rupture","hpo":null},"FOETO:PP.PLA-MAL-055":{"l":"Travail de plus de 12 h","hpo":null},"FOETO:PP.PLA-INF-053":{"l":"Infiltrat lymphocytaire T péri-artériel décidual","hpo":null},"FOETO:PP.PLA-INF-046":{"l":"Dépôt collagène dense sans inflammation","hpo":null},"FOETO:PP.PLA-MAL-058":{"l":"Macrophages méconiaux dans l'amnios","hpo":null},"FOETO:PP.PLA-INF-050":{"l":"Polynucléaires dans le chorion fibreux et/ou l'amnios","hpo":null},"FOETO:PP.PLA-VAS-063":{"l":"Thrombose récente d'une artère déciduale","hpo":null},"FOETO:PP.PLA-VAS-065":{"l":"Athérose aiguë déciduale : nécrose fibrinoïde, macrophages spumeux, vaisseau dilaté","hpo":null},"FOETO:PP.PLA-VAS-066":{"l":"Muscularisation persistante des artérioles spiralées (défaut de remodelage)","hpo":null},"FOETO:PP.PLA-INF-052":{"l":"Polynucléaires en migration vers l'amnios (sens de la chimiotaxie)","hpo":null},"FOETO:PP.PLA-INF-049":{"l":"Polynucléaires maternels dans le fibrinoïde sous-chorial / chorionite","hpo":null},"FOETO:PP.PLA-MAL-056":{"l":"Rupture des membranes depuis plus d'une semaine","hpo":null},"FOETO:PP.PLA-INF-051":{"l":"Chorioamniotite nécrosante : caryorrhexis des polynucléaires, nécrose amniocytaire, membrane basale hyperéosinophile","hpo":null},"FOETO:PP.PLA-INF-047":{"l":"Polynucléaires confluents ou microabcès sous-choriaux","hpo":null}};
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
@@ -826,8 +832,8 @@ function batir(){
             return '<button type="button" class="chip" data-act="etendue" data-k="' + i + '" data-v="' + e + '">' +
                    '<span class="k">étendue</span>' + e + '</button>';
           }).join("") + '</div>') +
-        sig.filter(blocable).map(ligneSigne).join("") + '</div>' +
-        sig.filter(function(x){ return !blocable(x); }).map(ligneSigne).join("") + '</div>';
+        sig.filter(function(x){ return !horsBloc(x); }).map(ligneSigne).join("") + '</div>' +
+        sig.filter(horsBloc).map(ligneSigne).join("") + '</div>';
     });
     $("signes").innerHTML = html.signes;
     $("contexte").innerHTML = html.contexte;
@@ -909,8 +915,11 @@ function ligneSigne(x){
       (x.horsFiche ? '<span class="meta">hors fiche — non sourcé par la biblio</span>' : "") +
       (x.fiche && !x.foeto ? '<span class="meta">dans la fiche ' + esc(x.fiche) + ', sans terme FOETO</span>' : "") +
       (oblig ? '<span class="meta">négatif à énoncer : répondre présent ou absent</span>' : "") +
-      (PRESENCE && !blocable(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
-        : "hors du « Non » en bloc : " + (x.mag === "technique" ? "se répond après la technique" : "polarité normale, à répondre seul")) +
+      (PRESENCE && horsBloc(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
+        : x.mag === "technique" ? "hors du « Non » en bloc : se répond après la technique"
+        : x.bloc === false ? "hors du « Non » en bloc : polarité normale, à répondre seul"
+        : x.seul ? "hors du « Non » en bloc : dépend du terme, à répondre seul"
+        : "« Non » en bloc seulement " + fenetreTxt(x.terme) + " — hors de là, à répondre seul") +
         '</span>' : "") +
       '</div>' +
       (x.auto ? '<span class="chip" data-auto="' + x.k + '" style="cursor:default"></span>' :
@@ -932,6 +941,8 @@ function foetoAjouter(id){
   /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
   var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
   if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
+  var vr = FUSION && VARIANTES.filter(function(v){ return v.foeto === id; })[0];
+  if (vr){ E.variantes[vr.k] = true; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
     if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
@@ -983,6 +994,17 @@ function codesPresents(){
   return SIGNES.filter(function(x){ return E.signes[x.k] === POS && codesDe(x).length; })
                .map(function(x){ return { k:x.k, l:x.l, foeto:x.foeto || null, hpo:x.hpo || null }; });
 }
+/* Codes du reste de la lecture : variante vue, critère de rétention présent, stade retenu,
+   mesure saisie (avec sa valeur). Exportés à part (codes_lecture), champ additif. */
+function codesLecture(){
+  var c = [];
+  VARIANTES.forEach(function(v){ if (v.foeto && E.variantes[v.k]) c.push({ type:"variante", k:v.k, l:v.l, foeto:v.foeto }); });
+  RETENTION.forEach(function(r){ if (r.foeto && E.retention[r.k] === "present") c.push({ type:"rétention", k:r.k, l:r.l, foeto:r.foeto }); });
+  STADES.forEach(function(s){ if (s.foeto && E.stade === s.k) c.push({ type:"stade", k:s.k, l:s.l, foeto:s.foeto }); });
+  if (MESURE) MESURE.champs.forEach(function(m){
+    if (m.foeto && E.mesure.v[m.id] != null) c.push({ type:"mesure", k:m.id, l:m.label, foeto:m.foeto, valeur:E.mesure.v[m.id] }); });
+  return c;
+}
 /* Grille branchée sur FOETO : un signe porte fv (terme tagué « verbatim ») ; son
    libellé et son HPO arbitré viennent de la base, le code exporté est l'id FOETO. */
 function resoudreFV(){
@@ -993,7 +1015,15 @@ function resoudreFV(){
     else if (!x.fiche) x.horsFiche = true;   // aucun terme de fiche derrière : non sourcé par la biblio
     /* fiche:"[keeling]" : constat sourcé dans la fiche que FOETO ne porte pas (encore) en terme */
   });
-  DIAGS.forEach(function(d){ if (d.fv && FOETOV[d.fv]) d.foeto = [d.fv]; });
+  /* Une association peut porter plusieurs termes maladie (fv:["FOETO:…", …]) : affichés, jamais exportés. */
+  DIAGS.forEach(function(d){
+    var ids = [].concat(d.fv || []).filter(function(i){ return FOETOV[i]; });
+    if (ids.length) d.foeto = ids;
+  });
+  /* Variantes, rétention, stades, champs de mesure portent aussi leur terme (NOR, RET, AXE, MES).
+     Seul le code s'y attache : variantes, rétention, stades et mesures gardent leur libellé. */
+  /* une variante GARDE son libellé : il porte des avertissements (« ne jamais énoncer en négatif ») */
+  VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).forEach(function(x){ if (x.fv && FOETOV[x.fv]) x.foeto = x.fv; });
 }
 
 /* ── Mode présence : rétention en liste, signes en paragraphes ─────────────── */
@@ -1036,7 +1066,21 @@ function variantesDe(g){ return VARIANTES.filter(function(v){ return v.g === g; 
    technique (mag:"technique") ni un signe de polarité normale (bloc:false, ex.
    « tubes collecteurs normaux » : absent y voudrait dire anormal). Ces signes restent
    visibles, paragraphe replié, et se répondent un par un. */
-function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false; }
+/* Un signe qui dépend du terme ne se répond pas en bloc hors de sa fenêtre : terme:[min, max]
+   en SA (une borne peut être null), bornes recopiées du verbatim de la fiche ; terme non saisi
+   = hors fenêtre. seul:true : dépend du terme sans borne écrite, il se répond un par un.
+   Dans les deux cas, présent reste une lésion. */
+function dansTerme(x){
+  if (!x.terme) return true;
+  var sa = num("sa");
+  return sa != null && (x.terme[0] == null || sa >= x.terme[0]) && (x.terme[1] == null || sa <= x.terme[1]);
+}
+/* toujours visible, paragraphe replié : ce que le « Non » en bloc peut ne pas répondre */
+function horsBloc(x){ return !!(x.auto || x.mag === "technique" || x.bloc === false || x.seul || x.terme); }
+function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false && !x.seul && dansTerme(x); }
+function fenetreTxt(t){
+  return t[0] != null && t[1] != null ? "de " + t[0] + " à " + t[1] + " SA" : t[0] != null ? "à partir de " + t[0] + " SA" : "jusqu'à " + t[1] + " SA";
+}
 /* Un signe bloc:false présent (méconium dans la lumière, collecteurs normaux) s'écrit au
    CR mais n'ouvre pas le paragraphe et ne bloque pas son « Non » : ce n'est pas une lésion. */
 function lesionPresente(x){ return E.signes[x.k] === POS && x.bloc !== false; }
@@ -1371,6 +1415,12 @@ function composer(){
     L.push("CODES DES SIGNES PRÉSENTS");
     cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
   }
+  var cl = codesLecture();
+  if (cl.length){
+    L.push("");
+    L.push("CODES DE LA LECTURE");
+    cl.forEach(function(c){ L.push("  " + c.type + " · " + c.l + (c.valeur != null ? " = " + c.valeur : "") + " [" + c.foeto + "]"); });
+  }
 
   var fo = Object.keys(E.foeto);
   if (fo.length){
@@ -1569,6 +1619,7 @@ function collecter(){
     terme_sa: num("sa"),
     grille: JSON.parse(JSON.stringify(E)),
     codes: codesPresents(),
+    codes_lecture: codesLecture(),
     compte_rendu: composer()
   };
 }
@@ -1870,7 +1921,7 @@ async function autotest(){
     clic("grp", iA, "non");
     chk("paragraphe non → signes absents", sA.every(function(x){ return E.signes[x.k] === NEG; }) &&
         etatGroupe(gA) === "non" && crTient(gA + " : non."));
-    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA; })[0];
+    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA && blocable(par(SIGNES, n.signe)); })[0];
     if (lie) chk("paragraphe non → négatif lié énoncé", etatNegatif(lie) === "ok");
     clic("grp", iA, "non");
     chk("second non → non regardé", sA.every(function(x){ return !E.signes[x.k]; }) && etatGroupe(gA) === null);
@@ -1904,6 +1955,18 @@ async function autotest(){
     chk("codes : lisibles (FOETO:/HP:)", SIGNES.every(function(x){
       return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)); }));
   }
+
+  /* Codes de la lecture : une variante vue exporte son terme (NOR), pas une variante non cochée */
+  var vc = VARIANTES.filter(function(v){ return v.foeto; })[0];
+  if (vc){
+    chk("codes lecture : rien sans variante vue", !codesLecture().some(function(c){ return c.k === vc.k; }));
+    clic("var", vc.k);
+    chk("codes lecture : la variante vue exporte son terme", collecter().codes_lecture.some(function(c){ return c.k === vc.k && c.foeto === vc.foeto; }) &&
+        crTient("CODES DE LA LECTURE") && crTient("[" + vc.foeto + "]"));
+    clic("var", vc.k);
+  }
+  chk("codes lecture : lisibles (FOETO:)", VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).every(function(x){
+    return !x.foeto || /^FOETO:/.test(x.foeto); }));
 
   /* Signes et associations */
   var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
@@ -2014,6 +2077,22 @@ async function autotest(){
           E.signes[xF.k] === POS && crTient(gF + " : non") && crTient(xF.l + " — PRÉSENT"));
       clic("grp", iF, "non");
       clic("les", xF.k, POS);
+    }
+    /* Fenêtre de terme : le « Non » en bloc ne répond un signe daté que dans sa fenêtre */
+    var xS = SIGNES.filter(function(x){ return x.terme && !x.auto; })[0];
+    if (xS){
+      var gS = xS.g, iS = groupes().indexOf(gS), t0 = xS.terme[0], t1 = xS.terme[1];
+      var dedans = t0 != null ? t0 : t1, dehors = t0 != null ? t0 - 1 : t1 + 1;
+      signesDe(gS).forEach(function(x){ if (!x.auto) delete E.signes[x.k]; }); delete E.groupes[gS];
+      set("sa", String(dehors));
+      clic("grp", iS, "non");
+      chk("terme : hors fenêtre, le « Non » ne répond pas « " + xS.k + " »", !E.signes[xS.k] && etatGroupe(gS) === "non");
+      clic("grp", iS, "non");
+      set("sa", String(dedans));
+      clic("grp", iS, "non");
+      chk("terme : dans la fenêtre, le « Non » le répond absent", E.signes[xS.k] === NEG);
+      clic("grp", iS, "non");
+      set("sa", "");
     }
     /* Rédaction proposée : la phrase du cadre « Non », celle du signe présent, rien sinon */
     if (REDIGE){

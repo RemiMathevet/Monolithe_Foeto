@@ -54,11 +54,16 @@
    Forme : gen_grille.py, calquée sur grille_poumon.html.
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 3.6.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 0 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 11 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 3 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "rein";
 var TITRE   = "rein et voies urinaires hautes";
 var SOURCE  = "fiche_rein.md";
 var MODULE  = "grille_rein";
-var VERSION = "3.5.0";
+var VERSION = "3.6.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;   /* v3 : plus de section “Termes FOETO” */
@@ -262,7 +267,7 @@ var VARIANTES = [
   { k:"vacuoles", g:"Tubes, artérioles et rénine",    l:"Vacuolisation claire des TCP du fœtus jeune" },
   { k:"cristaux", g:"Cortex et médullaire",    l:"Cristaux d'urate dans les tubes médullaires" },
   { k:"pelvis", g:"Contexte hors lame — macro, foie, clinique",      l:"Bassinet extrarénal ample sans dilatation calicielle" },
-  { k:"sclerose", g:"Sclérose et fibrose",    l:"Rares glomérules scléreux (plancher 1–2 % [ernst] · < 1 % service)" }
+  { k:"sclerose", fv:"FOETO:PF.REN-VAS-002", g:"Sclérose et fibrose",    l:"Rares glomérules scléreux (plancher 1–2 % [ernst] · < 1 % service)" }
 ];
 
 var CADRES = [
@@ -311,7 +316,7 @@ var SIGNES = [
   { k:"desorganisation", fv:"FOETO:PF.REN-MAL-016", g:"Cortex et médullaire", mag:"faible", l:"Désorganisation architecturale, perte du gradient cortico-médullaire" },
   { k:"cortexMince", fv:"FOETO:PF.REN-MAL-056", g:"Cortex et médullaire", mag:"faible" },
   { k:"cartilage", fv:"FOETO:PF.REN-MAL-060", g:"Cortex et médullaire", mag:"faible",      l:"Îlot de cartilage", meta:"rare — son absence ne réfute rien" },
-  { k:"collecteursDil", g:"Cortex et médullaire", mag:"faible", l:"Dilatation des tubes collecteurs" },
+  { k:"collecteursDil", fv:"FOETO:PF.REN-MAL-130", g:"Cortex et médullaire", mag:"faible", l:"Dilatation des tubes collecteurs" },
   { k:"fibrosePericalic", fv:"FOETO:PF.REN-MAL-018", g:"Cortex et médullaire", mag:"faible", l:"Fibrose autour des calices et des tubes collecteurs médullaires" },
   { k:"papilleAplatie", fv:"FOETO:PF.REN-NOR-006", g:"Cortex et médullaire", mag:"faible", l:"Papille aplatie et fibreuse" },
   { k:"infarctusMed", fv:"FOETO:PF.REN-VAS-003", g:"Cortex et médullaire", mag:"faible" },
@@ -325,7 +330,7 @@ var SIGNES = [
   { k:"collecteursNorm", bloc:false, fv:"FOETO:PF.REN-MAL-008", g:"Cortex et médullaire", mag:"moyen", l:"Tubes collecteurs médullaires normaux, non dilatés" },
   { k:"collecteursConj", fv:"FOETO:PF.REN-MAL-007", g:"Cortex et médullaire", mag:"moyen", l:"Tubes collecteurs dilatés cernés de tissu conjonctif dense" },
   { k:"henleRares", fv:"FOETO:PF.REN-NOR-001", g:"Cortex et médullaire", mag:"moyen" },
-  { k:"smaCollerette", g:"Cortex et médullaire", mag:"technique",  l:"Collerette SMA-positive" },
+  { k:"smaCollerette", fv:"FOETO:PF.REN-MAL-131", g:"Cortex et médullaire", mag:"technique",  l:"Collerette SMA-positive" },
   /* — Kystes — */
   { k:"kystesInegaux", g:"Kystes", mag:"faible",  l:"Kystes de taille inégale, sans systématisation" },
   { k:"kysteSC", fv:"FOETO:PF.REN-MAL-062", g:"Kystes", mag:"faible",        l:"Kyste sous-capsulaire cortical", meta:"« hallmark of obstruction »" },
@@ -354,7 +359,7 @@ var SIGNES = [
   /* — Sclérose et fibrose — */
   { k:"fibroseSC", g:"Sclérose et fibrose", mag:"faible",      l:"Fibrose interstitielle sous-capsulaire" },
   { k:"scleroseSurPlancher", hpo:"HP:0000096", g:"Sclérose et fibrose", mag:"moyen", l:"Glomérules scléreux au-dessus du plancher retenu" },
-  { k:"fibroseInterst", hpo:"HP:0005576", g:"Sclérose et fibrose", mag:"moyen", l:"Fibrose interstitielle" },
+  { k:"fibroseInterst", fv:"FOETO:PF.REN-MAL-132", hpo:"HP:0005576", g:"Sclérose et fibrose", mag:"moyen", l:"Fibrose interstitielle" },
   { k:"scleroseSegm", g:"Sclérose et fibrose", mag:"fort",   l:"Sclérose segmentaire" },
   /* — Inflammation et infection — */
   { k:"infiltrat", fv:"FOETO:PF.REN-INF-001", g:"Inflammation et infection", mag:"moyen",      l:"Infiltrat inflammatoire interstitiel" },
@@ -379,27 +384,27 @@ var SIGNES = [
    Le nom se déduit des signes. « cle » est le signe pivot : sans lui le compte
    peut être atteint sans que l'association tienne. */
 var DIAGS = [
-  { k:"dysplasie", l:"Dysplasie rénale", cle:"tubeCollerette", min:1,
+  { k:"dysplasie", fv:"FOETO:PF.REN-MAL-076", l:"Dysplasie rénale", cle:"tubeCollerette", min:1,
     signes:["tubeCollerette","tubePrimitif","smaCollerette","desorganisation","cartilage","blastemeAbsent","kystesInegaux"],
     stop:" — l'absence de cartilage ne réfute rien : il est rare et son absence n'exclut pas la dysplasie. " +
          "Un tube à collerette CORTICAL n'a pas la même valeur : le critère est médullaire. La dysplasie " +
          "n'est pas un diagnostic étiologique — elle peut être obstructive ou syndromique." },
 
-  { k:"obstruction", l:"Obstruction des voies urinaires", min:2,
+  { k:"obstruction", fv:"FOETO:PF.REN-MAL-085", l:"Obstruction des voies urinaires", min:2,
     signes:["kysteSC","kystesNoyau","blastemeBande","cortexMince","henleRares","reinsIrreguliers","collecteursDil","fibroseSC","uretereDilate"],
     stop:" — le kyste sous-capsulaire n'est PAS spécifique de l'obstruction : les AINS donnent la même " +
          "image. Ne pas nommer le niveau de l'obstacle sans les voies urinaires sur la table." },
 
-  { k:"pkra", l:"Polykystose autosomique récessive (PKRA)", cle:"kystesRadiaires", min:2,
+  { k:"pkra", fv:"FOETO:PF.REN-MAL-083", l:"Polykystose autosomique récessive (PKRA)", cle:"kystesRadiaires", min:2,
     signes:["kystesRadiaires","gradientKystes","plaqueDuctale","reinsVolumineux"],
     stop:" — la plaque ductale est CONSTANTE dans la PKRA : sans foie examiné, la PKRA n'est ni retenue " +
          "ni écartée. Des kystes glomérulaires nombreux l'écartent." },
 
-  { k:"pkda", l:"Polykystose autosomique dominante (PKDA)", min:2,
+  { k:"pkda", fv:"FOETO:PF.REN-MAL-082", l:"Polykystose autosomique dominante (PKDA)", min:2,
     signes:["kystesInegaux","intercalaire","kystesGlom","kystesGlomIsoles","microkystesRares","reinsVolumineux"],
     stop:" — des kystes glomérulaires nombreux écartent la PKRA, ils ne signent pas la PKDA pour autant." },
 
-  { k:"ciliopathie", l:"Ciliopathie syndromique (Meckel, Bardet-Biedl)", min:2,
+  { k:"ciliopathie", fv:["FOETO:PF.REN-MAL-075","FOETO:PF.REN-MAL-081"], l:"Ciliopathie syndromique (Meckel, Bardet-Biedl)", min:2,
     signes:["kystesDiffus","gradientKystes","collecteursNorm","fibrosePeriKyst","encephalocele","anomAssociees"],
     stop:" — un tube primitif à collerette EXCLUT le Meckel : c'est un critère d'exclusion, pas une " +
          "nuance. Ne pas nommer un syndrome sur le rein seul, sans l'examen fœtal complet." },
@@ -410,18 +415,18 @@ var DIAGS = [
          "compensatrice qui la définit est postnatale. Un CRG bas peut aussi ne dire que : fœtus plus " +
          "jeune que le terme déclaré." },
 
-  { k:"hyperplasie", l:"Excès de néphrons", cle:"crgHaut", min:1,
+  { k:"hyperplasie", fv:"FOETO:PF.REN-MAL-080", l:"Excès de néphrons", cle:"crgHaut", min:1,
     signes:["crgHaut","reinsLobules","poidsAugmente","syndromique"],
     stop:" — le corpus décrit jusqu'à 16 rangées à 29,5 SA : au-dessus du maximum théorique, l'excès " +
          "se constate, il ne se conclut pas seul." },
 
-  { k:"dtr", l:"Dysplasie tubulaire rénale (DTR) et ses phénocopies", fv:"FOETO:PF.REN-DYS-001", cle:"tcpRarefies", min:2,
+  { k:"dtr", l:"Dysplasie tubulaire rénale (DTR) et ses phénocopies", fv:["FOETO:PF.REN-DYS-001","FOETO:PF.REN-MAL-077","FOETO:PF.REN-MAL-078"], cle:"tcpRarefies", min:2,
     signes:["tcpRarefies","glomRetractes","arteriolesEp","renineAbsente","nephronsSuperf","voute","exposition"],
     stop:" — l'image est une CONVERGENCE : DTR génétique, blocage du système rénine-angiotensine, " +
          "AINS donnent le même rein. Sans l'anamnèse médicamenteuse, écrire la lésion, pas la cause. " +
          "Sur macéré, ne rien conclure sans CD10." },
 
-  { k:"nta", l:"Nécrose tubulaire aiguë", cle:"cylindres", min:2,
+  { k:"nta", fv:"FOETO:PF.REN-VAS-004", l:"Nécrose tubulaire aiguë", cle:"cylindres", min:2,
     signes:["cylindres","noyauxPerdus","debrisLumieres","regeneration"],
     stop:" — sans cylindres hémoglobiniques ou cellulaires, la nécrose tubulaire d'un mort-né est de la rétention [Genest] ; lésion et artefact de lyse post-mortem ne sont jamais départageables sur la seule " +
          "morphologie. La régénération, elle, est vitale : c'est le seul élément qui tranche." },

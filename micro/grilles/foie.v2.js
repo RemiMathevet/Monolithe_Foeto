@@ -54,11 +54,16 @@
    Forme : gen_grille.py, calquée sur grille_poumon.html.
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 4 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 11 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 2 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "foie";
 var TITRE   = "foie et voies biliaires";
 var SOURCE  = "fiche_foie.md";
 var MODULE  = "grille_foie";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -139,11 +144,11 @@ var RETENTION = [
          "ne date pas ici). Le foie n'est jamais lu seul : il s'encadre d'un organe plus rapide (tubes " +
          "rénaux) et d'un plus lent (tube digestif, surrénale). La règle d'arbitrage quand les deux " +
          "divergent n'est écrite nulle part" },
-  { k:"epithBiliaire", l:"Épithélium biliaire effacé", b:"—", d:"le premier perdu", h:0, q:"mauvais",
+  { k:"epithBiliaire", fv:"FOETO:PF.FOI-NOR-027", l:"Épithélium biliaire effacé", b:"—", d:"le premier perdu", h:0, q:"mauvais",
     note:"« Biliary epithelium is lost quickly with maceration, so assessment of bile duct development " +
          "could be hindered » [ernst, ch. 37] — une paucité biliaire ne se conclut pas sur foie macéré. " +
          "Indicateur de lisibilité (v1 : prédicteur moyen), pas un délai" },
-  { k:"noyauxHemato", l:"Noyaux hématopoïétiques perdus", b:"—", d:"perdus avec ceux des hépatocytes",
+  { k:"noyauxHemato", fv:"FOETO:PF.FOI-NOR-028", l:"Noyaux hématopoïétiques perdus", b:"—", d:"perdus avec ceux des hépatocytes",
     h:0, q:"mauvais",
     note:"une hématopoïèse “effondrée” sur macéré est un artefact, pas une anémie ni une aplasie. " +
          "Indicateur de lisibilité (v1 : prédicteur moyen), pas un délai" },
@@ -151,11 +156,11 @@ var RETENTION = [
     h:0, q:"mauvais",
     note:"« Trichrome can be helpful to determine if the structure of the liver is normal or abnormal » " +
          "[ernst, ch. 37] — l'architecture tombe en dernier et reste rattrapable" },
-  { k:"calcifDystro", l:"Calcifications dystrophiques", b:"—", d:"non datable", h:0, q:"mauvais",
+  { k:"calcifDystro", fv:"FOETO:PF.FOI-NOR-017", l:"Calcifications dystrophiques", b:"—", d:"non datable", h:0, q:"mauvais",
     note:"« Dystrophic calcification may develop in autolysed liver tissue » [keeling, ch. 15] — " +
          "ne pas y lire une infection, une tumeur ou une thrombose. Le constat lui-même est aussi un " +
          "signe (cadre Infection et inflammation)" },
-  { k:"debrisGranulaires", l:"Débris granulaires", b:"—", d:"non datable", h:0, q:"mauvais",
+  { k:"debrisGranulaires", fv:"FOETO:PF.FOI-NOR-020", l:"Débris granulaires", b:"—", d:"non datable", h:0, q:"mauvais",
     note:"« Degeneration of soft tissues results in granular debris which may be mistaken for " +
          "bacterial colonisation » [keeling, ch. 15]" }
 ];
@@ -194,7 +199,7 @@ var MESURE = {
                "[keeling, ch. 23]" }],
   opts:[{ k:"hes", l:"HES seul" },
         { k:"ck",  l:"CK7 / CK19" }],
-  champs:[{ id:"ep",    label:"Espaces portes évaluables", min:0, max:100, step:1 },
+  champs:[{ id:"ep",    fv:"FOETO:PF.FOI-NOR-015", label:"Espaces portes évaluables", min:0, max:100, step:1 },
           { id:"ratio", label:"Ratio canal / espace porte", min:0, max:3, step:0.1 }]
 };
 
@@ -248,14 +253,14 @@ function verdictMesure(){
 /* ── Variantes normales — chacune dans le cadre qu'elle mime (fiche § 4) ──── */
 var VARIANTES = [
   { k:"travees",      g:"Architecture et fibrose",           l:"Travées hépatocytaires épaisses, pluristratifiées" },
-  { k:"epFetal",      g:"Architecture et fibrose",           l:"Espace porte fœtal lâche et mésenchymateux" },
-  { k:"plaqueDuct",   g:"Plaque ductale et canaux biliaires", l:"Plaque ductale périphérique encore présente au terme" },
+  { k:"epFetal",      fv:"FOETO:PF.FOI-NOR-022", g:"Architecture et fibrose",           l:"Espace porte fœtal lâche et mésenchymateux" },
+  { k:"plaqueDuct",   fv:"FOETO:PF.FOI-NOR-029", g:"Plaque ductale et canaux biliaires", l:"Plaque ductale périphérique encore présente au terme" },
   { k:"bileFine",     g:"Cholestase",                         l:"Immaturité physiologique de la sécrétion biliaire" },
-  { k:"bessis",       g:"Infection et inflammation",          l:"Îlots de Bessis, érythropoïèse sinusoïdale" },
-  { k:"myelo",        g:"Infection et inflammation",          l:"Myélopoïèse portale dans et autour des espaces portes" },
-  { k:"glycogene",    g:"Stéatose",                           l:"Glycogénisation hépatocytaire, cytoplasme clair" },
+  { k:"bessis",       fv:"FOETO:PF.FOI-NOR-021", g:"Infection et inflammation",          l:"Îlots de Bessis, érythropoïèse sinusoïdale" },
+  { k:"myelo",        fv:"FOETO:PF.FOI-NOR-026", g:"Infection et inflammation",          l:"Myélopoïèse portale dans et autour des espaces portes" },
+  { k:"glycogene",    fv:"FOETO:PF.FOI-NOR-023", g:"Stéatose",                           l:"Glycogénisation hépatocytaire, cytoplasme clair" },
   { k:"hemosiderose", g:"Surcharges — fer et métaboliques",   l:"Hémosidérose périportale croissant avec le terme" },
-  { k:"cuivre",       g:"Surcharges — fer et métaboliques",   l:"Protéine associée au cuivre périportale néonatale physiologique" }
+  { k:"cuivre",       fv:"FOETO:PF.FOI-NOR-019", g:"Surcharges — fer et métaboliques",   l:"Protéine associée au cuivre périportale néonatale physiologique" }
 ];
 
 /* ── Cadres — dans l'ordre où on lit la lame ──────────────────────────────── */
@@ -311,20 +316,20 @@ var SIGNES = [
   { k:"cavernome", fiche:"§ 5.12", g:"Nécrose et lésions circulatoires", mag:"faible", l:"Cavernome portal" },
   { k:"foyersBordureNette", fv:"FOETO:PF.FOI-MAL-066", g:"Nécrose et lésions circulatoires", mag:"moyen", l:"Foyers focaux à bordure nette",
     meta:"le contraste local, pas l'état de la cellule" },
-  { k:"reactionCellulaire", fiche:"§ 5.7", g:"Nécrose et lésions circulatoires", mag:"moyen", l:"Réaction cellulaire en regard des foyers",
+  { k:"reactionCellulaire", fv:"FOETO:PF.FOI-MAL-080", fiche:"§ 5.7", g:"Nécrose et lésions circulatoires", mag:"moyen", l:"Réaction cellulaire en regard des foyers",
     meta:"comprise dans le terme FOETO du pivot quand bordure et réaction coexistent" },
   { k:"thrombiFibrineux", fiche:"§ 5.12", g:"Nécrose et lésions circulatoires", mag:"moyen", l:"Thrombi fibrineux intravasculaires" },
   /* — Plaque ductale et canaux biliaires — */
   { k:"ectasieCaroli", fiche:"§ 5.13", g:"Plaque ductale et canaux biliaires", mag:"faible", l:"Ectasie ductale de type Caroli" },
-  { k:"profilDuctal", fv:"FOETO:PF.FOI-MAL-067", g:"Plaque ductale et canaux biliaires", mag:"moyen",
+  { k:"profilDuctal", seul:true, fv:"FOETO:PF.FOI-MAL-067", g:"Plaque ductale et canaux biliaires", mag:"moyen",
     l:"Profil ductal circonférentiel persistant en couronne autour de l'espace porte" },
   { k:"atteinteHilaire", fv:"FOETO:PF.FOI-MAL-064", g:"Plaque ductale et canaux biliaires", mag:"moyen", l:"Atteinte des espaces portes HILAIRES",
     meta:"le critère qui sépare l'immaturité périphérique de la lésion" },
   { k:"canauxAnastomoses", fiche:"§ 5.1", g:"Plaque ductale et canaux biliaires", mag:"moyen", l:"Canaux dilatés et anastomosés" },
   { k:"proliferationDuctulaire", fiche:"§ 5.11", g:"Plaque ductale et canaux biliaires", mag:"moyen", l:"Prolifération ductulaire" },
-  { k:"canauxAbsentsHile", fiche:"§ 5.2", g:"Plaque ductale et canaux biliaires", mag:"moyen", l:"Espaces portes hilaires dépourvus de canal biliaire",
+  { k:"canauxAbsentsHile", seul:true, fiche:"§ 5.2", g:"Plaque ductale et canaux biliaires", mag:"moyen", l:"Espaces portes hilaires dépourvus de canal biliaire",
     meta:"au hile le remodelage est achevé bien avant le terme : l'immaturité est écartée par la topographie" },
-  { k:"ratioBas", fiche:"§ 5.2", g:"Plaque ductale et canaux biliaires", mag:"moyen", l:"Ratio canal / espace porte < 0,4 sur ≥ 10 espaces portes",
+  { k:"ratioBas", seul:true, fiche:"§ 5.2", g:"Plaque ductale et canaux biliaires", mag:"moyen", l:"Ratio canal / espace porte < 0,4 sur ≥ 10 espaces portes",
     meta:"déduit du comptage : rien sous 10 espaces portes ni sur épithélium biliaire effacé",
     auto:function(){
       var r = E.mesure.v.ratio, ep = E.mesure.v.ep;
@@ -342,7 +347,7 @@ var SIGNES = [
   { k:"bouchonsCanalic", fiche:"§ 5.4", g:"Cholestase", mag:"fort", l:"Bouchons biliaires canaliculaires" },
   { k:"cholestaseHepato", fiche:"§ 5.4", g:"Cholestase", mag:"fort", l:"Cholestase hépatocytaire" },
   /* — Hématopoïèse — */
-  { k:"erythroAugmentee", fv:"FOETO:PF.FOI-MET-006", g:"Hématopoïèse", mag:"moyen", l:"Érythropoïèse sinusoïdale augmentée (CD71)",
+  { k:"erythroAugmentee", seul:true, fv:"FOETO:PF.FOI-MET-006", g:"Hématopoïèse", mag:"moyen", l:"Érythropoïèse sinusoïdale augmentée (CD71)",
     meta:"lignée confirmée en CD71" },
   { k:"myeloAugmentee", fv:"FOETO:PF.FOI-MAL-065", g:"Hématopoïèse", mag:"moyen", l:"Myélopoïèse portale augmentée (MPO)",
     meta:"lignée confirmée en MPO" },
@@ -362,7 +367,7 @@ var SIGNES = [
   { k:"hemophagocytose", fiche:"§ 5.8", g:"Infection et inflammation", mag:"fort", l:"Hémophagocytose sinusoïdale" },
   { k:"oeilDeHibou", fv:"FOETO:PF.FOI-MAL-063", g:"Infection et inflammation", mag:"fort", l:"Inclusions intranucléaires en œil-de-hibou",
     meta:"survit à la macération" },
-  { k:"inclusionsCytopl", fiche:"§ 5.8", g:"Infection et inflammation", mag:"fort", l:"Inclusions cytoplasmiques",
+  { k:"inclusionsCytopl", fv:"FOETO:PF.FOI-INF-006", fiche:"§ 5.8", g:"Infection et inflammation", mag:"fort", l:"Inclusions cytoplasmiques",
     meta:"comprises dans le terme FOETO de l'œil-de-hibou quand les deux sont vues" },
   { k:"cytomegaliqueBiliaire", fv:"FOETO:PF.FOI-MAL-009", g:"Infection et inflammation", mag:"fort", l:"Cellules cytomégaliques dans les canaux biliaires" },
   /* — Stéatose — */

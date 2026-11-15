@@ -381,11 +381,16 @@ var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
      Perls, comme la v1 ;
    · blocs lus en § 02 (BLOCS) ; toujours pas de côté. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 3 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 11 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 13 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "thyroide";
 var TITRE   = "thyroïde et parathyroïdes";
 var SOURCE  = "fiche_thyroide.md";
 var MODULE  = "grille_thyroide";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -593,7 +598,7 @@ var MESURE = {
   optLabel:"siège de la parathyroïde identifiée — l'ectopie y est normale",
   defs:LOBES, opts:SIEGES,
   champs:[{ id:"follicule", label:"Diamètre du plus gros follicule (mm)", min:0, max:10, step:0.1 },
-          { id:"poids",     label:"Poids thyroïdien (g)",                 min:0, max:30, step:0.01 },
+          { id:"poids",     fv:"FOETO:PF.END-NOR-096", label:"Poids thyroïdien (g)",                 min:0, max:30, step:0.01 },
           { id:"nPara",     label:"Parathyroïdes identifiées (n)",        min:0, max:4,  step:1 }]
 };
 
@@ -721,25 +726,25 @@ var VARIANTES = [
     l:"Aspect cellulaire, presque solide, à faible grossissement sur tissu conservé" },
   { k:"neonatalPostTsh", g:"Nappe épithéliale et déplétion colloïdale",
     l:"Aspect néonatal d'après le pic de TSH — rang hors échelle fœtale" },
-  { k:"gradientCentrifuge", g:"Follicules et colloïde",
+  { k:"gradientCentrifuge", fv:"FOETO:PF.END-NOR-102", g:"Follicules et colloïde",
     l:"Follicules plus gros à la périphérie du lobe — gradient centre → périphérie" },
   /* v2, fiche § 4 [ernst, ch. 21] : mime l'épithélium hyperplasique */
-  { k:"epitheliumSecretoire", g:"Follicules et colloïde",
+  { k:"epitheliumSecretoire", fv:"FOETO:PF.END-NOR-101", g:"Follicules et colloïde",
     l:"Cellules folliculaires plus hautes, cytoplasme apical éosinophile pâle — activité sécrétoire" },
-  { k:"cellulesC", g:"Follicules et colloïde",
+  { k:"cellulesC", fv:"FOETO:PF.END-NOR-100", g:"Follicules et colloïde",
     l:"Cellules C parafolliculaires du tiers moyen profond des lobes latéraux" },
-  { k:"nidsSolides", g:"Masses et tissus non thyroïdiens",
+  { k:"nidsSolides", fv:"FOETO:PF.END-NOR-104", g:"Masses et tissus non thyroïdiens",
     l:"Nids de cellules solides, reliquats des corps ultimobranchiaux (p63+)" },
-  { k:"inclusionsHetero", g:"Masses et tissus non thyroïdiens",
+  { k:"inclusionsHetero", fv:"FOETO:PF.END-NOR-028", g:"Masses et tissus non thyroïdiens",
     l:"Inclusions intrathyroïdiennes hétérotopiques : thymus, cartilage, épithélium cilié, graisse" },
   { k:"choristome", g:"Masses et tissus non thyroïdiens", l:"Choristome thymique intrathyroïdien, bénin" },
-  { k:"lobePyramidal", g:"Masses et tissus non thyroïdiens", l:"Lobe pyramidal mêlé de muscle squelettique" },
+  { k:"lobePyramidal", fv:"FOETO:PF.END-NOR-103", g:"Masses et tissus non thyroïdiens", l:"Lobe pyramidal mêlé de muscle squelettique" },
   { k:"paraIntrathy", g:"Parathyroïdes", l:"Parathyroïde en arrière du lobe ou dans la thyroïde" },
   { k:"paraThymusEctopique", g:"Parathyroïdes", l:"Parathyroïdes entourées de tissu thymique ectopique" },
-  { k:"pasOxyphiles", g:"Parathyroïdes", l:"Absence de cellule oxyphile parathyroïdienne" },
-  { k:"pasStromaAdipeux", g:"Parathyroïdes", l:"Absence de stroma adipeux parathyroïdien" },
+  { k:"pasOxyphiles", fv:"FOETO:PF.END-NOR-098", g:"Parathyroïdes", l:"Absence de cellule oxyphile parathyroïdienne" },
+  { k:"pasStromaAdipeux", fv:"FOETO:PF.END-NOR-099", g:"Parathyroïdes", l:"Absence de stroma adipeux parathyroïdien" },
   /* v2, fiche § 3 [ernst, ch. 22] : mime l'hypertrophie parathyroïdienne */
-  { k:"tailleParaCroissante", g:"Parathyroïdes",
+  { k:"tailleParaCroissante", fv:"FOETO:PF.END-NOR-107", g:"Parathyroïdes",
     l:"Parathyroïde plus grande avec le terme — tendance illustrée, sans borne chiffrée" }
 ];
 
@@ -775,28 +780,28 @@ var SIGNES = [
     l:"RCIU sévère et précoce avec oligo-anamnios", meta:"hors lame" },
   { k:"nidfPlacenta", fv:"FOETO:PF.END-MET-005", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
     l:"Placenta trapu, NIDF diffuse, dépôts fibrinoïdes massifs", meta:"lame placentaire" },
-  { k:"tubesDedifferencies", fiche:"[soffoet, ch. 13]", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
+  { k:"tubesDedifferencies", fv:"FOETO:PF.END-MAL-153", fiche:"[soffoet, ch. 13]", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
     l:"Dysgénésie tubulaire acquise — dé-différenciation des tubes contournés proximaux", meta:"lame rénale" },
-  { k:"hypocalvaria", fiche:"[soffoet, ch. 13]", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
+  { k:"hypocalvaria", fv:"FOETO:PF.END-MAL-154", fiche:"[soffoet, ch. 13]", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
     l:"Hypocalvaria, ostéopénie radiologique", meta:"hors lame" },
   /* prélèvement qui contrefait des lésions : se sait du bloc, pas de la lame */
   { k:"blocNonSerie", fiche:"[ernst, ch. 22]", g:"Contexte hors lame — autres lames, clinique, échantillonnage",
     l:"Bloc cervical NON sérié en coupes transversales" },
 
   /* — Glande, lobes, ectopie et kystes — dysgénésie, kystes, plan de coupe — */
-  { k:"tissuAbsent", fv:"FOETO:PF.END-MAL-123", g:"Glande, lobes, ectopie et kystes", mag:"faible",
+  { k:"tissuAbsent", terme:[9, null], fv:"FOETO:PF.END-MAL-123", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Aucun tissu thyroïdien en position normale sur le bloc" },
-  { k:"glandeAtrophique", fiche:"[keeling, ch. 26]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
+  { k:"glandeAtrophique", fv:"FOETO:PF.END-MAL-155", fiche:"[keeling, ch. 26]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Glande très atrophique" },
   { k:"lobeAbsent", fv:"FOETO:PF.END-MAL-118", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Un lobe absent, l'autre en place" },
   { k:"lobeAsymetrique", fiche:"[keeling, ch. 26]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Asymétrie de taille ou de stade entre les deux lobes" },
-  { k:"coupeTangentielle", fiche:"[ernst, ch. 21]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
+  { k:"coupeTangentielle", fv:"FOETO:PF.END-MAL-156", fiche:"[ernst, ch. 21]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Coupe tangentielle ou périphérique du lobe" },
   { k:"tissuEctopique", fv:"FOETO:PF.END-MAL-055", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Foyer de tissu thyroïdien ectopique — lingual, sublingual, supra- ou infrathyroïdien" },
-  { k:"kysteTrajet", fiche:"[keeling, ch. 26]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
+  { k:"kysteTrajet", fv:"FOETO:PF.END-MAL-157", fiche:"[keeling, ch. 26]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Kyste médian sur le trajet du canal thyréoglosse" },
   { k:"kysteIntraglandulaire", fiche:"[corpus CR]", g:"Glande, lobes, ectopie et kystes", mag:"faible",
     l:"Kyste intraglandulaire à matrice éosinophile" },
@@ -812,7 +817,7 @@ var SIGNES = [
     meta:"lobe pyramidal normal, ou « a possible association with myopathies » — non tranché" },
   { k:"contingentsMultiples", g:"Masses et tissus non thyroïdiens", mag:"moyen",
     l:"Contingents tissulaires multiples dans la masse" },
-  { k:"surchargePAS", fiche:"[soffoet, ch. 20]", g:"Masses et tissus non thyroïdiens", mag:"technique",
+  { k:"surchargePAS", fv:"FOETO:PF.END-INF-013", fiche:"[soffoet, ch. 20]", g:"Masses et tissus non thyroïdiens", mag:"technique",
     l:"Inclusions PAS+ résistantes à l'amylase dans les fibres striées" },
 
   /* — Parathyroïdes — */
@@ -821,7 +826,7 @@ var SIGNES = [
   /* Déduit, ne se clique pas : il redit le siège déclaré en Maturation (Aucune parathyroïde
      identifiée sur la lame) ou le compte saisi. Hors du Non en bloc : formulé en négatif,
      le Non affirmerait qu'une parathyroïde a été vue, sans siège. */
-  { k:"aucuneParaVue", auto:function(){
+  { k:"aucuneParaVue", fv:"FOETO:PF.END-MAL-158", auto:function(){
       var o = E.mesure.opt, n = E.mesure.v.nPara;
       if (o) return o === "aucune";
       return n == null ? null : n === 0; },
@@ -833,18 +838,18 @@ var SIGNES = [
     l:"Nodule cervical non rattachable : parathyroïde, ganglion ou thyroïde" },
 
   /* — Nappe épithéliale et déplétion colloïdale — autolyse et son témoin, le piège central — */
-  { k:"nappePleine", fiche:"[ernst, ch. 21]", g:"Nappe épithéliale et déplétion colloïdale", mag:"faible",
+  { k:"nappePleine", fv:"FOETO:PF.END-MAL-159", fiche:"[ernst, ch. 21]", g:"Nappe épithéliale et déplétion colloïdale", mag:"faible",
     l:"Follicules non identifiables, nappe épithéliale quasi pleine",
     meta:"mime à la fois l'immaturité et la déplétion colloïdale" },
-  { k:"contrasteTemoin", fiche:"[ernst, ch. 22]", g:"Nappe épithéliale et déplétion colloïdale", mag:"moyen",
+  { k:"contrasteTemoin", fv:"FOETO:PF.END-MAL-160", fiche:"[ernst, ch. 22]", g:"Nappe épithéliale et déplétion colloïdale", mag:"moyen",
     l:"Contraste sur la même lame : thyroïde effondrée, parathyroïde préservée",
     meta:"témoin interne — c'est la paire qui informe, pas chaque glande" },
-  { k:"deplationColloide", fv:"FOETO:PF.END-NOR-095", g:"Nappe épithéliale et déplétion colloïdale", mag:"moyen",
+  { k:"deplationColloide", seul:true, fv:"FOETO:PF.END-NOR-095", g:"Nappe épithéliale et déplétion colloïdale", mag:"moyen",
     l:"Déplétion colloïdale, perte de colloïde",
     meta:"trois lectures irréconciliables : lésion, réponse au travail, autolyse" },
-  { k:"vacuolisationDetachement", fiche:"[ernst, ch. 21]", g:"Nappe épithéliale et déplétion colloïdale", mag:"fort",
+  { k:"vacuolisationDetachement", fv:"FOETO:PF.END-MET-012", fiche:"[ernst, ch. 21]", g:"Nappe épithéliale et déplétion colloïdale", mag:"fort",
     l:"Vacuolisation ou détachement des cellules épithéliales" },
-  { k:"noyauxPycnotiques", fiche:"[ernst, ch. 21]", g:"Nappe épithéliale et déplétion colloïdale", mag:"fort",
+  { k:"noyauxPycnotiques", fv:"FOETO:PF.END-MAL-161", fiche:"[ernst, ch. 21]", g:"Nappe épithéliale et déplétion colloïdale", mag:"fort",
     l:"Noyaux irréguliers et pycnotiques, « nuclear knots »" },
 
   /* — Follicules et colloïde — goitre, trois images à ne pas confondre, et l'image sans source — */
@@ -852,7 +857,7 @@ var SIGNES = [
     l:"Glande augmentée de volume" },
   { k:"hyperplasieNodulaire", fv:"FOETO:PF.END-MAL-117", g:"Follicules et colloïde", mag:"faible",
     l:"Hyperplasie nodulaire" },
-  { k:"folliculesGros", fiche:"[keeling, ch. 26]", g:"Follicules et colloïde", mag:"faible",
+  { k:"folliculesGros", fv:"FOETO:PF.END-MAL-162", fiche:"[keeling, ch. 26]", g:"Follicules et colloïde", mag:"faible",
     l:"Follicules larges" },
   { k:"colloideAugmentee", fv:"FOETO:PF.END-MAL-116", g:"Follicules et colloïde", mag:"faible",
     l:"Colloïde augmentée en quantité" },
@@ -862,7 +867,7 @@ var SIGNES = [
   /* bloc:false — polarité normale (« régulier ») : absent en bloc dirait un épithélium irrégulier */
   { k:"epitheliumCubiqueRegulier", bloc:false, fiche:"[corpus CR]", g:"Follicules et colloïde", mag:"moyen",
     l:"Épithélium folliculaire cubique régulier bordant les follicules dilatés" },
-  { k:"folliculesPetitsVides", fiche:"[keeling, ch. 26]", g:"Follicules et colloïde", mag:"moyen",
+  { k:"folliculesPetitsVides", fv:"FOETO:PF.END-MAL-163", terme:[14, null], fiche:"[keeling, ch. 26]", g:"Follicules et colloïde", mag:"moyen",
     l:"Petits follicules vides" },
   { k:"epitheliumHyperplasique", fv:"FOETO:PF.END-MAL-016", g:"Follicules et colloïde", mag:"moyen",
     l:"Épithélium folliculaire hyperplasique" },
@@ -1049,7 +1054,7 @@ var DIAGS = [
          "la congestion post-mortem : la fiche ne le tranche pas non plus." },
 
   { k:"tumeur", l:"Masse thyroïdienne — tératome en tête, carcinome à ne pas surdire",
-    fv:"FOETO:PF.END-TUM-005", cle:"masse", min:2,
+    fv:["FOETO:PF.END-TUM-005","FOETO:PF.END-TUM-004"], cle:"masse", min:2,
     signes:["masse","contingentsMultiples","hyperplasieNodulaire","pleomorphismeNucleaire"],
     stop:"« Teratomas are the most common neonatal thyroid tumor and may present with " +
          "polyhydramnios. Congenital carcinoma of the thyroid is extremely rare, and some of the " +
@@ -1446,8 +1451,8 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 }
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
-var FOETO = {"sections":[],"formes":{"FOETO:PF.END-TUM-004":["Carcinome thyroïdien congénital"],"FOETO:PF.END-NOR-100":["Cellules C parafolliculaires, tiers moyen profond des lobes latéraux (calcitonine, Grimelius)"],"FOETO:PF.END-NOR-101":["Cellules folliculaires plus hautes à cytoplasme apical éosinophile pâle (activité sécrétoire)"],"FOETO:PF.END-MAL-126":["Dysgénésie thyroïdienne (agénésie, hypoplasie, ectopie)"],"FOETO:PF.END-MAL-125":["Délétion 22q11 (syndrome de DiGeorge)"],"FOETO:PF.END-NOR-023":["Dépôt de pigment brun dans la thyroïde fœtale"],"FOETO:PF.END-MAL-124":["Glande augmentée de volume avec remaniement folliculaire"],"FOETO:PF.END-MAL-127":["Goitre de dyshormonogenèse"],"FOETO:PF.END-MAL-128":["Goitre endémique (carence iodée)"],"FOETO:PF.END-NOR-102":["Gradient de maturation centre → périphérie : follicules plus gros en périphérie"],"FOETO:PF.END-MAL-116":["Gros follicules, colloïde augmentée"],"FOETO:PF.END-MAL-130":["Hyperparathyroïdie fœtale secondaire"],"FOETO:PF.END-MAL-117":["Hyperplasie nodulaire à petits follicules vides"],"FOETO:PF.END-MAL-016":["Hyperplasie épithéliale thyroïdienne avec déplétion colloïdale"],"FOETO:PF.END-MAL-131":["Hyperthyroïdie fœtale (Graves maternel, mutation TSHR)"],"FOETO:PF.END-MAL-120":["Hypertrophie d'une parathyroïde"],"FOETO:PF.END-MAL-132":["Hypoplasie / aplasie parathyroïdienne"],"FOETO:PF.END-MAL-129":["Hémiagénésie thyroïdienne"],"FOETO:PF.END-MET-007":["Hémochromatose périnatale (surcharge ferrique extrahépatique)"],"FOETO:PF.END-NOR-028":["Inclusions intrathyroïdiennes hétérotopiques"],"FOETO:PF.END-INF-001":["Inclusions virales à CMV dans la thyroïde"],"FOETO:PF.END-INF-012":["Infection congénitale à cytomégalovirus"],"FOETO:PF.END-MAL-133":["Kyste du tractus thyréoglosse"],"FOETO:PF.END-MAL-114":["Malformation cardiaque conotroncale"],"FOETO:PF.END-NOR-103":["Muscle strié en bordure de la coupe (lobe pyramidal)"],"FOETO:PF.END-NOR-104":["Nids de cellules solides (reliquats ultimobranchiaux), main cells squamoïdes p63+"],"FOETO:PF.END-NOR-106":["Parathyroïde : cellules principales seules, bords cellulaires nets, chromatine sel et poivre"],"FOETO:PF.END-NOR-105":["Parathyroïde en nappes, cordons et travées, septa vascularisés"],"FOETO:PF.END-MAL-134":["Parathyroïde rétro- ou intrathyroïdienne, ou avec un lobule thymique non descendu"],"FOETO:PF.END-MAL-119":["Parathyroïdes absentes ou petites sur bloc cervical correctement sérié"],"FOETO:PF.END-NOR-098":["Pas de cellule oxyphile parathyroïdienne"],"FOETO:PF.END-NOR-097":["Pas de lipofuscine dans les cellules folliculaires fœtales"],"FOETO:PF.END-NOR-099":["Pas de stroma adipeux parathyroïdien"],"FOETO:PF.END-MAL-123":["Pas de tissu thyroïdien en position normale, ou glande très atrophique"],"FOETO:PF.END-NOR-095":["Perte de colloïde, vacuolisation ou détachement épithélial, noyaux irréguliers et pycnotiques, nuclear knots"],"FOETO:PF.END-MAL-121":["Pléomorphisme et gigantisme nucléaires focaux de l'épithélium"],"FOETO:PF.END-NOR-096":["Poids thyroïdien, glande entière"],"FOETO:PF.END-MET-005":["RCIU sévère avec dépôts fibrinoïdes intra-placentaires massifs (NIDF diffuse)"],"FOETO:PF.END-INF-011":["Réaction inflammatoire"],"FOETO:PF.END-MET-006":["Surcharge ferrique des cellules épithéliales thyroïdiennes (Perls positif)"],"FOETO:PF.END-NOR-107":["Taille parathyroïdienne croissante avec le terme"],"FOETO:PF.END-MAL-122":["Thymus absent ou hypoplasique"],"FOETO:PF.END-MAL-055":["Thyroïde ectopique linguale ou cervicale"],"FOETO:PF.END-NOR-108":["Thyroïde fœtale plus cellulaire que l'adulte : petits follicules uniformes, colloïde moins abondante, stroma plus abondant"],"FOETO:PF.END-MAL-115":["Tissu ectopique en hyperplasie compensatrice"],"FOETO:PF.END-TUM-005":["Tératome thyroïdien"],"FOETO:PF.END-MAL-118":["Un lobe absent, l'autre compensateur"]}};
-var FOETOV = {"FOETO:PF.END-MAL-131":{"l":"Hyperthyroïdie fœtale (Graves maternel, mutation TSHR)","hpo":null},"FOETO:PF.END-MAL-130":{"l":"Hyperparathyroïdie fœtale secondaire","hpo":null},"FOETO:PF.END-MAL-126":{"l":"Dysgénésie thyroïdienne (agénésie, hypoplasie, ectopie)","hpo":null},"FOETO:PF.END-MAL-132":{"l":"Hypoplasie / aplasie parathyroïdienne","hpo":null},"FOETO:PF.END-MET-006":{"l":"Surcharge ferrique des cellules épithéliales thyroïdiennes (Perls positif)","hpo":null},"FOETO:PF.END-INF-012":{"l":"Infection congénitale à cytomégalovirus","hpo":null},"FOETO:PF.END-MAL-118":{"l":"Un lobe absent, l'autre compensateur","hpo":null},"FOETO:PF.END-MAL-128":{"l":"Goitre endémique (carence iodée)","hpo":null},"FOETO:PF.END-MAL-133":{"l":"Kyste du tractus thyréoglosse","hpo":"HP:0010518"},"FOETO:PF.END-MAL-123":{"l":"Pas de tissu thyroïdien en position normale, ou glande très atrophique","hpo":null},"FOETO:PF.END-MET-005":{"l":"RCIU sévère avec dépôts fibrinoïdes intra-placentaires massifs (NIDF diffuse)","hpo":null},"FOETO:PF.END-NOR-023":{"l":"Dépôt de pigment brun dans la thyroïde fœtale","hpo":null},"FOETO:PF.END-MAL-127":{"l":"Goitre de dyshormonogenèse","hpo":null},"FOETO:PF.END-MAL-115":{"l":"Tissu ectopique en hyperplasie compensatrice","hpo":null},"FOETO:PF.END-MAL-122":{"l":"Thymus absent ou hypoplasique","hpo":"HP:0010515"},"FOETO:PF.END-MAL-117":{"l":"Hyperplasie nodulaire à petits follicules vides","hpo":null},"FOETO:PF.END-MAL-119":{"l":"Parathyroïdes absentes ou petites sur bloc cervical correctement sérié","hpo":null},"FOETO:PF.END-MAL-125":{"l":"Délétion 22q11 (syndrome de DiGeorge)","hpo":null},"FOETO:PF.END-INF-001":{"l":"Inclusions virales à CMV dans la thyroïde","hpo":null},"FOETO:PF.END-NOR-095":{"l":"Perte de colloïde, vacuolisation ou détachement épithélial, noyaux irréguliers et pycnotiques, nuclear knots","hpo":null},"FOETO:PF.END-MAL-055":{"l":"Thyroïde ectopique linguale ou cervicale","hpo":null},"FOETO:PF.END-MAL-129":{"l":"Hémiagénésie thyroïdienne","hpo":"HP:0011780"},"FOETO:PF.END-TUM-005":{"l":"Tératome thyroïdien","hpo":null},"FOETO:PF.END-MAL-016":{"l":"Hyperplasie épithéliale thyroïdienne avec déplétion colloïdale","hpo":null},"FOETO:PF.END-MAL-121":{"l":"Pléomorphisme et gigantisme nucléaires focaux de l'épithélium","hpo":null},"FOETO:PF.END-MAL-114":{"l":"Malformation cardiaque conotroncale","hpo":null},"FOETO:PF.END-MAL-124":{"l":"Glande augmentée de volume avec remaniement folliculaire","hpo":null},"FOETO:PF.END-MAL-120":{"l":"Hypertrophie d'une parathyroïde","hpo":null},"FOETO:PF.END-MAL-116":{"l":"Gros follicules, colloïde augmentée","hpo":null},"FOETO:PF.END-INF-011":{"l":"Réaction inflammatoire","hpo":null},"FOETO:PF.END-MET-007":{"l":"Hémochromatose périnatale (surcharge ferrique extrahépatique)","hpo":null}};
+var FOETO = {"sections":[],"formes":{"FOETO:PF.END-MAL-158":["Aucune parathyroïde identifiée sur la lame"],"FOETO:PF.END-TUM-004":["Carcinome thyroïdien congénital"],"FOETO:PF.END-NOR-100":["Cellules C parafolliculaires, tiers moyen profond des lobes latéraux (calcitonine, Grimelius)"],"FOETO:PF.END-NOR-101":["Cellules folliculaires plus hautes à cytoplasme apical éosinophile pâle (activité sécrétoire)"],"FOETO:PF.END-MAL-160":["Contraste sur la même lame : thyroïde effondrée, parathyroïde préservée"],"FOETO:PF.END-MAL-156":["Coupe tangentielle ou périphérique du lobe"],"FOETO:PF.END-MAL-126":["Dysgénésie thyroïdienne (agénésie, hypoplasie, ectopie)"],"FOETO:PF.END-MAL-153":["Dysgénésie tubulaire acquise — dé-différenciation des tubes contournés proximaux"],"FOETO:PF.END-MAL-125":["Délétion 22q11 (syndrome de DiGeorge)"],"FOETO:PF.END-NOR-023":["Dépôt de pigment brun dans la thyroïde fœtale"],"FOETO:PF.END-MAL-162":["Follicules larges"],"FOETO:PF.END-MAL-159":["Follicules non identifiables, nappe épithéliale quasi pleine"],"FOETO:PF.END-MAL-124":["Glande augmentée de volume avec remaniement folliculaire"],"FOETO:PF.END-MAL-155":["Glande très atrophique"],"FOETO:PF.END-MAL-127":["Goitre de dyshormonogenèse"],"FOETO:PF.END-MAL-128":["Goitre endémique (carence iodée)"],"FOETO:PF.END-NOR-102":["Gradient de maturation centre → périphérie : follicules plus gros en périphérie"],"FOETO:PF.END-MAL-116":["Gros follicules, colloïde augmentée"],"FOETO:PF.END-MAL-130":["Hyperparathyroïdie fœtale secondaire"],"FOETO:PF.END-MAL-117":["Hyperplasie nodulaire à petits follicules vides"],"FOETO:PF.END-MAL-016":["Hyperplasie épithéliale thyroïdienne avec déplétion colloïdale"],"FOETO:PF.END-MAL-131":["Hyperthyroïdie fœtale (Graves maternel, mutation TSHR)"],"FOETO:PF.END-MAL-120":["Hypertrophie d'une parathyroïde"],"FOETO:PF.END-MAL-154":["Hypocalvaria, ostéopénie radiologique"],"FOETO:PF.END-MAL-132":["Hypoplasie / aplasie parathyroïdienne"],"FOETO:PF.END-MAL-129":["Hémiagénésie thyroïdienne"],"FOETO:PF.END-MET-007":["Hémochromatose périnatale (surcharge ferrique extrahépatique)"],"FOETO:PF.END-INF-013":["Inclusions PAS+ résistantes à l'amylase dans les fibres striées"],"FOETO:PF.END-NOR-028":["Inclusions intrathyroïdiennes hétérotopiques"],"FOETO:PF.END-INF-001":["Inclusions virales à CMV dans la thyroïde"],"FOETO:PF.END-INF-012":["Infection congénitale à cytomégalovirus"],"FOETO:PF.END-MAL-133":["Kyste du tractus thyréoglosse"],"FOETO:PF.END-MAL-157":["Kyste médian sur le trajet du canal thyréoglosse"],"FOETO:PF.END-MAL-114":["Malformation cardiaque conotroncale"],"FOETO:PF.END-NOR-103":["Muscle strié en bordure de la coupe (lobe pyramidal)"],"FOETO:PF.END-NOR-104":["Nids de cellules solides (reliquats ultimobranchiaux), main cells squamoïdes p63+"],"FOETO:PF.END-MAL-161":["Noyaux irréguliers et pycnotiques, « nuclear knots »"],"FOETO:PF.END-NOR-106":["Parathyroïde : cellules principales seules, bords cellulaires nets, chromatine sel et poivre"],"FOETO:PF.END-NOR-105":["Parathyroïde en nappes, cordons et travées, septa vascularisés"],"FOETO:PF.END-MAL-134":["Parathyroïde rétro- ou intrathyroïdienne, ou avec un lobule thymique non descendu"],"FOETO:PF.END-MAL-119":["Parathyroïdes absentes ou petites sur bloc cervical correctement sérié"],"FOETO:PF.END-NOR-098":["Pas de cellule oxyphile parathyroïdienne"],"FOETO:PF.END-NOR-097":["Pas de lipofuscine dans les cellules folliculaires fœtales"],"FOETO:PF.END-NOR-099":["Pas de stroma adipeux parathyroïdien"],"FOETO:PF.END-MAL-123":["Pas de tissu thyroïdien en position normale, ou glande très atrophique"],"FOETO:PF.END-NOR-095":["Perte de colloïde, vacuolisation ou détachement épithélial, noyaux irréguliers et pycnotiques, nuclear knots"],"FOETO:PF.END-MAL-163":["Petits follicules vides"],"FOETO:PF.END-MAL-121":["Pléomorphisme et gigantisme nucléaires focaux de l'épithélium"],"FOETO:PF.END-NOR-096":["Poids thyroïdien, glande entière"],"FOETO:PF.END-MET-005":["RCIU sévère avec dépôts fibrinoïdes intra-placentaires massifs (NIDF diffuse)"],"FOETO:PF.END-INF-011":["Réaction inflammatoire"],"FOETO:PF.END-MET-006":["Surcharge ferrique des cellules épithéliales thyroïdiennes (Perls positif)"],"FOETO:PF.END-NOR-107":["Taille parathyroïdienne croissante avec le terme"],"FOETO:PF.END-MAL-122":["Thymus absent ou hypoplasique"],"FOETO:PF.END-MAL-055":["Thyroïde ectopique linguale ou cervicale"],"FOETO:PF.END-NOR-108":["Thyroïde fœtale plus cellulaire que l'adulte : petits follicules uniformes, colloïde moins abondante, stroma plus abondant"],"FOETO:PF.END-MAL-115":["Tissu ectopique en hyperplasie compensatrice"],"FOETO:PF.END-TUM-005":["Tératome thyroïdien"],"FOETO:PF.END-MAL-118":["Un lobe absent, l'autre compensateur"],"FOETO:PF.END-MET-012":["Vacuolisation ou détachement des cellules épithéliales"]}};
+var FOETOV = {"FOETO:PF.END-MAL-158":{"l":"Aucune parathyroïde identifiée sur la lame","hpo":null},"FOETO:PF.END-NOR-107":{"l":"Taille parathyroïdienne croissante avec le terme","hpo":null},"FOETO:PF.END-NOR-102":{"l":"Gradient de maturation centre → périphérie : follicules plus gros en périphérie","hpo":null},"FOETO:PF.END-MET-005":{"l":"RCIU sévère avec dépôts fibrinoïdes intra-placentaires massifs (NIDF diffuse)","hpo":null},"FOETO:PF.END-MAL-163":{"l":"Petits follicules vides","hpo":null},"FOETO:PF.END-MAL-126":{"l":"Dysgénésie thyroïdienne (agénésie, hypoplasie, ectopie)","hpo":null},"FOETO:PF.END-INF-012":{"l":"Infection congénitale à cytomégalovirus","hpo":null},"FOETO:PF.END-NOR-103":{"l":"Muscle strié en bordure de la coupe (lobe pyramidal)","hpo":null},"FOETO:PF.END-MAL-161":{"l":"Noyaux irréguliers et pycnotiques, « nuclear knots »","hpo":null},"FOETO:PF.END-NOR-098":{"l":"Pas de cellule oxyphile parathyroïdienne","hpo":null},"FOETO:PF.END-MAL-055":{"l":"Thyroïde ectopique linguale ou cervicale","hpo":null},"FOETO:PF.END-MAL-128":{"l":"Goitre endémique (carence iodée)","hpo":null},"FOETO:PF.END-MET-007":{"l":"Hémochromatose périnatale (surcharge ferrique extrahépatique)","hpo":null},"FOETO:PF.END-MAL-157":{"l":"Kyste médian sur le trajet du canal thyréoglosse","hpo":null},"FOETO:PF.END-MAL-133":{"l":"Kyste du tractus thyréoglosse","hpo":"HP:0010518"},"FOETO:PF.END-MAL-153":{"l":"Dysgénésie tubulaire acquise — dé-différenciation des tubes contournés proximaux","hpo":null},"FOETO:PF.END-NOR-099":{"l":"Pas de stroma adipeux parathyroïdien","hpo":null},"FOETO:PF.END-MAL-117":{"l":"Hyperplasie nodulaire à petits follicules vides","hpo":null},"FOETO:PF.END-MAL-160":{"l":"Contraste sur la même lame : thyroïde effondrée, parathyroïde préservée","hpo":null},"FOETO:PF.END-MAL-116":{"l":"Gros follicules, colloïde augmentée","hpo":null},"FOETO:PF.END-MAL-120":{"l":"Hypertrophie d'une parathyroïde","hpo":null},"FOETO:PF.END-NOR-095":{"l":"Perte de colloïde, vacuolisation ou détachement épithélial, noyaux irréguliers et pycnotiques, nuclear knots","hpo":null},"FOETO:PF.END-MET-012":{"l":"Vacuolisation ou détachement des cellules épithéliales","hpo":null},"FOETO:PF.END-MAL-118":{"l":"Un lobe absent, l'autre compensateur","hpo":null},"FOETO:PF.END-NOR-096":{"l":"Poids thyroïdien, glande entière","hpo":null},"FOETO:PF.END-INF-001":{"l":"Inclusions virales à CMV dans la thyroïde","hpo":null},"FOETO:PF.END-MAL-131":{"l":"Hyperthyroïdie fœtale (Graves maternel, mutation TSHR)","hpo":null},"FOETO:PF.END-MAL-130":{"l":"Hyperparathyroïdie fœtale secondaire","hpo":null},"FOETO:PF.END-MAL-121":{"l":"Pléomorphisme et gigantisme nucléaires focaux de l'épithélium","hpo":null},"FOETO:PF.END-MAL-159":{"l":"Follicules non identifiables, nappe épithéliale quasi pleine","hpo":null},"FOETO:PF.END-MAL-154":{"l":"Hypocalvaria, ostéopénie radiologique","hpo":null},"FOETO:PF.END-INF-013":{"l":"Inclusions PAS+ résistantes à l'amylase dans les fibres striées","hpo":null},"FOETO:PF.END-MAL-127":{"l":"Goitre de dyshormonogenèse","hpo":null},"FOETO:PF.END-MAL-119":{"l":"Parathyroïdes absentes ou petites sur bloc cervical correctement sérié","hpo":null},"FOETO:PF.END-INF-011":{"l":"Réaction inflammatoire","hpo":null},"FOETO:PF.END-NOR-028":{"l":"Inclusions intrathyroïdiennes hétérotopiques","hpo":null},"FOETO:PF.END-TUM-004":{"l":"Carcinome thyroïdien congénital","hpo":null},"FOETO:PF.END-MAL-122":{"l":"Thymus absent ou hypoplasique","hpo":"HP:0010515"},"FOETO:PF.END-TUM-005":{"l":"Tératome thyroïdien","hpo":null},"FOETO:PF.END-MAL-016":{"l":"Hyperplasie épithéliale thyroïdienne avec déplétion colloïdale","hpo":null},"FOETO:PF.END-MAL-125":{"l":"Délétion 22q11 (syndrome de DiGeorge)","hpo":null},"FOETO:PF.END-MAL-155":{"l":"Glande très atrophique","hpo":null},"FOETO:PF.END-MAL-162":{"l":"Follicules larges","hpo":null},"FOETO:PF.END-MAL-132":{"l":"Hypoplasie / aplasie parathyroïdienne","hpo":null},"FOETO:PF.END-NOR-100":{"l":"Cellules C parafolliculaires, tiers moyen profond des lobes latéraux (calcitonine, Grimelius)","hpo":null},"FOETO:PF.END-MAL-123":{"l":"Pas de tissu thyroïdien en position normale, ou glande très atrophique","hpo":null},"FOETO:PF.END-MAL-156":{"l":"Coupe tangentielle ou périphérique du lobe","hpo":null},"FOETO:PF.END-MAL-115":{"l":"Tissu ectopique en hyperplasie compensatrice","hpo":null},"FOETO:PF.END-NOR-023":{"l":"Dépôt de pigment brun dans la thyroïde fœtale","hpo":null},"FOETO:PF.END-MAL-129":{"l":"Hémiagénésie thyroïdienne","hpo":"HP:0011780"},"FOETO:PF.END-NOR-104":{"l":"Nids de cellules solides (reliquats ultimobranchiaux), main cells squamoïdes p63+","hpo":null},"FOETO:PF.END-MAL-114":{"l":"Malformation cardiaque conotroncale","hpo":null},"FOETO:PF.END-MET-006":{"l":"Surcharge ferrique des cellules épithéliales thyroïdiennes (Perls positif)","hpo":null},"FOETO:PF.END-NOR-101":{"l":"Cellules folliculaires plus hautes à cytoplasme apical éosinophile pâle (activité sécrétoire)","hpo":null},"FOETO:PF.END-MAL-124":{"l":"Glande augmentée de volume avec remaniement folliculaire","hpo":null}};
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
@@ -1637,8 +1642,8 @@ function batir(){
             return '<button type="button" class="chip" data-act="etendue" data-k="' + i + '" data-v="' + e + '">' +
                    '<span class="k">étendue</span>' + e + '</button>';
           }).join("") + '</div>') +
-        sig.filter(blocable).map(ligneSigne).join("") + '</div>' +
-        sig.filter(function(x){ return !blocable(x); }).map(ligneSigne).join("") + '</div>';
+        sig.filter(function(x){ return !horsBloc(x); }).map(ligneSigne).join("") + '</div>' +
+        sig.filter(horsBloc).map(ligneSigne).join("") + '</div>';
     });
     $("signes").innerHTML = html.signes;
     $("contexte").innerHTML = html.contexte;
@@ -1720,8 +1725,11 @@ function ligneSigne(x){
       (x.horsFiche ? '<span class="meta">hors fiche — non sourcé par la biblio</span>' : "") +
       (x.fiche && !x.foeto ? '<span class="meta">dans la fiche ' + esc(x.fiche) + ', sans terme FOETO</span>' : "") +
       (oblig ? '<span class="meta">négatif à énoncer : répondre présent ou absent</span>' : "") +
-      (PRESENCE && !blocable(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
-        : "hors du « Non » en bloc : " + (x.mag === "technique" ? "se répond après la technique" : "polarité normale, à répondre seul")) +
+      (PRESENCE && horsBloc(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
+        : x.mag === "technique" ? "hors du « Non » en bloc : se répond après la technique"
+        : x.bloc === false ? "hors du « Non » en bloc : polarité normale, à répondre seul"
+        : x.seul ? "hors du « Non » en bloc : dépend du terme, à répondre seul"
+        : "« Non » en bloc seulement " + fenetreTxt(x.terme) + " — hors de là, à répondre seul") +
         '</span>' : "") +
       '</div>' +
       (x.auto ? '<span class="chip" data-auto="' + x.k + '" style="cursor:default"></span>' :
@@ -1743,6 +1751,8 @@ function foetoAjouter(id){
   /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
   var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
   if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
+  var vr = FUSION && VARIANTES.filter(function(v){ return v.foeto === id; })[0];
+  if (vr){ E.variantes[vr.k] = true; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
     if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
@@ -1794,6 +1804,17 @@ function codesPresents(){
   return SIGNES.filter(function(x){ return E.signes[x.k] === POS && codesDe(x).length; })
                .map(function(x){ return { k:x.k, l:x.l, foeto:x.foeto || null, hpo:x.hpo || null }; });
 }
+/* Codes du reste de la lecture : variante vue, critère de rétention présent, stade retenu,
+   mesure saisie (avec sa valeur). Exportés à part (codes_lecture), champ additif. */
+function codesLecture(){
+  var c = [];
+  VARIANTES.forEach(function(v){ if (v.foeto && E.variantes[v.k]) c.push({ type:"variante", k:v.k, l:v.l, foeto:v.foeto }); });
+  RETENTION.forEach(function(r){ if (r.foeto && E.retention[r.k] === "present") c.push({ type:"rétention", k:r.k, l:r.l, foeto:r.foeto }); });
+  STADES.forEach(function(s){ if (s.foeto && E.stade === s.k) c.push({ type:"stade", k:s.k, l:s.l, foeto:s.foeto }); });
+  if (MESURE) MESURE.champs.forEach(function(m){
+    if (m.foeto && E.mesure.v[m.id] != null) c.push({ type:"mesure", k:m.id, l:m.label, foeto:m.foeto, valeur:E.mesure.v[m.id] }); });
+  return c;
+}
 /* Grille branchée sur FOETO : un signe porte fv (terme tagué « verbatim ») ; son
    libellé et son HPO arbitré viennent de la base, le code exporté est l'id FOETO. */
 function resoudreFV(){
@@ -1804,7 +1825,15 @@ function resoudreFV(){
     else if (!x.fiche) x.horsFiche = true;   // aucun terme de fiche derrière : non sourcé par la biblio
     /* fiche:"[keeling]" : constat sourcé dans la fiche que FOETO ne porte pas (encore) en terme */
   });
-  DIAGS.forEach(function(d){ if (d.fv && FOETOV[d.fv]) d.foeto = [d.fv]; });
+  /* Une association peut porter plusieurs termes maladie (fv:["FOETO:…", …]) : affichés, jamais exportés. */
+  DIAGS.forEach(function(d){
+    var ids = [].concat(d.fv || []).filter(function(i){ return FOETOV[i]; });
+    if (ids.length) d.foeto = ids;
+  });
+  /* Variantes, rétention, stades, champs de mesure portent aussi leur terme (NOR, RET, AXE, MES).
+     Seul le code s'y attache : variantes, rétention, stades et mesures gardent leur libellé. */
+  /* une variante GARDE son libellé : il porte des avertissements (« ne jamais énoncer en négatif ») */
+  VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).forEach(function(x){ if (x.fv && FOETOV[x.fv]) x.foeto = x.fv; });
 }
 
 /* ── Mode présence : rétention en liste, signes en paragraphes ─────────────── */
@@ -1847,7 +1876,21 @@ function variantesDe(g){ return VARIANTES.filter(function(v){ return v.g === g; 
    technique (mag:"technique") ni un signe de polarité normale (bloc:false, ex.
    « tubes collecteurs normaux » : absent y voudrait dire anormal). Ces signes restent
    visibles, paragraphe replié, et se répondent un par un. */
-function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false; }
+/* Un signe qui dépend du terme ne se répond pas en bloc hors de sa fenêtre : terme:[min, max]
+   en SA (une borne peut être null), bornes recopiées du verbatim de la fiche ; terme non saisi
+   = hors fenêtre. seul:true : dépend du terme sans borne écrite, il se répond un par un.
+   Dans les deux cas, présent reste une lésion. */
+function dansTerme(x){
+  if (!x.terme) return true;
+  var sa = num("sa");
+  return sa != null && (x.terme[0] == null || sa >= x.terme[0]) && (x.terme[1] == null || sa <= x.terme[1]);
+}
+/* toujours visible, paragraphe replié : ce que le « Non » en bloc peut ne pas répondre */
+function horsBloc(x){ return !!(x.auto || x.mag === "technique" || x.bloc === false || x.seul || x.terme); }
+function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false && !x.seul && dansTerme(x); }
+function fenetreTxt(t){
+  return t[0] != null && t[1] != null ? "de " + t[0] + " à " + t[1] + " SA" : t[0] != null ? "à partir de " + t[0] + " SA" : "jusqu'à " + t[1] + " SA";
+}
 /* Un signe bloc:false présent (méconium dans la lumière, collecteurs normaux) s'écrit au
    CR mais n'ouvre pas le paragraphe et ne bloque pas son « Non » : ce n'est pas une lésion. */
 function lesionPresente(x){ return E.signes[x.k] === POS && x.bloc !== false; }
@@ -2182,6 +2225,12 @@ function composer(){
     L.push("CODES DES SIGNES PRÉSENTS");
     cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
   }
+  var cl = codesLecture();
+  if (cl.length){
+    L.push("");
+    L.push("CODES DE LA LECTURE");
+    cl.forEach(function(c){ L.push("  " + c.type + " · " + c.l + (c.valeur != null ? " = " + c.valeur : "") + " [" + c.foeto + "]"); });
+  }
 
   var fo = Object.keys(E.foeto);
   if (fo.length){
@@ -2380,6 +2429,7 @@ function collecter(){
     terme_sa: num("sa"),
     grille: JSON.parse(JSON.stringify(E)),
     codes: codesPresents(),
+    codes_lecture: codesLecture(),
     compte_rendu: composer()
   };
 }
@@ -2681,7 +2731,7 @@ async function autotest(){
     clic("grp", iA, "non");
     chk("paragraphe non → signes absents", sA.every(function(x){ return E.signes[x.k] === NEG; }) &&
         etatGroupe(gA) === "non" && crTient(gA + " : non."));
-    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA; })[0];
+    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA && blocable(par(SIGNES, n.signe)); })[0];
     if (lie) chk("paragraphe non → négatif lié énoncé", etatNegatif(lie) === "ok");
     clic("grp", iA, "non");
     chk("second non → non regardé", sA.every(function(x){ return !E.signes[x.k]; }) && etatGroupe(gA) === null);
@@ -2715,6 +2765,18 @@ async function autotest(){
     chk("codes : lisibles (FOETO:/HP:)", SIGNES.every(function(x){
       return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)); }));
   }
+
+  /* Codes de la lecture : une variante vue exporte son terme (NOR), pas une variante non cochée */
+  var vc = VARIANTES.filter(function(v){ return v.foeto; })[0];
+  if (vc){
+    chk("codes lecture : rien sans variante vue", !codesLecture().some(function(c){ return c.k === vc.k; }));
+    clic("var", vc.k);
+    chk("codes lecture : la variante vue exporte son terme", collecter().codes_lecture.some(function(c){ return c.k === vc.k && c.foeto === vc.foeto; }) &&
+        crTient("CODES DE LA LECTURE") && crTient("[" + vc.foeto + "]"));
+    clic("var", vc.k);
+  }
+  chk("codes lecture : lisibles (FOETO:)", VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).every(function(x){
+    return !x.foeto || /^FOETO:/.test(x.foeto); }));
 
   /* Signes et associations */
   var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
@@ -2825,6 +2887,22 @@ async function autotest(){
           E.signes[xF.k] === POS && crTient(gF + " : non") && crTient(xF.l + " — PRÉSENT"));
       clic("grp", iF, "non");
       clic("les", xF.k, POS);
+    }
+    /* Fenêtre de terme : le « Non » en bloc ne répond un signe daté que dans sa fenêtre */
+    var xS = SIGNES.filter(function(x){ return x.terme && !x.auto; })[0];
+    if (xS){
+      var gS = xS.g, iS = groupes().indexOf(gS), t0 = xS.terme[0], t1 = xS.terme[1];
+      var dedans = t0 != null ? t0 : t1, dehors = t0 != null ? t0 - 1 : t1 + 1;
+      signesDe(gS).forEach(function(x){ if (!x.auto) delete E.signes[x.k]; }); delete E.groupes[gS];
+      set("sa", String(dehors));
+      clic("grp", iS, "non");
+      chk("terme : hors fenêtre, le « Non » ne répond pas « " + xS.k + " »", !E.signes[xS.k] && etatGroupe(gS) === "non");
+      clic("grp", iS, "non");
+      set("sa", String(dedans));
+      clic("grp", iS, "non");
+      chk("terme : dans la fenêtre, le « Non » le répond absent", E.signes[xS.k] === NEG);
+      clic("grp", iS, "non");
+      set("sa", "");
     }
     /* Rédaction proposée : la phrase du cadre « Non », celle du signe présent, rien sinon */
     if (REDIGE){

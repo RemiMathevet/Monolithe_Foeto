@@ -371,11 +371,16 @@ var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
    deux axes catégoriels (site du bloc, couches présentes) et leur verdict
    bloquant, techniques. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 1 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 13 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 8 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "vessie";
 var TITRE   = "vessie et voies urinaires basses — urètre, ouraque";
 var SOURCE  = "fiche_vessie.md";
 var MODULE  = "grille_vessie";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -516,7 +521,7 @@ var RETENTION = [
          "délabré : “La vessie est composée d'une épaisse couche scléreuse à l'intérieur de laquelle se " +
          "trouve un urothélium nécrosé” [corpus CR]. Cela ORDONNE sans DATER : " + HORS_BAREME },
 
-  { k:"urotheliumAbsent", l:"Urothélium incomplet ou totalement absent", b:"—", d:"artefact d'autopsie de base", h:0, q:"mauvais",
+  { k:"urotheliumAbsent", fv:"FOETO:PF.REN-NOR-052", l:"Urothélium incomplet ou totalement absent", b:"—", d:"artefact d'autopsie de base", h:0, q:"mauvais",
     note:"c'est le seul fait de lisibilité sourcé, et il est catégorique : « The urothelium is usually up " +
          "to six to seven layers thick in the contracted bladder, but in autopsy specimens, the urothelium " +
          "often is poorly preserved, and its layers may be incomplete or completely absent » [ernst, " +
@@ -528,7 +533,7 @@ var RETENTION = [
     note:"« The underlying lamina propria is relatively thick, depending on the degree of dilatation » " +
          "[ernst, ch. 9] : l'épaisseur du chorion mesure la réplétion, pas le temps" },
 
-  { k:"basophiliePerdue", l:"Perte de la basophilie nucléaire dans la paroi vésicale", b:"—", d:"aucun rang attribuable", h:0, q:"mauvais",
+  { k:"basophiliePerdue", fv:"FOETO:PF.REN-NOR-048", l:"Perte de la basophilie nucléaire dans la paroi vésicale", b:"—", d:"aucun rang attribuable", h:0, q:"mauvais",
     note:"« There is a predictable pattern of loss of nuclear basophilia in the internal organs which " +
          "should not be mistaken for necrosis » [keeling, ch. 15] — la règle générale s'applique, la " +
          "séquence chiffrée non : " + HORS_BAREME },
@@ -607,7 +612,7 @@ var MESURE = {
   optLabel:"couches présentes — paroi complète ou incomplète",
   defs:PLANS, opts:COUCHES,
   champs:[
-    { id:"couches",    label:"Couches urothéliales comptées", min:0, max:20, step:1 },
+    { id:"couches",    fv:"FOETO:PF.REN-NOR-039", label:"Couches urothéliales comptées", min:0, max:20, step:1 },
     { id:"musculeuse", label:"Épaisseur de la musculeuse (mm)", min:0, max:15, step:0.1 },
     { id:"paroi",      label:"Épaisseur pariétale totale à la coupe (mm)", min:0, max:30, step:0.1 }
   ]
@@ -750,19 +755,19 @@ var CADRES = [
 var VARIANTES = [
   { k:"desquamation", g:"Urothélium", l:"Urothélium desquamé ou absent — « in autopsy specimens, the urothelium often is poorly preserved »" },
   { k:"sixSept", g:"Urothélium",      l:"Six à sept couches urothéliales — « six to seven layers thick in the contracted bladder », valeur de réplétion" },
-  { k:"urotheliumMur", g:"Urothélium", l:"Urothélium d'aspect adulte dès le milieu de grossesse — « fully differentiated prenatally »" },
+  { k:"urotheliumMur", fv:"FOETO:PF.REN-NOR-053", g:"Urothélium", l:"Urothélium d'aspect adulte dès le milieu de grossesse — « fully differentiated prenatally »" },
   { k:"chorionVariable", g:"Paroi et contenu vésical", l:"Chorion d'épaisseur relative, fonction de la dilatation" },
-  { k:"muscMuqIndistincte", g:"Paroi et contenu vésical", l:"Musculaire muqueuse indistincte — « may be indistinct and composed of a thin, discontinuous layer of smooth muscle », existence contestée" },
-  { k:"faisceauxSansOrientation", g:"Paroi et contenu vésical", l:"Faisceaux musculaires sans orientation définie hors du col" },
-  { k:"peritoine", g:"Paroi et contenu vésical", l:"Péritoine recouvrant l'adventice sur une coupe de vessie supérieure" },
-  { k:"amande", g:"Contexte hors lame — vessie et urètre en macro",
+  { k:"muscMuqIndistincte", fv:"FOETO:PF.REN-NOR-045", g:"Paroi et contenu vésical", l:"Musculaire muqueuse indistincte — « may be indistinct and composed of a thin, discontinuous layer of smooth muscle », existence contestée" },
+  { k:"faisceauxSansOrientation", fv:"FOETO:PF.REN-NOR-046", g:"Paroi et contenu vésical", l:"Faisceaux musculaires sans orientation définie hors du col" },
+  { k:"peritoine", fv:"FOETO:PF.REN-NOR-040", g:"Paroi et contenu vésical", l:"Péritoine recouvrant l'adventice sur une coupe de vessie supérieure" },
+  { k:"amande", fv:"FOETO:PF.REN-NOR-057", g:"Contexte hors lame — vessie et urètre en macro",
     l:"Vessie haut située, flanquée des deux artères ombilicales, en amande vers l'ouraque" },
-  { k:"metaplasieUretrale", g:"Urètre et continuité vésico-urétrale", l:"Métaplasie malpighienne de l'urètre, « especially along the posterior wall » — normale, hormonale, décroissante" },
-  { k:"utricule", g:"Urètre et continuité vésico-urétrale", l:"Utricule prostatique au veru montanum, épithélium malpighien stratifié" },
+  { k:"metaplasieUretrale", fv:"FOETO:PF.REN-NOR-044", g:"Urètre et continuité vésico-urétrale", l:"Métaplasie malpighienne de l'urètre, « especially along the posterior wall » — normale, hormonale, décroissante" },
+  { k:"utricule", fv:"FOETO:PF.REN-NOR-054", g:"Urètre et continuité vésico-urétrale", l:"Utricule prostatique au veru montanum, épithélium malpighien stratifié" },
   { k:"veruU", g:"Urètre et continuité vésico-urétrale", l:"Lumière urétrale en U inversé au niveau du veru montanum" },
   { k:"morgagniLittre", g:"Urètre et continuité vésico-urétrale", l:"Lacunes de Morgagni et glandes de Littre de l'urètre pénien" },
-  { k:"fosseNaviculaire", g:"Urètre et continuité vésico-urétrale", l:"Fosse naviculaire à épithélium malpighien non kératinisant" },
-  { k:"reliquatCordon", g:"Contexte hors lame — ouraque et cordon",
+  { k:"fosseNaviculaire", fv:"FOETO:PF.REN-NOR-042", g:"Urètre et continuité vésico-urétrale", l:"Fosse naviculaire à épithélium malpighien non kératinisant" },
+  { k:"reliquatCordon", fv:"FOETO:PF.REN-NOR-049", g:"Contexte hors lame — ouraque et cordon",
      l:"Amas d'épithélium transitionnel sans lumière dans le cordon, central entre les deux artères — 14,6 %" },
   { k:"cryptorchidie", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
     l:"Testicules non descendus chez le jeune fœtus — « une cryptorchidie qui, chez le jeune fœtus, est physiologique » [soffoet]" }
@@ -828,9 +833,9 @@ var SIGNES = [
   /* — Contexte hors lame : l'amont, le rein, le poumon — ce que la vessie seule ne montre pas — */
   { k:"uretereDilate", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Uretère dilaté, urétéro-hydronéphrose", meta:"amont — bloc rein/voies ; « dilated ureters often have a thin wall »" },
-  { k:"hydronephrose", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
+  { k:"hydronephrose", fv:"FOETO:PF.REN-MAL-133", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Hydronéphrose", meta:"amont" },
-  { k:"kysteSousCapsulaire", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
+  { k:"kysteSousCapsulaire", fv:"FOETO:PF.REN-MAL-134", fiche:"[keeling]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Kyste sous-capsulaire cortical rénal", meta:"lame de rein — « hallmark of obstruction » sur la grille rein" },
   { k:"desorganisation", fv:"FOETO:PF.REN-MAL-016", g:"Contexte hors lame — amont, rein, poumon, Potter",
     meta:"lame de rein — « the cortex is thin and disorganized »" },
@@ -839,14 +844,14 @@ var SIGNES = [
     meta:"amont — c'est là que se juge la gravité ; reprise de la grille rein, pas un constat de cette lame" },
   { k:"oligoamnios", fiche:"[soffoet]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Oligoamnios ou anamnios", meta:"clinique" },
-  { k:"hypoplasiePulmonaire", fiche:"[soffoet]", g:"Contexte hors lame — amont, rein, poumon, Potter",
+  { k:"hypoplasiePulmonaire", fv:"FOETO:PF.REN-MAL-135", fiche:"[soffoet]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Hypoplasie pulmonaire", meta:"aval de la séquence — se juge sur la lame de poumon et le rapport poids" },
   { k:"faciesPotter", fiche:"[soffoet]", g:"Contexte hors lame — amont, rein, poumon, Potter",
     l:"Faciès de Potter, déformations positionnelles", meta:"externe" },
   /* — Contexte hors lame : paroi abdominale, génital, digestif — */
   { k:"defautMusculatureAbdo", fv:"FOETO:PF.REN-MAL-089", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
     meta:"macro — non spécifique : aussi dans les distensions d'origine non vésicale" },
-  { k:"testiculesNonDescendus", fv:"FOETO:PF.REN-MAL-088", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
+  { k:"testiculesNonDescendus", seul:true, fv:"FOETO:PF.REN-MAL-088", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
     meta:"critère prune belly pour keeling ; non retenu chez le jeune fœtus par soffoet — § 9-8" },
   { k:"sexeFemininOuAmbigu", fv:"FOETO:PF.REN-MAL-104", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
     meta:"v1 : féminin OU AMBIGU, même sous phénotype masculin — les VUP n'existent que chez le garçon" },
@@ -861,21 +866,21 @@ var SIGNES = [
     meta:"pratiquement constante dans l'exstrophie ; parfois associée à l'atrésie urétrale" },
   { k:"deuxHemivessies", fv:"FOETO:PF.REN-MAL-090", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
     meta:"forme majeure, cloacale" },
-  { k:"omphalocele", fiche:"[keeling]", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
+  { k:"omphalocele", fv:"FOETO:PF.REN-MAL-136", fiche:"[keeling]", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
     l:"Omphalocèle", meta:"spectre OEIS" },
-  { k:"defectSpinal", fiche:"[keeling]", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
+  { k:"defectSpinal", fv:"FOETO:PF.REN-MAL-137", fiche:"[keeling]", g:"Contexte hors lame — paroi abdominale, génital, digestif, exstrophie",
     l:"Défect spinal", meta:"spectre OEIS" },
   /* — Contexte hors lame : ouraque en macro, reliquat sur la lame de cordon — */
-  { k:"ouraquePermeable", fiche:"[keeling]", g:"Contexte hors lame — ouraque et cordon",
+  { k:"ouraquePermeable", fv:"FOETO:PF.REN-MAL-138", fiche:"[keeling]", g:"Contexte hors lame — ouraque et cordon",
     l:"Ouraque perméable, fistule vésico-ombilicale", meta:"« once in 200,000 births », plus fréquent chez le garçon" },
   { k:"cordonGeant", fv:"FOETO:PF.REN-MAL-087", g:"Contexte hors lame — ouraque et cordon",
     meta:"« giant umbilical cord » : peut révéler un ouraque perméable" },
-  { k:"kysteOuraquien", fiche:"[keeling]", g:"Contexte hors lame — ouraque et cordon",
+  { k:"kysteOuraquien", fv:"FOETO:PF.REN-MAL-139", fiche:"[keeling]", g:"Contexte hors lame — ouraque et cordon",
     l:"Kyste ou diverticule ouraquien", meta:"persistance partielle, moyenne ou distale" },
   { k:"reliquatExcentre", fiche:"[benirschke]", g:"Contexte hors lame — ouraque et cordon",
     l:"Reliquat épithélial du cordon NON central entre les deux artères",
     meta:"lame de cordon — la position est le critère : hors du centre, penser omphalomésentérique" },
-  { k:"ouraqueMuscle", fiche:"[benirschke]", g:"Contexte hors lame — ouraque et cordon",
+  { k:"ouraqueMuscle", fv:"FOETO:PF.REN-MAL-140", fiche:"[benirschke]", g:"Contexte hors lame — ouraque et cordon",
     l:"Reliquat allantoïdien accompagné de musculature", meta:"lame de cordon — « Rarely is the allantoic tissue accompanied by muscle »" },
 
   /* — Paroi et contenu vésical — */
@@ -941,7 +946,7 @@ var DIAGS = [
          "variability of physiologic dilatation, which will also affect the thickness of the wall and " +
          "its histological appearance. » [ernst, ch. 9]." },
 
-  { k:"obstacleUretral", l:"Obstacle urétral, niveau à préciser en macro", cle:"discontinuiteVesicoUretrale", min:2,
+  { k:"obstacleUretral", fv:"FOETO:PF.REN-MAL-122", l:"Obstacle urétral, niveau à préciser en macro", cle:"discontinuiteVesicoUretrale", min:2,
     signes:["discontinuiteVesicoUretrale","obstacleInfranchissable","colBorgne","orificePunctiforme",
             "replisVeru","uretrePostDilate","megavessie"],
     stop:" — la lame établit la CONTINUITÉ vésico-urétrale ou son absence, pas le type d'obstacle. " +
@@ -1421,8 +1426,8 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 }
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
-var FOETO = {"sections":[],"formes":{"FOETO:PF.REN-MAL-086":["Absence de continuité vésico-urétrale sur coupes sériées ou étagées"],"FOETO:PF.REN-NOR-040":["Adventice fibreuse mince, recouverte de péritoine sur les coupes de vessie supérieure"],"FOETO:PF.REN-NOR-055":["Aspect « classique » des valves fabriqué par le cathéter ou l'ouverture antérieure de l'urètre"],"FOETO:PF.REN-MAL-111":["Atrésie de l'urètre postérieur (sous-vésicale)"],"FOETO:PF.REN-NOR-041":["Chorion de tissu conjonctif dense, vaisseaux, lymphatiques et nerfs"],"FOETO:PF.REN-MAL-087":["Cordon ombilical géant"],"FOETO:PF.REN-MAL-088":["Cryptorchidie"],"FOETO:PF.REN-MAL-090":["Deux hémivessies exstrophiées séparées par un intestin exstrophié"],"FOETO:PF.REN-MAL-103":["Deux replis semi-lunaires insérés au bord inférieur du veru montanum, urètre franchissable"],"FOETO:PF.REN-MAL-107":["Dilatation de l'urètre postérieur"],"FOETO:PF.REN-MAL-112":["Dysgénésie cloacale"],"FOETO:PF.REN-MAL-089":["Défaut de la musculature pariétale abdominale"],"FOETO:PF.REN-MAL-016":["Désorganisation architecturale cortico-médullaire"],"FOETO:PF.REN-MAL-113":["Exstrophie cloacale (spectre OEIS)"],"FOETO:PF.REN-MAL-114":["Exstrophie vésicale"],"FOETO:PF.REN-NOR-042":["Fosse naviculaire à épithélium malpighien non kératinisé"],"FOETO:PF.REN-MAL-091":["Hypo/aplasie prostatique"],"FOETO:PF.REN-MAL-092":["Imperforation anale"],"FOETO:PF.REN-MAL-095":["Microcôlon"],"FOETO:PF.REN-MAL-096":["Microvessie (défaut de production d'urine)"],"FOETO:PF.REN-NOR-045":["Musculaire muqueuse indistincte, mince et discontinue"],"FOETO:PF.REN-NOR-046":["Musculeuse propre en faisceaux sans orientation définie, trois couches seulement au col"],"FOETO:PF.REN-NOR-043":["Méat urétral féminin : épithélium transitionnel rejoignant l'épithélium malpighien"],"FOETO:PF.REN-MAL-093":["Mégavessie"],"FOETO:PF.REN-MAL-094":["Mégavessie dépistée dès le 1er trimestre"],"FOETO:PF.REN-NOR-044":["Métaplasie malpighienne de l'urètre prostatique, surtout paroi postérieure"],"FOETO:PF.REN-NOR-039":["Nombre de couches urothéliales (jusqu'à 6–7 sur vessie contractée)"],"FOETO:PF.REN-MAL-097":["Obstacle infranchissable : le crin de Florence bute au veru montanum"],"FOETO:PF.REN-MAL-098":["Orifice punctiforme cathétérisable à la partie distale de l'urètre postérieur dilaté"],"FOETO:PF.REN-MAL-102":["Os pubiens séparés (diastasis pubien)"],"FOETO:PF.REN-MAL-100":["Paroi vésicale très mince, parfois avec ascite urineuse"],"FOETO:PF.REN-MAL-099":["Paroi vésicale épaissie (vessie de lutte)"],"FOETO:PF.REN-MAL-117":["Persistance de l'ouraque (fistule vésico-ombilicale, diverticule, kyste)"],"FOETO:PF.REN-NOR-048":["Perte de basophilie nucléaire pariétale"],"FOETO:PF.REN-MAL-101":["Plaque vésicale : masse charnue, rougeâtre, ovalaire, en continuité avec la peau"],"FOETO:PF.REN-NOR-049":["Reliquat allantoïdien du cordon, central entre les deux artères, à épithélium transitionnel"],"FOETO:PF.REN-MAL-104":["Sexe gonadique féminin devant une mégavessie"],"FOETO:PF.REN-NOR-047":["Solution de continuité urétrale par perforation au cathétérisme"],"FOETO:PF.REN-MAL-120":["Sténose de l'urètre postérieur"],"FOETO:PF.REN-MAL-118":["Syndrome / séquence prune belly"],"FOETO:PF.REN-MAL-115":["Syndrome mégavessie-microcôlon-hypopéristaltisme"],"FOETO:PF.REN-MAL-119":["Séquence de Potter"],"FOETO:PF.REN-MAL-105":["Trigone anormalement large, orifices urétéraux dilatés"],"FOETO:PF.REN-MAL-108":["Urine obtenue au méat à la pression vésicale"],"FOETO:PF.REN-MAL-116":["Uropathie obstructive basse (urétrale)"],"FOETO:PF.REN-NOR-052":["Urothélium absent ou en couches incomplètes sur pièce d'autopsie"],"FOETO:PF.REN-NOR-053":["Urothélium différencié d'aspect adulte dès le début du 2e trimestre"],"FOETO:PF.REN-NOR-050":["Urètre déchiré ou fragmenté par la dissection"],"FOETO:PF.REN-MAL-106":["Urètre postérieur dilaté effilé vers l'urètre membraneux, sans obstruction mécanique"],"FOETO:PF.REN-NOR-051":["Urètre pénien à épithélium cylindrique de surface sur assise stratifiée à pseudostratifiée"],"FOETO:PF.REN-MAL-121":["Urétérocèle de système duplex"],"FOETO:PF.REN-NOR-054":["Utricule prostatique à épithélium malpighien stratifié"],"FOETO:PF.REN-MAL-122":["Valves de l'urètre antérieur"],"FOETO:PF.REN-MAL-123":["Valves de l'urètre postérieur"],"FOETO:PF.REN-NOR-056":["Verumontanum identifié sur l'urètre prostatique"],"FOETO:PF.REN-MAL-110":["Vessie en sablier"],"FOETO:PF.REN-NOR-057":["Vessie fœtale haute, flanquée des deux artères ombilicales, effilée en ouraque (forme en amande)"],"FOETO:PF.REN-MAL-109":["Vessie à paroi épaisse, habituellement non trabéculée"]}};
-var FOETOV = {"FOETO:PF.REN-MAL-109":{"l":"Vessie à paroi épaisse, habituellement non trabéculée","hpo":null},"FOETO:PF.REN-MAL-112":{"l":"Dysgénésie cloacale","hpo":null},"FOETO:PF.REN-MAL-115":{"l":"Syndrome mégavessie-microcôlon-hypopéristaltisme","hpo":null},"FOETO:PF.REN-MAL-114":{"l":"Exstrophie vésicale","hpo":"HP:0002836"},"FOETO:PF.REN-MAL-089":{"l":"Défaut de la musculature pariétale abdominale","hpo":null},"FOETO:PF.REN-MAL-095":{"l":"Microcôlon","hpo":"HP:0004388"},"FOETO:PF.REN-MAL-117":{"l":"Persistance de l'ouraque (fistule vésico-ombilicale, diverticule, kyste)","hpo":"HP:0010479"},"FOETO:PF.REN-MAL-097":{"l":"Obstacle infranchissable : le crin de Florence bute au veru montanum","hpo":null},"FOETO:PF.REN-MAL-107":{"l":"Dilatation de l'urètre postérieur","hpo":null},"FOETO:PF.REN-MAL-123":{"l":"Valves de l'urètre postérieur","hpo":"HP:0010481"},"FOETO:PF.REN-MAL-091":{"l":"Hypo/aplasie prostatique","hpo":null},"FOETO:PF.REN-MAL-094":{"l":"Mégavessie dépistée dès le 1er trimestre","hpo":null},"FOETO:PF.REN-MAL-119":{"l":"Séquence de Potter","hpo":null},"FOETO:PF.REN-MAL-092":{"l":"Imperforation anale","hpo":"HP:0002023"},"FOETO:PF.REN-MAL-103":{"l":"Deux replis semi-lunaires insérés au bord inférieur du veru montanum, urètre franchissable","hpo":null},"FOETO:PF.REN-MAL-086":{"l":"Absence de continuité vésico-urétrale sur coupes sériées ou étagées","hpo":null},"FOETO:PF.REN-MAL-099":{"l":"Paroi vésicale épaissie (vessie de lutte)","hpo":null},"FOETO:PF.REN-MAL-096":{"l":"Microvessie (défaut de production d'urine)","hpo":null},"FOETO:PF.REN-MAL-105":{"l":"Trigone anormalement large, orifices urétéraux dilatés","hpo":null},"FOETO:PF.REN-MAL-108":{"l":"Urine obtenue au méat à la pression vésicale","hpo":null},"FOETO:PF.REN-NOR-047":{"l":"Solution de continuité urétrale par perforation au cathétérisme","hpo":null},"FOETO:PF.REN-MAL-111":{"l":"Atrésie de l'urètre postérieur (sous-vésicale)","hpo":null},"FOETO:PF.REN-MAL-016":{"l":"Désorganisation architecturale cortico-médullaire","hpo":null},"FOETO:PF.REN-MAL-113":{"l":"Exstrophie cloacale (spectre OEIS)","hpo":"HP:0010475"},"FOETO:PF.REN-MAL-104":{"l":"Sexe gonadique féminin devant une mégavessie","hpo":null},"FOETO:PF.REN-MAL-100":{"l":"Paroi vésicale très mince, parfois avec ascite urineuse","hpo":null},"FOETO:PF.REN-MAL-098":{"l":"Orifice punctiforme cathétérisable à la partie distale de l'urètre postérieur dilaté","hpo":null},"FOETO:PF.REN-MAL-116":{"l":"Uropathie obstructive basse (urétrale)","hpo":null},"FOETO:PF.REN-MAL-087":{"l":"Cordon ombilical géant","hpo":null},"FOETO:PF.REN-MAL-102":{"l":"Os pubiens séparés (diastasis pubien)","hpo":null},"FOETO:PF.REN-MAL-090":{"l":"Deux hémivessies exstrophiées séparées par un intestin exstrophié","hpo":null},"FOETO:PF.REN-MAL-093":{"l":"Mégavessie","hpo":"HP:0000021"},"FOETO:PF.REN-MAL-088":{"l":"Cryptorchidie","hpo":"HP:0000028"},"FOETO:PF.REN-MAL-118":{"l":"Syndrome / séquence prune belly","hpo":null},"FOETO:PF.REN-MAL-106":{"l":"Urètre postérieur dilaté effilé vers l'urètre membraneux, sans obstruction mécanique","hpo":null},"FOETO:PF.REN-MAL-101":{"l":"Plaque vésicale : masse charnue, rougeâtre, ovalaire, en continuité avec la peau","hpo":null},"FOETO:PF.REN-MAL-110":{"l":"Vessie en sablier","hpo":null},"FOETO:PF.REN-MAL-120":{"l":"Sténose de l'urètre postérieur","hpo":null},"FOETO:PF.REN-NOR-050":{"l":"Urètre déchiré ou fragmenté par la dissection","hpo":null}};
+var FOETO = {"sections":[],"formes":{"FOETO:PF.REN-MAL-086":["Absence de continuité vésico-urétrale sur coupes sériées ou étagées"],"FOETO:PF.REN-NOR-040":["Adventice fibreuse mince, recouverte de péritoine sur les coupes de vessie supérieure"],"FOETO:PF.REN-NOR-055":["Aspect « classique » des valves fabriqué par le cathéter ou l'ouverture antérieure de l'urètre"],"FOETO:PF.REN-MAL-111":["Atrésie de l'urètre postérieur (sous-vésicale)"],"FOETO:PF.REN-NOR-041":["Chorion de tissu conjonctif dense, vaisseaux, lymphatiques et nerfs"],"FOETO:PF.REN-MAL-087":["Cordon ombilical géant"],"FOETO:PF.REN-MAL-088":["Cryptorchidie"],"FOETO:PF.REN-MAL-090":["Deux hémivessies exstrophiées séparées par un intestin exstrophié"],"FOETO:PF.REN-MAL-103":["Deux replis semi-lunaires insérés au bord inférieur du veru montanum, urètre franchissable"],"FOETO:PF.REN-MAL-107":["Dilatation de l'urètre postérieur"],"FOETO:PF.REN-MAL-112":["Dysgénésie cloacale"],"FOETO:PF.REN-MAL-089":["Défaut de la musculature pariétale abdominale"],"FOETO:PF.REN-MAL-137":["Défect spinal"],"FOETO:PF.REN-MAL-016":["Désorganisation architecturale cortico-médullaire"],"FOETO:PF.REN-MAL-113":["Exstrophie cloacale (spectre OEIS)"],"FOETO:PF.REN-MAL-114":["Exstrophie vésicale"],"FOETO:PF.REN-NOR-042":["Fosse naviculaire à épithélium malpighien non kératinisé"],"FOETO:PF.REN-MAL-133":["Hydronéphrose"],"FOETO:PF.REN-MAL-091":["Hypo/aplasie prostatique"],"FOETO:PF.REN-MAL-135":["Hypoplasie pulmonaire"],"FOETO:PF.REN-MAL-092":["Imperforation anale"],"FOETO:PF.REN-MAL-139":["Kyste ou diverticule ouraquien"],"FOETO:PF.REN-MAL-134":["Kyste sous-capsulaire cortical rénal"],"FOETO:PF.REN-MAL-095":["Microcôlon"],"FOETO:PF.REN-MAL-096":["Microvessie (défaut de production d'urine)"],"FOETO:PF.REN-NOR-045":["Musculaire muqueuse indistincte, mince et discontinue"],"FOETO:PF.REN-NOR-046":["Musculeuse propre en faisceaux sans orientation définie, trois couches seulement au col"],"FOETO:PF.REN-NOR-043":["Méat urétral féminin : épithélium transitionnel rejoignant l'épithélium malpighien"],"FOETO:PF.REN-MAL-093":["Mégavessie"],"FOETO:PF.REN-MAL-094":["Mégavessie dépistée dès le 1er trimestre"],"FOETO:PF.REN-NOR-044":["Métaplasie malpighienne de l'urètre prostatique, surtout paroi postérieure"],"FOETO:PF.REN-NOR-039":["Nombre de couches urothéliales (jusqu'à 6–7 sur vessie contractée)"],"FOETO:PF.REN-MAL-097":["Obstacle infranchissable : le crin de Florence bute au veru montanum"],"FOETO:PF.REN-MAL-136":["Omphalocèle"],"FOETO:PF.REN-MAL-098":["Orifice punctiforme cathétérisable à la partie distale de l'urètre postérieur dilaté"],"FOETO:PF.REN-MAL-102":["Os pubiens séparés (diastasis pubien)"],"FOETO:PF.REN-MAL-138":["Ouraque perméable, fistule vésico-ombilicale"],"FOETO:PF.REN-MAL-100":["Paroi vésicale très mince, parfois avec ascite urineuse"],"FOETO:PF.REN-MAL-099":["Paroi vésicale épaissie (vessie de lutte)"],"FOETO:PF.REN-MAL-117":["Persistance de l'ouraque (fistule vésico-ombilicale, diverticule, kyste)"],"FOETO:PF.REN-NOR-048":["Perte de basophilie nucléaire pariétale"],"FOETO:PF.REN-MAL-101":["Plaque vésicale : masse charnue, rougeâtre, ovalaire, en continuité avec la peau"],"FOETO:PF.REN-MAL-140":["Reliquat allantoïdien accompagné de musculature"],"FOETO:PF.REN-NOR-049":["Reliquat allantoïdien du cordon, central entre les deux artères, à épithélium transitionnel"],"FOETO:PF.REN-MAL-104":["Sexe gonadique féminin devant une mégavessie"],"FOETO:PF.REN-NOR-047":["Solution de continuité urétrale par perforation au cathétérisme"],"FOETO:PF.REN-MAL-120":["Sténose de l'urètre postérieur"],"FOETO:PF.REN-MAL-118":["Syndrome / séquence prune belly"],"FOETO:PF.REN-MAL-115":["Syndrome mégavessie-microcôlon-hypopéristaltisme"],"FOETO:PF.REN-MAL-119":["Séquence de Potter"],"FOETO:PF.REN-MAL-105":["Trigone anormalement large, orifices urétéraux dilatés"],"FOETO:PF.REN-MAL-108":["Urine obtenue au méat à la pression vésicale"],"FOETO:PF.REN-MAL-116":["Uropathie obstructive basse (urétrale)"],"FOETO:PF.REN-NOR-052":["Urothélium absent ou en couches incomplètes sur pièce d'autopsie"],"FOETO:PF.REN-NOR-053":["Urothélium différencié d'aspect adulte dès le début du 2e trimestre"],"FOETO:PF.REN-NOR-050":["Urètre déchiré ou fragmenté par la dissection"],"FOETO:PF.REN-MAL-106":["Urètre postérieur dilaté effilé vers l'urètre membraneux, sans obstruction mécanique"],"FOETO:PF.REN-NOR-051":["Urètre pénien à épithélium cylindrique de surface sur assise stratifiée à pseudostratifiée"],"FOETO:PF.REN-MAL-121":["Urétérocèle de système duplex"],"FOETO:PF.REN-NOR-054":["Utricule prostatique à épithélium malpighien stratifié"],"FOETO:PF.REN-MAL-122":["Valves de l'urètre antérieur"],"FOETO:PF.REN-MAL-123":["Valves de l'urètre postérieur"],"FOETO:PF.REN-NOR-056":["Verumontanum identifié sur l'urètre prostatique"],"FOETO:PF.REN-MAL-110":["Vessie en sablier"],"FOETO:PF.REN-NOR-057":["Vessie fœtale haute, flanquée des deux artères ombilicales, effilée en ouraque (forme en amande)"],"FOETO:PF.REN-MAL-109":["Vessie à paroi épaisse, habituellement non trabéculée"]}};
+var FOETOV = {"FOETO:PF.REN-MAL-103":{"l":"Deux replis semi-lunaires insérés au bord inférieur du veru montanum, urètre franchissable","hpo":null},"FOETO:PF.REN-NOR-040":{"l":"Adventice fibreuse mince, recouverte de péritoine sur les coupes de vessie supérieure","hpo":null},"FOETO:PF.REN-MAL-107":{"l":"Dilatation de l'urètre postérieur","hpo":null},"FOETO:PF.REN-MAL-089":{"l":"Défaut de la musculature pariétale abdominale","hpo":null},"FOETO:PF.REN-MAL-092":{"l":"Imperforation anale","hpo":"HP:0002023"},"FOETO:PF.REN-MAL-118":{"l":"Syndrome / séquence prune belly","hpo":null},"FOETO:PF.REN-MAL-016":{"l":"Désorganisation architecturale cortico-médullaire","hpo":null},"FOETO:PF.REN-MAL-134":{"l":"Kyste sous-capsulaire cortical rénal","hpo":null},"FOETO:PF.REN-MAL-101":{"l":"Plaque vésicale : masse charnue, rougeâtre, ovalaire, en continuité avec la peau","hpo":null},"FOETO:PF.REN-MAL-100":{"l":"Paroi vésicale très mince, parfois avec ascite urineuse","hpo":null},"FOETO:PF.REN-MAL-116":{"l":"Uropathie obstructive basse (urétrale)","hpo":null},"FOETO:PF.REN-MAL-097":{"l":"Obstacle infranchissable : le crin de Florence bute au veru montanum","hpo":null},"FOETO:PF.REN-MAL-133":{"l":"Hydronéphrose","hpo":null},"FOETO:PF.REN-MAL-108":{"l":"Urine obtenue au méat à la pression vésicale","hpo":null},"FOETO:PF.REN-MAL-115":{"l":"Syndrome mégavessie-microcôlon-hypopéristaltisme","hpo":null},"FOETO:PF.REN-NOR-039":{"l":"Nombre de couches urothéliales (jusqu'à 6–7 sur vessie contractée)","hpo":null},"FOETO:PF.REN-MAL-099":{"l":"Paroi vésicale épaissie (vessie de lutte)","hpo":null},"FOETO:PF.REN-MAL-105":{"l":"Trigone anormalement large, orifices urétéraux dilatés","hpo":null},"FOETO:PF.REN-NOR-057":{"l":"Vessie fœtale haute, flanquée des deux artères ombilicales, effilée en ouraque (forme en amande)","hpo":null},"FOETO:PF.REN-NOR-042":{"l":"Fosse naviculaire à épithélium malpighien non kératinisé","hpo":null},"FOETO:PF.REN-MAL-106":{"l":"Urètre postérieur dilaté effilé vers l'urètre membraneux, sans obstruction mécanique","hpo":null},"FOETO:PF.REN-MAL-135":{"l":"Hypoplasie pulmonaire","hpo":null},"FOETO:PF.REN-MAL-140":{"l":"Reliquat allantoïdien accompagné de musculature","hpo":null},"FOETO:PF.REN-MAL-123":{"l":"Valves de l'urètre postérieur","hpo":"HP:0010481"},"FOETO:PF.REN-MAL-095":{"l":"Microcôlon","hpo":"HP:0004388"},"FOETO:PF.REN-MAL-096":{"l":"Microvessie (défaut de production d'urine)","hpo":null},"FOETO:PF.REN-MAL-098":{"l":"Orifice punctiforme cathétérisable à la partie distale de l'urètre postérieur dilaté","hpo":null},"FOETO:PF.REN-MAL-087":{"l":"Cordon ombilical géant","hpo":null},"FOETO:PF.REN-MAL-114":{"l":"Exstrophie vésicale","hpo":"HP:0002836"},"FOETO:PF.REN-MAL-139":{"l":"Kyste ou diverticule ouraquien","hpo":null},"FOETO:PF.REN-MAL-091":{"l":"Hypo/aplasie prostatique","hpo":null},"FOETO:PF.REN-MAL-111":{"l":"Atrésie de l'urètre postérieur (sous-vésicale)","hpo":null},"FOETO:PF.REN-MAL-088":{"l":"Cryptorchidie","hpo":"HP:0000028"},"FOETO:PF.REN-MAL-137":{"l":"Défect spinal","hpo":null},"FOETO:PF.REN-NOR-046":{"l":"Musculeuse propre en faisceaux sans orientation définie, trois couches seulement au col","hpo":null},"FOETO:PF.REN-MAL-094":{"l":"Mégavessie dépistée dès le 1er trimestre","hpo":null},"FOETO:PF.REN-MAL-113":{"l":"Exstrophie cloacale (spectre OEIS)","hpo":"HP:0010475"},"FOETO:PF.REN-MAL-090":{"l":"Deux hémivessies exstrophiées séparées par un intestin exstrophié","hpo":null},"FOETO:PF.REN-MAL-122":{"l":"Valves de l'urètre antérieur","hpo":null},"FOETO:PF.REN-MAL-112":{"l":"Dysgénésie cloacale","hpo":null},"FOETO:PF.REN-MAL-120":{"l":"Sténose de l'urètre postérieur","hpo":null},"FOETO:PF.REN-NOR-045":{"l":"Musculaire muqueuse indistincte, mince et discontinue","hpo":null},"FOETO:PF.REN-MAL-117":{"l":"Persistance de l'ouraque (fistule vésico-ombilicale, diverticule, kyste)","hpo":"HP:0010479"},"FOETO:PF.REN-MAL-136":{"l":"Omphalocèle","hpo":null},"FOETO:PF.REN-NOR-047":{"l":"Solution de continuité urétrale par perforation au cathétérisme","hpo":null},"FOETO:PF.REN-MAL-104":{"l":"Sexe gonadique féminin devant une mégavessie","hpo":null},"FOETO:PF.REN-MAL-119":{"l":"Séquence de Potter","hpo":null},"FOETO:PF.REN-NOR-048":{"l":"Perte de basophilie nucléaire pariétale","hpo":null},"FOETO:PF.REN-MAL-138":{"l":"Ouraque perméable, fistule vésico-ombilicale","hpo":null},"FOETO:PF.REN-MAL-093":{"l":"Mégavessie","hpo":"HP:0000021"},"FOETO:PF.REN-NOR-052":{"l":"Urothélium absent ou en couches incomplètes sur pièce d'autopsie","hpo":null},"FOETO:PF.REN-NOR-044":{"l":"Métaplasie malpighienne de l'urètre prostatique, surtout paroi postérieure","hpo":null},"FOETO:PF.REN-NOR-049":{"l":"Reliquat allantoïdien du cordon, central entre les deux artères, à épithélium transitionnel","hpo":null},"FOETO:PF.REN-NOR-053":{"l":"Urothélium différencié d'aspect adulte dès le début du 2e trimestre","hpo":null},"FOETO:PF.REN-MAL-109":{"l":"Vessie à paroi épaisse, habituellement non trabéculée","hpo":null},"FOETO:PF.REN-NOR-050":{"l":"Urètre déchiré ou fragmenté par la dissection","hpo":null},"FOETO:PF.REN-MAL-110":{"l":"Vessie en sablier","hpo":null},"FOETO:PF.REN-MAL-086":{"l":"Absence de continuité vésico-urétrale sur coupes sériées ou étagées","hpo":null},"FOETO:PF.REN-NOR-054":{"l":"Utricule prostatique à épithélium malpighien stratifié","hpo":null},"FOETO:PF.REN-MAL-102":{"l":"Os pubiens séparés (diastasis pubien)","hpo":null}};
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
@@ -1612,8 +1617,8 @@ function batir(){
             return '<button type="button" class="chip" data-act="etendue" data-k="' + i + '" data-v="' + e + '">' +
                    '<span class="k">étendue</span>' + e + '</button>';
           }).join("") + '</div>') +
-        sig.filter(blocable).map(ligneSigne).join("") + '</div>' +
-        sig.filter(function(x){ return !blocable(x); }).map(ligneSigne).join("") + '</div>';
+        sig.filter(function(x){ return !horsBloc(x); }).map(ligneSigne).join("") + '</div>' +
+        sig.filter(horsBloc).map(ligneSigne).join("") + '</div>';
     });
     $("signes").innerHTML = html.signes;
     $("contexte").innerHTML = html.contexte;
@@ -1695,8 +1700,11 @@ function ligneSigne(x){
       (x.horsFiche ? '<span class="meta">hors fiche — non sourcé par la biblio</span>' : "") +
       (x.fiche && !x.foeto ? '<span class="meta">dans la fiche ' + esc(x.fiche) + ', sans terme FOETO</span>' : "") +
       (oblig ? '<span class="meta">négatif à énoncer : répondre présent ou absent</span>' : "") +
-      (PRESENCE && !blocable(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
-        : "hors du « Non » en bloc : " + (x.mag === "technique" ? "se répond après la technique" : "polarité normale, à répondre seul")) +
+      (PRESENCE && horsBloc(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
+        : x.mag === "technique" ? "hors du « Non » en bloc : se répond après la technique"
+        : x.bloc === false ? "hors du « Non » en bloc : polarité normale, à répondre seul"
+        : x.seul ? "hors du « Non » en bloc : dépend du terme, à répondre seul"
+        : "« Non » en bloc seulement " + fenetreTxt(x.terme) + " — hors de là, à répondre seul") +
         '</span>' : "") +
       '</div>' +
       (x.auto ? '<span class="chip" data-auto="' + x.k + '" style="cursor:default"></span>' :
@@ -1718,6 +1726,8 @@ function foetoAjouter(id){
   /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
   var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
   if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
+  var vr = FUSION && VARIANTES.filter(function(v){ return v.foeto === id; })[0];
+  if (vr){ E.variantes[vr.k] = true; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
     if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
@@ -1769,6 +1779,17 @@ function codesPresents(){
   return SIGNES.filter(function(x){ return E.signes[x.k] === POS && codesDe(x).length; })
                .map(function(x){ return { k:x.k, l:x.l, foeto:x.foeto || null, hpo:x.hpo || null }; });
 }
+/* Codes du reste de la lecture : variante vue, critère de rétention présent, stade retenu,
+   mesure saisie (avec sa valeur). Exportés à part (codes_lecture), champ additif. */
+function codesLecture(){
+  var c = [];
+  VARIANTES.forEach(function(v){ if (v.foeto && E.variantes[v.k]) c.push({ type:"variante", k:v.k, l:v.l, foeto:v.foeto }); });
+  RETENTION.forEach(function(r){ if (r.foeto && E.retention[r.k] === "present") c.push({ type:"rétention", k:r.k, l:r.l, foeto:r.foeto }); });
+  STADES.forEach(function(s){ if (s.foeto && E.stade === s.k) c.push({ type:"stade", k:s.k, l:s.l, foeto:s.foeto }); });
+  if (MESURE) MESURE.champs.forEach(function(m){
+    if (m.foeto && E.mesure.v[m.id] != null) c.push({ type:"mesure", k:m.id, l:m.label, foeto:m.foeto, valeur:E.mesure.v[m.id] }); });
+  return c;
+}
 /* Grille branchée sur FOETO : un signe porte fv (terme tagué « verbatim ») ; son
    libellé et son HPO arbitré viennent de la base, le code exporté est l'id FOETO. */
 function resoudreFV(){
@@ -1779,7 +1800,15 @@ function resoudreFV(){
     else if (!x.fiche) x.horsFiche = true;   // aucun terme de fiche derrière : non sourcé par la biblio
     /* fiche:"[keeling]" : constat sourcé dans la fiche que FOETO ne porte pas (encore) en terme */
   });
-  DIAGS.forEach(function(d){ if (d.fv && FOETOV[d.fv]) d.foeto = [d.fv]; });
+  /* Une association peut porter plusieurs termes maladie (fv:["FOETO:…", …]) : affichés, jamais exportés. */
+  DIAGS.forEach(function(d){
+    var ids = [].concat(d.fv || []).filter(function(i){ return FOETOV[i]; });
+    if (ids.length) d.foeto = ids;
+  });
+  /* Variantes, rétention, stades, champs de mesure portent aussi leur terme (NOR, RET, AXE, MES).
+     Seul le code s'y attache : variantes, rétention, stades et mesures gardent leur libellé. */
+  /* une variante GARDE son libellé : il porte des avertissements (« ne jamais énoncer en négatif ») */
+  VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).forEach(function(x){ if (x.fv && FOETOV[x.fv]) x.foeto = x.fv; });
 }
 
 /* ── Mode présence : rétention en liste, signes en paragraphes ─────────────── */
@@ -1822,7 +1851,21 @@ function variantesDe(g){ return VARIANTES.filter(function(v){ return v.g === g; 
    technique (mag:"technique") ni un signe de polarité normale (bloc:false, ex.
    « tubes collecteurs normaux » : absent y voudrait dire anormal). Ces signes restent
    visibles, paragraphe replié, et se répondent un par un. */
-function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false; }
+/* Un signe qui dépend du terme ne se répond pas en bloc hors de sa fenêtre : terme:[min, max]
+   en SA (une borne peut être null), bornes recopiées du verbatim de la fiche ; terme non saisi
+   = hors fenêtre. seul:true : dépend du terme sans borne écrite, il se répond un par un.
+   Dans les deux cas, présent reste une lésion. */
+function dansTerme(x){
+  if (!x.terme) return true;
+  var sa = num("sa");
+  return sa != null && (x.terme[0] == null || sa >= x.terme[0]) && (x.terme[1] == null || sa <= x.terme[1]);
+}
+/* toujours visible, paragraphe replié : ce que le « Non » en bloc peut ne pas répondre */
+function horsBloc(x){ return !!(x.auto || x.mag === "technique" || x.bloc === false || x.seul || x.terme); }
+function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false && !x.seul && dansTerme(x); }
+function fenetreTxt(t){
+  return t[0] != null && t[1] != null ? "de " + t[0] + " à " + t[1] + " SA" : t[0] != null ? "à partir de " + t[0] + " SA" : "jusqu'à " + t[1] + " SA";
+}
 /* Un signe bloc:false présent (méconium dans la lumière, collecteurs normaux) s'écrit au
    CR mais n'ouvre pas le paragraphe et ne bloque pas son « Non » : ce n'est pas une lésion. */
 function lesionPresente(x){ return E.signes[x.k] === POS && x.bloc !== false; }
@@ -2157,6 +2200,12 @@ function composer(){
     L.push("CODES DES SIGNES PRÉSENTS");
     cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
   }
+  var cl = codesLecture();
+  if (cl.length){
+    L.push("");
+    L.push("CODES DE LA LECTURE");
+    cl.forEach(function(c){ L.push("  " + c.type + " · " + c.l + (c.valeur != null ? " = " + c.valeur : "") + " [" + c.foeto + "]"); });
+  }
 
   var fo = Object.keys(E.foeto);
   if (fo.length){
@@ -2355,6 +2404,7 @@ function collecter(){
     terme_sa: num("sa"),
     grille: JSON.parse(JSON.stringify(E)),
     codes: codesPresents(),
+    codes_lecture: codesLecture(),
     compte_rendu: composer()
   };
 }
@@ -2656,7 +2706,7 @@ async function autotest(){
     clic("grp", iA, "non");
     chk("paragraphe non → signes absents", sA.every(function(x){ return E.signes[x.k] === NEG; }) &&
         etatGroupe(gA) === "non" && crTient(gA + " : non."));
-    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA; })[0];
+    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA && blocable(par(SIGNES, n.signe)); })[0];
     if (lie) chk("paragraphe non → négatif lié énoncé", etatNegatif(lie) === "ok");
     clic("grp", iA, "non");
     chk("second non → non regardé", sA.every(function(x){ return !E.signes[x.k]; }) && etatGroupe(gA) === null);
@@ -2690,6 +2740,18 @@ async function autotest(){
     chk("codes : lisibles (FOETO:/HP:)", SIGNES.every(function(x){
       return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)); }));
   }
+
+  /* Codes de la lecture : une variante vue exporte son terme (NOR), pas une variante non cochée */
+  var vc = VARIANTES.filter(function(v){ return v.foeto; })[0];
+  if (vc){
+    chk("codes lecture : rien sans variante vue", !codesLecture().some(function(c){ return c.k === vc.k; }));
+    clic("var", vc.k);
+    chk("codes lecture : la variante vue exporte son terme", collecter().codes_lecture.some(function(c){ return c.k === vc.k && c.foeto === vc.foeto; }) &&
+        crTient("CODES DE LA LECTURE") && crTient("[" + vc.foeto + "]"));
+    clic("var", vc.k);
+  }
+  chk("codes lecture : lisibles (FOETO:)", VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).every(function(x){
+    return !x.foeto || /^FOETO:/.test(x.foeto); }));
 
   /* Signes et associations */
   var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
@@ -2800,6 +2862,22 @@ async function autotest(){
           E.signes[xF.k] === POS && crTient(gF + " : non") && crTient(xF.l + " — PRÉSENT"));
       clic("grp", iF, "non");
       clic("les", xF.k, POS);
+    }
+    /* Fenêtre de terme : le « Non » en bloc ne répond un signe daté que dans sa fenêtre */
+    var xS = SIGNES.filter(function(x){ return x.terme && !x.auto; })[0];
+    if (xS){
+      var gS = xS.g, iS = groupes().indexOf(gS), t0 = xS.terme[0], t1 = xS.terme[1];
+      var dedans = t0 != null ? t0 : t1, dehors = t0 != null ? t0 - 1 : t1 + 1;
+      signesDe(gS).forEach(function(x){ if (!x.auto) delete E.signes[x.k]; }); delete E.groupes[gS];
+      set("sa", String(dehors));
+      clic("grp", iS, "non");
+      chk("terme : hors fenêtre, le « Non » ne répond pas « " + xS.k + " »", !E.signes[xS.k] && etatGroupe(gS) === "non");
+      clic("grp", iS, "non");
+      set("sa", String(dedans));
+      clic("grp", iS, "non");
+      chk("terme : dans la fenêtre, le « Non » le répond absent", E.signes[xS.k] === NEG);
+      clic("grp", iS, "non");
+      set("sa", "");
     }
     /* Rédaction proposée : la phrase du cadre « Non », celle du signe présent, rien sinon */
     if (REDIGE){

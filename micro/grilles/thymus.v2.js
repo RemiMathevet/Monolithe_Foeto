@@ -47,11 +47,16 @@
    Forme : gen_grille.py, calquée sur grille_poumon.html.
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 4 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 17 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 7 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "thymus";
 var TITRE   = "thymus";
 var SOURCE  = "fiche_thymus.md";
 var MODULE  = "grille_thymus";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -156,10 +161,10 @@ var STADES = [
   { k:"cmHassall",     l:"Distinction cortico-médullaire apparente, corpuscules de Hassall apparus", max:18,
     note:"« Hassall's corpuscles, which appear between 12 and 16 weeks » [keeling, ch. 27] — même " +
          "incertitude d'unité" },
-  { k:"cortexMince",   l:"Cortex en calotte mince, septa larges, lobules espacés", max:24,
+  { k:"cortexMince",   fv:"FOETO:PF.HEM-NOR-121", l:"Cortex en calotte mince, septa larges, lobules espacés", max:24,
     note:"borne reconstruite depuis les figures d'[ernst, ch. 24] (17 puis 22 semaines de gestation) : " +
          "ce n'est pas un seuil sourcé, et cette image est aussi celle des rangs 3 et 4 de l'involution" },
-  { k:"cortexEpaissi", l:"Cortex épaissi, septa resserrés, lobules rapprochés", max:37,
+  { k:"cortexEpaissi", fv:"FOETO:PF.HEM-NOR-107", l:"Cortex épaissi, septa resserrés, lobules rapprochés", max:37,
     note:"« As gestation progresses, the interlobular septa become narrower, and the cortex becomes " +
          "thicker » [ernst, ch. 24] — trajectoire sans palier, la borne haute est un repère d'affichage" },
   { k:"cortex85",      l:"Cortex occupant l'essentiel du lobule", max:99,
@@ -207,8 +212,8 @@ var MESURE = {
        "médianes du service lues dans les CR, pas dans l'abaque d'origine.",
   defs:ARCH,
   opts:CELL,
-  champs:[{ id:"cortex", label:"Fraction corticale (%)", min:0, max:100, step:1 },
-          { id:"poids",  label:"Poids du thymus (g)",    min:0, max:60,  step:0.01 }]
+  champs:[{ id:"cortex", fv:"FOETO:PF.HEM-NOR-099", label:"Fraction corticale (%)", min:0, max:100, step:1 },
+          { id:"poids",  fv:"FOETO:PF.HEM-NOR-100", label:"Poids du thymus (g)",    min:0, max:60,  step:0.01 }]
 };
 
 /* Les grades 0 et 1 partagent le même texte d'architecture : la colonne 1 ne
@@ -307,16 +312,16 @@ function verdictMesure(){
 
 /* ── Variantes normales — chacune dans le cadre dont elle mime un signe ───── */
 var VARIANTES = [
-  { k:"extensionsCerv", g:"Contexte hors lame — macro, autres organes, clinique", l:"Extensions cervicales du thymus" },
+  { k:"extensionsCerv", fv:"FOETO:PF.HEM-NOR-108", g:"Contexte hors lame — macro, autres organes, clinique", l:"Extensions cervicales du thymus" },
   { k:"nodulesLibres", g:"Contexte hors lame — macro, autres organes, clinique",  l:"Nodules thymiques non connectés à la glande" },
   { k:"parathyroideVar", g:"Kyste et tissu parathyroïdien", l:"Tissu parathyroïdien dans un lobule thymique" },
-  { k:"ehmSeptale", g:"Déplétion non liée au stress",      l:"Hématopoïèse dans la capsule, les septa et le long des vaisseaux" },
+  { k:"ehmSeptale", fv:"FOETO:PF.HEM-NOR-111", g:"Déplétion non liée au stress",      l:"Hématopoïèse dans la capsule, les septa et le long des vaisseaux" },
   { k:"ehmEosino", g:"Déplétion non liée au stress",       l:"Éléments myéloïdes purement éosinophiles" },
   { k:"cielDiscret", g:"Cellularité corticale",            l:"Ciel étoilé discret — macrophages à corps tingibles physiologiques" },
   { k:"apoptose", g:"Cellularité corticale",               l:"Apoptose lymphocytaire corticale" },
   { k:"bPeriHassall", g:"Hyperplasie et prolifération lymphoïde", l:"Lymphocytes B isolés autour des corpuscules de Hassall" },
-  { k:"gradientCortex", g:"Cellularité corticale",         l:"Grands lymphocytes sous-capsulaires, plus petits en profondeur" },
-  { k:"capsuleMince", g:"Architecture lobulaire",          l:"Capsule mince — elle le reste toute la gestation" }
+  { k:"gradientCortex", fv:"FOETO:PF.HEM-NOR-109", g:"Cellularité corticale",         l:"Grands lymphocytes sous-capsulaires, plus petits en profondeur" },
+  { k:"capsuleMince", fv:"FOETO:PF.HEM-NOR-102", g:"Architecture lobulaire",          l:"Capsule mince — elle le reste toute la gestation" }
 ];
 
 /* Cadres dans l'ordre de lecture : ce que porte la coupe, puis les deux colonnes de
@@ -343,7 +348,7 @@ var SIGNES = [
   /* — Contexte hors lame — macro, autres organes, clinique — */
   { k:"poidsBas", fv:"FOETO:PF.HEM-MAL-036", g:"Contexte hors lame — macro, autres organes, clinique", l:"Poids abaissé pour le terme" },
   { k:"poidsEleve", fv:"FOETO:PF.HEM-MAL-028", g:"Contexte hors lame — macro, autres organes, clinique" },
-  { k:"masse2pc", fiche:"[keeling, ch. 27]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Thymus représentant plus de 2 % de la masse corporelle" },
+  { k:"masse2pc", fv:"FOETO:PF.HEM-NOR-124", fiche:"[keeling, ch. 27]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Thymus représentant plus de 2 % de la masse corporelle" },
   { k:"thymusAbsent", fv:"FOETO:PF.HEM-MAL-038", g:"Contexte hors lame — macro, autres organes, clinique",
     meta:"constat macro — « Son absence complète est rare même dans les cardiopathies cono-truncales » : chercher le reliquat histologique (médiastin antérieur ET cou)" },
   { k:"petechies", fv:"FOETO:PF.HEM-MAL-035", g:"Contexte hors lame — macro, autres organes, clinique",
@@ -359,22 +364,22 @@ var SIGNES = [
   { k:"diabeteMaternel", fv:"FOETO:PF.HEM-MAL-026", g:"Contexte hors lame — macro, autres organes, clinique",
     meta:"contexte, jamais critère : « more than half of stillbirths occurring in diabetic mothers » ont un petit placenta et une involution aiguë [keeling, ch. 15]" },
   { k:"langerhansVol", fiche:"[soffoet, ch. 16]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Îlots de Langerhans volumineux", meta:"lu hors thymus" },
-  { k:"surrenaleLipoide", fiche:"[soffoet, ch. 16]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Dégénérescence lipoïdique de la zone fœtale surrénalienne",
+  { k:"surrenaleLipoide", fv:"FOETO:PF.HEM-MAL-058", fiche:"[soffoet, ch. 16]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Dégénérescence lipoïdique de la zone fœtale surrénalienne",
     meta:"lu hors thymus" },
-  { k:"steatoseHep", fiche:"[soffoet, ch. 16]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Stéatose hépatique et déplétion glycogénique", meta:"lu hors thymus" },
-  { k:"tubesRenauxDil", fiche:"[soffoet, ch. 16]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Tubes rénaux dilatés", meta:"lu hors thymus" },
-  { k:"placentaPetit", fiche:"[keeling, ch. 15]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Petit placenta", meta:"lu hors thymus" },
+  { k:"steatoseHep", fv:"FOETO:PF.HEM-MET-014", fiche:"[soffoet, ch. 16]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Stéatose hépatique et déplétion glycogénique", meta:"lu hors thymus" },
+  { k:"tubesRenauxDil", fv:"FOETO:PF.HEM-MAL-059", fiche:"[soffoet, ch. 16]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Tubes rénaux dilatés", meta:"lu hors thymus" },
+  { k:"placentaPetit", fv:"FOETO:PF.HEM-MAL-060", fiche:"[keeling, ch. 15]", g:"Contexte hors lame — macro, autres organes, clinique", l:"Petit placenta", meta:"lu hors thymus" },
   /* — Repères manquants ou reliquat seul — */
-  { k:"medullaireAbsente", fiche:"[keeling, ch. 15]", g:"Repères manquants ou reliquat seul", mag:"faible", l:"Pas de médullaire sur la coupe",
+  { k:"medullaireAbsente", fv:"FOETO:PF.HEM-MAL-061", fiche:"[keeling, ch. 15]", g:"Repères manquants ou reliquat seul", mag:"faible", l:"Pas de médullaire sur la coupe",
     meta:"quatre des cinq critères de gradation deviennent indéterminables" },
   { k:"reliquat", fv:"FOETO:PF.HEM-MAL-037", g:"Repères manquants ou reliquat seul", mag:"faible",
     meta:"le mot exact du geste diagnostique en cardiopathie cono-troncale — jamais l'aplasie sur une macro négative" },
-  { k:"hassallAbsents", fiche:"[ernst, ch. 24]", g:"Repères manquants ou reliquat seul", mag:"moyen", l:"Aucun corpuscule de Hassall sur la coupe" },
+  { k:"hassallAbsents", seul:true, fiche:"[ernst, ch. 24]", g:"Repères manquants ou reliquat seul", mag:"moyen", l:"Aucun corpuscule de Hassall sur la coupe" },
   /* — Architecture lobulaire (colonne 1 de la Table 15.8) — */
-  { k:"lobulesSepares", fv:"FOETO:PF.HEM-NOR-098", g:"Architecture lobulaire", mag:"faible", l:"Lobules séparés, septa élargis" },
+  { k:"lobulesSepares", terme:[24, null], fv:"FOETO:PF.HEM-NOR-098", g:"Architecture lobulaire", mag:"faible", l:"Lobules séparés, septa élargis" },
   { k:"interstitiumProem", fv:"FOETO:PF.HEM-MAL-030", g:"Architecture lobulaire", mag:"faible" },
-  { k:"cmFloue", fv:"FOETO:PF.HEM-MAL-034", g:"Architecture lobulaire", mag:"faible", meta:"le seuil du grade 3" },
-  { k:"cortexRetreci", fv:"FOETO:PF.HEM-CLA-001", g:"Architecture lobulaire", mag:"faible",
+  { k:"cmFloue", seul:true, fv:"FOETO:PF.HEM-MAL-034", g:"Architecture lobulaire", mag:"faible", meta:"le seuil du grade 3" },
+  { k:"cortexRetreci", terme:[24, null], fv:"FOETO:PF.HEM-CLA-001", g:"Architecture lobulaire", mag:"faible",
     meta:"aussi l'image du thymus immature de la mi-gestation" },
   { k:"cortexDisparu", fv:"FOETO:PF.HEM-MAL-027", g:"Architecture lobulaire", mag:"faible" },
   { k:"hassallTasses", fv:"FOETO:PF.HEM-NOR-070", g:"Architecture lobulaire", mag:"moyen",
@@ -398,7 +403,7 @@ var SIGNES = [
   { k:"foyersHemo", fiche:"[corpus CR]", g:"Hémorragie et artefacts", mag:"faible", l:"Foyers hémorragiques intraparenchymateux",
     meta:"aucun critère histologique ne le sépare du saignement de dissection" },
   { k:"blueBlobs", fv:"FOETO:PF.HEM-NOR-101", g:"Hémorragie et artefacts", mag:"moyen", l:"« Blue blobs » du parenchyme" },
-  { k:"poussiereBaso", fiche:"[ernst, ch. 37]", g:"Hémorragie et artefacts", mag:"moyen", l:"Poussière basophile péri-viscérale",
+  { k:"poussiereBaso", fv:"FOETO:PF.HEM-NOR-117", fiche:"[ernst, ch. 37]", g:"Hémorragie et artefacts", mag:"moyen", l:"Poussière basophile péri-viscérale",
     meta:"Gram tissulaire avant de conclure" },
   /* — Kyste et tissu parathyroïdien (le nodule ectopique se lit sur un autre prélèvement : hors lame) — */
   { k:"kysteThymique", fiche:"[keeling, ch. 27]", g:"Kyste et tissu parathyroïdien", mag:"faible", l:"Kyste bordé dans un tissu thymique" },
@@ -419,7 +424,7 @@ var SIGNES = [
   /* — Hyperplasie et prolifération lymphoïde — */
   { k:"centreGerminatif", fv:"FOETO:PF.HEM-MAL-024", g:"Hyperplasie et prolifération lymphoïde", mag:"faible",
     meta:"le cortex fœtal normal n'en a pas" },
-  { k:"lameNormaleAge", bloc:false, fiche:"[keeling, ch. 27]", g:"Hyperplasie et prolifération lymphoïde", mag:"faible",
+  { k:"lameNormaleAge", fv:"FOETO:PF.HEM-NOR-125", bloc:false, fiche:"[keeling, ch. 27]", g:"Hyperplasie et prolifération lymphoïde", mag:"faible",
     l:"Lame d'aspect normal pour l'âge",
     meta:"constat d'ensemble, à répondre après les autres cadres — « with retention of normal microscopic appearances for age »" },
   { k:"amasPeriHassall", fiche:"[ernst, ch. 24]", g:"Hyperplasie et prolifération lymphoïde", mag:"moyen", l:"Amas lymphoïde autour d'un corpuscule de Hassall",
@@ -465,7 +470,7 @@ var DIAGS = [
          "tassement des corpuscules de Hassall. Sans corpuscule de Hassall, rien ne prouve qu'il s'agit " +
          "de thymus." },
 
-  { k:"hypoplasie", l:"Hypoplasie ou aplasie thymique — spectre 22q11.2", fv:"FOETO:PF.HEM-MAL-003", cle:"reliquat", min:1,
+  { k:"hypoplasie", l:"Hypoplasie ou aplasie thymique — spectre 22q11.2", fv:["FOETO:PF.HEM-MAL-003","FOETO:PF.HEM-MAL-039","FOETO:PF.HEM-MAL-041"], cle:"reliquat", min:1,
     signes:["reliquat","thymusAbsent","poidsBas","cardiopathieCT","malfoAssociees","hypoplasieParathyr"],
     stop:" — ne jamais conclure à l'aplasie sur une macro négative : « Son absence complète est rare même " +
          "dans les cardiopathies cono-truncales », où il faut en rechercher les reliquats histologiques. " +
@@ -479,21 +484,21 @@ var DIAGS = [
          "lymphocytes B y sont isolés et normaux. Le critère est le centre germinatif constitué, que le " +
          "cortex fœtal normal n'a pas — « a sheet without distinct follicle or germinal center formation »." },
 
-  { k:"hyperplasieVraie", l:"Hyperplasie thymique vraie", fv:"FOETO:PF.HEM-MAL-043", cle:"lameNormaleAge", min:2,
+  { k:"hyperplasieVraie", l:"Hyperplasie thymique vraie", fv:["FOETO:PF.HEM-MAL-043","FOETO:PF.HEM-MAL-049"], cle:"lameNormaleAge", min:2,
     signes:["lameNormaleAge","poidsEleve","masse2pc"],
     stop:" — la lame est normale pour l'âge : c'est le poids qui parle, et le seuil « more than 2 standard " +
          "deviations from the median weight for age » change de sens selon l'abaque — environ 17,50 g au " +
          "terme pour le service contre 12 g, ou 10,2 g avec +2 DS à 18 g, pour keeling. Hémorragie, " +
          "surcharge métabolique et Wiedemann-Beckwith donnent aussi un gros thymus." },
 
-  { k:"ectopie", l:"Thymus ectopique ou kyste thymique", fv:"FOETO:PF.HEM-MAL-048", min:2,
+  { k:"ectopie", l:"Thymus ectopique ou kyste thymique", fv:["FOETO:PF.HEM-MAL-048","FOETO:PF.HEM-MAL-045"], min:2,
     signes:["noduleEctopique","kysteThymique","parathyroide"],
     stop:" — la plupart des nodules thymiques ectopiques du fœtus sont NORMAUX : « a common finding in " +
          "fetuses », et le corpus les écrit « choristome thymique intrathyroïdien (bénin) » et « tissu " +
          "thymique ectopique normal (pas de valeur pathologique) ». Les extensions cervicales sont " +
          "normales et font partie de l'organe. Ne pas coder une ectopie comme une lésion." },
 
-  { k:"surcharge", l:"Surcharge lysosomale — le thymus est un site de lecture", fv:"FOETO:PF.HEM-MET-010", min:1,
+  { k:"surcharge", l:"Surcharge lysosomale — le thymus est un site de lecture", fv:["FOETO:PF.HEM-MET-010","FOETO:PF.HEM-MAL-047"], min:1,
     signes:["gaucher","vacuolisees"],
     stop:" — la cellule de surcharge n'est caractéristique que dans la maladie de Gaucher ; ailleurs " +
          "l'aspect n'est pas caractéristique sur coloration standard, ce sont des « cellules au " +
@@ -509,7 +514,7 @@ var DIAGS = [
          "macroscopique, à ne pas reporter en micro, et l'attribution « anoxie aiguë » est la pratique du " +
          "service, pas une donnée des livres." },
 
-  { k:"deplNonStress", l:"Déplétion lymphoïde non liée au stress", min:2,
+  { k:"deplNonStress", fv:["FOETO:PF.HEM-INF-013","FOETO:PF.HEM-MAL-040","FOETO:PF.HEM-MAL-046"], l:"Déplétion lymphoïde non liée au stress", min:2,
     signes:["deplFoyers","inversionDensite","macrophagesCD4","infiltratLH","inclusionNucl"],
     stop:" — la lame ne tranche pas ce différentiel : le VIH donne une « déplétion thymique lymphocytaire " +
          "avec présence de macrophages CD4 », la lymphohistiocytose hémophagocytaire un infiltrat diffus, " +

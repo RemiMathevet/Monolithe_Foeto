@@ -366,11 +366,16 @@ var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
    Fond : ~/Bureau/fiches_lecture/fiche_muscle.md (§1 à §9).
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 1 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 6 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 17 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "muscle";
 var TITRE   = "muscle squelettique";
 var SOURCE  = "fiche_muscle.md";
 var MODULE  = "grille_muscle";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -467,7 +472,7 @@ var RETENTION = [
          "jamais celle du muscle ; deux lectures restent ouvertes et aucune n'est sourcée (§ 9.2) : " +
          "soit le muscle n'a pas été étudié, soit il ne date pas",
     alerte:MODIF },
-  { k:"basophiliePerdue", l:"Perte de basophilie nucléaire des fibres", b:"—", d:"non situable au muscle",
+  { k:"basophiliePerdue", fv:"FOETO:PF.MUS-NOR-021", l:"Perte de basophilie nucléaire des fibres", b:"—", d:"non situable au muscle",
     h:0, q:"mauvais",
     note:"« There is a predictable pattern of loss of nuclear basophilia in the internal organs which " +
          "should not be mistaken for necrosis » [keeling, ch. 15] — mais le muscle n'est pas dans la " +
@@ -479,11 +484,11 @@ var RETENTION = [
          "dans AUCUNE source — ni Table 15.6, ni Table 37.1, ni keeling ch. 31, ni soffoet ch. 10 — et " +
          "l'expression contraction band n'est sourcée que pour le MYOCARDE [ashworth, ch. 6]. " +
          "Quatrième occurrence du même défaut dans la série (§ 9.3) : ne pas dater là-dessus" },
-  { k:"debrisGranulaire", l:"Débris granulaire des tissus mous", b:"—", d:"non datable seul", h:0, q:"mauvais",
+  { k:"debrisGranulaire", fv:"FOETO:PF.MUS-NOR-017", l:"Débris granulaire des tissus mous", b:"—", d:"non datable seul", h:0, q:"mauvais",
     note:"« Degeneration of soft tissues results in granular debris which may be mistaken for bacterial " +
          "colonisation » [keeling, ch. 15] ; le critère de discrimination est la présence d'une réponse " +
          "inflammatoire — faire un Gram tissulaire avant de conclure" },
-  { k:"mulberry", l:"Corps « mûre » (mulberry-like bodies) dans les vaisseaux", b:"≈ 2–3 jours",
+  { k:"mulberry", fv:"FOETO:PF.MUS-NOR-016", l:"Corps « mûre » (mulberry-like bodies) dans les vaisseaux", b:"≈ 2–3 jours",
     d:"lu hors muscle, [keeling, ch. 15]", h:60, q:"moyen",
     note:"« should not be mistaken for infective organisms » [keeling, ch. 15] — le muscle est richement " +
          "vascularisé donc il les porte, mais la borne est celle de l'artefact vasculaire général, elle " +
@@ -687,14 +692,14 @@ var CADRES = [
    dont elle mime un signe. (Termes FOETO de la fiche : PF.MUS-NOR-018 petites
    fibres rondes, PF.MUS-NOR-019 fuseau, PF.MUS-NOR-020 oculo-moteurs.) */
 var VARIANTES = [
-  { k:"petitesRondes", g:"Calibre des fibres", l:"Petites fibres rondes — normales chez le FŒTUS" },
+  { k:"petitesRondes", fv:"FOETO:PF.MUS-NOR-018", g:"Calibre des fibres", l:"Petites fibres rondes — normales chez le FŒTUS" },
   { k:"wohlfart",      g:"Calibre des fibres", l:"Bimodalité « a » / « b » de Wohlfart entre 18 et 35 SA" },
   { k:"myotubesJeune", g:"Noyaux et myotubes", l:"Myotubes avant 18 SA — stade, pas maladie" },
-  { k:"fuseau",        g:"Atrophie groupée et fibres hypertrophiques", l:"Fuseau neuromusculaire du périmysium, coupé en travers" },
+  { k:"fuseau",        fv:"FOETO:PF.MUS-NOR-019", g:"Atrophie groupée et fibres hypertrophiques", l:"Fuseau neuromusculaire du périmysium, coupé en travers" },
   { k:"noyauxInternesRares", g:"Noyaux et myotubes", l:"Quelques noyaux internes, moins de 5 % à terme" },
   { k:"glycogenePAS",  g:"Structures et inclusions", l:"Répartition inhomogène du glycogène au PAS" },
   { k:"muscleFoie",    g:"Architecture fasciculaire", l:"Muscle strié en bordure d'un bloc de foie ou de paroi" },
-  { k:"oculomoteurs",  g:"Calibre des fibres", l:"Muscles oculo-moteurs sur une lame d'orbite" }
+  { k:"oculomoteurs",  fv:"FOETO:PF.MUS-NOR-020", g:"Calibre des fibres", l:"Muscles oculo-moteurs sur une lame d'orbite" }
 ];
 
 /* ── 06 · Signes ──────────────────────────────────────────────────────────────
@@ -706,25 +711,25 @@ var VARIANTES = [
 var SIGNES = [
   /* — Contexte hors lame — macro, moelle, clinique — lu ailleurs, répondu ici
        parce qu'il commande la lecture — */
-  { k:"contractures", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Contractures multiples articulaires (macro)" },
+  { k:"contractures", fv:"FOETO:PF.MUS-MAL-039", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Contractures multiples articulaires (macro)" },
   { k:"contracturesDistales", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Contractures distales seulement (mains, pieds, poignets, chevilles)" },
   { k:"contracturesPoly", fv:"FOETO:PF.MUS-MAL-013", g:"Contexte hors lame — macro, moelle, clinique",
     meta:"ce qui sépare la SDAF de l'AMC [keeling, ch. 31] — redit trois signes de ce cadre, répondre aussi chacun" },
-  { k:"asymetrie", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Anomalies posturales ASYMÉTRIQUES" },
-  { k:"masseOsseuseNormale", bloc:false, fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Masse osseuse normale" },
+  { k:"asymetrie", fv:"FOETO:PF.MUS-MAL-040", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Anomalies posturales ASYMÉTRIQUES" },
+  { k:"masseOsseuseNormale", fv:"FOETO:PF.MUS-NOR-022", bloc:false, fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Masse osseuse normale" },
   { k:"micrognathieMoindre", bloc:false, fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Micrognathie peu marquée" },
-  { k:"ptergyium", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Ptérygia" },
+  { k:"ptergyium", fv:"FOETO:PF.MUS-MAL-041", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Ptérygia" },
   { k:"anasarquePrecoce", fv:"FOETO:PF.MUS-MAL-017", g:"Contexte hors lame — macro, moelle, clinique",
     meta:"« early-onset (first-trimester) hydrops leads to the formation of pterygia » [keeling, ch. 31]" },
-  { k:"hydramnios", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Polyhydramnios" },
-  { k:"oligoamnios", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Oligoamnios documenté" },
-  { k:"hypoplasiePulm", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Hypoplasie pulmonaire" },
-  { k:"fentePalatine", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Fente palatine" },
-  { k:"anasarque", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Œdème sous-cutané ou anasarque" },
-  { k:"diaphragmeSureleve", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Diaphragme surélevé ou éventré" },
-  { k:"peauRigide", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Peau rigide, bouche fixée ouverte en « O »" },
+  { k:"hydramnios", fv:"FOETO:PF.MUS-MAL-042", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Polyhydramnios" },
+  { k:"oligoamnios", fv:"FOETO:PF.MUS-MAL-043", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Oligoamnios documenté" },
+  { k:"hypoplasiePulm", fv:"FOETO:PF.MUS-MAL-044", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Hypoplasie pulmonaire" },
+  { k:"fentePalatine", fv:"FOETO:PF.MUS-MAL-045", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Fente palatine" },
+  { k:"anasarque", fv:"FOETO:PF.MUS-MAL-046", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Œdème sous-cutané ou anasarque" },
+  { k:"diaphragmeSureleve", fv:"FOETO:PF.MUS-MAL-047", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Diaphragme surélevé ou éventré" },
+  { k:"peauRigide", fv:"FOETO:PF.MUS-MAL-048", fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Peau rigide, bouche fixée ouverte en « O »" },
   { k:"mortNeuronale", fiche:"[soffoet, ch. 22]", g:"Contexte hors lame — macro, moelle, clinique", l:"Mort neuronale des cornes antérieures (moelle, 3 niveaux)" },
-  { k:"cornesNormales", bloc:false, fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Cornes antérieures SANS déplétion ni dégénérescence" },
+  { k:"cornesNormales", fv:"FOETO:PF.MUS-NOR-023", bloc:false, fiche:"[keeling, ch. 31]", g:"Contexte hors lame — macro, moelle, clinique", l:"Cornes antérieures SANS déplétion ni dégénérescence" },
 
   /* — Architecture fasciculaire — le seul axe qui survit à la fixation — */
   { k:"fasciculesIncomplets", fv:"FOETO:PF.MUS-RET-019", g:"Architecture fasciculaire", mag:"faible", l:"Fascicules incomplets",
@@ -733,13 +738,13 @@ var SIGNES = [
     meta:"intrafasciculaire" },
   { k:"perimysiumFasc", bloc:false, fv:"FOETO:PF.MUS-MAL-020", g:"Architecture fasciculaire", mag:"faible", l:"Fascicules entourés de périmysium",
     meta:"« said to be a characteristic feature »" },
-  { k:"muscleNormal", bloc:false, fiche:"[keeling, ch. 31]", g:"Architecture fasciculaire", mag:"faible", l:"Muscle d'aspect essentiellement normal",
+  { k:"muscleNormal", fv:"FOETO:PF.MUS-NOR-024", bloc:false, fiche:"[keeling, ch. 31]", g:"Architecture fasciculaire", mag:"faible", l:"Muscle d'aspect essentiellement normal",
     meta:"n'exclut aucune maladie létale — se répond seul, en fin de lecture" },
 
   /* — Atrophie groupée et fibres hypertrophiques — */
   { k:"atrophieGroupee", fv:"FOETO:PF.MUS-MAL-002", g:"Atrophie groupée et fibres hypertrophiques", mag:"faible", l:"Atrophie groupée de larges groupes de fibres",
     meta:"« large group atrophy » [keeling, ch. 31] — groupes de fibres atrophiques" },
-  { k:"atrophieFasciculaire", fiche:"[soffoet, ch. 10]", g:"Atrophie groupée et fibres hypertrophiques", mag:"faible", l:"Atrophie fasciculaire",
+  { k:"atrophieFasciculaire", fv:"FOETO:PF.MUS-MAL-049", fiche:"[soffoet, ch. 10]", g:"Atrophie groupée et fibres hypertrophiques", mag:"faible", l:"Atrophie fasciculaire",
     meta:"le motif nommé par soffoet — deux sources, deux mots pour une image voisine" },
   { k:"fibresHypertrophiques", fv:"FOETO:PF.MUS-RET-022", g:"Atrophie groupée et fibres hypertrophiques", mag:"moyen", l:"Fibres hypertrophiques isolées, dispersées",
     meta:"isolées, dispersées — « scattered enlarged individual fibers » [keeling, ch. 31]" },
@@ -767,14 +772,14 @@ var SIGNES = [
     meta:"bimodale = Wohlfart si 18–35 SA ; anarchique = à coter" },
   { k:"petitesFibres", fv:"FOETO:PF.MUS-MAL-011", g:"Calibre des fibres", mag:"moyen", l:"Fibres de petite taille",
     meta:"« small and rounded as they are in arthrogryposis » chez le fœtus normal" },
-  { k:"hypotrophieGen", fiche:"[keeling, ch. 31]", g:"Calibre des fibres", mag:"moyen", l:"Hypotrophie généralisée des fibres" },
-  { k:"calibreHomogene", bloc:false, fiche:"[soffoet, ch. 10]", g:"Calibre des fibres", mag:"moyen", l:"Calibre uniforme, fibres « a » et « b » non reconnaissables",
+  { k:"hypotrophieGen", fv:"FOETO:PF.MUS-MAL-050", fiche:"[keeling, ch. 31]", g:"Calibre des fibres", mag:"moyen", l:"Hypotrophie généralisée des fibres" },
+  { k:"calibreHomogene", fv:"FOETO:PF.MUS-NOR-025", bloc:false, fiche:"[soffoet, ch. 10]", g:"Calibre des fibres", mag:"moyen", l:"Calibre uniforme, fibres « a » et « b » non reconnaissables",
     meta:"repère du stade 3, après 35 SA" },
 
   /* — Noyaux et myotubes — */
-  { k:"myotubes", fv:"FOETO:PF.MUS-MAL-010", g:"Noyaux et myotubes", mag:"moyen", l:"Myotubes présents — noyaux centraux en chaîne",
+  { k:"myotubes", terme:[18, null], fv:"FOETO:PF.MUS-MAL-010", g:"Noyaux et myotubes", mag:"moyen", l:"Myotubes présents — noyaux centraux en chaîne",
     meta:"noyaux centraux en chaîne ; normal avant 18 SA, signe après — le terme tranche, pas la lame" },
-  { k:"noyauxCentrauxPredom", fiche:"[keeling, ch. 31]", g:"Noyaux et myotubes", mag:"moyen", l:"Prédominance de noyaux centraux" },
+  { k:"noyauxCentrauxPredom", fv:"FOETO:PF.MUS-MAL-051", fiche:"[keeling, ch. 31]", g:"Noyaux et myotubes", mag:"moyen", l:"Prédominance de noyaux centraux" },
   { k:"morphoMyotubulaire", fiche:"[keeling, ch. 31]", g:"Noyaux et myotubes", mag:"moyen", l:"Morphologie myotubulaire diffuse" },
   { k:"noyauxInternes", fv:"FOETO:PF.MUS-RET-035", g:"Noyaux et myotubes", mag:"fort", l:"Noyaux internes au-delà de 5 %",
     meta:"au-delà de 5 % ; 5–75 % dans la myopathie myotubulaire — les seuils se touchent à 5 %" },
@@ -1307,8 +1312,8 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 }
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
-var FOETO = {"sections":[],"formes":{"FOETO:PF.MUS-MAL-001":["Absence/réduction de nécrose et régénération musculaire"],"FOETO:PF.MUS-MAL-021":["Amyoplasie"],"FOETO:PF.MUS-MAL-022":["Amyotrophie spinale infantile"],"FOETO:PF.MUS-MAL-017":["Anasarque précoce (premier trimestre)"],"FOETO:PF.MUS-MAL-023":["Arthrogrypose distale"],"FOETO:PF.MUS-MAL-002":["Atrophie fasciculaire neurogène"],"FOETO:PF.MUS-RET-049":["Atrophie ou groupement des fibres de type 1"],"FOETO:PF.MUS-MAL-003":["Bâtonnets de némaline (myopathie à bâtonnets)"],"FOETO:PF.MUS-NOR-014":["Calibre des fibres à terme"],"FOETO:PF.MUS-MAL-013":["Contractures multiples avec polyhydramnios, hypoplasie pulmonaire, fente palatine"],"FOETO:PF.MUS-MAL-032":["Contrainte intra-utérine — séquence oligoamnios"],"FOETO:PF.MUS-MAL-014":["Cores (central core, multiminicore)"],"FOETO:PF.MUS-NOR-016":["Corps « mûre » (mulberry-like bodies) basophiles"],"FOETO:PF.MUS-MAL-024":["Dermopathie restrictive"],"FOETO:PF.MUS-MAL-016":["Diminution du nombre des fibres musculaires"],"FOETO:PF.MUS-MAL-006":["Dispersion de calibre des fibres musculaires"],"FOETO:PF.MUS-RET-014":["Disproportion congénitale des types de fibres"],"FOETO:PF.MUS-MAL-025":["Dystrophie musculaire congénitale"],"FOETO:PF.MUS-MAL-033":["Dystrophie myotonique congénitale (Steinert)"],"FOETO:PF.MUS-NOR-017":["Débris granulaire de dégénérescence des tissus mous"],"FOETO:PF.MUS-MAL-007":["Déficit en mérosine (immunohistochimie musculaire)"],"FOETO:PF.MUS-RET-018":["Dégénérescence vacuolaire des fibres musculaires"],"FOETO:PF.MUS-MAL-019":["Expression retardée de la myosine lente par les fibres de 2e génération (immuno)"],"FOETO:PF.MUS-MAL-020":["Fascicules entourés de périmysium"],"FOETO:PF.MUS-RET-019":["Fascicules musculaires incomplets avec remplacement adipeux partiel"],"FOETO:PF.MUS-MAL-015":["Fibres atrophiques d'aspect arrondi"],"FOETO:PF.MUS-RET-051":["Fibres de type 1 plus petites d'au moins 35–40 % que les type 2"],"FOETO:PF.MUS-RET-022":["Fibres musculaires hypertrophiques isolées"],"FOETO:PF.MUS-NOR-018":["Fibres petites et arrondies — état normal du fœtus"],"FOETO:PF.MUS-RET-024":["Fibrose endomysiale"],"FOETO:PF.MUS-NOR-019":["Fuseau neuromusculaire dans le périmysium, capsule stratifiée"],"FOETO:PF.MUS-RET-028":["Halo périphérique des fibres sur NADH (myotonie congénitale DM1)"],"FOETO:PF.MUS-INF-001":["Infection congénitale à échovirus (types 33 et 27)"],"FOETO:PF.MUS-RET-050":["Infiltrat inflammatoire intramusculaire"],"FOETO:PF.MUS-MAL-018":["Marquage immunohistochimique normal de la mérosine"],"FOETO:PF.MUS-NOR-020":["Muscles oculomoteurs — mésoderme crânial, profil distinct du quadriceps"],"FOETO:PF.MUS-MAL-026":["Myasthénie néonatale"],"FOETO:PF.MUS-INF-002":["Myopathie inflammatoire congénitale"],"FOETO:PF.MUS-MAL-028":["Myopathie myotubulaire (centronucléaire liée à l'X, MTM1)"],"FOETO:PF.MUS-MAL-029":["Myopathie à bâtonnets (némaline)"],"FOETO:PF.MUS-MAL-027":["Myopathie à cores (central core RYR1, multiminicore)"],"FOETO:PF.MUS-RET-035":["Noyaux centraux dans les fibres musculaires"],"FOETO:PF.MUS-VAS-001":["Nécrose hémorragique marquée des muscles périphériques"],"FOETO:PF.MUS-MAL-010":["Persistance anormale de myotubes"],"FOETO:PF.MUS-NOR-021":["Perte de basophilie nucléaire post-mortem"],"FOETO:PF.MUS-MAL-011":["Petite taille des fibres musculaires"],"FOETO:PF.MUS-NOR-015":["Pourcentage de noyaux internes"],"FOETO:PF.MUS-RET-040":["Remplacement adipeux du muscle squelettique"],"FOETO:PF.MUS-RET-043":["Régénération des fibres musculaires"],"FOETO:PF.MUS-MAL-030":["Syndrome des ptérygia multiples létal (LMPS)"],"FOETO:PF.MUS-MAL-031":["Séquence de déformation d'akinésie fœtale (SDAF / FADS)"]}};
-var FOETOV = {"FOETO:PF.MUS-MAL-025":{"l":"Dystrophie musculaire congénitale","hpo":null},"FOETO:PF.MUS-INF-001":{"l":"Infection congénitale à échovirus (types 33 et 27)","hpo":null},"FOETO:PF.MUS-MAL-011":{"l":"Petite taille des fibres musculaires","hpo":null},"FOETO:PF.MUS-MAL-013":{"l":"Contractures multiples avec polyhydramnios, hypoplasie pulmonaire, fente palatine","hpo":null},"FOETO:PF.MUS-RET-040":{"l":"Remplacement adipeux du muscle squelettique","hpo":"HP:0012548"},"FOETO:PF.MUS-MAL-024":{"l":"Dermopathie restrictive","hpo":null},"FOETO:PF.MUS-MAL-018":{"l":"Marquage immunohistochimique normal de la mérosine","hpo":null},"FOETO:PF.MUS-MAL-033":{"l":"Dystrophie myotonique congénitale (Steinert)","hpo":null},"FOETO:PF.MUS-MAL-032":{"l":"Contrainte intra-utérine — séquence oligoamnios","hpo":null},"FOETO:PF.MUS-RET-050":{"l":"Infiltrat inflammatoire intramusculaire","hpo":null},"FOETO:PF.MUS-MAL-031":{"l":"Séquence de déformation d'akinésie fœtale (SDAF / FADS)","hpo":null},"FOETO:PF.MUS-MAL-003":{"l":"Bâtonnets de némaline (myopathie à bâtonnets)","hpo":null},"FOETO:PF.MUS-RET-049":{"l":"Atrophie ou groupement des fibres de type 1","hpo":null},"FOETO:PF.MUS-RET-019":{"l":"Fascicules musculaires incomplets avec remplacement adipeux partiel","hpo":"HP:0012548"},"FOETO:PF.MUS-MAL-030":{"l":"Syndrome des ptérygia multiples létal (LMPS)","hpo":null},"FOETO:PF.MUS-VAS-001":{"l":"Nécrose hémorragique marquée des muscles périphériques","hpo":null},"FOETO:PF.MUS-MAL-019":{"l":"Expression retardée de la myosine lente par les fibres de 2e génération (immuno)","hpo":null},"FOETO:PF.MUS-RET-022":{"l":"Fibres musculaires hypertrophiques isolées","hpo":null},"FOETO:PF.MUS-RET-051":{"l":"Fibres de type 1 plus petites d'au moins 35–40 % que les type 2","hpo":null},"FOETO:PF.MUS-MAL-014":{"l":"Cores (central core, multiminicore)","hpo":null},"FOETO:PF.MUS-MAL-020":{"l":"Fascicules entourés de périmysium","hpo":null},"FOETO:PF.MUS-MAL-022":{"l":"Amyotrophie spinale infantile","hpo":null},"FOETO:PF.MUS-MAL-001":{"l":"Absence/réduction de nécrose et régénération musculaire","hpo":null},"FOETO:PF.MUS-MAL-028":{"l":"Myopathie myotubulaire (centronucléaire liée à l'X, MTM1)","hpo":null},"FOETO:PF.MUS-MAL-015":{"l":"Fibres atrophiques d'aspect arrondi","hpo":null},"FOETO:PF.MUS-MAL-023":{"l":"Arthrogrypose distale","hpo":"HP:0005684"},"FOETO:PF.MUS-MAL-002":{"l":"Atrophie fasciculaire neurogène","hpo":null},"FOETO:PF.MUS-INF-002":{"l":"Myopathie inflammatoire congénitale","hpo":null},"FOETO:PF.MUS-RET-043":{"l":"Régénération des fibres musculaires","hpo":null},"FOETO:PF.MUS-MAL-007":{"l":"Déficit en mérosine (immunohistochimie musculaire)","hpo":null},"FOETO:PF.MUS-RET-018":{"l":"Dégénérescence vacuolaire des fibres musculaires","hpo":null},"FOETO:PF.MUS-MAL-029":{"l":"Myopathie à bâtonnets (némaline)","hpo":null},"FOETO:PF.MUS-RET-024":{"l":"Fibrose endomysiale","hpo":"HP:0100297"},"FOETO:PF.MUS-MAL-016":{"l":"Diminution du nombre des fibres musculaires","hpo":null},"FOETO:PF.MUS-RET-028":{"l":"Halo périphérique des fibres sur NADH (myotonie congénitale DM1)","hpo":null},"FOETO:PF.MUS-MAL-021":{"l":"Amyoplasie","hpo":null},"FOETO:PF.MUS-MAL-010":{"l":"Persistance anormale de myotubes","hpo":"HP:0003687"},"FOETO:PF.MUS-RET-035":{"l":"Noyaux centraux dans les fibres musculaires","hpo":"HP:0003687"},"FOETO:PF.MUS-MAL-006":{"l":"Dispersion de calibre des fibres musculaires","hpo":"HP:0003557"},"FOETO:PF.MUS-MAL-017":{"l":"Anasarque précoce (premier trimestre)","hpo":null}};
+var FOETO = {"sections":[],"formes":{"FOETO:PF.MUS-MAL-001":["Absence/réduction de nécrose et régénération musculaire"],"FOETO:PF.MUS-MAL-021":["Amyoplasie"],"FOETO:PF.MUS-MAL-022":["Amyotrophie spinale infantile"],"FOETO:PF.MUS-MAL-017":["Anasarque précoce (premier trimestre)"],"FOETO:PF.MUS-MAL-040":["Anomalies posturales ASYMÉTRIQUES"],"FOETO:PF.MUS-MAL-023":["Arthrogrypose distale"],"FOETO:PF.MUS-MAL-049":["Atrophie fasciculaire"],"FOETO:PF.MUS-MAL-002":["Atrophie fasciculaire neurogène"],"FOETO:PF.MUS-RET-049":["Atrophie ou groupement des fibres de type 1"],"FOETO:PF.MUS-MAL-003":["Bâtonnets de némaline (myopathie à bâtonnets)"],"FOETO:PF.MUS-NOR-014":["Calibre des fibres à terme"],"FOETO:PF.MUS-NOR-025":["Calibre uniforme, fibres « a » et « b » non reconnaissables"],"FOETO:PF.MUS-MAL-039":["Contractures multiples articulaires (macro)"],"FOETO:PF.MUS-MAL-013":["Contractures multiples avec polyhydramnios, hypoplasie pulmonaire, fente palatine"],"FOETO:PF.MUS-MAL-032":["Contrainte intra-utérine — séquence oligoamnios"],"FOETO:PF.MUS-MAL-014":["Cores (central core, multiminicore)"],"FOETO:PF.MUS-NOR-023":["Cornes antérieures SANS déplétion ni dégénérescence"],"FOETO:PF.MUS-NOR-016":["Corps « mûre » (mulberry-like bodies) basophiles"],"FOETO:PF.MUS-MAL-024":["Dermopathie restrictive"],"FOETO:PF.MUS-MAL-047":["Diaphragme surélevé ou éventré"],"FOETO:PF.MUS-MAL-016":["Diminution du nombre des fibres musculaires"],"FOETO:PF.MUS-MAL-006":["Dispersion de calibre des fibres musculaires"],"FOETO:PF.MUS-RET-014":["Disproportion congénitale des types de fibres"],"FOETO:PF.MUS-MAL-025":["Dystrophie musculaire congénitale"],"FOETO:PF.MUS-MAL-033":["Dystrophie myotonique congénitale (Steinert)"],"FOETO:PF.MUS-NOR-017":["Débris granulaire de dégénérescence des tissus mous"],"FOETO:PF.MUS-MAL-007":["Déficit en mérosine (immunohistochimie musculaire)"],"FOETO:PF.MUS-RET-018":["Dégénérescence vacuolaire des fibres musculaires"],"FOETO:PF.MUS-MAL-019":["Expression retardée de la myosine lente par les fibres de 2e génération (immuno)"],"FOETO:PF.MUS-MAL-020":["Fascicules entourés de périmysium"],"FOETO:PF.MUS-RET-019":["Fascicules musculaires incomplets avec remplacement adipeux partiel"],"FOETO:PF.MUS-MAL-045":["Fente palatine"],"FOETO:PF.MUS-MAL-015":["Fibres atrophiques d'aspect arrondi"],"FOETO:PF.MUS-RET-051":["Fibres de type 1 plus petites d'au moins 35–40 % que les type 2"],"FOETO:PF.MUS-RET-022":["Fibres musculaires hypertrophiques isolées"],"FOETO:PF.MUS-NOR-018":["Fibres petites et arrondies — état normal du fœtus"],"FOETO:PF.MUS-RET-024":["Fibrose endomysiale"],"FOETO:PF.MUS-NOR-019":["Fuseau neuromusculaire dans le périmysium, capsule stratifiée"],"FOETO:PF.MUS-RET-028":["Halo périphérique des fibres sur NADH (myotonie congénitale DM1)"],"FOETO:PF.MUS-MAL-044":["Hypoplasie pulmonaire"],"FOETO:PF.MUS-MAL-050":["Hypotrophie généralisée des fibres"],"FOETO:PF.MUS-INF-001":["Infection congénitale à échovirus (types 33 et 27)"],"FOETO:PF.MUS-RET-050":["Infiltrat inflammatoire intramusculaire"],"FOETO:PF.MUS-MAL-018":["Marquage immunohistochimique normal de la mérosine"],"FOETO:PF.MUS-NOR-022":["Masse osseuse normale"],"FOETO:PF.MUS-NOR-024":["Muscle d'aspect essentiellement normal"],"FOETO:PF.MUS-NOR-020":["Muscles oculomoteurs — mésoderme crânial, profil distinct du quadriceps"],"FOETO:PF.MUS-MAL-026":["Myasthénie néonatale"],"FOETO:PF.MUS-INF-002":["Myopathie inflammatoire congénitale"],"FOETO:PF.MUS-MAL-028":["Myopathie myotubulaire (centronucléaire liée à l'X, MTM1)"],"FOETO:PF.MUS-MAL-029":["Myopathie à bâtonnets (némaline)"],"FOETO:PF.MUS-MAL-027":["Myopathie à cores (central core RYR1, multiminicore)"],"FOETO:PF.MUS-RET-035":["Noyaux centraux dans les fibres musculaires"],"FOETO:PF.MUS-VAS-001":["Nécrose hémorragique marquée des muscles périphériques"],"FOETO:PF.MUS-MAL-043":["Oligoamnios documenté"],"FOETO:PF.MUS-MAL-048":["Peau rigide, bouche fixée ouverte en « O »"],"FOETO:PF.MUS-MAL-010":["Persistance anormale de myotubes"],"FOETO:PF.MUS-NOR-021":["Perte de basophilie nucléaire post-mortem"],"FOETO:PF.MUS-MAL-011":["Petite taille des fibres musculaires"],"FOETO:PF.MUS-MAL-042":["Polyhydramnios"],"FOETO:PF.MUS-NOR-015":["Pourcentage de noyaux internes"],"FOETO:PF.MUS-MAL-051":["Prédominance de noyaux centraux"],"FOETO:PF.MUS-MAL-041":["Ptérygia"],"FOETO:PF.MUS-RET-040":["Remplacement adipeux du muscle squelettique"],"FOETO:PF.MUS-RET-043":["Régénération des fibres musculaires"],"FOETO:PF.MUS-MAL-030":["Syndrome des ptérygia multiples létal (LMPS)"],"FOETO:PF.MUS-MAL-031":["Séquence de déformation d'akinésie fœtale (SDAF / FADS)"],"FOETO:PF.MUS-MAL-046":["Œdème sous-cutané ou anasarque"]}};
+var FOETOV = {"FOETO:PF.MUS-INF-002":{"l":"Myopathie inflammatoire congénitale","hpo":null},"FOETO:PF.MUS-NOR-021":{"l":"Perte de basophilie nucléaire post-mortem","hpo":null},"FOETO:PF.MUS-MAL-032":{"l":"Contrainte intra-utérine — séquence oligoamnios","hpo":null},"FOETO:PF.MUS-MAL-010":{"l":"Persistance anormale de myotubes","hpo":"HP:0003687"},"FOETO:PF.MUS-MAL-042":{"l":"Polyhydramnios","hpo":null},"FOETO:PF.MUS-MAL-003":{"l":"Bâtonnets de némaline (myopathie à bâtonnets)","hpo":null},"FOETO:PF.MUS-MAL-025":{"l":"Dystrophie musculaire congénitale","hpo":null},"FOETO:PF.MUS-RET-051":{"l":"Fibres de type 1 plus petites d'au moins 35–40 % que les type 2","hpo":null},"FOETO:PF.MUS-MAL-033":{"l":"Dystrophie myotonique congénitale (Steinert)","hpo":null},"FOETO:PF.MUS-MAL-043":{"l":"Oligoamnios documenté","hpo":null},"FOETO:PF.MUS-MAL-007":{"l":"Déficit en mérosine (immunohistochimie musculaire)","hpo":null},"FOETO:PF.MUS-MAL-024":{"l":"Dermopathie restrictive","hpo":null},"FOETO:PF.MUS-MAL-002":{"l":"Atrophie fasciculaire neurogène","hpo":null},"FOETO:PF.MUS-MAL-048":{"l":"Peau rigide, bouche fixée ouverte en « O »","hpo":null},"FOETO:PF.MUS-NOR-018":{"l":"Fibres petites et arrondies — état normal du fœtus","hpo":null},"FOETO:PF.MUS-NOR-022":{"l":"Masse osseuse normale","hpo":null},"FOETO:PF.MUS-MAL-023":{"l":"Arthrogrypose distale","hpo":"HP:0005684"},"FOETO:PF.MUS-MAL-001":{"l":"Absence/réduction de nécrose et régénération musculaire","hpo":null},"FOETO:PF.MUS-NOR-019":{"l":"Fuseau neuromusculaire dans le périmysium, capsule stratifiée","hpo":null},"FOETO:PF.MUS-MAL-006":{"l":"Dispersion de calibre des fibres musculaires","hpo":"HP:0003557"},"FOETO:PF.MUS-VAS-001":{"l":"Nécrose hémorragique marquée des muscles périphériques","hpo":null},"FOETO:PF.MUS-RET-035":{"l":"Noyaux centraux dans les fibres musculaires","hpo":"HP:0003687"},"FOETO:PF.MUS-RET-019":{"l":"Fascicules musculaires incomplets avec remplacement adipeux partiel","hpo":"HP:0012548"},"FOETO:PF.MUS-NOR-016":{"l":"Corps « mûre » (mulberry-like bodies) basophiles","hpo":null},"FOETO:PF.MUS-RET-049":{"l":"Atrophie ou groupement des fibres de type 1","hpo":null},"FOETO:PF.MUS-MAL-011":{"l":"Petite taille des fibres musculaires","hpo":null},"FOETO:PF.MUS-RET-024":{"l":"Fibrose endomysiale","hpo":"HP:0100297"},"FOETO:PF.MUS-NOR-025":{"l":"Calibre uniforme, fibres « a » et « b » non reconnaissables","hpo":null},"FOETO:PF.MUS-MAL-046":{"l":"Œdème sous-cutané ou anasarque","hpo":null},"FOETO:PF.MUS-RET-022":{"l":"Fibres musculaires hypertrophiques isolées","hpo":null},"FOETO:PF.MUS-MAL-013":{"l":"Contractures multiples avec polyhydramnios, hypoplasie pulmonaire, fente palatine","hpo":null},"FOETO:PF.MUS-RET-040":{"l":"Remplacement adipeux du muscle squelettique","hpo":"HP:0012548"},"FOETO:PF.MUS-MAL-031":{"l":"Séquence de déformation d'akinésie fœtale (SDAF / FADS)","hpo":null},"FOETO:PF.MUS-MAL-044":{"l":"Hypoplasie pulmonaire","hpo":null},"FOETO:PF.MUS-MAL-040":{"l":"Anomalies posturales ASYMÉTRIQUES","hpo":null},"FOETO:PF.MUS-MAL-050":{"l":"Hypotrophie généralisée des fibres","hpo":null},"FOETO:PF.MUS-RET-050":{"l":"Infiltrat inflammatoire intramusculaire","hpo":null},"FOETO:PF.MUS-NOR-020":{"l":"Muscles oculomoteurs — mésoderme crânial, profil distinct du quadriceps","hpo":null},"FOETO:PF.MUS-MAL-014":{"l":"Cores (central core, multiminicore)","hpo":null},"FOETO:PF.MUS-MAL-049":{"l":"Atrophie fasciculaire","hpo":null},"FOETO:PF.MUS-NOR-024":{"l":"Muscle d'aspect essentiellement normal","hpo":null},"FOETO:PF.MUS-MAL-021":{"l":"Amyoplasie","hpo":null},"FOETO:PF.MUS-NOR-023":{"l":"Cornes antérieures SANS déplétion ni dégénérescence","hpo":null},"FOETO:PF.MUS-MAL-018":{"l":"Marquage immunohistochimique normal de la mérosine","hpo":null},"FOETO:PF.MUS-MAL-030":{"l":"Syndrome des ptérygia multiples létal (LMPS)","hpo":null},"FOETO:PF.MUS-INF-001":{"l":"Infection congénitale à échovirus (types 33 et 27)","hpo":null},"FOETO:PF.MUS-MAL-041":{"l":"Ptérygia","hpo":null},"FOETO:PF.MUS-NOR-017":{"l":"Débris granulaire de dégénérescence des tissus mous","hpo":null},"FOETO:PF.MUS-MAL-020":{"l":"Fascicules entourés de périmysium","hpo":null},"FOETO:PF.MUS-RET-018":{"l":"Dégénérescence vacuolaire des fibres musculaires","hpo":null},"FOETO:PF.MUS-MAL-047":{"l":"Diaphragme surélevé ou éventré","hpo":null},"FOETO:PF.MUS-MAL-017":{"l":"Anasarque précoce (premier trimestre)","hpo":null},"FOETO:PF.MUS-MAL-045":{"l":"Fente palatine","hpo":null},"FOETO:PF.MUS-MAL-022":{"l":"Amyotrophie spinale infantile","hpo":null},"FOETO:PF.MUS-MAL-029":{"l":"Myopathie à bâtonnets (némaline)","hpo":null},"FOETO:PF.MUS-RET-028":{"l":"Halo périphérique des fibres sur NADH (myotonie congénitale DM1)","hpo":null},"FOETO:PF.MUS-MAL-019":{"l":"Expression retardée de la myosine lente par les fibres de 2e génération (immuno)","hpo":null},"FOETO:PF.MUS-MAL-028":{"l":"Myopathie myotubulaire (centronucléaire liée à l'X, MTM1)","hpo":null},"FOETO:PF.MUS-MAL-016":{"l":"Diminution du nombre des fibres musculaires","hpo":null},"FOETO:PF.MUS-MAL-039":{"l":"Contractures multiples articulaires (macro)","hpo":null},"FOETO:PF.MUS-MAL-015":{"l":"Fibres atrophiques d'aspect arrondi","hpo":null},"FOETO:PF.MUS-MAL-051":{"l":"Prédominance de noyaux centraux","hpo":null},"FOETO:PF.MUS-RET-043":{"l":"Régénération des fibres musculaires","hpo":null}};
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
@@ -1498,8 +1503,8 @@ function batir(){
             return '<button type="button" class="chip" data-act="etendue" data-k="' + i + '" data-v="' + e + '">' +
                    '<span class="k">étendue</span>' + e + '</button>';
           }).join("") + '</div>') +
-        sig.filter(blocable).map(ligneSigne).join("") + '</div>' +
-        sig.filter(function(x){ return !blocable(x); }).map(ligneSigne).join("") + '</div>';
+        sig.filter(function(x){ return !horsBloc(x); }).map(ligneSigne).join("") + '</div>' +
+        sig.filter(horsBloc).map(ligneSigne).join("") + '</div>';
     });
     $("signes").innerHTML = html.signes;
     $("contexte").innerHTML = html.contexte;
@@ -1581,8 +1586,11 @@ function ligneSigne(x){
       (x.horsFiche ? '<span class="meta">hors fiche — non sourcé par la biblio</span>' : "") +
       (x.fiche && !x.foeto ? '<span class="meta">dans la fiche ' + esc(x.fiche) + ', sans terme FOETO</span>' : "") +
       (oblig ? '<span class="meta">négatif à énoncer : répondre présent ou absent</span>' : "") +
-      (PRESENCE && !blocable(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
-        : "hors du « Non » en bloc : " + (x.mag === "technique" ? "se répond après la technique" : "polarité normale, à répondre seul")) +
+      (PRESENCE && horsBloc(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
+        : x.mag === "technique" ? "hors du « Non » en bloc : se répond après la technique"
+        : x.bloc === false ? "hors du « Non » en bloc : polarité normale, à répondre seul"
+        : x.seul ? "hors du « Non » en bloc : dépend du terme, à répondre seul"
+        : "« Non » en bloc seulement " + fenetreTxt(x.terme) + " — hors de là, à répondre seul") +
         '</span>' : "") +
       '</div>' +
       (x.auto ? '<span class="chip" data-auto="' + x.k + '" style="cursor:default"></span>' :
@@ -1604,6 +1612,8 @@ function foetoAjouter(id){
   /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
   var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
   if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
+  var vr = FUSION && VARIANTES.filter(function(v){ return v.foeto === id; })[0];
+  if (vr){ E.variantes[vr.k] = true; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
     if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
@@ -1655,6 +1665,17 @@ function codesPresents(){
   return SIGNES.filter(function(x){ return E.signes[x.k] === POS && codesDe(x).length; })
                .map(function(x){ return { k:x.k, l:x.l, foeto:x.foeto || null, hpo:x.hpo || null }; });
 }
+/* Codes du reste de la lecture : variante vue, critère de rétention présent, stade retenu,
+   mesure saisie (avec sa valeur). Exportés à part (codes_lecture), champ additif. */
+function codesLecture(){
+  var c = [];
+  VARIANTES.forEach(function(v){ if (v.foeto && E.variantes[v.k]) c.push({ type:"variante", k:v.k, l:v.l, foeto:v.foeto }); });
+  RETENTION.forEach(function(r){ if (r.foeto && E.retention[r.k] === "present") c.push({ type:"rétention", k:r.k, l:r.l, foeto:r.foeto }); });
+  STADES.forEach(function(s){ if (s.foeto && E.stade === s.k) c.push({ type:"stade", k:s.k, l:s.l, foeto:s.foeto }); });
+  if (MESURE) MESURE.champs.forEach(function(m){
+    if (m.foeto && E.mesure.v[m.id] != null) c.push({ type:"mesure", k:m.id, l:m.label, foeto:m.foeto, valeur:E.mesure.v[m.id] }); });
+  return c;
+}
 /* Grille branchée sur FOETO : un signe porte fv (terme tagué « verbatim ») ; son
    libellé et son HPO arbitré viennent de la base, le code exporté est l'id FOETO. */
 function resoudreFV(){
@@ -1665,7 +1686,15 @@ function resoudreFV(){
     else if (!x.fiche) x.horsFiche = true;   // aucun terme de fiche derrière : non sourcé par la biblio
     /* fiche:"[keeling]" : constat sourcé dans la fiche que FOETO ne porte pas (encore) en terme */
   });
-  DIAGS.forEach(function(d){ if (d.fv && FOETOV[d.fv]) d.foeto = [d.fv]; });
+  /* Une association peut porter plusieurs termes maladie (fv:["FOETO:…", …]) : affichés, jamais exportés. */
+  DIAGS.forEach(function(d){
+    var ids = [].concat(d.fv || []).filter(function(i){ return FOETOV[i]; });
+    if (ids.length) d.foeto = ids;
+  });
+  /* Variantes, rétention, stades, champs de mesure portent aussi leur terme (NOR, RET, AXE, MES).
+     Seul le code s'y attache : variantes, rétention, stades et mesures gardent leur libellé. */
+  /* une variante GARDE son libellé : il porte des avertissements (« ne jamais énoncer en négatif ») */
+  VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).forEach(function(x){ if (x.fv && FOETOV[x.fv]) x.foeto = x.fv; });
 }
 
 /* ── Mode présence : rétention en liste, signes en paragraphes ─────────────── */
@@ -1708,7 +1737,21 @@ function variantesDe(g){ return VARIANTES.filter(function(v){ return v.g === g; 
    technique (mag:"technique") ni un signe de polarité normale (bloc:false, ex.
    « tubes collecteurs normaux » : absent y voudrait dire anormal). Ces signes restent
    visibles, paragraphe replié, et se répondent un par un. */
-function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false; }
+/* Un signe qui dépend du terme ne se répond pas en bloc hors de sa fenêtre : terme:[min, max]
+   en SA (une borne peut être null), bornes recopiées du verbatim de la fiche ; terme non saisi
+   = hors fenêtre. seul:true : dépend du terme sans borne écrite, il se répond un par un.
+   Dans les deux cas, présent reste une lésion. */
+function dansTerme(x){
+  if (!x.terme) return true;
+  var sa = num("sa");
+  return sa != null && (x.terme[0] == null || sa >= x.terme[0]) && (x.terme[1] == null || sa <= x.terme[1]);
+}
+/* toujours visible, paragraphe replié : ce que le « Non » en bloc peut ne pas répondre */
+function horsBloc(x){ return !!(x.auto || x.mag === "technique" || x.bloc === false || x.seul || x.terme); }
+function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false && !x.seul && dansTerme(x); }
+function fenetreTxt(t){
+  return t[0] != null && t[1] != null ? "de " + t[0] + " à " + t[1] + " SA" : t[0] != null ? "à partir de " + t[0] + " SA" : "jusqu'à " + t[1] + " SA";
+}
 /* Un signe bloc:false présent (méconium dans la lumière, collecteurs normaux) s'écrit au
    CR mais n'ouvre pas le paragraphe et ne bloque pas son « Non » : ce n'est pas une lésion. */
 function lesionPresente(x){ return E.signes[x.k] === POS && x.bloc !== false; }
@@ -2043,6 +2086,12 @@ function composer(){
     L.push("CODES DES SIGNES PRÉSENTS");
     cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
   }
+  var cl = codesLecture();
+  if (cl.length){
+    L.push("");
+    L.push("CODES DE LA LECTURE");
+    cl.forEach(function(c){ L.push("  " + c.type + " · " + c.l + (c.valeur != null ? " = " + c.valeur : "") + " [" + c.foeto + "]"); });
+  }
 
   var fo = Object.keys(E.foeto);
   if (fo.length){
@@ -2241,6 +2290,7 @@ function collecter(){
     terme_sa: num("sa"),
     grille: JSON.parse(JSON.stringify(E)),
     codes: codesPresents(),
+    codes_lecture: codesLecture(),
     compte_rendu: composer()
   };
 }
@@ -2542,7 +2592,7 @@ async function autotest(){
     clic("grp", iA, "non");
     chk("paragraphe non → signes absents", sA.every(function(x){ return E.signes[x.k] === NEG; }) &&
         etatGroupe(gA) === "non" && crTient(gA + " : non."));
-    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA; })[0];
+    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA && blocable(par(SIGNES, n.signe)); })[0];
     if (lie) chk("paragraphe non → négatif lié énoncé", etatNegatif(lie) === "ok");
     clic("grp", iA, "non");
     chk("second non → non regardé", sA.every(function(x){ return !E.signes[x.k]; }) && etatGroupe(gA) === null);
@@ -2576,6 +2626,18 @@ async function autotest(){
     chk("codes : lisibles (FOETO:/HP:)", SIGNES.every(function(x){
       return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)); }));
   }
+
+  /* Codes de la lecture : une variante vue exporte son terme (NOR), pas une variante non cochée */
+  var vc = VARIANTES.filter(function(v){ return v.foeto; })[0];
+  if (vc){
+    chk("codes lecture : rien sans variante vue", !codesLecture().some(function(c){ return c.k === vc.k; }));
+    clic("var", vc.k);
+    chk("codes lecture : la variante vue exporte son terme", collecter().codes_lecture.some(function(c){ return c.k === vc.k && c.foeto === vc.foeto; }) &&
+        crTient("CODES DE LA LECTURE") && crTient("[" + vc.foeto + "]"));
+    clic("var", vc.k);
+  }
+  chk("codes lecture : lisibles (FOETO:)", VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).every(function(x){
+    return !x.foeto || /^FOETO:/.test(x.foeto); }));
 
   /* Signes et associations */
   var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
@@ -2686,6 +2748,22 @@ async function autotest(){
           E.signes[xF.k] === POS && crTient(gF + " : non") && crTient(xF.l + " — PRÉSENT"));
       clic("grp", iF, "non");
       clic("les", xF.k, POS);
+    }
+    /* Fenêtre de terme : le « Non » en bloc ne répond un signe daté que dans sa fenêtre */
+    var xS = SIGNES.filter(function(x){ return x.terme && !x.auto; })[0];
+    if (xS){
+      var gS = xS.g, iS = groupes().indexOf(gS), t0 = xS.terme[0], t1 = xS.terme[1];
+      var dedans = t0 != null ? t0 : t1, dehors = t0 != null ? t0 - 1 : t1 + 1;
+      signesDe(gS).forEach(function(x){ if (!x.auto) delete E.signes[x.k]; }); delete E.groupes[gS];
+      set("sa", String(dehors));
+      clic("grp", iS, "non");
+      chk("terme : hors fenêtre, le « Non » ne répond pas « " + xS.k + " »", !E.signes[xS.k] && etatGroupe(gS) === "non");
+      clic("grp", iS, "non");
+      set("sa", String(dedans));
+      clic("grp", iS, "non");
+      chk("terme : dans la fenêtre, le « Non » le répond absent", E.signes[xS.k] === NEG);
+      clic("grp", iS, "non");
+      set("sa", "");
     }
     /* Rédaction proposée : la phrase du cadre « Non », celle du signe présent, rien sinon */
     if (REDIGE){

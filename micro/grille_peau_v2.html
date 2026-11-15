@@ -364,11 +364,16 @@ var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
    Fond : ~/Bureau/fiches_lecture/fiche_peau.md (§1 à §9).
    Les divergences entre sources sont PORTÉES dans les champs, jamais arbitrées. */
 
+/* 2.1.0 (2026-11-14) — lot FOETO, propositions relues par Kimi K3.1 Pro et vérifiées par script
+   (verbatim mot pour mot dans la fiche) : 3 fenêtre(s) de terme — le « Non » en bloc ne répond plus
+   un signe daté hors de sa fenêtre (seul : un par un) ; 16 code(s) FOETO existant(s) branché(s)
+   (variantes, rétention, stades, mesures, associations) ; 6 code(s) créé(s) depuis le verbatim de la
+   fiche. Les propositions jugées faibles ou fausses attendent le tri de Rémi. */
 var ORGANE  = "peau";
 var TITRE   = "peau";
 var SOURCE  = "fiche_peau.md";
 var MODULE  = "grille_peau";
-var VERSION = "2.0.0";
+var VERSION = "2.1.0";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var FOETO_DANS_SIGNES = true;
@@ -497,7 +502,7 @@ var RETENTION = [
          "« subepidermal blistering with cell-poor infiltrate » [keeling, ch. 33]. Sur un fœtus macéré, " +
          "un décollement sous-épidermique n'est pas interprétable — et le seul aveu honnête est de " +
          "l'écrire (§ 06)" },
-  { k:"necroseEpidRet", l:"Nécrose épidermique associée à la bulle", b:"—",
+  { k:"necroseEpidRet", fv:"FOETO:PF.PEA-NOR-040", l:"Nécrose épidermique associée à la bulle", b:"—",
     d:"oriente, ne date pas", h:0, q:"mauvais",
     note:"oriente vers la macération plutôt que vers une génodermatose [soffoet, ch. 12] — c'est le " +
          "seul élément de lame qui sépare les deux, et il ne donne aucun délai" },
@@ -508,12 +513,12 @@ var RETENTION = [
     note:"la couche cornée est ANUCLÉÉE : elle ne perd pas de basophilie, donc sa conservation ne dit " +
          "rien de la fraîcheur du tissu. C'est aussi pourquoi l'axe maturation survit ici à la lyse — " +
          "mais ce mécanisme est une INFÉRENCE de la fiche, pas une citation (§ 9-4)" },
-  { k:"decollementPrema", l:"Décollement épidermique d'un grand prématuré", b:"—",
+  { k:"decollementPrema", fv:"FOETO:PF.PEA-NOR-045", l:"Décollement épidermique d'un grand prématuré", b:"—",
     d:"geste, pas rétention", h:0, q:"mauvais",
     note:"« The immature skin of premature babies may be easily sloughed if tangential force is applied " +
          "to the skin during or following delivery » [keeling, ch. 15] — c'est la délivrance, pas la " +
          "rétention" },
-  { k:"moisissures", l:"Moisissures, activité d'insectes", b:"—",
+  { k:"moisissures", fv:"FOETO:PF.PEA-NOR-046", l:"Moisissures, activité d'insectes", b:"—",
     d:"décomposition post-délivrance", h:0, q:"mauvais",
     note:"les moisissures et l'activité d'insectes distinguent la décomposition APRÈS la délivrance de " +
          "la macération intra-utérine [keeling, ch. 15] : elles n'entrent dans aucune borne" }
@@ -596,7 +601,7 @@ var MESURE = {
   defLabel:"région prélevée — sans elle, aucun stade",
   optLabel:"rang du service — aucune borne SA",
   defs:REGIONS, opts:KERAT,
-  champs:[{ id:"cornee", label:"Épaisseur de la couche cornée, peau fine (µm)", min:0, max:200, step:0.1 }]
+  champs:[{ id:"cornee", fv:"FOETO:PF.PEA-NOR-039", label:"Épaisseur de la couche cornée, peau fine (µm)", min:0, max:200, step:0.1 }]
 };
 
 function peauFine(k){ return k === "abdomen" || k === "cuirChevelu" || k === "dos" || k === "thoraxLat"; }
@@ -683,13 +688,13 @@ function verdictMesure(){
 
 /* ── 05 · Variantes normales — chacune dans le cadre dont elle mime un signe ── */
 var VARIANTES = [
-  { k:"spineuseClaire",  g:"Épiderme et kératinisation", l:"Couche spineuse claire, glycogénique, PAS+ (aspect de cellules claires)" },
-  { k:"elastiqueImmat",  g:"Derme — œdème et vaisseaux", l:"Réseau élastique dermique immature ou raréfié à l'orcéine" },
-  { k:"granuleuseAbs",   g:"Épiderme et kératinisation", l:"Absence de couche granuleuse avant la kératinisation de la région" },
-  { k:"peridermeDesq",   g:"Décollement et bulles",      l:"Périderme desquamant en fin de 2ᵉ trimestre" },
-  { k:"melanoSansTransf",g:"Épiderme et kératinisation", l:"Mélanocytes présents sans transfert mélanosomal aux kératinocytes" },
-  { k:"corneeMince",     g:"Épiderme et kératinisation", l:"Couche cornée encore mince au 3ᵉ trimestre" },
-  { k:"pasDeFollicule",  g:"Annexes",                    l:"Absence de follicule pileux en peau épaisse palmoplantaire" },
+  { k:"spineuseClaire",  fv:"FOETO:PF.PEA-NOR-043", g:"Épiderme et kératinisation", l:"Couche spineuse claire, glycogénique, PAS+ (aspect de cellules claires)" },
+  { k:"elastiqueImmat",  fv:"FOETO:PF.PEA-NOR-053", g:"Derme — œdème et vaisseaux", l:"Réseau élastique dermique immature ou raréfié à l'orcéine" },
+  { k:"granuleuseAbs",   fv:"FOETO:PF.PEA-NOR-042", g:"Épiderme et kératinisation", l:"Absence de couche granuleuse avant la kératinisation de la région" },
+  { k:"peridermeDesq",   fv:"FOETO:PF.PEA-NOR-052", g:"Décollement et bulles",      l:"Périderme desquamant en fin de 2ᵉ trimestre" },
+  { k:"melanoSansTransf",fv:"FOETO:PF.PEA-NOR-054", g:"Épiderme et kératinisation", l:"Mélanocytes présents sans transfert mélanosomal aux kératinocytes" },
+  { k:"corneeMince",     fv:"FOETO:PF.PEA-NOR-041", g:"Épiderme et kératinisation", l:"Couche cornée encore mince au 3ᵉ trimestre" },
+  { k:"pasDeFollicule",  fv:"FOETO:PF.PEA-NOR-051", g:"Annexes",                    l:"Absence de follicule pileux en peau épaisse palmoplantaire" },
   { k:"kerato21",        g:"Épiderme et kératinisation", l:"Absence de grains de kératohyaline avant ≈ 21 semaines (ernst, échelle non établie)" },
   { k:"vernix",          g:"Décollement et bulles",      l:"Vernix caseosa — périderme desquamé, sébum et lanugo" },
   { k:"cicatrisation",   g:"Contexte hors lame — macro, anamnèse, bloc",
@@ -722,14 +727,14 @@ var SIGNES = [
     meta:"macroscopie — forme moins sévère d'ARCI" },
   { k:"arlequin", fiche:"[keeling, ch. 33]", g:"Contexte hors lame — macro, anamnèse, bloc", l:"Aspect d'arlequin",
     meta:"macroscopie — forme la plus sévère d'ARCI, ABCA12" },
-  { k:"desquamationLambeaux", fiche:"[soffoet, ch. 18]", g:"Contexte hors lame — macro, anamnèse, bloc", l:"Desquamation cutanée en lambeaux",
+  { k:"desquamationLambeaux", fv:"FOETO:PF.PEA-NOR-048", fiche:"[soffoet, ch. 18]", g:"Contexte hors lame — macro, anamnèse, bloc", l:"Desquamation cutanée en lambeaux",
     meta:"macroscopie" },
-  { k:"colorationBrune", fiche:"[ernst, ch. 37]", g:"Contexte hors lame — macro, anamnèse, bloc", l:"Coloration brune ou ocre de la peau",
+  { k:"colorationBrune", fv:"FOETO:PF.PEA-MAL-120", fiche:"[ernst, ch. 37]", g:"Contexte hors lame — macro, anamnèse, bloc", l:"Coloration brune ou ocre de la peau",
     meta:"macroscopie — signe de rétention" },
   { k:"sillonConstrictif", fv:"FOETO:PF.PEA-MAL-083", g:"Contexte hors lame — macro, anamnèse, bloc", l:"Sillon constrictif circonférentiel" },
-  { k:"amputation", fiche:"[keeling, ch. 33]", g:"Contexte hors lame — macro, anamnèse, bloc", l:"Amputation d'un segment" },
-  { k:"syndactylie", fiche:"[keeling, ch. 33]", g:"Contexte hors lame — macro, anamnèse, bloc", l:"Syndactylie de fusion" },
-  { k:"lambeauDetache", fiche:"[soffoet, ch. 18]", g:"Contexte hors lame — macro, anamnèse, bloc", l:"Lambeau de peau détaché" },
+  { k:"amputation", fv:"FOETO:PF.PEA-MAL-121", fiche:"[keeling, ch. 33]", g:"Contexte hors lame — macro, anamnèse, bloc", l:"Amputation d'un segment" },
+  { k:"syndactylie", fv:"FOETO:PF.PEA-MAL-122", fiche:"[keeling, ch. 33]", g:"Contexte hors lame — macro, anamnèse, bloc", l:"Syndactylie de fusion" },
+  { k:"lambeauDetache", fv:"FOETO:PF.PEA-MAL-123", fiche:"[soffoet, ch. 18]", g:"Contexte hors lame — macro, anamnèse, bloc", l:"Lambeau de peau détaché" },
   { k:"amniocentese", fv:"FOETO:PF.PEA-MAL-068", g:"Contexte hors lame — macro, anamnèse, bloc",
     meta:"hors lame — l'anamnèse tranche, pas la lame" },
   /* déduit de la région déclarée au § 04 (la v1 la faisait saisir deux fois) */
@@ -739,7 +744,7 @@ var SIGNES = [
   /* — Décollement et bulles — le piège majeur de l'organe — */
   { k:"decollementTotal", fiche:"[expérience]", g:"Décollement et bulles", mag:"faible", l:"Épiderme décollé sur toute la longueur du fragment" },
   { k:"bulle", fv:"FOETO:PF.PEA-MAL-069", g:"Décollement et bulles", mag:"faible" },
-  { k:"clivageSousEpid", fiche:"[keeling, ch. 33]", g:"Décollement et bulles", mag:"faible", l:"Clivage SOUS-épidermique" },
+  { k:"clivageSousEpid", fv:"FOETO:PF.PEA-MAL-124", fiche:"[keeling, ch. 33]", g:"Décollement et bulles", mag:"faible", l:"Clivage SOUS-épidermique" },
   { k:"clivageHaut", fv:"FOETO:PF.PEA-MAL-072", g:"Décollement et bulles", mag:"moyen", l:"Décollement épidermique HAUT, intra-épidermique" },
   { k:"infiltratPauvre", fv:"FOETO:PF.PEA-MAL-031", g:"Décollement et bulles", mag:"moyen", l:"Infiltrat pauvre en cellules au niveau du clivage",
     meta:"« subepidermal blistering with cell-poor infiltrate » — commun à TOUS les sous-types d'EB : ce critère ne sépare rien" },
@@ -757,7 +762,7 @@ var SIGNES = [
     meta:"à lire d'abord : elle contrefait l'acanthose et l'avance" },
   { k:"epidermeEpais", fiche:"[expérience]", g:"Épiderme et kératinisation", mag:"faible", l:"Épiderme épais, couches désorganisées",
     meta:"chercher d'abord la coupe tangentielle" },
-  { k:"epidermeMince", fiche:"[soffoet, ch. 12]", g:"Épiderme et kératinisation", mag:"faible", l:"Épiderme mince, non kératinisé au terme déclaré" },
+  { k:"epidermeMince", fv:"FOETO:PF.PEA-MAL-125", fiche:"[soffoet, ch. 12]", g:"Épiderme et kératinisation", mag:"faible", l:"Épiderme mince, non kératinisé au terme déclaré" },
   { k:"acanthose", fv:"FOETO:PF.PEA-MAL-067", g:"Épiderme et kératinisation", mag:"faible" },
   { k:"hyperkeratose", fv:"FOETO:PF.PEA-MAL-076", g:"Épiderme et kératinisation", mag:"faible",
     meta:"descripteur : « There is usually variable hyperkeratosis, focal parakeratosis, hypergranulosis and acanthosis of the epidermis in all forms »" },
@@ -768,11 +773,11 @@ var SIGNES = [
   /* — Annexes — le compte des dysplasies ectodermiques — */
   { k:"annexesAbsentes", fiche:"[expérience]", g:"Annexes", mag:"faible", l:"Aucune annexe sur le fragment",
     meta:"prélèvement trop superficiel avant tout — pas de derme profond" },
-  { k:"annexesReduites", fv:"FOETO:PF.PEA-MAL-061", g:"Annexes", mag:"faible",
+  { k:"annexesReduites", seul:true, fv:"FOETO:PF.PEA-MAL-061", g:"Annexes", mag:"faible",
     meta:"les trois annexes ensemble ; aucune densité normale par terme n'est publiée" },
   { k:"folliculesReduits", fiche:"[keeling, ch. 33]", g:"Annexes", mag:"faible", l:"Follicules pileux réduits en nombre ou en taille" },
-  { k:"eccrinesReduites", fiche:"[keeling, ch. 33]", g:"Annexes", mag:"moyen", l:"Glandes sudorales eccrines réduites en nombre ou en taille" },
-  { k:"sebaceesReduites", fiche:"[keeling, ch. 33]", g:"Annexes", mag:"moyen", l:"Glandes sébacées réduites en nombre ou en taille" },
+  { k:"eccrinesReduites", seul:true, fiche:"[keeling, ch. 33]", g:"Annexes", mag:"moyen", l:"Glandes sudorales eccrines réduites en nombre ou en taille" },
+  { k:"sebaceesReduites", seul:true, fiche:"[keeling, ch. 33]", g:"Annexes", mag:"moyen", l:"Glandes sébacées réduites en nombre ou en taille" },
 
   /* — Derme — œdème et vaisseaux — */
   { k:"oedemeDermoHypo", fv:"FOETO:PF.PEA-MAL-079", g:"Derme — œdème et vaisseaux", mag:"faible" },
@@ -844,7 +849,7 @@ var DIAGS = [
          "[soffoet, ch. 12]. Décrire le niveau, l'infiltrat, l'état de l'épiderme sus-jacent. Un " +
          "négatif viral sur fœtus macéré ne vaut pas exclusion." },
 
-  { k:"decollementHaut", l:"Décollement épidermique haut — impétigo, épidermolyse staphylococcique", fv:"FOETO:PF.PEA-MAL-090",
+  { k:"decollementHaut", l:"Décollement épidermique haut — impétigo, épidermolyse staphylococcique", fv:["FOETO:PF.PEA-MAL-090","FOETO:PF.PEA-MAL-094"],
     cle:"clivageHaut", min:2,
     signes:["clivageHaut","pustules","bulle"],
     stop:" — le niveau du décollement est ce qui sépare cette famille de l'épidermolyse bulleuse " +
@@ -873,7 +878,7 @@ var DIAGS = [
          "dans les malformations vasculaires [keeling, ch. 33]. Si la lésion est multiple, chercher les " +
          "localisations viscérales." },
 
-  { k:"malformationVasculaire", l:"Hémangiome congénital ou malformation vasculaire", fv:"FOETO:PF.PEA-VAS-004",
+  { k:"malformationVasculaire", l:"Hémangiome congénital ou malformation vasculaire", fv:["FOETO:PF.PEA-VAS-004","FOETO:PF.PEA-TUM-001"],
     cle:"glut1Neg", min:2,
     signes:["canauxDysmorphiques","glut1Neg","prolifCapillaire"],
     stop:" — GLUT-1 négatif ne distingue PAS l'hémangiome congénital de la malformation vasculaire : " +
@@ -911,7 +916,7 @@ var DIAGS = [
          "due à la macération pour une génodermatose » [soffoet, ch. 18]. Une bande de peau détachée " +
          "n'est ni une bride ni une génodermatose." },
 
-  { k:"peauTendueGeste", l:"Peau tendue ou rigide — trois présentations macroscopiques, un seul geste", fv:"FOETO:PF.PEA-MAL-087",
+  { k:"peauTendueGeste", l:"Peau tendue ou rigide — trois présentations macroscopiques, un seul geste", fv:["FOETO:PF.PEA-MAL-087","FOETO:PF.PEA-MAL-085","FOETO:PF.PEA-MAL-091"],
     cle:"peauTendue", min:1,
     signes:["peauTendue","bebeCollodion","arlequin"],
     stop:" — ce n'est pas une association histologique : aucune histologie de la dermopathie " +
@@ -1227,8 +1232,9 @@ async function testsOrgane(chk, clic, set, crTient, pause){
   chk("v2 : code FOETO et HPO du terme verbatim",
       codesDe(par(SIGNES, "hyperkeratose"))[0] === "FOETO:PF.PEA-MAL-076" && par(SIGNES, "hyperkeratose").hpo === "HP:0000962");
   chk("v2 : aucun signe hors fiche", SIGNES.every(function(x){ return !x.horsFiche; }));
+  chk("v2.1 : clivage sous-épidermique codé depuis son verbatim (lot)", /^FOETO:/.test(par(SIGNES, "clivageSousEpid").foeto || ""));
   chk("v2 : constat de fiche sans terme porté tel quel",
-      !par(SIGNES, "clivageSousEpid").foeto && par(SIGNES, "clivageSousEpid").fiche === "[keeling, ch. 33]");
+      !par(SIGNES, "bebeCollodion").foeto && par(SIGNES, "bebeCollodion").fiche === "[keeling, ch. 33]");
   chk("v2 : terme maladie sur l'association", par(DIAGS, "ebSuspecte").foeto[0] === "FOETO:PF.PEA-MAL-089");
   chk("v2 : blocs lus en §02", BLOCS_LUS && !$("blocsBloc").hidden);
   propre();
@@ -1243,8 +1249,8 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 }
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
-var FOETO = {"sections":[],"formes":{"FOETO:PF.PEA-NOR-042":["Absence de couche granuleuse (grains de kératohyaline) avant la kératinisation régionale"],"FOETO:PF.PEA-NOR-054":["Absence de transfert mélanosomal aux kératinocytes (peau peu pigmentée)"],"FOETO:PF.PEA-MAL-067":["Acanthose"],"FOETO:PF.PEA-MAL-068":["Amniocentèse dans l'anamnèse"],"FOETO:PF.PEA-MAL-084":["Anasarque (œdème cutané)"],"FOETO:PF.PEA-MAL-086":["Brides amniotiques (disruption)"],"FOETO:PF.PEA-MAL-069":["Bulle"],"FOETO:PF.PEA-NOR-040":["Bulles par macération (nécrose épidermique)"],"FOETO:PF.PEA-MAL-085":["Bébé collodion (ARCI)"],"FOETO:PF.PEA-VAS-001":["Canaux vasculaires dysmorphiques sans prolifération"],"FOETO:PF.PEA-MAL-070":["Clivage au niveau des kératinocytes basaux (IF / ME)"],"FOETO:PF.PEA-MAL-071":["Clivage dans la lamina lucida (IF / ME)"],"FOETO:PF.PEA-MAL-023":["Clivage sous la lamina densa"],"FOETO:PF.PEA-NOR-041":["Couche cornée encore mince, kératinisation non achevée à terme"],"FOETO:PF.PEA-NOR-043":["Couche spineuse claire, glycogénique, PAS+"],"FOETO:PF.PEA-MAL-087":["Dermopathie restrictive"],"FOETO:PF.PEA-NOR-048":["Desquamation cutanée en lambeaux due à la macération"],"FOETO:PF.PEA-MAL-088":["Dysplasie ectodermique (forme anhidrotique)"],"FOETO:PF.PEA-NOR-045":["Décollement cutané mécanique du prématuré vivant (force tangentielle)"],"FOETO:PF.PEA-MAL-031":["Décollement sous-épidermique à infiltrat cellulaire pauvre (épidermolyse bulleuse — toutes formes)"],"FOETO:PF.PEA-MAL-072":["Décollement épidermique haut"],"FOETO:PF.PEA-NOR-044":["Décollement épidermique post-mortem (skin slippage)"],"FOETO:PF.PEA-NOR-046":["Décomposition post-natale (insectes, prédation, moisissures)"],"FOETO:PF.PEA-NOR-047":["Déplacement passif de liquide post-mortem, sans augmentation de quantité"],"FOETO:PF.PEA-MAL-078":["Espaces lymphatiques dilatés cervicaux"],"FOETO:PF.PEA-MAL-091":["Fœtus arlequin (ARCI, ABCA12)"],"FOETO:PF.PEA-MAL-073":["GLUT-1 négatif (IHC)"],"FOETO:PF.PEA-MAL-074":["GLUT-1 positif (IHC)"],"FOETO:PF.PEA-NOR-049":["Gradient régional de kératinisation (céphalo-caudal, dorso-ventral, épaisse > fine, péri-folliculaire)"],"FOETO:PF.PEA-MAL-075":["Hypergranulose"],"FOETO:PF.PEA-MAL-076":["Hyperkératose"],"FOETO:PF.PEA-TUM-001":["Hémangiome congénital"],"FOETO:PF.PEA-TUM-002":["Hémangiome infantile"],"FOETO:PF.PEA-MAL-092":["Ichtyose bulleuse"],"FOETO:PF.PEA-MAL-093":["Ichtyose congénitale"],"FOETO:PF.PEA-MAL-094":["Impétigo bulleux"],"FOETO:PF.PEA-MAL-077":["Inclusions virales (HSV, varicelle) associées aux bulles"],"FOETO:PF.PEA-INF-002":["Infiltrat inflammatoire dermique"],"FOETO:PF.PEA-VAS-004":["Malformation vasculaire cutanée"],"FOETO:PF.PEA-NOR-050":["Nouveau-né vivant immergé : changements identiques à la macération"],"FOETO:PF.PEA-VAS-002":["Nécrose épidermique associée à la bulle"],"FOETO:PF.PEA-MAL-080":["Parakératose focale"],"FOETO:PF.PEA-MAL-081":["Peau tendue (tight skin)"],"FOETO:PF.PEA-NOR-051":["Peau épaisse palmoplantaire, normalement sans follicule pileux"],"FOETO:PF.PEA-VAS-003":["Prolifération capillaire lobulée"],"FOETO:PF.PEA-MAL-082":["Pustules"],"FOETO:PF.PEA-NOR-052":["Périderme desquamant en fin de 2ᵉ trimestre (contribue au vernix caseosa)"],"FOETO:PF.PEA-MAL-061":["Réduction des glandes eccrines, follicules pileux et glandes sébacées (dysplasie ectodermique)"],"FOETO:PF.PEA-NOR-053":["Réseau élastique dermique immature (orcéine)"],"FOETO:PF.PEA-MAL-083":["Sillon constrictif"],"FOETO:PF.PEA-NOR-039":["Épaisseur de la couche cornée, peau fine (µm, coupe perpendiculaire)"],"FOETO:PF.PEA-MAL-089":["Épidermolyse bulleuse héréditaire"],"FOETO:PF.PEA-MAL-090":["Épidermolyse staphylococcique aiguë"],"FOETO:PF.PEA-INF-003":["Éruption virale à HSV (herpès, varicelle)"],"FOETO:PF.PEA-MAL-079":["Œdème dermo-hypodermique"]}};
-var FOETOV = {"FOETO:PF.PEA-INF-003":{"l":"Éruption virale à HSV (herpès, varicelle)","hpo":null},"FOETO:PF.PEA-MAL-093":{"l":"Ichtyose congénitale","hpo":null},"FOETO:PF.PEA-MAL-071":{"l":"Clivage dans la lamina lucida (IF / ME)","hpo":null},"FOETO:PF.PEA-VAS-002":{"l":"Nécrose épidermique associée à la bulle","hpo":null},"FOETO:PF.PEA-MAL-083":{"l":"Sillon constrictif","hpo":null},"FOETO:PF.PEA-MAL-076":{"l":"Hyperkératose","hpo":"HP:0000962"},"FOETO:PF.PEA-MAL-080":{"l":"Parakératose focale","hpo":null},"FOETO:PF.PEA-MAL-088":{"l":"Dysplasie ectodermique (forme anhidrotique)","hpo":"HP:0000968"},"FOETO:PF.PEA-MAL-079":{"l":"Œdème dermo-hypodermique","hpo":null},"FOETO:PF.PEA-INF-002":{"l":"Infiltrat inflammatoire dermique","hpo":null},"FOETO:PF.PEA-MAL-073":{"l":"GLUT-1 négatif (IHC)","hpo":null},"FOETO:PF.PEA-TUM-002":{"l":"Hémangiome infantile","hpo":null},"FOETO:PF.PEA-MAL-089":{"l":"Épidermolyse bulleuse héréditaire","hpo":null},"FOETO:PF.PEA-MAL-069":{"l":"Bulle","hpo":null},"FOETO:PF.PEA-MAL-072":{"l":"Décollement épidermique haut","hpo":null},"FOETO:PF.PEA-MAL-078":{"l":"Espaces lymphatiques dilatés cervicaux","hpo":null},"FOETO:PF.PEA-VAS-001":{"l":"Canaux vasculaires dysmorphiques sans prolifération","hpo":null},"FOETO:PF.PEA-MAL-082":{"l":"Pustules","hpo":"HP:0200039"},"FOETO:PF.PEA-MAL-068":{"l":"Amniocentèse dans l'anamnèse","hpo":null},"FOETO:PF.PEA-MAL-087":{"l":"Dermopathie restrictive","hpo":null},"FOETO:PF.PEA-MAL-023":{"l":"Clivage sous la lamina densa","hpo":null},"FOETO:PF.PEA-MAL-077":{"l":"Inclusions virales (HSV, varicelle) associées aux bulles","hpo":null},"FOETO:PF.PEA-MAL-081":{"l":"Peau tendue (tight skin)","hpo":null},"FOETO:PF.PEA-MAL-084":{"l":"Anasarque (œdème cutané)","hpo":"HP:0012050"},"FOETO:PF.PEA-MAL-061":{"l":"Réduction des glandes eccrines, follicules pileux et glandes sébacées (dysplasie ectodermique)","hpo":null},"FOETO:PF.PEA-MAL-031":{"l":"Décollement sous-épidermique à infiltrat cellulaire pauvre (épidermolyse bulleuse — toutes formes)","hpo":null},"FOETO:PF.PEA-MAL-070":{"l":"Clivage au niveau des kératinocytes basaux (IF / ME)","hpo":null},"FOETO:PF.PEA-MAL-067":{"l":"Acanthose","hpo":"HP:0025092"},"FOETO:PF.PEA-MAL-074":{"l":"GLUT-1 positif (IHC)","hpo":null},"FOETO:PF.PEA-MAL-086":{"l":"Brides amniotiques (disruption)","hpo":"HP:0009775"},"FOETO:PF.PEA-MAL-075":{"l":"Hypergranulose","hpo":"HP:0025114"},"FOETO:PF.PEA-VAS-003":{"l":"Prolifération capillaire lobulée","hpo":null},"FOETO:PF.PEA-VAS-004":{"l":"Malformation vasculaire cutanée","hpo":null},"FOETO:PF.PEA-MAL-090":{"l":"Épidermolyse staphylococcique aiguë","hpo":null}};
+var FOETO = {"sections":[],"formes":{"FOETO:PF.PEA-NOR-042":["Absence de couche granuleuse (grains de kératohyaline) avant la kératinisation régionale"],"FOETO:PF.PEA-NOR-054":["Absence de transfert mélanosomal aux kératinocytes (peau peu pigmentée)"],"FOETO:PF.PEA-MAL-067":["Acanthose"],"FOETO:PF.PEA-MAL-068":["Amniocentèse dans l'anamnèse"],"FOETO:PF.PEA-MAL-121":["Amputation d'un segment"],"FOETO:PF.PEA-MAL-084":["Anasarque (œdème cutané)"],"FOETO:PF.PEA-MAL-086":["Brides amniotiques (disruption)"],"FOETO:PF.PEA-MAL-069":["Bulle"],"FOETO:PF.PEA-NOR-040":["Bulles par macération (nécrose épidermique)"],"FOETO:PF.PEA-MAL-085":["Bébé collodion (ARCI)"],"FOETO:PF.PEA-VAS-001":["Canaux vasculaires dysmorphiques sans prolifération"],"FOETO:PF.PEA-MAL-124":["Clivage SOUS-épidermique"],"FOETO:PF.PEA-MAL-070":["Clivage au niveau des kératinocytes basaux (IF / ME)"],"FOETO:PF.PEA-MAL-071":["Clivage dans la lamina lucida (IF / ME)"],"FOETO:PF.PEA-MAL-023":["Clivage sous la lamina densa"],"FOETO:PF.PEA-MAL-120":["Coloration brune ou ocre de la peau"],"FOETO:PF.PEA-NOR-041":["Couche cornée encore mince, kératinisation non achevée à terme"],"FOETO:PF.PEA-NOR-043":["Couche spineuse claire, glycogénique, PAS+"],"FOETO:PF.PEA-MAL-087":["Dermopathie restrictive"],"FOETO:PF.PEA-NOR-048":["Desquamation cutanée en lambeaux due à la macération"],"FOETO:PF.PEA-MAL-088":["Dysplasie ectodermique (forme anhidrotique)"],"FOETO:PF.PEA-NOR-045":["Décollement cutané mécanique du prématuré vivant (force tangentielle)"],"FOETO:PF.PEA-MAL-031":["Décollement sous-épidermique à infiltrat cellulaire pauvre (épidermolyse bulleuse — toutes formes)"],"FOETO:PF.PEA-MAL-072":["Décollement épidermique haut"],"FOETO:PF.PEA-NOR-044":["Décollement épidermique post-mortem (skin slippage)"],"FOETO:PF.PEA-NOR-046":["Décomposition post-natale (insectes, prédation, moisissures)"],"FOETO:PF.PEA-NOR-047":["Déplacement passif de liquide post-mortem, sans augmentation de quantité"],"FOETO:PF.PEA-MAL-078":["Espaces lymphatiques dilatés cervicaux"],"FOETO:PF.PEA-MAL-091":["Fœtus arlequin (ARCI, ABCA12)"],"FOETO:PF.PEA-MAL-073":["GLUT-1 négatif (IHC)"],"FOETO:PF.PEA-MAL-074":["GLUT-1 positif (IHC)"],"FOETO:PF.PEA-NOR-049":["Gradient régional de kératinisation (céphalo-caudal, dorso-ventral, épaisse > fine, péri-folliculaire)"],"FOETO:PF.PEA-MAL-075":["Hypergranulose"],"FOETO:PF.PEA-MAL-076":["Hyperkératose"],"FOETO:PF.PEA-TUM-001":["Hémangiome congénital"],"FOETO:PF.PEA-TUM-002":["Hémangiome infantile"],"FOETO:PF.PEA-MAL-092":["Ichtyose bulleuse"],"FOETO:PF.PEA-MAL-093":["Ichtyose congénitale"],"FOETO:PF.PEA-MAL-094":["Impétigo bulleux"],"FOETO:PF.PEA-MAL-077":["Inclusions virales (HSV, varicelle) associées aux bulles"],"FOETO:PF.PEA-INF-002":["Infiltrat inflammatoire dermique"],"FOETO:PF.PEA-MAL-123":["Lambeau de peau détaché"],"FOETO:PF.PEA-VAS-004":["Malformation vasculaire cutanée"],"FOETO:PF.PEA-NOR-050":["Nouveau-né vivant immergé : changements identiques à la macération"],"FOETO:PF.PEA-VAS-002":["Nécrose épidermique associée à la bulle"],"FOETO:PF.PEA-MAL-080":["Parakératose focale"],"FOETO:PF.PEA-MAL-081":["Peau tendue (tight skin)"],"FOETO:PF.PEA-NOR-051":["Peau épaisse palmoplantaire, normalement sans follicule pileux"],"FOETO:PF.PEA-VAS-003":["Prolifération capillaire lobulée"],"FOETO:PF.PEA-MAL-082":["Pustules"],"FOETO:PF.PEA-NOR-052":["Périderme desquamant en fin de 2ᵉ trimestre (contribue au vernix caseosa)"],"FOETO:PF.PEA-MAL-061":["Réduction des glandes eccrines, follicules pileux et glandes sébacées (dysplasie ectodermique)"],"FOETO:PF.PEA-NOR-053":["Réseau élastique dermique immature (orcéine)"],"FOETO:PF.PEA-MAL-083":["Sillon constrictif"],"FOETO:PF.PEA-MAL-122":["Syndactylie de fusion"],"FOETO:PF.PEA-NOR-039":["Épaisseur de la couche cornée, peau fine (µm, coupe perpendiculaire)"],"FOETO:PF.PEA-MAL-125":["Épiderme mince, non kératinisé au terme déclaré"],"FOETO:PF.PEA-MAL-089":["Épidermolyse bulleuse héréditaire"],"FOETO:PF.PEA-MAL-090":["Épidermolyse staphylococcique aiguë"],"FOETO:PF.PEA-INF-003":["Éruption virale à HSV (herpès, varicelle)"],"FOETO:PF.PEA-MAL-079":["Œdème dermo-hypodermique"]}};
+var FOETOV = {"FOETO:PF.PEA-TUM-001":{"l":"Hémangiome congénital","hpo":null},"FOETO:PF.PEA-MAL-072":{"l":"Décollement épidermique haut","hpo":null},"FOETO:PF.PEA-MAL-080":{"l":"Parakératose focale","hpo":null},"FOETO:PF.PEA-INF-003":{"l":"Éruption virale à HSV (herpès, varicelle)","hpo":null},"FOETO:PF.PEA-NOR-040":{"l":"Bulles par macération (nécrose épidermique)","hpo":null},"FOETO:PF.PEA-NOR-039":{"l":"Épaisseur de la couche cornée, peau fine (µm, coupe perpendiculaire)","hpo":null},"FOETO:PF.PEA-MAL-031":{"l":"Décollement sous-épidermique à infiltrat cellulaire pauvre (épidermolyse bulleuse — toutes formes)","hpo":null},"FOETO:PF.PEA-MAL-079":{"l":"Œdème dermo-hypodermique","hpo":null},"FOETO:PF.PEA-NOR-051":{"l":"Peau épaisse palmoplantaire, normalement sans follicule pileux","hpo":null},"FOETO:PF.PEA-NOR-042":{"l":"Absence de couche granuleuse (grains de kératohyaline) avant la kératinisation régionale","hpo":null},"FOETO:PF.PEA-NOR-053":{"l":"Réseau élastique dermique immature (orcéine)","hpo":null},"FOETO:PF.PEA-NOR-054":{"l":"Absence de transfert mélanosomal aux kératinocytes (peau peu pigmentée)","hpo":null},"FOETO:PF.PEA-MAL-123":{"l":"Lambeau de peau détaché","hpo":null},"FOETO:PF.PEA-MAL-023":{"l":"Clivage sous la lamina densa","hpo":null},"FOETO:PF.PEA-MAL-124":{"l":"Clivage SOUS-épidermique","hpo":null},"FOETO:PF.PEA-MAL-070":{"l":"Clivage au niveau des kératinocytes basaux (IF / ME)","hpo":null},"FOETO:PF.PEA-VAS-003":{"l":"Prolifération capillaire lobulée","hpo":null},"FOETO:PF.PEA-MAL-087":{"l":"Dermopathie restrictive","hpo":null},"FOETO:PF.PEA-MAL-088":{"l":"Dysplasie ectodermique (forme anhidrotique)","hpo":"HP:0000968"},"FOETO:PF.PEA-MAL-083":{"l":"Sillon constrictif","hpo":null},"FOETO:PF.PEA-MAL-085":{"l":"Bébé collodion (ARCI)","hpo":null},"FOETO:PF.PEA-MAL-091":{"l":"Fœtus arlequin (ARCI, ABCA12)","hpo":null},"FOETO:PF.PEA-MAL-122":{"l":"Syndactylie de fusion","hpo":null},"FOETO:PF.PEA-NOR-041":{"l":"Couche cornée encore mince, kératinisation non achevée à terme","hpo":null},"FOETO:PF.PEA-MAL-094":{"l":"Impétigo bulleux","hpo":null},"FOETO:PF.PEA-VAS-002":{"l":"Nécrose épidermique associée à la bulle","hpo":null},"FOETO:PF.PEA-MAL-073":{"l":"GLUT-1 négatif (IHC)","hpo":null},"FOETO:PF.PEA-MAL-077":{"l":"Inclusions virales (HSV, varicelle) associées aux bulles","hpo":null},"FOETO:PF.PEA-MAL-084":{"l":"Anasarque (œdème cutané)","hpo":"HP:0012050"},"FOETO:PF.PEA-MAL-090":{"l":"Épidermolyse staphylococcique aiguë","hpo":null},"FOETO:PF.PEA-MAL-082":{"l":"Pustules","hpo":"HP:0200039"},"FOETO:PF.PEA-MAL-093":{"l":"Ichtyose congénitale","hpo":null},"FOETO:PF.PEA-MAL-076":{"l":"Hyperkératose","hpo":"HP:0000962"},"FOETO:PF.PEA-INF-002":{"l":"Infiltrat inflammatoire dermique","hpo":null},"FOETO:PF.PEA-NOR-043":{"l":"Couche spineuse claire, glycogénique, PAS+","hpo":null},"FOETO:PF.PEA-MAL-125":{"l":"Épiderme mince, non kératinisé au terme déclaré","hpo":null},"FOETO:PF.PEA-MAL-071":{"l":"Clivage dans la lamina lucida (IF / ME)","hpo":null},"FOETO:PF.PEA-MAL-078":{"l":"Espaces lymphatiques dilatés cervicaux","hpo":null},"FOETO:PF.PEA-MAL-074":{"l":"GLUT-1 positif (IHC)","hpo":null},"FOETO:PF.PEA-MAL-067":{"l":"Acanthose","hpo":"HP:0025092"},"FOETO:PF.PEA-VAS-001":{"l":"Canaux vasculaires dysmorphiques sans prolifération","hpo":null},"FOETO:PF.PEA-MAL-086":{"l":"Brides amniotiques (disruption)","hpo":"HP:0009775"},"FOETO:PF.PEA-MAL-121":{"l":"Amputation d'un segment","hpo":null},"FOETO:PF.PEA-NOR-048":{"l":"Desquamation cutanée en lambeaux due à la macération","hpo":null},"FOETO:PF.PEA-MAL-068":{"l":"Amniocentèse dans l'anamnèse","hpo":null},"FOETO:PF.PEA-NOR-052":{"l":"Périderme desquamant en fin de 2ᵉ trimestre (contribue au vernix caseosa)","hpo":null},"FOETO:PF.PEA-MAL-069":{"l":"Bulle","hpo":null},"FOETO:PF.PEA-NOR-045":{"l":"Décollement cutané mécanique du prématuré vivant (force tangentielle)","hpo":null},"FOETO:PF.PEA-MAL-081":{"l":"Peau tendue (tight skin)","hpo":null},"FOETO:PF.PEA-MAL-075":{"l":"Hypergranulose","hpo":"HP:0025114"},"FOETO:PF.PEA-MAL-061":{"l":"Réduction des glandes eccrines, follicules pileux et glandes sébacées (dysplasie ectodermique)","hpo":null},"FOETO:PF.PEA-TUM-002":{"l":"Hémangiome infantile","hpo":null},"FOETO:PF.PEA-VAS-004":{"l":"Malformation vasculaire cutanée","hpo":null},"FOETO:PF.PEA-MAL-089":{"l":"Épidermolyse bulleuse héréditaire","hpo":null},"FOETO:PF.PEA-NOR-046":{"l":"Décomposition post-natale (insectes, prédation, moisissures)","hpo":null},"FOETO:PF.PEA-MAL-120":{"l":"Coloration brune ou ocre de la peau","hpo":null}};
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
@@ -1434,8 +1440,8 @@ function batir(){
             return '<button type="button" class="chip" data-act="etendue" data-k="' + i + '" data-v="' + e + '">' +
                    '<span class="k">étendue</span>' + e + '</button>';
           }).join("") + '</div>') +
-        sig.filter(blocable).map(ligneSigne).join("") + '</div>' +
-        sig.filter(function(x){ return !blocable(x); }).map(ligneSigne).join("") + '</div>';
+        sig.filter(function(x){ return !horsBloc(x); }).map(ligneSigne).join("") + '</div>' +
+        sig.filter(horsBloc).map(ligneSigne).join("") + '</div>';
     });
     $("signes").innerHTML = html.signes;
     $("contexte").innerHTML = html.contexte;
@@ -1517,8 +1523,11 @@ function ligneSigne(x){
       (x.horsFiche ? '<span class="meta">hors fiche — non sourcé par la biblio</span>' : "") +
       (x.fiche && !x.foeto ? '<span class="meta">dans la fiche ' + esc(x.fiche) + ', sans terme FOETO</span>' : "") +
       (oblig ? '<span class="meta">négatif à énoncer : répondre présent ou absent</span>' : "") +
-      (PRESENCE && !blocable(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
-        : "hors du « Non » en bloc : " + (x.mag === "technique" ? "se répond après la technique" : "polarité normale, à répondre seul")) +
+      (PRESENCE && horsBloc(x) ? '<span class="meta">' + (x.auto ? "déduit de la mesure — ne se clique pas"
+        : x.mag === "technique" ? "hors du « Non » en bloc : se répond après la technique"
+        : x.bloc === false ? "hors du « Non » en bloc : polarité normale, à répondre seul"
+        : x.seul ? "hors du « Non » en bloc : dépend du terme, à répondre seul"
+        : "« Non » en bloc seulement " + fenetreTxt(x.terme) + " — hors de là, à répondre seul") +
         '</span>' : "") +
       '</div>' +
       (x.auto ? '<span class="chip" data-auto="' + x.k + '" style="cursor:default"></span>' :
@@ -1540,6 +1549,8 @@ function foetoAjouter(id){
   /* Un terme déjà porté par un signe pose le signe : un seul endroit par constat. */
   var sg = FUSION && SIGNES.filter(function(x){ return x.foeto === id; })[0];
   if (sg){ E.signes[sg.k] = POS; peindre(); enregistrer(); return; }
+  var vr = FUSION && VARIANTES.filter(function(v){ return v.foeto === id; })[0];
+  if (vr){ E.variantes[vr.k] = true; peindre(); enregistrer(); return; }
   if (!document.querySelector('#foeto [data-act="foeto"][data-k="' + id + '"]')){
     var box = $("foeto").querySelector(".chips");
     if (!box){ $("foeto").innerHTML = '<div class="chips"></div>'; box = $("foeto").querySelector(".chips"); }
@@ -1591,6 +1602,17 @@ function codesPresents(){
   return SIGNES.filter(function(x){ return E.signes[x.k] === POS && codesDe(x).length; })
                .map(function(x){ return { k:x.k, l:x.l, foeto:x.foeto || null, hpo:x.hpo || null }; });
 }
+/* Codes du reste de la lecture : variante vue, critère de rétention présent, stade retenu,
+   mesure saisie (avec sa valeur). Exportés à part (codes_lecture), champ additif. */
+function codesLecture(){
+  var c = [];
+  VARIANTES.forEach(function(v){ if (v.foeto && E.variantes[v.k]) c.push({ type:"variante", k:v.k, l:v.l, foeto:v.foeto }); });
+  RETENTION.forEach(function(r){ if (r.foeto && E.retention[r.k] === "present") c.push({ type:"rétention", k:r.k, l:r.l, foeto:r.foeto }); });
+  STADES.forEach(function(s){ if (s.foeto && E.stade === s.k) c.push({ type:"stade", k:s.k, l:s.l, foeto:s.foeto }); });
+  if (MESURE) MESURE.champs.forEach(function(m){
+    if (m.foeto && E.mesure.v[m.id] != null) c.push({ type:"mesure", k:m.id, l:m.label, foeto:m.foeto, valeur:E.mesure.v[m.id] }); });
+  return c;
+}
 /* Grille branchée sur FOETO : un signe porte fv (terme tagué « verbatim ») ; son
    libellé et son HPO arbitré viennent de la base, le code exporté est l'id FOETO. */
 function resoudreFV(){
@@ -1601,7 +1623,15 @@ function resoudreFV(){
     else if (!x.fiche) x.horsFiche = true;   // aucun terme de fiche derrière : non sourcé par la biblio
     /* fiche:"[keeling]" : constat sourcé dans la fiche que FOETO ne porte pas (encore) en terme */
   });
-  DIAGS.forEach(function(d){ if (d.fv && FOETOV[d.fv]) d.foeto = [d.fv]; });
+  /* Une association peut porter plusieurs termes maladie (fv:["FOETO:…", …]) : affichés, jamais exportés. */
+  DIAGS.forEach(function(d){
+    var ids = [].concat(d.fv || []).filter(function(i){ return FOETOV[i]; });
+    if (ids.length) d.foeto = ids;
+  });
+  /* Variantes, rétention, stades, champs de mesure portent aussi leur terme (NOR, RET, AXE, MES).
+     Seul le code s'y attache : variantes, rétention, stades et mesures gardent leur libellé. */
+  /* une variante GARDE son libellé : il porte des avertissements (« ne jamais énoncer en négatif ») */
+  VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).forEach(function(x){ if (x.fv && FOETOV[x.fv]) x.foeto = x.fv; });
 }
 
 /* ── Mode présence : rétention en liste, signes en paragraphes ─────────────── */
@@ -1644,7 +1674,21 @@ function variantesDe(g){ return VARIANTES.filter(function(v){ return v.g === g; 
    technique (mag:"technique") ni un signe de polarité normale (bloc:false, ex.
    « tubes collecteurs normaux » : absent y voudrait dire anormal). Ces signes restent
    visibles, paragraphe replié, et se répondent un par un. */
-function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false; }
+/* Un signe qui dépend du terme ne se répond pas en bloc hors de sa fenêtre : terme:[min, max]
+   en SA (une borne peut être null), bornes recopiées du verbatim de la fiche ; terme non saisi
+   = hors fenêtre. seul:true : dépend du terme sans borne écrite, il se répond un par un.
+   Dans les deux cas, présent reste une lésion. */
+function dansTerme(x){
+  if (!x.terme) return true;
+  var sa = num("sa");
+  return sa != null && (x.terme[0] == null || sa >= x.terme[0]) && (x.terme[1] == null || sa <= x.terme[1]);
+}
+/* toujours visible, paragraphe replié : ce que le « Non » en bloc peut ne pas répondre */
+function horsBloc(x){ return !!(x.auto || x.mag === "technique" || x.bloc === false || x.seul || x.terme); }
+function blocable(x){ return !x.auto && x.mag !== "technique" && x.bloc !== false && !x.seul && dansTerme(x); }
+function fenetreTxt(t){
+  return t[0] != null && t[1] != null ? "de " + t[0] + " à " + t[1] + " SA" : t[0] != null ? "à partir de " + t[0] + " SA" : "jusqu'à " + t[1] + " SA";
+}
 /* Un signe bloc:false présent (méconium dans la lumière, collecteurs normaux) s'écrit au
    CR mais n'ouvre pas le paragraphe et ne bloque pas son « Non » : ce n'est pas une lésion. */
 function lesionPresente(x){ return E.signes[x.k] === POS && x.bloc !== false; }
@@ -1979,6 +2023,12 @@ function composer(){
     L.push("CODES DES SIGNES PRÉSENTS");
     cp.forEach(function(c){ L.push("  " + c.l + " [" + [c.foeto, c.hpo].filter(Boolean).join(" ") + "]"); });
   }
+  var cl = codesLecture();
+  if (cl.length){
+    L.push("");
+    L.push("CODES DE LA LECTURE");
+    cl.forEach(function(c){ L.push("  " + c.type + " · " + c.l + (c.valeur != null ? " = " + c.valeur : "") + " [" + c.foeto + "]"); });
+  }
 
   var fo = Object.keys(E.foeto);
   if (fo.length){
@@ -2177,6 +2227,7 @@ function collecter(){
     terme_sa: num("sa"),
     grille: JSON.parse(JSON.stringify(E)),
     codes: codesPresents(),
+    codes_lecture: codesLecture(),
     compte_rendu: composer()
   };
 }
@@ -2478,7 +2529,7 @@ async function autotest(){
     clic("grp", iA, "non");
     chk("paragraphe non → signes absents", sA.every(function(x){ return E.signes[x.k] === NEG; }) &&
         etatGroupe(gA) === "non" && crTient(gA + " : non."));
-    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA; })[0];
+    var lie = NEGATIFS.filter(function(n){ return n.signe && par(SIGNES, n.signe).g === gA && blocable(par(SIGNES, n.signe)); })[0];
     if (lie) chk("paragraphe non → négatif lié énoncé", etatNegatif(lie) === "ok");
     clic("grp", iA, "non");
     chk("second non → non regardé", sA.every(function(x){ return !E.signes[x.k]; }) && etatGroupe(gA) === null);
@@ -2512,6 +2563,18 @@ async function autotest(){
     chk("codes : lisibles (FOETO:/HP:)", SIGNES.every(function(x){
       return (!x.foeto || /^FOETO:/.test(x.foeto)) && (!x.hpo || /^HP:\d{7}$/.test(x.hpo)); }));
   }
+
+  /* Codes de la lecture : une variante vue exporte son terme (NOR), pas une variante non cochée */
+  var vc = VARIANTES.filter(function(v){ return v.foeto; })[0];
+  if (vc){
+    chk("codes lecture : rien sans variante vue", !codesLecture().some(function(c){ return c.k === vc.k; }));
+    clic("var", vc.k);
+    chk("codes lecture : la variante vue exporte son terme", collecter().codes_lecture.some(function(c){ return c.k === vc.k && c.foeto === vc.foeto; }) &&
+        crTient("CODES DE LA LECTURE") && crTient("[" + vc.foeto + "]"));
+    clic("var", vc.k);
+  }
+  chk("codes lecture : lisibles (FOETO:)", VARIANTES.concat(RETENTION, STADES, MESURE ? MESURE.champs : []).every(function(x){
+    return !x.foeto || /^FOETO:/.test(x.foeto); }));
 
   /* Signes et associations */
   var d0 = DIAGS[0], l0 = par(SIGNES, d0.signes[0]);
@@ -2622,6 +2685,22 @@ async function autotest(){
           E.signes[xF.k] === POS && crTient(gF + " : non") && crTient(xF.l + " — PRÉSENT"));
       clic("grp", iF, "non");
       clic("les", xF.k, POS);
+    }
+    /* Fenêtre de terme : le « Non » en bloc ne répond un signe daté que dans sa fenêtre */
+    var xS = SIGNES.filter(function(x){ return x.terme && !x.auto; })[0];
+    if (xS){
+      var gS = xS.g, iS = groupes().indexOf(gS), t0 = xS.terme[0], t1 = xS.terme[1];
+      var dedans = t0 != null ? t0 : t1, dehors = t0 != null ? t0 - 1 : t1 + 1;
+      signesDe(gS).forEach(function(x){ if (!x.auto) delete E.signes[x.k]; }); delete E.groupes[gS];
+      set("sa", String(dehors));
+      clic("grp", iS, "non");
+      chk("terme : hors fenêtre, le « Non » ne répond pas « " + xS.k + " »", !E.signes[xS.k] && etatGroupe(gS) === "non");
+      clic("grp", iS, "non");
+      set("sa", String(dedans));
+      clic("grp", iS, "non");
+      chk("terme : dans la fenêtre, le « Non » le répond absent", E.signes[xS.k] === NEG);
+      clic("grp", iS, "non");
+      set("sa", "");
     }
     /* Rédaction proposée : la phrase du cadre « Non », celle du signe présent, rien sinon */
     if (REDIGE){
