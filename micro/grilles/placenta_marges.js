@@ -25,11 +25,15 @@
 /* 1.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
    fiche et vérifiées par script : 0 fenêtre(s) de terme, 2 code(s) créé(s), 1 branché(s) sur un
    code existant ; 0 proposition(s) rejetée(s) (le signe garde son comportement). */
+/* 1.1.2 (2026-11-16) — confrontation aux termes FOETO tagués verbatim que la grille ne portait pas :
+   codes posés sur des signes et variantes existants, variantes et signes nouveaux, codes
+   interprétatifs sur les associations ; codes NOR qui décrivent une lésion renumérotés. Les
+   synonymes et codes secondaires attendent la passe de fusion FOETO. */
 var ORGANE  = "placenta_marges";
 var TITRE   = "placenta — marges";
 var SOURCE  = "fiche_placenta.md";
 var MODULE  = "grille_placenta_marges";
-var VERSION = "1.1.1";
+var VERSION = "1.1.2";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var PAIR    = false;
@@ -59,7 +63,7 @@ var MESURE    = null;
 
 /* ── Variantes — chacune dans le cadre dont elle mime un signe ─────────────── */
 var VARIANTES = [
-  { k:"circummargine", g:"Bord et insertion des membranes",
+  { k:"circummargine", fv:"FOETO:PP.PLA-MAL-030", g:"Bord et insertion des membranes",
     l:"Insertion circummarginée (sans signification selon Fox et Sen ; keeling sépare le circumvallé total)" },
   { k:"fibrineMarge", g:"Parenchyme marginal",
     l:"Fibrine périvillositaire < 10 %, autour des souches, en sous-chorial et au bord" }
@@ -77,7 +81,7 @@ var CADRES = [
 /* ── Signes — des constats, jamais un nom de maladie ──────────────────────── */
 var SIGNES = [
   /* — Bord et insertion des membranes — */
-  { k:"hemorragieMarginale", g:"Bord et insertion des membranes", mag:"faible",
+  { k:"hemorragieMarginale", fv:"FOETO:PP.PLA-VAS-014", g:"Bord et insertion des membranes", mag:"faible",
     l:"Hémorragie marginale ancienne, hématome marginal",
     cr:"On note une hémorragie marginale ancienne (hématome marginal)" },
   { k:"caduqueCapsulaire", g:"Bord et insertion des membranes", mag:"faible",
@@ -101,7 +105,7 @@ var SIGNES = [
 
 /* ── Associations — affichées, jamais cochées ─────────────────────────────── */
 var DIAGS = [
-  { k:"hemorragieChronique", l:"Hémorragie marginale chronique — circumvallé histologique", cle:"hemosiderineMarge", min:1,
+  { k:"hemorragieChronique", fv:"FOETO:PP.PLA-MAL-031", l:"Hémorragie marginale chronique — circumvallé histologique", cle:"hemosiderineMarge", min:1,
     signes:["hemorragieMarginale","hemosiderineMarge","caduqueCapsulaire"],
     stop:" — le mot circumvallé n'est pas employé uniformément, d'où une incidence rapportée de 1 à 7 % " +
          "[benirschke, ch. 15]. keeling sépare le circumvallé total, associé au petit poids de naissance, du " +
@@ -164,5 +168,5 @@ async function testsOrgane(chk, clic, set, crTient, pause){
 
   chk("aucun bouton ne porte un diagnostic",
       DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
-  chk("FOETO 1.1.1 : 2 signes codés depuis le verbatim (après le tri)", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 2);
+  chk("FOETO 1.1.2 : 3 signe(s) codé(s) depuis le verbatim (après la confrontation)", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 3);
 }

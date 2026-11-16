@@ -34,11 +34,15 @@
 /* (même version) — reprise sur consignes de Rémi : un signe descriptif porte un terme descriptif,
    la gradation ou le diagnostic se déduisent et leur code passe sur l'association ; un code NOR décrit
    le normal (codes mal typés renumérotés) ; pancréas absent et réduit séparés. */
+/* 1.1.2 (2026-11-16) — confrontation aux termes FOETO tagués verbatim que la grille ne portait pas :
+   codes posés sur des signes et variantes existants, variantes et signes nouveaux, codes
+   interprétatifs sur les associations ; codes NOR qui décrivent une lésion renumérotés. Les
+   synonymes et codes secondaires attendent la passe de fusion FOETO. */
 var ORGANE  = "placenta_cordon";
 var TITRE   = "placenta — cordon ombilical";
 var SOURCE  = "fiche_placenta.md";
 var MODULE  = "grille_placenta_cordon";
-var VERSION = "1.1.1";
+var VERSION = "1.1.2";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var PAIR    = false;
@@ -75,7 +79,9 @@ var VARIANTES = [
   { k:"whartonNecrose", g:"Gelée de Wharton", l:"Nécrose de la gelée de Wharton (rétention ≥ 48 h, mauvais prédicteur)" },
   { k:"mediaPycnotique", g:"Inflammation — réponse fœtale",
     l:"Noyaux pycnotiques et plissés de la média ombilicale (mort fœtale, « mimicking neutrophils »)" },
-  { k:"cordonVascNecrose", g:"Méconium", l:"Nécrose vasculaire du cordon (rétention ≥ 7 j)" }
+  { k:"cordonVascNecrose", g:"Méconium", l:"Nécrose vasculaire du cordon (rétention ≥ 7 j)" },
+  { k:"lameElastique", fv:"FOETO:PP.PLA-NOR-188", g:"Vaisseaux ombilicaux", l:"Artères ombilicales sans lame élastique interne bien formée, veine à lame élastique interne (repère artère / veine)" },
+  { k:"metaplasieCordon", fv:"FOETO:PP.PLA-NOR-159", g:"Gelée de Wharton", l:"Métaplasie malpighienne de l'épithélium de revêtement du cordon, fréquente près de l'ombilic" }
 ];
 
 /* ── Cadres, dans l'ordre de lecture d'une coupe de cordon ───────────────────
@@ -126,12 +132,15 @@ var SIGNES = [
     l:"Gelée de Wharton condensée en liseré, ± microcalcifications diffuses (cordon grêle)",
     meta:"diamètre < 8 mm ; biaisé par la rétention",
     cr:"La gelée de Wharton est condensée en liseré (cordon grêle)" },
-  { k:"oedemeCordon", g:"Gelée de Wharton", mag:"faible", l:"Œdème de la gelée, cordon épais", meta:"diabète maternel, hydrops",
+  { k:"oedemeCordon", fv:"FOETO:PP.PLA-DYS-003", g:"Gelée de Wharton", mag:"faible", l:"Œdème de la gelée, cordon épais", meta:"diabète maternel, hydrops",
     cr:"La gelée de Wharton est œdémateuse (cordon épais)" },
   { k:"hematomeCordon", g:"Gelée de Wharton", mag:"moyen",
     l:"Hématome funiculaire avec organisation, lignes de Zahn ou polynucléaires",
     meta:"sans les trois : artefact [ernst, ch. 36]",
     cr:"On note un hématome funiculaire avec organisation, lignes de Zahn ou polynucléaires" },
+  { k:"microcalcifWharton", fv:"FOETO:PP.PLA-MAL-007", g:"Gelée de Wharton", mag:"moyen", l:"Microcalcifications diffuses de la gelée de Wharton",
+    meta:"souvent sur une gelée condensée en liseré (cordon grêle) ; se coche seule",
+    cr:"On note des microcalcifications diffuses de la gelée de Wharton" },
 
   /* — Inflammation — réponse fœtale — */
   { k:"phlebiteOmb", fv:"FOETO:PP.PLA-INF-065", g:"Inflammation — réponse fœtale", mag:"moyen",
@@ -161,7 +170,7 @@ var SIGNES = [
 
 /* ── Associations — affichées, jamais cochées ─────────────────────────────── */
 var DIAGS = [
-  { k:"fir", fv:"FOETO:PP.COR-INF-008", l:"Réponse inflammatoire fœtale (funisite)", min:1,
+  { k:"fir", fv:["FOETO:PP.COR-INF-008","FOETO:PP.COR-INF-006"], l:"Réponse inflammatoire fœtale (funisite)", min:1,
     signes:["phlebiteOmb","arteriteOmb","arteriteDeux","funisiteNecro"],
     stop:" — Amsterdam : phlébite → artérite → funisite nécrosante ; Van Hoeven met la gelée de Wharton DANS les " +
          "stades 1–2 : les deux échelles se croisent. Le gabarit de CR numérote RIF 1 à 3 par nombre de vaisseaux " +
@@ -270,5 +279,5 @@ async function testsOrgane(chk, clic, set, crTient, pause){
       DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
   /* FOETO : aucun terme tagué verbatim pour le placenta — rien de branché */
   /* 1.1.0 : codes créés depuis le verbatim de la fiche (lot FOETO) — les signes branchés exportent leur code */
-  chk("FOETO 1.1.1 : 11 signe(s) codé(s) depuis le verbatim (après le tri et le réancrage)", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 11);
+  chk("FOETO 1.1.2 : 13 signe(s) codé(s) depuis le verbatim (après la confrontation)", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 13);
 }

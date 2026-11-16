@@ -361,11 +361,15 @@ var SCHEMA = "0.2.0";   /* 0.2.0 : grille.foeto = termes FOETO cochés */
 /* (même version) — reprise sur consignes de Rémi : un signe descriptif porte un terme descriptif,
    la gradation ou le diagnostic se déduisent et leur code passe sur l'association ; un code NOR décrit
    le normal (codes mal typés renumérotés) ; pancréas absent et réduit séparés. */
+/* 1.1.2 (2026-11-16) — confrontation aux termes FOETO tagués verbatim que la grille ne portait pas :
+   codes posés sur des signes et variantes existants, variantes et signes nouveaux, codes
+   interprétatifs sur les associations ; codes NOR qui décrivent une lésion renumérotés. Les
+   synonymes et codes secondaires attendent la passe de fusion FOETO. */
 var ORGANE  = "placenta_parenchyme";
 var TITRE   = "placenta — parenchyme";
 var SOURCE  = "fiche_placenta.md";
 var MODULE  = "grille_placenta_parenchyme";
-var VERSION = "1.1.1";
+var VERSION = "1.1.2";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var PAIR    = false;
@@ -592,16 +596,23 @@ var CADRES = [
 /* ── Variantes — chacune dans le cadre dont elle mime un signe ─────────────── */
 var VARIANTES = [
   { k:"vitellin",       g:PC, l:"Reliquat du sac vitellin (plaque blanche sous-amniotique)" },
-  { k:"coussinMyxoide", g:VF, l:"Coussin myxoïde intimal d'un vaisseau chorial, sans fibrine ni calcification" },
-  { k:"fibrinoides",    g:FI, l:"Fibrinoïde de Langhans (sous-chorial), de Rohr et de Nitabuch" },
-  { k:"fibrineMarge",   g:FI, l:"Fibrine périvillositaire < 10 %, autour des souches, en sous-chorial et au bord" },
-  { k:"calcifBasales",  g:FI, l:"Calcifications du tiers basal, physiologiques à terme" },
+  { k:"coussinMyxoide", fv:"FOETO:PP.PLA-NOR-053", g:VF, l:"Coussin myxoïde intimal d'un vaisseau chorial, sans fibrine ni calcification" },
+  { k:"fibrinoides",    fv:"FOETO:PP.PLA-NOR-168", g:FI, l:"Fibrinoïde de Langhans (sous-chorial), de Rohr et de Nitabuch" },
+  { k:"fibrineMarge",   fv:"FOETO:PP.PLA-NOR-066", g:FI, l:"Fibrine périvillositaire < 10 %, autour des souches, en sous-chorial et au bord" },
+  { k:"calcifBasales",  fv:"FOETO:PP.PLA-NOR-025", g:FI, l:"Calcifications du tiers basal, physiologiques à terme" },
   { k:"kystes",         g:PM, l:"Kystes amniotiques et kystes des septa" },
-  { k:"cellulesX",      g:PM, l:"Îlots de trophoblaste extravilleux (cellules X) dans la chambre intervilleuse" },
-  { k:"congestion",     g:CA, l:"Congestion villositaire (vaisseaux distendus, non multipliés — diabète maternel)" },
-  { k:"trophoNitabuch", g:PB, l:"Trophoblaste extravilleux au-delà de Nitabuch" },
-  { k:"remodelageT2",   g:PB, l:"Artérioles partiellement remodelées au deuxième trimestre" },
-  { k:"lymphoDecid",    g:PB, l:"Lymphocytes et cellules NK épars dans la caduque (le plasmocyte, lui, n'est pas normal)" }
+  { k:"cellulesX",      fv:"FOETO:PP.PLA-NOR-181", g:PM, l:"Îlots de trophoblaste extravilleux (cellules X) dans la chambre intervilleuse" },
+  { k:"congestion",     fv:"FOETO:PP.PLA-VAS-002", g:CA, l:"Congestion villositaire (vaisseaux distendus, non multipliés — diabète maternel)" },
+  { k:"trophoNitabuch", fv:"FOETO:PP.PLA-NOR-179", g:PB, l:"Trophoblaste extravilleux au-delà de Nitabuch" },
+  { k:"remodelageT2",   fv:"FOETO:PP.AUP-NOR-000", g:PB, l:"Artérioles partiellement remodelées au deuxième trimestre" },
+  { k:"lymphoDecid",    fv:"FOETO:PP.DBA-NOR-000", g:PB, l:"Lymphocytes et cellules NK épars dans la caduque (le plasmocyte, lui, n'est pas normal)" },
+  { k:"bourgeonsSyncytiaux", fv:"FOETO:PP.PLA-NOR-021", g:MM, l:"Bourgeons syncytiaux, première étape d'une villosité nouvelle : ne se comptent pas comme nœuds" },
+  { k:"pontsSyncytiaux", fv:"FOETO:PP.PLA-NOR-144", g:MM, l:"Ponts syncytiaux entre villosités voisines, artefacts de coupe tangentielle dans 80 % des cas" },
+  { k:"fauxNoeuds", fv:"FOETO:PP.PAR-RET-004", g:MM, l:"Faux nœuds syncytiaux de coupe tangentielle (chromatine euchromatique), sans valeur de maturation" },
+  { k:"capillairesFocaux", g:CA, l:"Capillaires focalement augmentés au contact d'une villite ou d'un foyer de FVM : ne comptent pas pour la chorangiose" },
+  { k:"viImmatures", fv:"FOETO:PP.PLA-NOR-192", g:MA, l:"Villosités intermédiaires immatures (cytotrophoblaste sur plus de la moitié de la circonférence, stroma réticulaire) en proportion conforme au terme" },
+  { k:"capillairesCollabes", fv:"FOETO:PP.PAR-RET-003", g:MA, l:"Capillaires villositaires collabés après la délivrance : MVS réduites sans valeur de maturation (délai de fixation)" },
+  { k:"stromaReticulaire", fv:"FOETO:PP.PLA-NOR-170", g:OE, l:"Stroma réticulaire à canaux liquidiens et cellules de Hofbauer des villosités intermédiaires immatures" }
 ];
 
 /* ── Signes — des constats, jamais un nom de maladie ──────────────────────── */
@@ -635,6 +646,15 @@ var SIGNES = [
   { k:"infiltratChorialBasal", fv:"FOETO:PP.PLA-INF-055", g:PC, mag:"moyen", l:"Infiltrat granulocytaire maternel bien limité de la plaque choriale basale",
     meta:"≈ 66 % des MFIU macérées — pas une chorioamniotite [vogel, ch. 14]",
     cr:"On note un infiltrat granulocytaire maternel bien limité de la plaque choriale basale" },
+  { k:"hematomeSousChorial", fv:"FOETO:PP.PLA-VAS-016", g:PC, mag:"faible", l:"Hématome sous-chorial : sang lamellé et fibrine entre plaque choriale et chambre intervilleuse",
+    meta:"thrombohématome kystique en différentiel ; la môle de Breus en est l'aspect macroscopique massif",
+    cr:"On note un hématome sous-chorial, fait de sang lamellé et de fibrine sous la plaque choriale" },
+  { k:"histiocytesChorion", fv:"FOETO:PP.PLA-INF-015", g:PC, mag:"moyen", l:"Histiocytes en bande à la base du chorion de la plaque choriale",
+    meta:"hyperplasie histiocytaire chorionique : signification inconnue [khong2019, ch. 13]",
+    cr:"On note une bande d'histiocytes à la base du chorion de la plaque choriale" },
+  { k:"chorialDenude", fv:"FOETO:PP.PLA-MET-031", g:PC, mag:"moyen", l:"Surface choriale dénudée d'amnios, infiltrée de macrophages volumineux",
+    meta:"amnios absent de longue date (rupture, brides) ; sans réaction cellulaire, c'est l'amnios décollé par traction",
+    cr:"La surface choriale est dénudée d'amnios et infiltrée de macrophages volumineux" },
 
   /* — Vaisseaux fœtaux — malperfusion fœtale — */
   { k:"ectasie", fv:"FOETO:PP.PLA-VAS-082", g:VF, mag:"faible", l:"Ectasie d'un vaisseau chorial ou souche ≥ 4 fois le diamètre des vaisseaux voisins",
@@ -712,6 +732,12 @@ var SIGNES = [
   { k:"calcifPoussiere", g:FI, mag:"moyen", l:"Microcalcifications stromales poussiéreuses diffuses",
     meta:"rétention (mauvais prédicteur), pas une lésion",
     cr:"On note des microcalcifications stromales poussiéreuses diffuses" },
+  { k:"thrombusIntervilleux", fv:"FOETO:PP.PLA-VAS-059", g:FI, mag:"faible", l:"Thrombus intervilleux : caillot lamellé de sang et de fibrine refoulant les villosités",
+    meta:"il refoule le tissu villositaire, l'infarctus le tue [benirschke, ch. 1]",
+    cr:"On note un thrombus intervilleux, caillot lamellé refoulant les villosités" },
+  { k:"amasTrophoFibrine", fv:"FOETO:PP.PLA-DYS-030", g:FI, mag:"moyen", l:"Amas de trophoblaste intermédiaire dans la fibrine périvillositaire, au bord d'un infarctus ou d'un hématome",
+    meta:"Ki-67 quasi nul malgré l'aspect proliférant : pas un choriocarcinome [horii2018, ch. 30]",
+    cr:"On note des amas de trophoblaste intermédiaire dans la fibrine périvillositaire" },
 
   /* — Dysplasie mésenchymateuse et trophoblaste — */
   { k:"souchesKystiques", fv:"FOETO:PP.PLA-MAL-065", g:PM, mag:"faible", l:"Villosités souches dilatées, kystiques, œdémateuses, mêlées de villosités normales",
@@ -729,9 +755,18 @@ var SIGNES = [
   { k:"proliferationTropho", fv:"FOETO:PP.PLA-MAL-067", g:PM, mag:"moyen", l:"Prolifération trophoblastique circonférentielle ou atypique",
     meta:"→ fiche fille 5.14 ; Ki-67 décide",
     cr:"On note une prolifération trophoblastique circonférentielle ou atypique" },
-  { k:"kystesInclusionTropho", g:PM, mag:"moyen",
+  { k:"kystesInclusionTropho", fv:"FOETO:PP.PLA-DYS-031", g:PM, mag:"moyen",
     l:"Kystes d'inclusion trophoblastiques du stroma villositaire, sans citerne ni prolifération trophoblastique",
     cr:"On note la présence de kystes d'inclusion trophoblastiques au sein du stroma de quelques villosités sans citerne ni prolifération trophoblastique anormale (KIT)." },
+  { k:"p57StromaNeg", fv:"FOETO:PP.PLA-DYS-028", g:PM, mag:"technique", l:"p57KIP2 négatif dans le stroma d'au moins un sous-ensemble de villosités (IHC)",
+    meta:"hétérogène = attendu (mosaïque) ; avec un trophoblaste positif, la discordance signe la PMD",
+    cr:"Le p57KIP2 est négatif dans le stroma d'une partie des villosités" },
+  { k:"p57TrophoConserve", fv:"FOETO:PP.PLA-DYS-032", g:PM, mag:"technique", l:"p57KIP2 conservé dans le cytotrophoblaste villositaire (IHC)",
+    meta:"sépare la PMD de la môle complète, dont le trophoblaste est négatif",
+    cr:"Le p57KIP2 est conservé dans le cytotrophoblaste villositaire" },
+  { k:"actineStromaNeg", fv:"FOETO:PP.PLA-DYS-027", g:PM, mag:"technique", l:"Stroma des souches anormales négatif pour l'actine musculaire lisse, vimentine et desmine positives (IHC)",
+    meta:"stroma resté fibroblastique : le seul argument du mot dysplasie [khong2019, ch. 16]",
+    cr:"Le stroma des villosités souches anormales est négatif pour l'actine musculaire lisse, positif pour la vimentine et la desmine" },
 
   /* — Capillaires villositaires — */
   { k:"chorangiome", fv:"FOETO:PP.PAR-DYS-002", g:CA, mag:"faible", l:"Nodule capillaire expansif d'une souche sous-choriale, péricytes présents",
@@ -748,6 +783,15 @@ var SIGNES = [
     l:"Capillaires à couche de péricytes et membrane basale discontinue, villosités intermédiaires et souches",
     meta:"chorangiomatose — la chorangiose a une paroi normale",
     cr:"Les capillaires des villosités intermédiaires et souches ont une couche de péricytes et une membrane basale discontinue" },
+  { k:"paroiCapillaireNormale", fv:"FOETO:PP.PLA-NOR-115", g:CA, mag:"fort", bloc:false, l:"Capillaires villositaires à membrane basale continue et bien individualisée, sans couche de péricytes",
+    meta:"paroi normale : le seul critère non numérique qui sépare la chorangiose de la chorangiomatose",
+    cr:"Les capillaires villositaires ont une membrane basale continue, sans couche de péricytes" },
+  { k:"reticulineTreillis", fv:"FOETO:PP.PLA-VAS-090", g:CA, mag:"technique", l:"Réseau de fibres de réticuline en treillis lâche autour des capillaires proliférants (réticuline)",
+    meta:"chorangiome et chorangiomatose [benirschke, ch. 30]",
+    cr:"La réticuline dessine un réseau en treillis lâche autour des capillaires proliférants" },
+  { k:"trophoChorangiome", fv:"FOETO:PP.PLA-TUM-006", g:CA, mag:"moyen", l:"Trophoblaste de surface multicouche, ± atypies et nécrose, bordant un chorangiome",
+    meta:"conclusion recommandée : chorangioma, with associated trophoblastic proliferation — pas un choriocarcinome",
+    cr:"Le chorangiome est bordé d'un trophoblaste de surface multicouche" },
 
   /* — Inflammation villositaire et intervilleuse — */
   { k:"villite", fv:"FOETO:PP.PLA-INF-056", g:IN, mag:"moyen", l:"Villite chronique lymphohistiocytaire, foyers < 10 villosités contiguës",
@@ -769,8 +813,14 @@ var SIGNES = [
     cr:"On note une périvillite" },
   { k:"villitePlasmo", fv:"FOETO:PP.PLA-INF-062", g:IN, mag:"fort", l:"Villite à prédominance plasmocytaire", meta:"CMV à chercher avant de nommer une VUE",
     cr:"La villite est à prédominance plasmocytaire" },
-  { k:"inclusionsVirales", g:IN, mag:"fort", l:"Inclusions virales (CMV en œil de hibou), parvovirus",
-    cr:"On note des inclusions virales (CMV en œil de hibou, parvovirus)" },
+  { k:"inclusionsVirales", g:IN, mag:"fort", l:"Inclusions virales à cytomégalovirus (en œil de hibou)",
+    cr:"On note des inclusions virales à cytomégalovirus (en œil de hibou)" },
+  { k:"inclusionsParvo", fv:"FOETO:PP.PLA-INF-045", g:IN, mag:"fort", l:"Inclusions intranucléaires amphophiles des normoblastes (parvovirus B19)",
+    meta:"IHC parvovirus utile sur tissu autolysé",
+    cr:"On note des inclusions intranucléaires amphophiles des normoblastes (parvovirus B19)" },
+  { k:"cellulesAtypiquesEIV", fv:"FOETO:PP.PLA-TUM-003", g:IN, mag:"moyen", l:"Cellules atypiques non inflammatoires dans la chambre intervilleuse (blastes ou cellules tumorales maternelles)",
+    meta:"leucémie ou tumeur maternelle : mime une intervillite [khong2019, ch. 31]",
+    cr:"On note des cellules atypiques non inflammatoires dans la chambre intervilleuse" },
 
   /* — Maturation villositaire — */
   { k:"populationMonotone", fv:"FOETO:PP.PLA-VAS-078", seul:true, g:MA, mag:"moyen", l:"Population villositaire monotone (≥ 10 villosités) à capillaires centraux",
@@ -780,6 +830,9 @@ var SIGNES = [
     cr:"Les membranes vasculo-syncytiales sont réduites pour le terme" },
   { k:"cytotrophoContinu", fv:"FOETO:PP.PLA-MAL-068", seul:true, g:MA, mag:"fort", l:"Cytotrophoblaste en couche continue au-delà du terme attendu",
     cr:"Le cytotrophoblaste forme une couche continue au-delà du terme attendu" },
+  { k:"intermediairesExces", fv:"FOETO:PP.PLA-MAL-084", seul:true, g:MA, mag:"moyen", l:"Villosités intermédiaires en excès pour le terme, au détriment des terminales",
+    meta:"recoupe la table des stades (stade lu inférieur au terme) ; proportionnel à la gravité de l'érythroblastose [benirschke, ch. 23]",
+    cr:"Les villosités intermédiaires sont en excès pour le terme, au détriment des terminales" },
 
   /* — Œdème, érythroblastes et surcharge — */
   { k:"oedemeDiffus", fv:"FOETO:PP.PLA-MAL-069", g:OE, mag:"faible", l:"Œdème villositaire diffus, circonférentiel, stroma pâle, trophoblaste conservé",
@@ -802,6 +855,18 @@ var SIGNES = [
     cr:"On note des vacuoles intracellulaires vides du trophoblaste, des cellules de Hofbauer et de l'endothélium" },
   { k:"granuleuxEosino", fv:"FOETO:PP.PLA-MAL-074", g:OE, mag:"fort", l:"Matériel granuleux éosinophile intracellulaire",
     cr:"On note un matériel granuleux éosinophile intracellulaire" },
+  { k:"hematopoieseStromale", fv:"FOETO:PP.PLA-MAL-083", g:OE, mag:"fort", l:"Foyers d'hématopoïèse dans le stroma villositaire, hors des lumières vasculaires",
+    meta:"CD34 / CD31 pour situer le vaisseau ; marqueur de durée, absent après une hémorragie fœto-maternelle aiguë",
+    cr:"On note des foyers d'hématopoïèse dans le stroma villositaire, hors des lumières vasculaires" },
+  { k:"capillairesVides", fv:"FOETO:PP.PLA-VAS-032", g:OE, mag:"moyen", l:"Capillaires villositaires vides ou quasi dépourvus d'hématies fœtales",
+    meta:"anémie fœtale (hémorragie fœto-maternelle, aplasie) ; le prélèvement vide aussi les capillaires",
+    cr:"Les capillaires villositaires sont vides ou presque dépourvus d'hématies fœtales" },
+  { k:"histiocytesFibrillaires", fv:"FOETO:PP.PLA-MET-015", g:OE, mag:"fort", l:"Histiocytes stromaux mono- et multinucléés à cytoplasme ample, fibrillaire, non vacuolaire",
+    meta:"cellules de Gaucher (CD68, PAS-D, LFB) : une surcharge sans vacuole",
+    cr:"Le stroma villositaire contient des histiocytes mono- et multinucléés à cytoplasme ample, fibrillaire, non vacuolaire" },
+  { k:"blastesVasculaires", fv:"FOETO:PP.PLA-TUM-028", g:OE, mag:"fort", l:"Blastes, mégacaryocytes immatures et précurseurs médullaires nombreux dans les vaisseaux fœtaux villositaires",
+    meta:"myéloprolifération transitoire de la trisomie 21 ; le marquage précise la lignée",
+    cr:"Les vaisseaux fœtaux villositaires contiennent de nombreux blastes, mégacaryocytes immatures et précurseurs médullaires" },
 
   /* — Plaque basale — */
   { k:"hrp", fv:"FOETO:PP.PLA-VAS-088", g:PB, mag:"faible",
@@ -834,7 +899,7 @@ var DIAGS = [
          "sans l'intervalle. Les vaisseaux de la caduque pariétale (athérose, muscularisation, hypertrophie murale) se " +
          "lisent sur la grille membranes, le cordon grêle sur la grille cordon, l'infarctus périphérique sur la grille marges." },
 
-  { k:"fvm", l:"Malperfusion vasculaire fœtale (FVM)", cle:"avascTrophoVivant", min:2,
+  { k:"fvm", fv:["FOETO:PP.PLA-DYS-023","FOETO:PP.PAR-VAS-025","FOETO:PP.VAC-VAS-002"], l:"Malperfusion vasculaire fœtale (FVM)", cle:"avascTrophoVivant", min:2,
     signes:["avascTrophoVivant","vsk","obliterationSouche","thrombusSouche","thrombusChorial","ectasie",
             "fibrineIntramurale","foyersPetits","foyersLarges","coussinFibrine","oedemeFocal"],
     stop:" — le trophoblaste VIVANT sur villosité avasculaire est le critère positif, avant tout comptage. Haut " +
@@ -851,7 +916,7 @@ var DIAGS = [
          "basal maternel est présent dans 66 % des cas. Un fibrinoïde sous-chorial épais cache l'inflammation " +
          "(faux négatif géométrique). Les membranes se lisent sur la grille membranes, la funisite sur la grille cordon." },
 
-  { k:"vue", l:"Villite chronique d'étiologie indéterminée (VUE)", cle:"villite", min:1,
+  { k:"vue", fv:"FOETO:PP.PAR-INF-007", l:"Villite chronique d'étiologie indéterminée (VUE)", cle:"villite", min:1,
     signes:["villite","villiteLarge","villiteObliteration","avascAvecVillite","intervilliteChronique"],
     stop:" — six définitions du grade : « diffus » = 30 % chez Amsterdam, 5 % chez quatre autres sources ; vogel " +
          "exige un cluster de 5–10 villosités. Trois blocs = 62 % des villites : une villite absente sur quatre " +
@@ -860,12 +925,12 @@ var DIAGS = [
          "sévérité du RCIU." },
 
   { k:"villiteInfectieuse", l:"Villite infectieuse", cle:"villitePlasmo", min:1,
-    signes:["villitePlasmo","inclusionsVirales","villite"],
+    signes:["villitePlasmo","inclusionsVirales","villite","inclusionsParvo"],
     stop:" — la VUE est une définition PAR EXCLUSION : elle exclut ce qui a une cause. Les inclusions de CMV " +
          "survivent à la macération ; les tréponèmes sont rares dans le placenta du fœtus macéré et abondants " +
          "dans le foie : un Warthin-Starry placentaire négatif ne dit rien." },
 
-  { k:"mpfd", l:"Fibrine périvillositaire massive / infarctus du plancher (MPFD, MFI)", cle:"fibrineEIVconserve", min:2,
+  { k:"mpfd", fv:"FOETO:PP.PAR-CLA-002", l:"Fibrine périvillositaire massive / infarctus du plancher (MPFD, MFI)", cle:"fibrineEIVconserve", min:2,
     signes:["fibrineEIVconserve","fibrineTransmurale","fibrine2550","fibrineBasale3mm","nidf"],
     stop:" — cinq systèmes de seuils, aucun chez Amsterdam : 25–50 % / > 50 % d'UNE LAME (khong2019), 25 % de la " +
          "MASSE macroscopique comme plancher (recurrent), > 50 % d'un CHAMP MPF (vogel), 25 % de la lame " +
@@ -874,46 +939,46 @@ var DIAGS = [
          "l'excès de fibrine. « Maternal floor infarction » n'est pas un infarctus. La NIDF francophone n'a pas de " +
          "table de correspondance avec ces cadres." },
 
-  { k:"dvm", l:"Retard de maturation villositaire (DVM)", cle:"populationMonotone", min:2,
+  { k:"dvm", fv:["FOETO:PP.PAR-MAL-008","FOETO:PP.PLA-MAL-082"], l:"Retard de maturation villositaire (DVM)", cle:"populationMonotone", min:2,
     signes:["populationMonotone","mvsReduites","cytotrophoContinu"],
     stop:" — après 36 SA, rarement avant 34 ; ≥ 10 villosités monotones, ≥ 30 % d'une lame pleine épaisseur ; " +
          "« the thresholds for significance of this lesion are unclear at present » [amsterdam]. Les MVS diminuent " +
          "avec le délai avant fixation. Diabète et obésité maternels : les DEUX sens de maturation sont décrits " +
          "[keeling, ch. 4]. Le cadre de vogel (7 entités, % d'un champ MPF) n'est pas convertible." },
 
-  { k:"chorangiose", l:"Chorangiose villositaire", cle:"capillairesSup10", min:1,
-    signes:["capillairesSup10","villositesRondes"],
+  { k:"chorangiose", fv:["FOETO:PP.PAR-VAS-008","FOETO:PP.PLA-VAS-058"], l:"Chorangiose villositaire", cle:"capillairesSup10", min:1,
+    signes:["capillairesSup10","villositesRondes","paroiCapillaireNormale"],
     stop:" — quatre lectures divergentes d'un seul article (Altshuler 1984) : les « trois » et les « dix » sont " +
          "échangés entre benirschke et keeling. Le seuil HES (> 10) tombe DANS la normale CD34 (8–15) : ne jamais " +
          "la porter sans la coloration. Congestion = vaisseaux distendus, chorangiose = vaisseaux multipliés ; " +
          "vidange et injection fabriquent l'image dans les deux sens. Deux voies causales, dont une non hypoxique " +
          "(hyperinsulinisme, IGF-2)." },
 
-  { k:"chorangiomatose", l:"Chorangiomatose / chorangiome", cle:"pericytes", min:1,
-    signes:["pericytes","chorangiome","villositesRondes"],
+  { k:"chorangiomatose", fv:["FOETO:PP.PAR-DYS-001","FOETO:PP.PLA-TUM-026"], l:"Chorangiomatose / chorangiome", cle:"pericytes", min:1,
+    signes:["pericytes","chorangiome","villositesRondes","reticulineTreillis","trophoChorangiome"],
     stop:" — la chorangiose est le seul membre de la famille à paroi capillaire normale : péricytes et membrane " +
          "basale discontinue font la chorangiomatose, le nodule fait le chorangiome. Texte et Table 24.1 de " +
          "khong2019 se contredisent sur « branching ». Un chorangiome bordé de trophoblaste nécrosant n'est pas un " +
          "choriocarcinome : « chorangioma, with associated trophoblastic proliferation »." },
 
-  { k:"pmd", l:"Dysplasie mésenchymateuse placentaire (PMD)", cle:"trophoNormalPMD", min:3,
-    signes:["souchesKystiques","vaisseauxTortueux","citernes","trophoNormalPMD","magistral","thrombusChorial"],
+  { k:"pmd", fv:"FOETO:PP.PAR-DYS-003", l:"Dysplasie mésenchymateuse placentaire (PMD)", cle:"trophoNormalPMD", min:3,
+    signes:["souchesKystiques","vaisseauxTortueux","citernes","trophoNormalPMD","magistral","thrombusChorial","p57StromaNeg","p57TrophoConserve","actineStromaNeg"],
     stop:" — le second membre de la définition est NÉGATIF : absence de prolifération trophoblastique, souches " +
          "proximales (la môle atteint les villosités distales). C'est un stade, pas un grade : < 20 SA les signes " +
          "sont discrets, les kystes migrent vers la plaque choriale. p57 avec témoin interne — un p57 négatif sans " +
          "témoin est une manipulation ratée. nRBC dans la chambre intervilleuse = hémorragie fœto-maternelle, HbF. " +
          "L'hypertorsion du cordon se lit sur la grille cordon." },
 
-  { k:"hydrops", l:"Œdème villositaire diffus — anasarque", cle:"oedemeDiffus", min:2,
-    signes:["oedemeDiffus","hofbauer","erythroblastes"],
+  { k:"hydrops", fv:["FOETO:PP.PLA-MAL-052","FOETO:PP.PLA-MAL-051"], l:"Œdème villositaire diffus — anasarque", cle:"oedemeDiffus", min:2,
+    signes:["oedemeDiffus","hofbauer","erythroblastes","hematopoieseStromale"],
     stop:" — « with the exception of certain infections or large chorangiomas, it is impossible to diagnose with " +
          "certainty the cause of hydrops from pathologic examination of the placenta alone » [benirschke, ch. 23] ; " +
          "la maladie hémolytique ne se diagnostique pas sur le placenta isolé. Circonférentiel et régulier = " +
          "hydrops ; irrégulier et non circonférentiel = chercher la FVM. Trois gradations de l'œdème dans un même " +
          "chapitre. L'œdème de la gelée de Wharton se lit sur la grille cordon." },
 
-  { k:"surcharge", l:"Maladie de surcharge", cle:"vacuolesIntracell", min:1,
-    signes:["vacuolesIntracell","granuleuxEosino","hofbauer","oedemeDiffus"],
+  { k:"surcharge", fv:["FOETO:PP.PAR-MET-002","FOETO:PP.PLA-MET-001","FOETO:PP.PLA-MET-030"], l:"Maladie de surcharge", cle:"vacuolesIntracell", min:1,
+    signes:["vacuolesIntracell","granuleuxEosino","hofbauer","oedemeDiffus","histiocytesFibrillaires"],
     stop:" — la vacuole VIDE est la règle (produit soluble) ; certaines surcharges donnent un matériel granuleux " +
          "sans vacuole ; la quantité dépend du terme. « Fetal death or edema does not give rise to vacuolation » " +
          "[benirschke, ch. 24] : ne pas imputer à la macération. Trois vacuolisations ne sont pas des surcharges : " +
@@ -932,7 +997,19 @@ var DIAGS = [
     stop:" — étendue à grader : focale < 10 %, modérée 10–50 %, massive > 50 % [khong2019, ch. 30] ; « focale » " +
          "chez [vogel, ch. 9] contre « massive » comme nom historique [recurrent]. Des polynucléaires dans la " +
          "chambre intervilleuse ne sont pas une intervillite chronique [khong2019, ch. 30]. Villite associée : 25–35 % " +
-         "[recurrent] contre 30–47 % [khong2019, ch. 30]." }
+         "[recurrent] contre 30–47 % [khong2019, ch. 30]." },
+
+  { k:"fvmSegmentaire", l:"Malperfusion vasculaire fœtale, patron segmentaire", fv:"FOETO:PP.PAR-VAS-016", cle:"avascTrophoVivant", min:2,
+    signes:["thrombusChorial","thrombusSouche","obliterationSouche","avascTrophoVivant","foyersLarges"],
+    stop:" — patron d'Amsterdam : occlusion thrombotique d'un vaisseau chorial ou souche, ou oblitération de souche, " +
+         "avec villosités avasculaires en aval [amsterdam]. Le grade (bas ou haut) est un axe distinct, porté par le " +
+         "compte des foyers." },
+
+  { k:"fvmGlobale", l:"Malperfusion vasculaire fœtale, patron global", fv:"FOETO:PP.PLA-VAS-027", min:2,
+    signes:["ectasie","fibrineIntramurale","foyersPetits","vsk"],
+    stop:" — patron d'Amsterdam : obstruction partielle du flux ombilical — ectasie veineuse, fibrine intramurale des " +
+         "gros vaisseaux, petits foyers de villosités avasculaires (moins de 5 par foyer) [amsterdam]. La VSK est aussi " +
+         "le premier seau de la rétention : sur un mort-né, elle ne compte pas." }
 
 ];
 
@@ -1007,7 +1084,7 @@ function suggerer(){
   if (vu("citernes")) s.pasAlcian = 1;
   if (vu("nrbcIntervilleux")) s.hbf = 1;
   if (vu("pchoChorionite", "pchoNecrose", "vasculiteChoriale")) s.gram = 1;
-  if (vu("villitePlasmo", "inclusionsVirales")){ s.ihcViral = 1; s.warthin = 1; }
+  if (vu("villitePlasmo", "inclusionsVirales", "inclusionsParvo")){ s.ihcViral = 1; s.warthin = 1; }
   if (vu("vacuolesIntracell", "granuleuxEosino")){ s.surcharge = 1; s.resine = 1; s.adn = 1; }
   if (vu("noeudsAugmentes", "matAcceleree")) s.series = 1;
   if (vu("villite", "villiteLarge")) s.blocs6 = 1;
@@ -1148,12 +1225,12 @@ async function testsOrgane(chk, clic, set, crTient, pause){
   ote("mvsReduites");
 
   /* 1.1.0 : codes créés depuis le verbatim de la fiche (lot FOETO) — les signes branchés exportent leur code */
-  chk("FOETO 1.1.1 : 53 signe(s) codé(s) depuis le verbatim (après le tri et le réancrage)", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 53);
+  chk("FOETO 1.1.2 : 72 signe(s) codé(s) depuis le verbatim (après la confrontation)", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 72);
 }
 
 /* ── Termes FOETO — engendré depuis foeto_terms (triage contre la fiche) ──── */
 var FOETO = {"sections":[],"formes":{}};
-var FOETOV = {"FOETO:PP.PAR-DYS-002":{"l":"Chorangiome placentaire","hpo":null},"FOETO:PP.PAR-INF-002":{"l":"Intervillosite chronique histiocytaire","hpo":null},"FOETO:PP.PAR-NOR-001":{"l":"ANSCT augmentés","hpo":null},"FOETO:PP.PAR-VAS-020":{"l":"Thrombus de la plaque choriale","hpo":null},"FOETO:PP.PAR-VAS-030":{"l":"Abruptio placentae","hpo":null},"FOETO:PP.PCH-INF-002":{"l":"Chorioamniotite aiguë de la plaque choriale","hpo":null},"FOETO:PP.PLA-INF-007":{"l":"Chorioamniotite aiguë","hpo":null},"FOETO:PP.PLA-INF-051":{"l":"Chorioamniotite nécrosante : caryorrhexis des polynucléaires, nécrose amniocytaire, membrane basale hyperéosinophile","hpo":null},"FOETO:PP.PLA-INF-054":{"l":"Polynucléaires dans le toit de la chambre intervilleuse (fibrinoïde sous-chorial), sans extension au chorion","hpo":null},"FOETO:PP.PLA-INF-055":{"l":"Infiltrat granulocytaire maternel bien limité de la plaque choriale basale","hpo":null},"FOETO:PP.PLA-INF-056":{"l":"Villite chronique lymphohistiocytaire, foyers < 10 villosités contiguës","hpo":null},"FOETO:PP.PLA-INF-057":{"l":"Villite chronique, ≥ 1 foyer > 10 villosités contiguës, sur > 1 coupe","hpo":null},"FOETO:PP.PLA-INF-058":{"l":"Villite avec destruction d'un vaisseau souche musculaire","hpo":null},"FOETO:PP.PLA-INF-059":{"l":"Villosités avasculaires dans un placenta avec villite","hpo":null},"FOETO:PP.PLA-INF-060":{"l":"Polynucléaires dans la chambre intervilleuse","hpo":null},"FOETO:PP.PLA-INF-061":{"l":"Périvillite","hpo":null},"FOETO:PP.PLA-INF-062":{"l":"Villite à prédominance plasmocytaire","hpo":null},"FOETO:PP.PLA-INF-064":{"l":"Fibrinoïde sous-chorial abondant, chorioamnion épaissi","hpo":null},"FOETO:PP.PLA-MAL-060":{"l":"Hypoplasie villositaire distale : terminales rares, fines, allongées, deux tiers inférieurs","hpo":null},"FOETO:PP.PLA-MAL-061":{"l":"Villosités d'aspect terme pour le terme, nœuds ↑, fibrine intervilleuse, alternant avec des plages de paucité","hpo":null},"FOETO:PP.PLA-MAL-062":{"l":"Villosités agglutinées par la fibrine (2 à 20), touchant d'autres villosités","hpo":null},"FOETO:PP.PLA-MAL-064":{"l":"Fibrinoïde périvillositaire comblant l'espace, chambre intervilleuse CONSERVÉE, villosités épargnées dans la lésion","hpo":null},"FOETO:PP.PLA-MAL-065":{"l":"Villosités souches dilatées, kystiques, œdémateuses, mêlées de villosités normales","hpo":null},"FOETO:PP.PLA-MAL-066":{"l":"Citernes centrales de matériel myxoïde (acide hyaluronique, bleu alcian)","hpo":null},"FOETO:PP.PLA-MAL-067":{"l":"Prolifération trophoblastique circonférentielle ou atypique","hpo":null},"FOETO:PP.PLA-MAL-068":{"l":"Cytotrophoblaste en couche continue au-delà du terme attendu","hpo":null},"FOETO:PP.PLA-MAL-069":{"l":"Œdème villositaire diffus, circonférentiel, stroma pâle, trophoblaste conservé","hpo":null},"FOETO:PP.PLA-MAL-070":{"l":"Œdème villositaire focal, irrégulier, non circonférentiel, entre villosités normales","hpo":null},"FOETO:PP.PLA-MAL-071":{"l":"Cellules de Hofbauer et canaux stromaux proéminents","hpo":null},"FOETO:PP.PLA-MAL-072":{"l":"Au moins un érythroblaste dans la plupart des champs au fort grossissement","hpo":null},"FOETO:PP.PLA-MAL-073":{"l":"Hématies nucléées nombreuses dans la chambre intervilleuse (côté maternel)","hpo":null},"FOETO:PP.PLA-MAL-074":{"l":"Matériel granuleux éosinophile intracellulaire","hpo":null},"FOETO:PP.PLA-MAL-075":{"l":"Athérose ou muscularisation persistante des artères spiralées de la plaque basale","hpo":null},"FOETO:PP.PLA-MET-034":{"l":"Dépôt de fibrine intramural sous-endothélial (non occlusif par définition)","hpo":null},"FOETO:PP.PLA-MET-035":{"l":"Vacuoles intracellulaires vides du trophoblaste, des cellules de Hofbauer, de l'endothélium","hpo":null},"FOETO:PP.PLA-NOR-230":{"l":"Trophoblaste normal, contours lisses, sans pseudo-inclusion, sur des souches kystiques","hpo":null},"FOETO:PP.PLA-VAS-028":{"l":"Oblitération des vaisseaux des villosités-troncs","hpo":null},"FOETO:PP.PLA-VAS-046":{"l":"Thrombus des vaisseaux des villosités-troncs","hpo":null},"FOETO:PP.PLA-VAS-067":{"l":"Patron vasculaire magistral de la plaque choriale (gros vaisseaux non dichotomiques)","hpo":null},"FOETO:PP.PLA-VAS-068":{"l":"Vasculite des vaisseaux de la plaque choriale","hpo":null},"FOETO:PP.PLA-VAS-069":{"l":"Hémorragie intravillositaire","hpo":null},"FOETO:PP.PLA-VAS-070":{"l":"Coussin myxoïde intimal AVEC fibrine ou calcification","hpo":null},"FOETO:PP.PLA-VAS-071":{"l":"Villosités avasculaires à trophoblaste VIVANT (lésion « inside out »)","hpo":null},"FOETO:PP.PLA-VAS-072":{"l":"Petits foyers de villosités avasculaires (< 5 villosités par foyer)","hpo":null},"FOETO:PP.PLA-VAS-073":{"l":"Caryorrhexis stromale-vasculaire villositaire (VSK)","hpo":null},"FOETO:PP.PLA-VAS-074":{"l":"Infarctus : collapsus de la chambre intervilleuse ET perte de basophilie du trophoblaste, jusqu'aux « ghost villi »","hpo":null},"FOETO:PP.PLA-VAS-075":{"l":"Vaisseaux souches à paroi épaisse, tortueux, anévrismaux, manchons de mésenchyme lâche","hpo":null},"FOETO:PP.PLA-VAS-076":{"l":"Villosités terminales grandes, rondes, à vascularisation proéminente au faible grossissement","hpo":null},"FOETO:PP.PLA-VAS-077":{"l":"Capillaires à couche de péricytes et membrane basale discontinue, villosités intermédiaires et souches","hpo":null},"FOETO:PP.PLA-VAS-078":{"l":"Population villositaire monotone (≥ 10 villosités) à capillaires centraux","hpo":null},"FOETO:PP.PLA-VAS-079":{"l":"Membranes vasculo-syncytiales réduites pour le terme","hpo":null},"FOETO:PP.PLA-VAS-080":{"l":"Nécrose ischémique avec dépôts de fibrine (NIDF)","hpo":null},"FOETO:PP.PLA-VAS-081":{"l":"Plaque basale disséquée par du sang frais","hpo":null},"FOETO:PP.PLA-VAS-082":{"l":"Ectasie d'un vaisseau chorial ou souche ≥ 4 fois le diamètre des vaisseaux voisins","hpo":null},"FOETO:PP.PLA-VAS-083":{"l":"Foyers larges d'avascularité, cumul ≥ 45 villosités sur 3 sections ou > 15 par section","hpo":null},"FOETO:PP.PLA-VAS-084":{"l":"Fibrinoïde transmural, de la plaque choriale à la basale, > 50 % d'une lame","hpo":null},"FOETO:PP.PLA-VAS-085":{"l":"Fibrinoïde sur 25–50 % d'une lame","hpo":null},"FOETO:PP.PLA-VAS-086":{"l":"Fibrinoïde basal encastrant les villosités sur ≥ 3 mm le long du plancher","hpo":null},"FOETO:PP.PLA-VAS-087":{"l":"Villosités terminales à > 10 capillaires, 10 villosités, 10 champs, hors zones ischémiques","hpo":null},"FOETO:PP.PLA-VAS-088":{"l":"Hématome rétroplacentaire adhérent : sang et fibrine (frais) ; polynucléaires, macrophages, sidérophages (chronique)","hpo":null}};
+var FOETOV = {"FOETO:PP.AUP-NOR-000":{"l":"Artères utéro-placentaires normales (remodelage physiologique)","hpo":null},"FOETO:PP.DBA-NOR-000":{"l":"Décidue basale normale","hpo":null},"FOETO:PP.PAR-CLA-002":{"l":"Dépôt massif de fibrinoïde périvillositaire","hpo":null},"FOETO:PP.PAR-DYS-001":{"l":"Chorangiomatose placentaire","hpo":null},"FOETO:PP.PAR-DYS-002":{"l":"Chorangiome placentaire","hpo":null},"FOETO:PP.PAR-DYS-003":{"l":"Dysplasie mésenchymateuse placentaire","hpo":null},"FOETO:PP.PAR-INF-002":{"l":"Intervillosite chronique histiocytaire","hpo":null},"FOETO:PP.PAR-INF-007":{"l":"Villite chronique d'étiologie inconnue (VCEI)","hpo":null},"FOETO:PP.PAR-MAL-008":{"l":"Retard de maturation villositaire","hpo":null},"FOETO:PP.PAR-MET-002":{"l":"Accumulation lysosomale de glycogène dans le placenta","hpo":null},"FOETO:PP.PAR-NOR-001":{"l":"ANSCT augmentés","hpo":null},"FOETO:PP.PAR-RET-003":{"l":"Effondrement post-mortem des sinusoïdes capillaires villositaires","hpo":null},"FOETO:PP.PAR-RET-004":{"l":"Faux nœuds syncytiaux (artéfact de section)","hpo":null},"FOETO:PP.PAR-VAS-008":{"l":"Hypercapillarisation des villosités terminales (chorangiose)","hpo":null},"FOETO:PP.PAR-VAS-016":{"l":"Malperfusion vasculaire fœtale segmentaire","hpo":null},"FOETO:PP.PAR-VAS-020":{"l":"Thrombus de la plaque choriale","hpo":null},"FOETO:PP.PAR-VAS-025":{"l":"Vasculopathie thrombotique fœtale","hpo":null},"FOETO:PP.PAR-VAS-030":{"l":"Abruptio placentae","hpo":null},"FOETO:PP.PCH-INF-002":{"l":"Chorioamniotite aiguë de la plaque choriale","hpo":null},"FOETO:PP.PLA-DYS-023":{"l":"Malperfusion vasculaire fœtale placentaire","hpo":null},"FOETO:PP.PLA-DYS-027":{"l":"Perte d'expression de l'actine musculaire lisse dans le stroma villositaire","hpo":null},"FOETO:PP.PLA-DYS-028":{"l":"Perte d'expression de p57kip2 dans le stroma villositaire","hpo":null},"FOETO:PP.PLA-DYS-030":{"l":"Prolifération de trophoblastes intermédiaires périvilleuse","hpo":null},"FOETO:PP.PLA-DYS-031":{"l":"Pseudo-inclusion trophoblastique","hpo":null},"FOETO:PP.PLA-DYS-032":{"l":"Rétention trophoblastique de l'expression de p57kip2","hpo":null},"FOETO:PP.PLA-INF-007":{"l":"Chorioamniotite aiguë","hpo":null},"FOETO:PP.PLA-INF-015":{"l":"Hyperplasie histiocytaire chorionique","hpo":null},"FOETO:PP.PLA-INF-045":{"l":"Inclusions intranucléaires amphophiles des normoblastes","hpo":null},"FOETO:PP.PLA-INF-051":{"l":"Chorioamniotite nécrosante : caryorrhexis des polynucléaires, nécrose amniocytaire, membrane basale hyperéosinophile","hpo":null},"FOETO:PP.PLA-INF-054":{"l":"Polynucléaires dans le toit de la chambre intervilleuse (fibrinoïde sous-chorial), sans extension au chorion","hpo":null},"FOETO:PP.PLA-INF-055":{"l":"Infiltrat granulocytaire maternel bien limité de la plaque choriale basale","hpo":null},"FOETO:PP.PLA-INF-056":{"l":"Villite chronique lymphohistiocytaire, foyers < 10 villosités contiguës","hpo":null},"FOETO:PP.PLA-INF-057":{"l":"Villite chronique, ≥ 1 foyer > 10 villosités contiguës, sur > 1 coupe","hpo":null},"FOETO:PP.PLA-INF-058":{"l":"Villite avec destruction d'un vaisseau souche musculaire","hpo":null},"FOETO:PP.PLA-INF-059":{"l":"Villosités avasculaires dans un placenta avec villite","hpo":null},"FOETO:PP.PLA-INF-060":{"l":"Polynucléaires dans la chambre intervilleuse","hpo":null},"FOETO:PP.PLA-INF-061":{"l":"Périvillite","hpo":null},"FOETO:PP.PLA-INF-062":{"l":"Villite à prédominance plasmocytaire","hpo":null},"FOETO:PP.PLA-INF-064":{"l":"Fibrinoïde sous-chorial abondant, chorioamnion épaissi","hpo":null},"FOETO:PP.PLA-MAL-051":{"l":"Villosités élargies, hypovasculaires, à éléments hématopoïétiques immatures","hpo":null},"FOETO:PP.PLA-MAL-052":{"l":"Placenta hydropique","hpo":null},"FOETO:PP.PLA-MAL-060":{"l":"Hypoplasie villositaire distale : terminales rares, fines, allongées, deux tiers inférieurs","hpo":null},"FOETO:PP.PLA-MAL-061":{"l":"Villosités d'aspect terme pour le terme, nœuds ↑, fibrine intervilleuse, alternant avec des plages de paucité","hpo":null},"FOETO:PP.PLA-MAL-062":{"l":"Villosités agglutinées par la fibrine (2 à 20), touchant d'autres villosités","hpo":null},"FOETO:PP.PLA-MAL-064":{"l":"Fibrinoïde périvillositaire comblant l'espace, chambre intervilleuse CONSERVÉE, villosités épargnées dans la lésion","hpo":null},"FOETO:PP.PLA-MAL-065":{"l":"Villosités souches dilatées, kystiques, œdémateuses, mêlées de villosités normales","hpo":null},"FOETO:PP.PLA-MAL-066":{"l":"Citernes centrales de matériel myxoïde (acide hyaluronique, bleu alcian)","hpo":null},"FOETO:PP.PLA-MAL-067":{"l":"Prolifération trophoblastique circonférentielle ou atypique","hpo":null},"FOETO:PP.PLA-MAL-068":{"l":"Cytotrophoblaste en couche continue au-delà du terme attendu","hpo":null},"FOETO:PP.PLA-MAL-069":{"l":"Œdème villositaire diffus, circonférentiel, stroma pâle, trophoblaste conservé","hpo":null},"FOETO:PP.PLA-MAL-070":{"l":"Œdème villositaire focal, irrégulier, non circonférentiel, entre villosités normales","hpo":null},"FOETO:PP.PLA-MAL-071":{"l":"Cellules de Hofbauer et canaux stromaux proéminents","hpo":null},"FOETO:PP.PLA-MAL-072":{"l":"Au moins un érythroblaste dans la plupart des champs au fort grossissement","hpo":null},"FOETO:PP.PLA-MAL-073":{"l":"Hématies nucléées nombreuses dans la chambre intervilleuse (côté maternel)","hpo":null},"FOETO:PP.PLA-MAL-074":{"l":"Matériel granuleux éosinophile intracellulaire","hpo":null},"FOETO:PP.PLA-MAL-075":{"l":"Athérose ou muscularisation persistante des artères spiralées de la plaque basale","hpo":null},"FOETO:PP.PLA-MAL-082":{"l":"Immaturité villositaire distale","hpo":null},"FOETO:PP.PLA-MAL-083":{"l":"Érythropoïèse extramédullaire stromale","hpo":null},"FOETO:PP.PLA-MAL-084":{"l":"Villosités intermédiaires en proportion augmentée","hpo":null},"FOETO:PP.PLA-MET-001":{"l":"Accumulation de cholestérol et lipides dans le syncytiotrophoblaste","hpo":null},"FOETO:PP.PLA-MET-015":{"l":"Infiltrat de cellules de Gaucher dans le stroma villositaire","hpo":null},"FOETO:PP.PLA-MET-030":{"l":"Placenta des mucopolysaccharidoses et de la sialidose (surcharge lysosomale étiquetée)","hpo":null},"FOETO:PP.PLA-MET-031":{"l":"Infiltration par des macrophages augmentés de taille","hpo":null},"FOETO:PP.PLA-MET-034":{"l":"Dépôt de fibrine intramural sous-endothélial (non occlusif par définition)","hpo":null},"FOETO:PP.PLA-MET-035":{"l":"Vacuoles intracellulaires vides du trophoblaste, des cellules de Hofbauer, de l'endothélium","hpo":null},"FOETO:PP.PLA-NOR-021":{"l":"Bourgeon syncytial / bourgeon trophoblastique","hpo":null},"FOETO:PP.PLA-NOR-025":{"l":"Calcifications placentaires","hpo":null},"FOETO:PP.PLA-NOR-053":{"l":"Coussinets myxoïdes intimaux des vaisseaux de la plaque choriale","hpo":null},"FOETO:PP.PLA-NOR-066":{"l":"Dépôt de fibrinoïde placentaire","hpo":null},"FOETO:PP.PLA-NOR-115":{"l":"Membranes basales distinctes des capillaires villositaires terminaux","hpo":null},"FOETO:PP.PLA-NOR-144":{"l":"Ponts intervillositaires syncytiaux","hpo":null},"FOETO:PP.PLA-NOR-168":{"l":"Strie fibrinoïde de Langhans","hpo":null},"FOETO:PP.PLA-NOR-170":{"l":"Stroma réticulaire villositaire","hpo":null},"FOETO:PP.PLA-NOR-179":{"l":"Trophoblaste extravilleux de la plaque basale","hpo":null},"FOETO:PP.PLA-NOR-181":{"l":"Trophoblaste extravillositaire dans le fibrinoïde","hpo":null},"FOETO:PP.PLA-NOR-192":{"l":"Villosité intermédiaire immature","hpo":null},"FOETO:PP.PLA-NOR-230":{"l":"Trophoblaste normal, contours lisses, sans pseudo-inclusion, sur des souches kystiques","hpo":null},"FOETO:PP.PLA-TUM-003":{"l":"Cellules anormales dans l'espace intervillositaire","hpo":null},"FOETO:PP.PLA-TUM-006":{"l":"Chorangiome avec prolifération trophoblastique","hpo":null},"FOETO:PP.PLA-TUM-026":{"l":"Hémangio-endothéliomes et chorangiomes multiples","hpo":null},"FOETO:PP.PLA-TUM-028":{"l":"Blastes circulants nombreux, mégacaryocytes immatures et précurseurs médullaires","hpo":null},"FOETO:PP.PLA-VAS-002":{"l":"Congestion vasculaire villositaire","hpo":null},"FOETO:PP.PLA-VAS-016":{"l":"Hématome sous-chorionique","hpo":null},"FOETO:PP.PLA-VAS-027":{"l":"Malperfusion vasculaire fœtale globale","hpo":null},"FOETO:PP.PLA-VAS-028":{"l":"Oblitération des vaisseaux des villosités-troncs","hpo":null},"FOETO:PP.PLA-VAS-032":{"l":"Raréfaction du sang fœtal intravasculaire","hpo":null},"FOETO:PP.PLA-VAS-046":{"l":"Thrombus des vaisseaux des villosités-troncs","hpo":null},"FOETO:PP.PLA-VAS-058":{"l":"Lésions prolifératives des capillaires fœtaux","hpo":null},"FOETO:PP.PLA-VAS-059":{"l":"Thrombi intervilleux","hpo":null},"FOETO:PP.PLA-VAS-067":{"l":"Patron vasculaire magistral de la plaque choriale (gros vaisseaux non dichotomiques)","hpo":null},"FOETO:PP.PLA-VAS-068":{"l":"Vasculite des vaisseaux de la plaque choriale","hpo":null},"FOETO:PP.PLA-VAS-069":{"l":"Hémorragie intravillositaire","hpo":null},"FOETO:PP.PLA-VAS-070":{"l":"Coussin myxoïde intimal AVEC fibrine ou calcification","hpo":null},"FOETO:PP.PLA-VAS-071":{"l":"Villosités avasculaires à trophoblaste VIVANT (lésion « inside out »)","hpo":null},"FOETO:PP.PLA-VAS-072":{"l":"Petits foyers de villosités avasculaires (< 5 villosités par foyer)","hpo":null},"FOETO:PP.PLA-VAS-073":{"l":"Caryorrhexis stromale-vasculaire villositaire (VSK)","hpo":null},"FOETO:PP.PLA-VAS-074":{"l":"Infarctus : collapsus de la chambre intervilleuse ET perte de basophilie du trophoblaste, jusqu'aux « ghost villi »","hpo":null},"FOETO:PP.PLA-VAS-075":{"l":"Vaisseaux souches à paroi épaisse, tortueux, anévrismaux, manchons de mésenchyme lâche","hpo":null},"FOETO:PP.PLA-VAS-076":{"l":"Villosités terminales grandes, rondes, à vascularisation proéminente au faible grossissement","hpo":null},"FOETO:PP.PLA-VAS-077":{"l":"Capillaires à couche de péricytes et membrane basale discontinue, villosités intermédiaires et souches","hpo":null},"FOETO:PP.PLA-VAS-078":{"l":"Population villositaire monotone (≥ 10 villosités) à capillaires centraux","hpo":null},"FOETO:PP.PLA-VAS-079":{"l":"Membranes vasculo-syncytiales réduites pour le terme","hpo":null},"FOETO:PP.PLA-VAS-080":{"l":"Nécrose ischémique avec dépôts de fibrine (NIDF)","hpo":null},"FOETO:PP.PLA-VAS-081":{"l":"Plaque basale disséquée par du sang frais","hpo":null},"FOETO:PP.PLA-VAS-082":{"l":"Ectasie d'un vaisseau chorial ou souche ≥ 4 fois le diamètre des vaisseaux voisins","hpo":null},"FOETO:PP.PLA-VAS-083":{"l":"Foyers larges d'avascularité, cumul ≥ 45 villosités sur 3 sections ou > 15 par section","hpo":null},"FOETO:PP.PLA-VAS-084":{"l":"Fibrinoïde transmural, de la plaque choriale à la basale, > 50 % d'une lame","hpo":null},"FOETO:PP.PLA-VAS-085":{"l":"Fibrinoïde sur 25–50 % d'une lame","hpo":null},"FOETO:PP.PLA-VAS-086":{"l":"Fibrinoïde basal encastrant les villosités sur ≥ 3 mm le long du plancher","hpo":null},"FOETO:PP.PLA-VAS-087":{"l":"Villosités terminales à > 10 capillaires, 10 villosités, 10 champs, hors zones ischémiques","hpo":null},"FOETO:PP.PLA-VAS-088":{"l":"Hématome rétroplacentaire adhérent : sang et fibrine (frais) ; polynucléaires, macrophages, sidérophages (chronique)","hpo":null},"FOETO:PP.PLA-VAS-090":{"l":"Réseau de réticuline en treillis dans les villosités capillaires anormales","hpo":null},"FOETO:PP.VAC-VAS-002":{"l":"Endovasculite hémorragique allanto-choriale","hpo":null}};
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  MÉCANIQUE COMMUNE — gen_grille.py                                    ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */

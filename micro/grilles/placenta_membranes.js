@@ -29,11 +29,15 @@
 /* 1.1.1 (2026-11-15) — tri des propositions du lot jugées faibles ou fausses par Kimi, relues sur la
    fiche et vérifiées par script : 4 fenêtre(s) de terme, 2 code(s) créé(s), 5 branché(s) sur un
    code existant ; 0 proposition(s) rejetée(s) (le signe garde son comportement). */
+/* 1.1.2 (2026-11-16) — confrontation aux termes FOETO tagués verbatim que la grille ne portait pas :
+   codes posés sur des signes et variantes existants, variantes et signes nouveaux, codes
+   interprétatifs sur les associations ; codes NOR qui décrivent une lésion renumérotés. Les
+   synonymes et codes secondaires attendent la passe de fusion FOETO. */
 var ORGANE  = "placenta_membranes";
 var TITRE   = "placenta — membranes libres";
 var SOURCE  = "fiche_placenta.md";
 var MODULE  = "grille_placenta_membranes";
-var VERSION = "1.1.1";
+var VERSION = "1.1.2";
 var SCHEMA  = "0.3.0";   /* 0.3.0 : signes present/absent, négatifs déduits */
 var ETATS   = "presence";
 var PAIR    = false;
@@ -63,13 +67,14 @@ var MESURE    = null;
 
 /* ── Variantes — chacune dans le cadre dont elle mime un signe ─────────────── */
 var VARIANTES = [
-  { k:"metaplasie", g:"Amnios et chorion", l:"Métaplasie malpighienne de l'amnios (jusqu'à 60 % des placentas à terme, près du cordon)" },
+  { k:"metaplasie", fv:"FOETO:PP.PLA-NOR-124", g:"Amnios et chorion", l:"Métaplasie malpighienne de l'amnios (jusqu'à 60 % des placentas à terme, près du cordon)" },
   { k:"kystes", g:"Amnios et chorion", l:"Kystes amniotiques" },
-  { k:"vacuolLaeve", g:"Amnios et chorion", l:"Trophoblaste extravilleux vacuolisé du chorion lisse (lipides, pinocytose)" },
-  { k:"muscleParietal", g:"Caduque — vaisseaux et inflammation chronique",
+  { k:"vacuolLaeve", fv:"FOETO:PP.PLA-NOR-180", g:"Amnios et chorion", l:"Trophoblaste extravilleux vacuolisé du chorion lisse (lipides, pinocytose)" },
+  { k:"muscleParietal", fv:"FOETO:PP.PLA-NOR-061", g:"Caduque — vaisseaux et inflammation chronique",
     l:"Muscle lisse dans les vaisseaux de la caduque pariétale (non remodelés)" },
   { k:"lymphoDecid", g:"Caduque — vaisseaux et inflammation chronique",
-    l:"Lymphocytes et cellules NK épars dans la caduque (le plasmocyte, lui, n'est pas normal)" }
+    l:"Lymphocytes et cellules NK épars dans la caduque (le plasmocyte, lui, n'est pas normal)" },
+  { k:"epitheliumAmniotiqueHaut", fv:"FOETO:PP.PLA-NOR-216", g:"Amnios et chorion", l:"Épithélium amniotique cubique à cylindrique, plus haut près de l'insertion, noyaux volumineux polyploïdes, mitoses rares" }
 ];
 
 /* ── Cadres, dans l'ordre de lecture du rouleau ──────────────────────────────
@@ -120,6 +125,15 @@ var SIGNES = [
   { k:"amniosDegenere", fv:"FOETO:PP.PLA-CLA-009", g:"Amnios et chorion", mag:"moyen",
     l:"Amnios vacuolisé, hérissé, nécrosé (méconium prolongé, laparoschisis)", meta:"mime une surcharge",
     cr:"L'amnios est vacuolisé, hérissé, par places nécrosé" },
+  { k:"chorioamnioChronique", fv:"FOETO:PP.MEM-INF-003", g:"Amnios et chorion", mag:"moyen", l:"Lymphocytes dans le chorion ou l'amnios, sans polynucléaires",
+    meta:"chorioamniotite chronique : signification inconnue quand elle est isolée [khong2019, ch. 13] ; souvent avec une villite chronique",
+    cr:"On note des lymphocytes dans le chorion et l'amnios, sans polynucléaires" },
+  { k:"macrophagesPigmentes", fv:"FOETO:PP.MEM-MET-001", g:"Amnios et chorion", mag:"moyen", l:"Macrophages pigmentés dans le conjonctif des membranes, pigment à typer (Perls)",
+    meta:"à poser avant de conclure méconium ou hémosidérine : sur un placenta immature, un pigment verdâtre est plus souvent de l'hémosidérine",
+    cr:"On note des macrophages pigmentés dans le conjonctif des membranes" },
+  { k:"polypesAmnios", fv:"FOETO:PP.MEM-MAL-001", g:"Amnios et chorion", mag:"moyen", l:"Excroissances polypoïdes du conjonctif à travers des défects de l'épithélium amniotique",
+    meta:"épidermolyse bulleuse congénitale [benirschke, ch. 15]",
+    cr:"On note des excroissances polypoïdes du conjonctif à travers des défects de l'épithélium amniotique" },
 
   /* — Inflammation aiguë — réponse maternelle — */
   { k:"microabces", fv:"FOETO:PP.PLA-INF-047", g:INF, mag:"faible", l:"Polynucléaires confluents ou microabcès sous-choriaux", meta:"MIR grade 2",
@@ -171,10 +185,13 @@ var SIGNES = [
   /* — Méconium — */
   { k:"meconiumAmnios", terme:[20, null], fv:"FOETO:PP.PLA-MAL-058", g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans l'amnios",
     cr:"On note des macrophages chargés de méconium dans l'amnios" },
-  { k:"meconiumChorion", terme:[20, null], g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans le chorion et la caduque capsulaire",
+  { k:"meconiumChorion", fv:"FOETO:PP.PLA-INF-010", terme:[20, null], g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans le chorion",
     cr:"Les membranes présentent quelques macrophages chargés de méconium épars au chorion (MFM)." },
   { k:"meconiumNombreux", terme:[20, null], g:"Méconium", mag:"fort", l:"Macrophages méconiaux très nombreux dans le chorion",
-    cr:"Les membranes présentent de très nombreux macrophages chargés de méconium épars au chorion (MFM+)." }
+    cr:"Les membranes présentent de très nombreux macrophages chargés de méconium épars au chorion (MFM+)." },
+  { k:"meconiumCaduque", terme:[20, null], fv:"FOETO:PP.PLA-RET-009", g:"Méconium", mag:"fort", l:"Macrophages méconiaux dans la caduque capsulaire",
+    meta:"après l'amnios et le chorion : la profondeur ordonne, elle ne date pas",
+    cr:"On note des macrophages méconiaux dans la caduque capsulaire" },
 ];
 
 /* ── Associations — affichées, jamais cochées ─────────────────────────────── */
@@ -190,7 +207,7 @@ var DIAGS = [
          "choriale se lit sur la grille parenchyme, la réponse fœtale sur les grilles cordon et parenchyme." },
 
   { k:"meconium", l:"Exposition prolongée au méconium (membranes)", min:2,
-    signes:["meconiumAmnios","meconiumChorion","meconiumNombreux","amniosDegenere"],
+    signes:["meconiumAmnios","meconiumChorion","meconiumNombreux","amniosDegenere","meconiumCaduque"],
     stop:" — 1–3 h contre 24–48 h : la profondeur de pénétration ORDONNE, elle ne date pas. Le fer positif tranche " +
          "l'hémosidérine ; un bleu de Prusse négatif n'affirme pas le méconium (la bile se colore mal). Le fœtus " +
          "très immature ne défèque pas — avec les deux modèles opposés du corpus. Myonécrose : < 1 % des placentas " +
@@ -202,13 +219,19 @@ var DIAGS = [
          "normal, absent à 600 g / 27 semaines. Ne pas confondre avec la métaplasie malpighienne (kératinisation " +
          "focale, placenta mature, près du cordon). Rare sur le cordon ; le jumeau monoamniotique est protégé." },
 
-  { k:"arteriopathie", l:"Artériopathie déciduale — athérose, défaut de remodelage", cle:"atherose", min:1,
+  { k:"arteriopathie", fv:"FOETO:PP.PAR-VAS-001", l:"Artériopathie déciduale — athérose, défaut de remodelage", cle:"atherose", min:1,
     signes:["atherose","muscularisation","hypertrophieMurale","thromboseDeciduale","lymphocytesT"],
     stop:" — le seuil mural diamètre > 1/3 de la circonférence est dimensionnellement fautif, et deux sources " +
          "indépendantes le partagent ; trois formulations dans un même chapitre. Sur 53 placentas, quatre athéroses " +
          "n'ont été vues qu'après revue des QUATRE rouleaux. Identique en caduque pariétale, basale ou lit " +
          "placentaire — la plaque basale se lit sur la grille parenchyme. Le muscle lisse pariétal est normal : " +
-         "c'est l'épaisseur relative qui devient lésionnelle." }
+         "c'est l'épaisseur relative qui devient lésionnelle." },
+
+  { k:"hemosideroseDiffuse", l:"Hémosidérose chorioamniotique diffuse", fv:"FOETO:PP.PLA-RET-005", cle:"hemosiderine", min:1,
+    signes:["hemosiderine","hemorragieMembranes","macrophagesPigmentes"],
+    stop:" — saignement chronique : hémosidérine abondante dans les membranes après une hémorragie [benirschke, ch. 15]. " +
+         "Le fer positif tranche contre le méconium ; l'hémosidérine du bord se lit sur la grille marges." }
+
 ];
 
 /* ── Négatifs obligatoires — déduits des signes ou des données consignées ──── */
@@ -243,7 +266,7 @@ var TECHNIQUES = [
 function suggerer(){
   var s = {};
   function vu(){ for (var i = 0; i < arguments.length; i++) if (E.signes[arguments[i]] === POS) return true; return false; }
-  if (vu("hemosiderine", "meconiumChorion", "meconiumAmnios", "meconiumNombreux")) s.perls = 1;
+  if (vu("hemosiderine", "meconiumChorion", "meconiumAmnios", "meconiumNombreux", "meconiumCaduque", "macrophagesPigmentes")) s.perls = 1;
   if (vu("chorioamniotite", "necrosante", "microabces")) s.gram = 1;
   if (vu("amniosNodosum")) s.pasAlcian = 1;
   if (vu("atherose", "muscularisation", "hypertrophieMurale")) s.rouleaux = 1;
@@ -318,5 +341,5 @@ async function testsOrgane(chk, clic, set, crTient, pause){
   chk("aucun bouton ne porte un diagnostic",
       DIAGS.every(function(d){ return !document.querySelector('[data-act="les"][data-k="' + d.k + '"]'); }));
   /* 1.1.0 : codes créés depuis le verbatim de la fiche (lot FOETO) — les signes branchés exportent leur code */
-  chk("FOETO 1.1.1 : 18 signe(s) codé(s) depuis le verbatim (après le tri et le réancrage)", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 18);
+  chk("FOETO 1.1.2 : 20 signe(s) codé(s) depuis le verbatim (après la confrontation)", SIGNES.filter(function(x){ return /^FOETO:PP\.PLA-/.test(x.foeto || ""); }).length === 20);
 }
