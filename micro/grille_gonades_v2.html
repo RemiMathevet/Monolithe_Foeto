@@ -138,6 +138,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
   max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
 .flash.on{opacity:1}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+body.hote #btnWipe{display:none}
 </style>
 </head>
 <body>
@@ -2740,12 +2741,31 @@ function vider(){
 /* ── Enregistrement continu ───────────────────────────────────────────────── */
 var attente = null;
 function enregistrer(){
-  if (!dossier || !db) return;
+  if (!dossier || !(db || HOTE)) return;
   clearTimeout(attente);
   attente = setTimeout(function(){
+    if (HOTE){ HOTE_CIBLE.postMessage({ type:"grille:saisie", module:MODULE, saisie:collecter() }, "/"); return; }
     putSaisie(collecter()).catch(function(e){ flash("Enregistrement refusé : " + e.message); });
   }, 350);
 }
+
+/* ── Mode intégré (?hote=1, dans un cadre) ────────────────────────────────────
+   Une page hôte (viewer de lames, même origine) donne le dossier, le lecteur et la
+   lecture déjà faite ; la grille lui renvoie collecter() à chaque enregistrement.
+   Pas d'IndexedDB : l'hôte garde la lecture, une par lame. */
+var HOTE = /[?&]hote=1\b/.test(location.search) && window.parent !== window,
+    HOTE_CIBLE = window.parent, hoteSaisie = null, hoteBlocs = "";
+function recevoirHote(e){
+  var m = e.data || {};
+  if (e.source !== HOTE_CIBLE || m.type !== "grille:init") return;
+  hoteSaisie = m.saisie && m.saisie.grille ? m.saisie : null;
+  hoteBlocs = m.blocs || "";
+  if (m.operateur && !$("operateur").value) $("operateur").value = m.operateur;
+  $("dossier").value = normDossier(m.dossier || "");
+  dossier = "";   // relit la lecture de l'hôte même si le dossier ne change pas
+  return majDossier();
+}
+if (HOTE) window.addEventListener("message", recevoirHote);
 
 /* ── Saisie du dossier ────────────────────────────────────────────────────── */
 $("dossier").addEventListener("input", function(){
@@ -2777,8 +2797,11 @@ async function majDossier(){
   if (ok && v !== dossier){
     dossier = v;
     vider();
-    var rec = await getSaisie(dossier).catch(function(){ return null; });
+    var rec = HOTE ? hoteSaisie : await getSaisie(dossier).catch(function(){ return null; });
     if (rec){ appliquer(rec); flash("Grille du " + dossier + " restituée."); }
+    else if (HOTE && BLOCS_LUS && hoteBlocs){
+      E.blocs = lireBlocs(hoteBlocs).ok; $("blocs").value = E.blocs.join(", ");
+    }
   } else if (!ok && dossier){
     dossier = ""; vider();
   }
@@ -2868,6 +2891,14 @@ async function diagnostic(){
   $("ver").textContent = "v" + VERSION;
   E = neuf();
   resoudreFV(); batir(); majSa(); peindre();
+  if (HOTE){
+    document.body.classList.add("hote");
+    $("dossier").readOnly = true;
+    document.querySelector("header .sub").textContent = "Lecture enregistrée par le viewer, une par lame.";
+    await majDossier();
+    HOTE_CIBLE.postMessage({ type:"grille:prete", module:MODULE }, "/");
+    return;
+  }
   try { db = await openDB(); }
   catch(e){
     var h = $("dossierHint");
@@ -3243,6 +3274,22 @@ async function autotest(){
   chk("JSON d'un autre module refusé", refus);
 
   await tx("readwrite", function(s){ return s.delete("26P0123"); });
+  vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
+
+  /* Mode intégré : la lecture de l'hôte se restitue, la saisie repart à l'hôte */
+  var recus = [], cible0 = HOTE_CIBLE;
+  HOTE = true; HOTE_CIBLE = { postMessage:function(m){ recus.push(m); } };
+  await recevoirHote({ source:HOTE_CIBLE, data:{ type:"grille:init", dossier:"26p0123", operateur:"RM", saisie:snap } });
+  chk("intégré : lecture de l'hôte restituée", E.signes[l0.k] === POS && dossier === "26P0123");
+  enregistrer();
+  await new Promise(function(r){ setTimeout(r, 400); });
+  chk("intégré : saisie envoyée à l'hôte", recus.length === 1 && recus[0].type === "grille:saisie" &&
+      recus[0].module === MODULE && recus[0].saisie.grille.signes[l0.k] === POS);
+  if (BLOCS_LUS){
+    await recevoirHote({ source:HOTE_CIBLE, data:{ type:"grille:init", dossier:"26P0123", operateur:"RM", blocs:"6" } });
+    chk("intégré : bloc de la lame prérempli", E.blocs.join() === "6" && Object.keys(E.signes).length === 0);
+  }
+  HOTE = false; HOTE_CIBLE = cible0; hoteSaisie = null; hoteBlocs = "";
   vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
 
   document.body.insertAdjacentHTML("afterbegin",
