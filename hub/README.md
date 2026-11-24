@@ -49,8 +49,14 @@ On corrige un adaptateur, on réindexe, rien d'autre ne bouge.
 **Rien ne se corrige en base.** Une erreur de saisie se corrige dans le module,
 qui la ré-enregistre. La nouvelle saisie devient courante, l'ancienne reste avec
 `courant = 0` : on garde la trace de ce qui avait été écrit et quand. Les seules
-choses qui se décident dans la page de gestion sont le statut, les remarques et
-la clôture — des décisions, pas des constatations.
+choses qui se décident dans la page de gestion sont le statut, les remarques, le
+signalement « macro refaite fixée » et la clôture — des décisions, pas des
+constatations.
+
+**L'export le plus récent reste courant.** Deux exports du téléphone pour le même
+module (« x.json », « x (1).json ») se départagent à leur date d'export, pas à leur
+ordre d'arrivée : le plus ancien va à l'historique. Une saisie du poste est toujours
+courante. Contrôle : `python3 outils/verifier_ordre.py`.
 
 ---
 

@@ -545,6 +545,9 @@ function pastilleStatut(s){
   var c = s === "complet" ? "ok" : s === "clos" ? "" : s === "ouvert" ? "chaud" : "att";
   return '<span class="pastille ' + c + '">' + esc(LIB_STATUT[s] || s) + "</span>";
 }
+function pastilleMacro(d){
+  return d.macro_refaite ? ' <span class="pastille att">macro refaite fixée</span>' : "";
+}
 /* Une saisie porte le nom de son module ; la fiche la range dans un créneau.
    Les dix-sept grilles de microscopie partagent le créneau « microscopie » :
    un dossier peut en avoir zéro, une ou dix-sept, ça reste une ligne. */
@@ -606,7 +609,7 @@ function rendreListe(){
     return '<div class="cas' + (COURANT === d.numero ? " sel" : "") +
       '" data-num="' + esc(d.numero) + '">' +
       '<div class="l1"><span class="n">' + esc(d.numero) + "</span>" +
-        '<span class="s">' + pastilleStatut(d.statut) + "</span></div>" +
+        '<span class="s">' + pastilleStatut(d.statut) + pastilleMacro(d) + "</span></div>" +
       '<div class="l2">' + esc(terme(d)) + " · " + esc(d.type_issue || "issue —") +
         (d.indication ? " · " + esc(d.indication) : "") + "</div>" +
       '<div class="l3">' + jauge(d) +
@@ -831,7 +834,7 @@ function ouvrir(numero, garderOnglet){
   $("aucunCas").hidden = true;
   $("fiche").hidden = false;
   $("ficheNum").textContent = numero;
-  $("ficheStatut").innerHTML = pastilleStatut(d.statut);
+  $("ficheStatut").innerHTML = pastilleStatut(d.statut) + pastilleMacro(d);
   $("ficheResume").textContent = terme(d) + " · " + (d.type_issue || "—") + " · " +
     (d.sexe || "—") + " · " + modulesDe(d).length + "/" + INDEX.modules_attendus.length + " modules";
 
@@ -892,6 +895,9 @@ function panneauDossier(d, slugs){
       esc(d.remarques || "") + '" placeholder="note de suivi, décision, ce qui reste à faire"></div>' +
       '<div class="field" style="flex:0 0 auto"><button class="btn ghost" onclick="poserRemarques(' +
       js(d.numero) + ')">Enregistrer</button></div></div>';
+    h += '<label class="noprint" style="display:block;margin-top:8px"><input type="checkbox"' +
+      (d.macro_refaite ? " checked" : "") + ' onchange="poserMacroRefaite(' + js(d.numero) +
+      ', this.checked)"> Macroscopie refaite sur pièce fixée</label>';
   } else if (d.remarques){
     h += '<h3>Remarques</h3><p style="margin:0">' + esc(d.remarques) + "</p>";
   }
@@ -1288,12 +1294,12 @@ $("btnCsv").onclick = function(){
   var l = filtres();
   var lignes = [["dossier","statut","terme_sa","terme_j","sexe","issue",
                  "date_reception","date_examen","modules","cliches","indication",
-                 "remarques","derniere_reprise"].join(";")];
+                 "remarques","macro_refaite","derniere_reprise"].join(";")];
   l.forEach(function(d){
     lignes.push([d.numero, d.statut, d.terme_sa, d.terme_j, d.sexe, d.type_issue,
                  d.date_reception, d.date_examen, modulesDe(d).join("|"), d.cliches,
                  (d.indication || "").replace(/[;\r\n]/g, " "),
-                 (d.remarques || "").replace(/[;\r\n]/g, " "), d.derniere_ingestion]
+                 (d.remarques || "").replace(/[;\r\n]/g, " "), d.macro_refaite, d.derniere_ingestion]
                 .map(function(v){ return v == null ? "" : v; }).join(";"));
   });
   var blob = new Blob(["﻿" + lignes.join("\r\n")], {type:"text/csv;charset=utf-8"});
@@ -1401,6 +1407,15 @@ function poserRemarques(numero){
   }).then(function(){ flash("Remarques enregistrées."); return rafraichir(); })
     .catch(function(e){ flash("Échec : " + e.message); });
 }
+function poserMacroRefaite(numero, oui){
+  api("/api/dossiers/" + encodeURIComponent(numero), {
+    method: "PUT", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({macro_refaite: oui ? "fixee" : ""})
+  }).then(function(){
+    flash(oui ? "Macro refaite fixée : signalé." : "Signalement retiré.");
+    return rafraichir();
+  }).catch(function(e){ flash("Échec : " + e.message); });
+}
 function reprendreRejet(nom){
   api("/api/rejets/" + encodeURIComponent(nom) + "/reprendre", {method:"POST"})
     .then(function(o){ flash(o.repris + " remis dans arrivee/."); return rafraichir(); })
@@ -1408,7 +1423,7 @@ function reprendreRejet(nom){
 }
 if (SERVI){
   $("sousTitre").innerHTML =
-    'Servie par <span class="mono">serveur.py</span>. Seuls le statut et les remarques ' +
+    'Servie par <span class="mono">serveur.py</span>. Seuls le statut, les remarques et le signalement de macro refaite ' +
     "se décident ici ; une constatation se corrige dans son module, qui l'enregistre au hub.";
   try { $("operateur").value = localStorage.getItem("hub_operateur") || ""; } catch(e){}
   $("operateur").addEventListener("input", function(){
@@ -2360,6 +2375,8 @@ if (/[?&]selftest=1/.test(location.search)){
     chk("lisible : liste",          lisible(["a","b"]) === "a · b");
     chk("filtre plein texte",       ($("q").value = "asym", filtres().length === 0));
     chk("filtre sur numéro",        ($("q").value = "26P", filtres().length === 1));
+    chk("macro refaite signalée",   pastilleMacro({macro_refaite:"fixee"}).indexOf("fixée") > 0 &&
+                                    pastilleMacro({}) === "");
     chk("filtre sur remarques",     ($("q").value = "relire", filtres().length === 1));
     $("q").value = "";
     chk("filtre module manquant",   ($("fManque").value = "administratif", filtres().length === 1));

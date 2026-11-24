@@ -857,16 +857,29 @@ def ingerer(cx, racine: Path, brut: bytes, nom: str, provenance="telephone", dry
     # L'empreinte dans le nom : deux versions reprises dans la même seconde
     # (enregistrer deux fois de suite depuis un module) ne s'écrasent pas.
     cx.execute("INSERT OR IGNORE INTO dossiers (numero) VALUES (?)", (dossier,))
-    cx.execute("UPDATE saisies SET courant=0 WHERE dossier=? AND module=?", (dossier, module))
+    # Le téléphone exporte parfois deux fois (« x.json », « x (1).json »), et les
+    # fichiers n'arrivent pas dans l'ordre : c'est la date d'export qui décide. Le
+    # poste, lui, enregistre en direct — une horloge en retard ne doit pas l'écarter.
+    courante = cx.execute("SELECT id, schema_version, exported_at, donnees_json FROM saisies "
+                          "WHERE dossier=? AND module=? AND courant=1", (dossier, module)).fetchone()
+    exporte = txt(d.get("exported_at"))
+    retard = bool(provenance == "telephone" and courante and exporte
+                  and courante["exported_at"] and exporte < courante["exported_at"])
+    if not retard:
+        cx.execute("UPDATE saisies SET courant=0 WHERE dossier=? AND module=?", (dossier, module))
     sid = ins(cx, "saisies",
               dossier=dossier, module=module,
               schema_version=d["schema_version"], module_version=d["module_version"],
-              operateur=txt(d.get("operateur")), exported_at=txt(d.get("exported_at")),
+              operateur=txt(d.get("operateur")), exported_at=exporte,
               fichier=nom, archive=rel_archive, sha256=empreinte,
-              octets=len(brut), courant=1, provenance=provenance,
+              octets=len(brut), courant=0 if retard else 1, provenance=provenance,
               donnees_json=json.dumps(sans_base64(d), ensure_ascii=False))
 
     indexer(cx, sid, dossier, module, d["schema_version"], d)
+    if retard:   # la fiche du dossier (terme, sexe…) reste celle de la saisie courante
+        vieux = json.loads(courante["donnees_json"] or "{}")
+        if vieux and (module, courante["schema_version"]) in ADAPTATEURS:
+            indexer(cx, courante["id"], dossier, module, courante["schema_version"], vieux)
 
     n_photos = ecrire_photos(cx, racine, sid, dossier, module, d)
     majuscule_statut(cx, dossier)
@@ -879,6 +892,8 @@ def ingerer(cx, racine: Path, brut: bytes, nom: str, provenance="telephone", dry
     msg = f"{module} v{d['module_version']} → {dossier}" + (f", {n_photos} cliché(s)" if n_photos else "")
     if d.get("_avertissement_nom"):
         msg += f" [{d['_avertissement_nom']}]"
+    if retard:
+        msg += f" [plus ancien que la saisie courante, exportée le {courante['exported_at'][:16]} : rangé à l'historique]"
     return "info", msg, sid
 
 
@@ -985,7 +1000,7 @@ def reindexer(cx, bavard=True):
     ajoute une colonne à un module.
     """
     lignes = cx.execute("""SELECT id, dossier, module, schema_version, donnees_json
-                             FROM saisies ORDER BY id""").fetchall()
+                             FROM saisies ORDER BY courant, id""").fetchall()   # les courantes écrivent la fiche en dernier
     faites = sans_adaptateur = sans_document = 0
     for r in lignes:
         try:
