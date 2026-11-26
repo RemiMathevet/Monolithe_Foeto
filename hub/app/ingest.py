@@ -533,7 +533,8 @@ def adapt_plat(cx, sid, dossier, d):
             return
         if isinstance(v, dict):
             for k in v:
-                descendre(v[k], chemin + [str(k)])
+                if k != "data_base64":   # le son d'une dictée : des octets, pas une valeur à chercher
+                    descendre(v[k], chemin + [str(k)])
         elif isinstance(v, list):
             for i, x in enumerate(v):
                 descendre(x, chemin + [str(i)])
@@ -580,6 +581,9 @@ ADAPTATEURS = {
     ("autopsie",           "0.2.0"): (4, adapt_autopsie),
     ("micro",              "0.2.0"): (4, adapt_plat),
     ("macro_placenta",     "0.2.0"): (4, adapt_plat),
+    # 0.2.1 : clé facultative « dictees » (clips audio). Mêmes tables, à plat ; le
+    # son n'est ni indexé ni transcrit — il reste dans l'archive.
+    ("macro_placenta",     "0.2.1"): (4, adapt_plat),
 }
 ADAPTATEURS.update({(m, "0.1.0"): (1, adapt_microscopie) for m in MODULES_MICRO})
 ADAPTATEURS.update({(m, "0.2.0"): (4, adapt_microscopie) for m in MODULES_MICRO})
@@ -821,9 +825,12 @@ def sans_base64(d: dict) -> dict:
     sur le disque et seraient illisibles en base de toute façon.
     """
     out = {k: v for k, v in d.items() if not k.startswith("_avertissement")}
-    if out.get("photos"):
-        out["photos"] = [{k: v for k, v in p.items() if k != "data_base64"}
-                         for p in out["photos"]]
+    # dictees (macro placenta 0.2.1) : clips audio enregistrés hors ligne, non
+    # transcrits ici. Le son reste dans l'archive, octet pour octet.
+    for cle in ("photos", "dictees"):
+        if out.get(cle):
+            out[cle] = [{k: v for k, v in p.items() if k != "data_base64"}
+                        for p in out[cle]]
     return out
 
 

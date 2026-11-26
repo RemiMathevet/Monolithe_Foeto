@@ -133,6 +133,14 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 .legende{display:flex;flex-wrap:wrap;gap:14px;font-family:var(--mono);font-size:11px;color:#9FB5B1}
 .legende b{color:var(--paper);font-weight:600}
 .legende .sw{display:inline-block;width:9px;height:9px;margin-right:5px;border-radius:1px}
+
+/* ── Dictée ── */
+.dictee{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}
+.dictee .mini{margin-top:0}
+.mic.rec{background:var(--alert);border-color:var(--alert);color:#fff}
+.clips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;
+       font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+.clip{display:inline-flex;gap:2px}
 </style>
 </head>
 <body>
@@ -141,7 +149,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 <header>
   <p class="eyebrow">Fœtopathologie · macro placentaire</p>
   <h1>Macro placentaire — pièce fraîche <span class="ver" id="ver"></span></h1>
-  <p class="sub">Document autonome, à la paillasse, hors réseau. Clichés et constatations restent sur cet appareil ; rien n'est transmis. L'export produit un fichier JSON nommé d'après le numéro de dossier. Placenta d'un fœtus unique : les gémellaires ne sont pas traités ici.</p>
+  <p class="sub">Document autonome, à la paillasse, hors réseau. Clichés, dictées et constatations restent sur cet appareil ; rien n'est transmis. Une dictée est enregistrée, pas transcrite : le son part dans l'export. L'export produit un fichier JSON nommé d'après le numéro de dossier. Placenta d'un fœtus unique : les gémellaires ne sont pas traités ici.</p>
 </header>
 
 <!-- 01 — Dossier -->
@@ -213,9 +221,10 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
    ═══════════════════════════════════════════════════════════════════════════ */
 
 var MODULE = "macro_placenta";
-var SCHEMA = "0.2.0";   /* 0.2.0 : indication ; masse parée dans sa section "paree" */
-var VERSION = "1.1.1";   /* version du document ; à incrémenter à chaque diffusion */
-var DB_NAME = "foeto-macro-placenta", DB_VER = 1, db = null;
+var SCHEMA = "0.2.1";   /* 0.2.0 : indication ; masse parée dans sa section "paree" ;
+                           0.2.1 : clé facultative "dictees" (clips audio en base64) */
+var VERSION = "1.2.0";   /* version du document ; à incrémenter à chaque diffusion */
+var DB_NAME = "foeto-macro-placenta", DB_VER = 2, db = null;   /* 2 : store "clips" */
 
 /* ── Sections ───────────────────────────────────────────────────────────────
    Une section : ses clichés de trame, puis ses champs.
@@ -333,6 +342,10 @@ function openDB(){
       if (!d.objectStoreNames.contains("shots")){
         d.createObjectStore("shots", {keyPath:"id"}).createIndex("dossier", "dossier");
       }
+      /* les dictées à part : "shots" alimente les listes de clichés */
+      if (!d.objectStoreNames.contains("clips")){
+        d.createObjectStore("clips", {keyPath:"id"}).createIndex("dossier", "dossier");
+      }
     };
     r.onsuccess = function(){ res(r.result); };
     r.onerror   = function(){ rej(r.error || new Error("accès refusé")); };
@@ -358,10 +371,16 @@ function delShot(i){ return tx("shots", "readwrite", function(s){ return s.delet
 function shotsOf(d){
   return tx("shots", "readonly", function(s){ return s.index("dossier").getAll(IDBKeyRange.only(d)); });
 }
+function putClip(r){ return tx("clips", "readwrite", function(s){ return s.put(r); }); }
+function delClip(i){ return tx("clips", "readwrite", function(s){ return s.delete(i); }); }
+function clipsOf(d){
+  return tx("clips", "readonly", function(s){ return s.index("dossier").getAll(IDBKeyRange.only(d)); });
+}
 
 /* ── État ─────────────────────────────────────────────────────────────────── */
 var dossier = "", shots = {}, urls = {}, libres = {}, slotCible = null;
 var nGroupes = 0, nLesions = 0;
+var clips = {};   /* dictées : champ -> [enregistrements], dans l'ordre de prise */
 /* libres : clichés hors trame, clé -> { l: intitulé, section, item }
    item vaut "g<n>" pour une tranche, "les<n>" pour une lésion, null sinon. */
 
@@ -378,7 +397,8 @@ function champHTML(c){
   }
   if (c.t === "texte"){
     return '<div class="field large">' + lab +
-           '<textarea id="f_' + c.id + '" rows="2" placeholder="Texte libre…"></textarea></div>';
+           '<textarea id="f_' + c.id + '" rows="2" placeholder="Texte libre…"></textarea>' +
+           micHTML(c.id) + '</div>';
   }
   return '<div class="field' + ((c.d || []).length > 3 ? " large" : "") + '">' + lab +
          '<div class="chips" id="ch_' + c.id + '" data-mode="' + c.t + '">' +
@@ -480,13 +500,16 @@ function ajouterLesion(force){
         '<div class="field"><label for="les_k_' + n + '">N° de cassette</label>' +
           '<input type="text" id="les_k_' + n + '" placeholder="K1, K2…" autocomplete="off"></div>' +
         '<div class="field large"><label for="les_d_' + n + '">Description</label>' +
-          '<textarea id="les_d_' + n + '" rows="2" placeholder="Siège, taille, aspect, tranche…"></textarea></div>' +
+          '<textarea id="les_d_' + n + '" rows="2" placeholder="Siège, taille, aspect, tranche…"></textarea>' +
+          micHTML("lesion_" + n) + '</div>' +
       '</div>' +
     '</div>');
   return n;
 }
 async function retirerLesion(n){
   await retirer("lesion_" + n, true);
+  var dl = clips["lesion_" + n] || [];   /* ses dictées partent avec elle, comme son cliché */
+  for (var i = 0; i < dl.length; i++) await retirerClip(dl[i].id, true);
   var el = $("les_" + n); if (el) el.remove();
   if (n === nLesions) nLesions--;
   rendreCliches(); enregistrer();
@@ -524,6 +547,12 @@ document.addEventListener("click", function(ev){
   if (dl){ ev.stopPropagation(); retirerLesion(+dl.dataset.delles); return; }
   var add = t.closest("[data-add]");
   if (add){ nouveauCliche(add.dataset.add); return; }
+  var mic = t.closest("[data-mic]");
+  if (mic){ basculerMic(mic.dataset.mic); return; }
+  var pl = t.closest("[data-play]");
+  if (pl){ ecouter(pl.dataset.play); return; }
+  var dc = t.closest("[data-delclip]");
+  if (dc){ if (confirm("Supprimer cette dictée ?")) retirerClip(dc.dataset.delclip); return; }
   var del = t.closest("[data-del]");
   if (del){ ev.stopPropagation(); retirer(del.dataset.del); return; }
   var slot = t.closest(".slot");
@@ -645,7 +674,8 @@ function majRapport(){
   }
 }
 async function jauge(){
-  var total = Object.keys(shots).reduce(function(a,k){ return a + (shots[k].bytes||0); }, 0);
+  var total = Object.keys(shots).reduce(function(a,k){ return a + (shots[k].bytes||0); }, 0) +
+              tousClips().reduce(function(a,r){ return a + (r.bytes||0); }, 0);
   var proj  = Math.round(total * 4/3) + 8192;
   var used = null, quota = null;
   if (navigator.storage && navigator.storage.estimate){
@@ -727,6 +757,126 @@ async function retirer(k, muet){
   flash("Cliché retiré.");
 }
 
+/* ── Dictée ───────────────────────────────────────────────────────────────────
+   Le document ENREGISTRE, il ne transcrit pas : hors réseau, pas de moteur de
+   reconnaissance. Le clip part dans l'export en base64 ; la transcription se
+   fait à l'ingestion, par qui en a les moyens. Un clip est rattaché au champ
+   sous lequel on l'a dicté (champ du Monolithe, ou lesion_<n> pour la
+   description d'une lésion). Format natif du navigateur : aucun réencodage. */
+var MIC_MAX = 60;   /* secondes par clip */
+var enr = null, lecture = null;
+function micHTML(champ){
+  return '<div class="dictee"><button type="button" class="mini mic" data-mic="' + champ + '">🎙 Dicter</button>' +
+         '<span class="clips" id="cl_' + champ + '"></span></div>';
+}
+function sectionDeDictee(champ){ return /^lesion_\d+$/.test(champ) ? "tranches" : sectionDeChamp(champ); }
+function micDispo(){
+  return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+}
+function formatAudio(){
+  if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return "";
+  var f = ["audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus", "audio/mp4"];
+  for (var i = 0; i < f.length; i++) if (MediaRecorder.isTypeSupported(f[i])) return f[i];
+  return "";
+}
+function majBoutonMic(champ, s){
+  var b = document.querySelector('[data-mic="' + champ + '"]');
+  if (!b) return;
+  b.classList.toggle("rec", s != null);
+  b.textContent = s != null ? "■ " + s + " / " + MIC_MAX + " s" : "🎙 Dicter";
+}
+async function basculerMic(champ){
+  if (enr){ if (enr.champ === champ) arreterMic(); else flash("Une dictée est déjà en cours."); return; }
+  if (!dossier){ flash("Saisir d'abord dossier et opérateur."); $("dossier").focus(); return; }
+  if (!micDispo()){ flash("Micro indisponible dans ce navigateur (voir le diagnostic)."); return; }
+  var flux, rec, fa = formatAudio();
+  try { flux = await navigator.mediaDevices.getUserMedia({audio: true}); }
+  catch(e){ flash("Micro refusé : " + e.message); return; }
+  try { rec = fa ? new MediaRecorder(flux, {mimeType: fa}) : new MediaRecorder(flux); }
+  catch(e){
+    flux.getTracks().forEach(function(t){ t.stop(); });
+    flash("Enregistrement impossible : " + e.message); return;
+  }
+  /* le dossier est figé au départ : un clip appartient au dossier où on l'a dicté */
+  var e = enr = { champ: champ, dossier: dossier, rec: rec, morceaux: [], t0: Date.now() };
+  rec.ondataavailable = function(ev){ if (ev.data && ev.data.size) e.morceaux.push(ev.data); };
+  rec.onstop = async function(){
+    clearInterval(e.minuteur);
+    flux.getTracks().forEach(function(t){ t.stop(); });
+    enr = null;
+    majBoutonMic(champ);
+    var duree = Math.round((Date.now() - e.t0) / 100) / 10;
+    var blob = new Blob(e.morceaux, {type: rec.mimeType || fa || "audio/webm"});
+    if (!blob.size){ flash("Dictée vide — rien n'est conservé."); return; }
+    try { await ajouterClip(champ, blob, duree, e.dossier); flash("Dictée conservée (" + duree + " s)."); }
+    catch(err){ flash("Échec : " + err.message + " — dictée non conservée."); }
+  };
+  rec.start(1000);
+  e.minuteur = setInterval(function(){
+    var s = Math.floor((Date.now() - e.t0) / 1000);
+    if (s >= MIC_MAX) arreterMic(); else majBoutonMic(champ, s);
+  }, 250);
+  majBoutonMic(champ, 0);
+}
+function arreterMic(){ if (enr && enr.rec.state !== "inactive") enr.rec.stop(); }
+async function ajouterClip(champ, blob, duree, d){
+  d = d || dossier;
+  var at = new Date().toISOString();
+  var r = { id: d + "|" + champ + "|" + at, dossier: d, module: MODULE, champ: champ,
+            section: sectionDeDictee(champ), addedAt: at, type: blob.type || "audio/webm",
+            duree_s: duree, bytes: blob.size, blob: blob };
+  await putClip(r);
+  if (d === dossier){ (clips[champ] = clips[champ] || []).push(r); rendreClips(); }
+  return r;
+}
+function tousClips(){
+  var l = [];
+  Object.keys(clips).forEach(function(c){ l = l.concat(clips[c]); });
+  return l.sort(function(a, b){ return a.addedAt < b.addedAt ? -1 : a.addedAt > b.addedAt ? 1 : 0; });
+}
+function trouverClip(id){ return tousClips().filter(function(r){ return r.id === id; })[0]; }
+function rendreClips(){
+  Array.prototype.forEach.call(document.querySelectorAll(".dictee .clips"), function(sp){
+    var l = clips[sp.id.slice(3)] || [];
+    sp.innerHTML = !l.length ? "" :
+      '<span>' + l.length + (l.length > 1 ? " dictées" : " dictée") + '</span>' +
+      l.map(function(r, i){
+        return '<span class="clip">' +
+          '<button type="button" class="mini" data-play="' + esc(r.id) + '" aria-label="Écouter la dictée ' +
+            (i+1) + '">▶ ' + (i+1) + ' · ' + Math.round(r.duree_s) + ' s</button>' +
+          '<button type="button" class="mini danger" data-delclip="' + esc(r.id) + '" aria-label="Supprimer la dictée ' +
+            (i+1) + '">✕</button></span>';
+      }).join("");
+  });
+  jauge();
+}
+function ecouter(id){
+  var r = trouverClip(id);
+  if (!r) return;
+  if (lecture){ lecture.pause(); URL.revokeObjectURL(lecture.src); }
+  var a = lecture = new Audio(URL.createObjectURL(r.blob));
+  a.onended = function(){ URL.revokeObjectURL(a.src); if (lecture === a) lecture = null; };
+  a.play().catch(function(e){ flash("Lecture impossible : " + e.message); });
+}
+async function retirerClip(id, muet){
+  await delClip(id).catch(function(){});
+  Object.keys(clips).forEach(function(c){
+    clips[c] = clips[c].filter(function(r){ return r.id !== id; });
+    if (!clips[c].length) delete clips[c];
+  });
+  if (muet) return;
+  rendreClips();
+  flash("Dictée supprimée.");
+}
+async function relierClips(){
+  var list = await clipsOf(dossier).catch(function(){ return []; });
+  clips = {};
+  list.sort(function(a, b){ return a.addedAt < b.addedAt ? -1 : a.addedAt > b.addedAt ? 1 : 0; })
+      .forEach(function(r){ (clips[r.champ] = clips[r.champ] || []).push(r); });
+  rendreClips();
+  return list.length;
+}
+
 /* ── Collecte / restitution ─────────────────────────────────────────────────
    Les clés de champs et de clichés reprennent celles de la PWA pour que les
    deux voies s'ingèrent avec le même code. */
@@ -780,8 +930,9 @@ function vider(){
   $("groupes").innerHTML = ""; $("lesions").innerHTML = "";
   nGroupes = 0; nLesions = 0;
   Object.keys(urls).forEach(function(k){ URL.revokeObjectURL(urls[k]); });
-  urls = {}; shots = {}; libres = {};
+  urls = {}; shots = {}; libres = {}; clips = {};
   rendreCliches();
+  rendreClips();
   majRapport();
 }
 /* ── Chargement d'un dossier ──────────────────────────────────────────────── */
@@ -802,7 +953,7 @@ async function chargerDossier(){
   if (!dossier || !db) return;
   var rec = await getSaisie(dossier).catch(function(){ return null; });
   if (rec) appliquer(rec);
-  var n = await relierCliches();
+  var n = await relierCliches() + await relierClips();
   rendreCliches();
   if (rec || n) flash("Dossier " + dossier + " restitué.");
 }
@@ -841,7 +992,7 @@ async function majDossier(){
   verrouiller(ok);
   $("btnExport").disabled = !ok;
   $("outHint").textContent = ok
-    ? "L'export produira " + v + "_" + MODULE + ".json — clichés inclus en base64."
+    ? "L'export produira " + v + "_" + MODULE + ".json — clichés et dictées inclus en base64."
     : ok_n ? "Saisir l'opérateur pour activer l'export."
            : "Saisir le numéro de dossier pour activer l'export.";
 
@@ -885,6 +1036,17 @@ async function paquet(){
       addedAt: r.addedAt, data_base64: await toB64(r.blob)
     });
   }
+  /* clé posée seulement s'il y a des dictées : un export sans dictée reste
+     identique à celui de la 1.1 */
+  var dl = tousClips();
+  if (dl.length) out.dictees = [];
+  for (var j = 0; j < dl.length; j++){
+    var c = dl[j];
+    out.dictees.push({
+      id: c.id, champ: c.champ, section: c.section, addedAt: c.addedAt, type: c.type,
+      duree_s: c.duree_s, bytes: c.bytes, data_base64: await toB64(c.blob)
+    });
+  }
   return out;
 }
 $("btnExport").onclick = async function(){
@@ -895,7 +1057,7 @@ $("btnExport").onclick = async function(){
     var out = await paquet();
     var blob = new Blob([JSON.stringify(out, null, 1)], {type:"application/json"});
     telecharger(blob, dossier + "_" + MODULE + ".json");
-    flash(out.photos.length + " cliché(s), " + fmt(blob.size) +
+    flash(out.photos.length + " cliché(s), " + (out.dictees || []).length + " dictée(s), " + fmt(blob.size) +
           " exportés en " + Math.round(performance.now()-t0) + " ms." +
           (shots[K_ETIQUETTE] ? "" : " ⚠ sans étiquette patient."));
   } catch(e){
@@ -926,10 +1088,21 @@ async function relire(o){
       blob: blob, thumb: th
     });
   }
+  /* l'identifiant se refait sur le dossier courant : dossier|champ|addedAt */
+  var dict = o.dictees || [];
+  for (var j = 0; j < dict.length; j++){
+    var q = dict[j], son = fromB64(q.data_base64, q.type || "audio/webm");
+    await putClip({
+      id: dossier + "|" + q.champ + "|" + q.addedAt, dossier: dossier, module: MODULE, champ: q.champ,
+      section: q.section || sectionDeDictee(q.champ), addedAt: q.addedAt, type: son.type,
+      duree_s: q.duree_s, bytes: son.size, blob: son
+    });
+  }
   /* les constatations d'abord — cliches_libres porte aussi les clichés
      déclarés mais pas encore pris — puis les blobs. */
   appliquer(o);
   await relierCliches();
+  await relierClips();
   rendreCliches();
   enregistrer();
   return photos.length;
@@ -949,20 +1122,23 @@ $("jsonPick").addEventListener("change", function(){
 });
 $("btnWipe").onclick = async function(){
   var seul = dossier
-    ? confirm("Effacer la saisie et les clichés du dossier " + dossier + " ?\n\n" +
+    ? confirm("Effacer la saisie, les clichés et les dictées du dossier " + dossier + " ?\n\n" +
               "OK : ce dossier seulement.\nAnnuler : choisir ensuite un effacement total.")
     : false;
   if (seul){
     var list = await shotsOf(dossier);
     for (var i = 0; i < list.length; i++) await delShot(list[i].id);
+    var cl = await clipsOf(dossier);
+    for (var j = 0; j < cl.length; j++) await delClip(cl[j].id);
     await tx("saisies", "readwrite", function(s){ return s.delete(dossier); });
     await chargerDossier();
     flash("Dossier " + dossier + " vidé.");
     return;
   }
-  if (!confirm("Effacer TOUTES les saisies et TOUS les clichés sur cet appareil ?\n" +
+  if (!confirm("Effacer TOUTES les saisies, TOUS les clichés et TOUTES les dictées sur cet appareil ?\n" +
                "Vérifier que les exports JSON ont bien été récupérés.")) return;
   await tx("shots",   "readwrite", function(s){ return s.clear(); });
+  await tx("clips",   "readwrite", function(s){ return s.clear(); });
   await tx("saisies", "readwrite", function(s){ return s.clear(); });
   await chargerDossier();
   flash("Stockage vidé.");
@@ -985,6 +1161,11 @@ async function diagnostic(){
   ligne("Stockage persistant", p ? "accordé" : "non accordé", p ? "ok" : "warn");
   ligne("Sections", SECTIONS.length + " — " + N_CHAMPS + " champs, " + N_TRAME + " clichés de trame");
   ligne("Clichés", "pleine résolution, aucun réencodage", "ok");
+  /* getUserMedia n'existe qu'en contexte sécurisé : https, localhost, et file:// selon le navigateur */
+  ligne("Dictée", micDispo()
+        ? "micro disponible — " + (formatAudio() || "format par défaut du navigateur") + ", " + MIC_MAX + " s par clip"
+        : "micro indisponible" + (window.isSecureContext === false ? " (contexte non sécurisé)" : ""),
+        micDispo() ? "ok" : "warn");
   ligne("Portée", "placenta d'un fœtus unique — gémellaires non traités", "warn");
   ligne("Version du document", "v" + VERSION + " — schéma " + SCHEMA);
   ligne("Navigateur", navigator.userAgent.slice(0, 80));
@@ -1117,6 +1298,25 @@ async function autotest(){
   chk("étiquette hors libres",    !libres[K_ETIQUETTE]);
   chk("bandeau étiquette vert",   $("etiquetteHint").className.indexOf("good") >= 0);
 
+  /* Dictée : le document garde le son, il ne transcrit pas */
+  function son(n){ return new Blob([new Uint8Array(n).fill(7)], {type: "audio/webm;codecs=opus"}); }
+  function pause(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+  chk("un micro par texte libre", document.querySelectorAll("#sections textarea").length ===
+                                  document.querySelectorAll("#sections [data-mic]").length);
+  chk("micro sous la lésion",     !!document.querySelector('[data-mic="lesion_1"]'));
+  chk("format audio : chaîne",    typeof formatAudio() === "string");
+  var c1 = await ajouterClip("remarques_basale", son(3000), 4.2);
+  await pause(5);   /* l'identifiant porte l'horodatage à la milliseconde */
+  await ajouterClip("remarques_basale", son(1500), 2);
+  await ajouterClip("lesion_1", son(2000), 2.5);
+  chk("dictées stockées",         clips["remarques_basale"].length === 2 && clips["lesion_1"].length === 1);
+  chk("dictée rattachée",         c1.section === "basale" && clips["lesion_1"][0].section === "tranches");
+  chk("identifiant stable",       c1.id === "26P0123|remarques_basale|" + c1.addedAt);
+  chk("compteur du champ",        $("cl_remarques_basale").textContent.indexOf("2 dictées") === 0);
+  chk("champ sans dictée muet",   $("cl_remarques_cordon").textContent === "");
+  chk("dictée hors clichés",      !shots[c1.id] && $("tPhotos").textContent === "1/" + N_TRAME);
+  chk("texte non touché",         $("f_remarques_basale").value === "dépôts fibrineux en carte de géographie");
+
   var snap = collecter();
   var gal = snap.sections.filter(function(s){ return s.id === "paree"; })[0];
   chk("version dans le JSON",     snap.module_version === VERSION);
@@ -1138,12 +1338,22 @@ async function autotest(){
   chk("relecture base64",         fromB64(parCle(pack, "lesion_1").data_base64, "image/jpeg").size
                                     === shots["lesion_1"].bytes);
   chk("supplémentaires listés",   pack.cliches_libres.length === 7);
+  var parChamp = function(p, c){ return (p.dictees || []).filter(function(x){ return x.champ === c; }); };
+  chk("dictées exportées",        (pack.dictees || []).length === 3);
+  chk("dictée : clés de l'export", ["id","champ","section","addedAt","type","duree_s","bytes","data_base64"]
+                                     .every(function(k){ return k in pack.dictees[0]; }));
+  chk("dictée : ordre de prise",  pack.dictees[0].id === c1.id && pack.dictees[0].duree_s === 4.2);
+  chk("dictée : son relu",        fromB64(parChamp(pack, "lesion_1")[0].data_base64).size === 2000);
+  chk("dictée : format gardé",    pack.dictees[0].type === "audio/webm;codecs=opus");
+  chk("champ sans dictée : rien", parChamp(pack, "remarques_cordon").length === 0 &&
+                                  pack.dictees.every(function(x){ return !!clips[x.champ]; }));
 
   await putSaisie(collecter());
   vider();
   chk("vider efface les champs",  valeur("terme_sa") === null && valeur("etat_basale").length === 0);
   chk("vider efface les groupes", groupesPresents().length === 0 && lesionsPresentes().length === 0);
   chk("vider efface les clichés", !shots["photo_basale"]);
+  chk("vider efface les dictées", Object.keys(clips).length === 0 && $("cl_remarques_basale").textContent === "");
   await chargerDossier();
   chk("IndexedDB restitue le nombre", valeur("masse") === 410);
   chk("IndexedDB restitue le multi",  valeur("etat_basale").length === 2);
@@ -1154,6 +1364,12 @@ async function autotest(){
   chk("IndexedDB restitue l'étiquette", !!shots[K_ETIQUETTE] &&
                                         $("ph_etiquette").children[0].classList.contains("done"));
   chk("IndexedDB restitue la tranche",  $("ph_g1").children[1].classList.contains("done"));
+  chk("IndexedDB restitue les dictées", (clips["remarques_basale"] || []).length === 2 &&
+                                        $("cl_lesion_1").textContent.indexOf("1 dictée") === 0);
+  var c2 = clips["remarques_basale"][1];
+  await retirerClip(c2.id);
+  chk("dictée supprimée",               clips["remarques_basale"].length === 1 &&
+                                        (await clipsOf("26P0123")).every(function(r){ return r.id !== c2.id; }));
 
   /* Un groupe retiré au milieu ne renumérote pas les autres : leurs clés de
      clichés sont déjà écrites dans les JSON déjà sortis. */
@@ -1172,12 +1388,15 @@ async function autotest(){
   async function nettoyer(){
     var l = await shotsOf("26P0123");
     for (var i = 0; i < l.length; i++) await delShot(l[i].id);
+    var lc = await clipsOf("26P0123");
+    for (var j = 0; j < lc.length; j++) await delClip(lc[j].id);
     await tx("saisies", "readwrite", function(s){ return s.delete("26P0123"); });
     $("dossier").value = ""; await majDossier();   /* majDossier remet dossier à "" et vide */
   }
   await nettoyer();
   chk("banc remis à zéro",        valeur("masse") === null && Object.keys(shots).length === 0 &&
-                                  groupesPresents().length === 0);
+                                  groupesPresents().length === 0 && Object.keys(clips).length === 0);
+  chk("export sans dictée : pas de clé", !("dictees" in (await paquet())));
 
   chk("clichés relus",            (await relire(pack)) === 4);
   chk("relecture : étiquette",    !!shots[K_ETIQUETTE]);
@@ -1190,10 +1409,20 @@ async function autotest(){
   chk("relecture : cliché trame", !!shots["photo_basale"] && $("tPhotos").textContent === "1/" + N_TRAME);
   chk("relecture : cliché tranche", $("ph_g1").children[1].classList.contains("done"));
   chk("relecture : cliché lésion",  $("ph_les1").children[0].classList.contains("done"));
+  chk("relecture : dictées",        (clips["remarques_basale"] || []).length === 2 &&
+                                    (clips["lesion_1"] || []).length === 1);
+  chk("relecture : son intact",     clips["lesion_1"][0].blob.size === 2000 &&
+                                    clips["lesion_1"][0].type === "audio/webm;codecs=opus");
+  chk("relecture : identifiant",    clips["remarques_basale"][0].id === pack.dictees[0].id);
+  chk("relecture : compteur",       $("cl_lesion_1").textContent.indexOf("1 dictée") === 0);
+  await retirerLesion(1);
+  chk("lésion retirée, dictées aussi", !clips["lesion_1"] &&
+                                    (await clipsOf("26P0123")).every(function(r){ return r.champ !== "lesion_1"; }));
 
   await nettoyer();
   $("operateur").value = "";
-  chk("nettoyage du banc",        (await shotsOf("26P0123")).length === 0);
+  chk("nettoyage du banc",        (await shotsOf("26P0123")).length === 0 &&
+                                  (await clipsOf("26P0123")).length === 0);
 
   document.body.insertAdjacentHTML("afterbegin",
     '<pre style="background:' + (ko.length ? "#9C3A28" : "#0E6B62") + ';color:#fff;padding:14px;' +

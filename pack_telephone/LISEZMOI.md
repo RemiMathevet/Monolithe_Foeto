@@ -10,7 +10,7 @@ Dans l'ordre de l'examen :
 - `radio.html` — Imagerie radiologique (v1.0.1)
 - `autopsie.html` — Autopsie — examen interne (v2.1.1)
 - `neuropath.html` — Neuropathologie — examen de l'encéphale fixé (v1.1.1)
-- `macro_placenta.html` — Macro placentaire — pièce fraîche (v1.1.1)
+- `macro_placenta.html` — Macro placentaire — pièce fraîche (v1.2.0)
 
 Chaque module enregistre sur l'appareil et exporte un `<dossier>_<module>.json`
 qu'on recopie ensuite dans `hub/arrivee/` de l'ordinateur — ou qu'on glisse sur
