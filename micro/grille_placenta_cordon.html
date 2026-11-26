@@ -1643,16 +1643,18 @@ function enregistrer(){
 }
 
 /* ── Mode intégré (?hote=1, dans un cadre) ────────────────────────────────────
-   Une page hôte (viewer de lames, même origine) donne le dossier, le lecteur et la
-   lecture déjà faite ; la grille lui renvoie collecter() à chaque enregistrement.
-   Pas d'IndexedDB : l'hôte garde la lecture, une par lame. */
+   Une page hôte (viewer de lames, même origine) donne le dossier, le lecteur, le terme
+   du dossier et la lecture déjà faite ; la grille lui renvoie collecter() à chaque
+   enregistrement. Pas d'IndexedDB : l'hôte garde la lecture, une par lame.
+   Le terme de l'hôte ne remplit qu'un champ vide et n'enregistre rien à lui seul. */
 var HOTE = /[?&]hote=1\b/.test(location.search) && window.parent !== window,
-    HOTE_CIBLE = window.parent, hoteSaisie = null, hoteBlocs = "";
+    HOTE_CIBLE = window.parent, hoteSaisie = null, hoteBlocs = "", hoteTerme = null;
 function recevoirHote(e){
   var m = e.data || {};
   if (e.source !== HOTE_CIBLE || m.type !== "grille:init") return;
   hoteSaisie = m.saisie && m.saisie.grille ? m.saisie : null;
   hoteBlocs = m.blocs || "";
+  hoteTerme = m.terme_sa != null && m.terme_sa !== "" ? m.terme_sa : null;
   if (m.operateur && !$("operateur").value) $("operateur").value = m.operateur;
   $("dossier").value = normDossier(m.dossier || "");
   dossier = "";   // relit la lecture de l'hôte même si le dossier ne change pas
@@ -1695,6 +1697,7 @@ async function majDossier(){
     else if (HOTE && BLOCS_LUS && hoteBlocs){
       E.blocs = lireBlocs(hoteBlocs).ok; $("blocs").value = E.blocs.join(", ");
     }
+    if (HOTE && hoteTerme != null && $("sa").value === ""){ $("sa").value = hoteTerme; majSa(); }
   } else if (!ok && dossier){
     dossier = ""; vider();
   }
@@ -2182,7 +2185,14 @@ async function autotest(){
     await recevoirHote({ source:HOTE_CIBLE, data:{ type:"grille:init", dossier:"26P0123", operateur:"RM", blocs:"6" } });
     chk("intégré : bloc de la lame prérempli", E.blocs.join() === "6" && Object.keys(E.signes).length === 0);
   }
-  HOTE = false; HOTE_CIBLE = cible0; hoteSaisie = null; hoteBlocs = "";
+  recus.length = 0;
+  await recevoirHote({ source:HOTE_CIBLE, data:{ type:"grille:init", dossier:"26P0123", operateur:"RM", terme_sa:31 } });
+  await new Promise(function(r){ setTimeout(r, 400); });
+  chk("intégré : terme de l'hôte prérempli, rien envoyé", $("sa").value === "31" && recus.length === 0);
+  snap.terme_sa = 28;
+  await recevoirHote({ source:HOTE_CIBLE, data:{ type:"grille:init", dossier:"26P0123", operateur:"RM", terme_sa:31, saisie:snap } });
+  chk("intégré : le terme de la lecture l'emporte sur celui de l'hôte", $("sa").value === "28");
+  HOTE = false; HOTE_CIBLE = cible0; hoteSaisie = null; hoteBlocs = ""; hoteTerme = null;
   vider(); $("dossier").value = ""; $("operateur").value = ""; dossier = ""; await majDossier();
 
   document.body.insertAdjacentHTML("afterbegin",
