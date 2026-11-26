@@ -21,6 +21,7 @@ hub/outils/corrections/
 # module de transcription : son Python et le modèle se refont (outils/paquet_transcription.sh)
 hub/transcription/python/
 hub/transcription/modele/
+hub/transcription/omni/
 hub/bamara.json
 hub/.sonde_sqlite*
 hub/exemples/cas/

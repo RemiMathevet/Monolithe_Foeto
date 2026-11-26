@@ -1030,8 +1030,9 @@ function panneauTranscriptions(d){
     if (k !== cle){ groupes.push({module: t.module, titre: t.titre || t.section || "—", l: []}); cle = k; }
     groupes[groupes.length - 1].l.push(t);
   });
-  return '<p class="note" style="margin-top:0">Transcription automatique (Whisper), sur ce poste. ' +
-    "Le son reste dans l'archive ; relire avant de reprendre un texte.</p>" +
+  return '<p class="note" style="margin-top:0">Transcription automatique sur ce poste : Whisper, ' +
+    "et Omni en seconde écoute si son paquet est posé — ⟨whisper / omni⟩ marque un passage où les " +
+    "deux écoutes divergent. Le son reste dans l'archive ; relire avant de reprendre un texte.</p>" +
     groupes.map(function(g){
       return '<h3 style="margin:14px 0 6px">' + esc(g.titre) +
         ' <span class="note">· ' + esc(g.module.replace(/_/g, " ")) + "</span></h3>" +

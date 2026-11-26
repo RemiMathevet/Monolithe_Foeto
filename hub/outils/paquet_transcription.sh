@@ -11,7 +11,7 @@ SORTIE=$(realpath "${1:-$HUB/..}")
 PIP=${PIP:-python3 -m pip}
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
 M="$T/transcription"; mkdir -p "$M"
-cp "$HUB/transcription/transcrire.py" "$HUB/transcription/LISEZMOI.md" "$M/"
+cp "$HUB/transcription/transcrire.py" "$HUB/transcription/installer_omni.py" "$HUB/transcription/LISEZMOI.md" "$M/"
 
 echo "· Python $PY Windows (python-build-standalone $PBS)"
 curl -fsSL "https://github.com/astral-sh/python-build-standalone/releases/download/$PBS/cpython-$PY+$PBS-x86_64-pc-windows-msvc-install_only.tar.gz" \

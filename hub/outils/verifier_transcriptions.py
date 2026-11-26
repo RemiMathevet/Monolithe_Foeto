@@ -69,6 +69,13 @@ with tempfile.TemporaryDirectory() as t:
     n_rejoue = ingest.transcrire_en_attente(cx, racine)
     garde = cx.execute("SELECT COUNT(*) FROM transcriptions").fetchone()[0]
 
+# Le module lui-même : fusion des deux écoutes, et Omni écarté sans bruit s'il n'est pas posé.
+sys.path.insert(0, str(APP.parent / "transcription"))
+import transcrire  # noqa: E402
+os.environ["MONOLITHE_OMNI"] = str(Path(tempfile.gettempdir()) / "pas_d_omni_ici")
+transcrire.OMNI = Path(os.environ["MONOLITHE_OMNI"])
+paquet, raison = transcrire.omni_possible()
+
 if vrai:
     for x in tr:
         print("  ", x["titre"], "|", x["champ"], "|", x["texte"])
@@ -80,6 +87,11 @@ CAS = [
     ("texte et champ gardés", vrai and all(x["texte"] for x in tr)
                               or tr[0]["texte"] == "texte de remarques_cordon" and tr[1]["champ"] == "lesion_1"),
     ("--rejouer garde les transcriptions", n_rejoue == 0 and garde == 2),
+    ("fusion : accord à la casse près", transcrire.fusion("Cordon RAS.", "cordon RAS") == "Cordon RAS."),
+    ("fusion : divergence marquée", transcrire.fusion("quelques hectasies des vaisseaux",
+                                                      "quelques ectasies des vaisseaux")
+                                    == "quelques ⟨hectasies / ectasies⟩ des vaisseaux"),
+    ("sans paquet Omni : Whisper seul", paquet is None and "absent" in raison),
 ]
 for titre, bon in CAS:
     print(("ok   " if bon else "FAUX ") + titre)

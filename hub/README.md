@@ -198,7 +198,10 @@ reste dans l'archive. Si le module `transcription/` est posé à côté d'`app/`
 dictées qui attendent, y compris celles d'avant sa pose. Les textes vont dans la
 table `transcriptions` et dans l'onglet **Transcriptions** du dossier, rangés
 par onglet d'enregistrement. `python app/ingest.py --transcrire` le fait sans
-ingérer. Tout reste sur le poste. Voir `transcription/LISEZMOI.md` ;
+ingérer. Paquet Omni facultatif (`Monolithe_Transcription_Omni_Windows.zip`) :
+seconde écoute par Qwen3-Omni sur les postes qui ont la mémoire, divergences
+marquées ⟨whisper / omni⟩, Whisper seul sinon. Tout reste sur le poste. Voir
+`transcription/LISEZMOI.md` ;
 vérification : `python3 outils/verifier_transcriptions.py`.
 
 ---
