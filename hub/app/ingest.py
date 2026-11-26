@@ -39,6 +39,7 @@ import os
 import re
 import shutil
 import sqlite3
+import subprocess
 import sys
 import traceback
 import zipfile
@@ -1137,9 +1138,14 @@ def construire_index(cx):
         journal_ = [dict(r) for r in cx.execute(
             """SELECT at, niveau, module, message FROM journal WHERE dossier=?
                 ORDER BY id DESC LIMIT 100""", (num_,))]
+        # Les dictées transcrites : l'onglet Transcriptions, rangé par onglet d'enregistrement.
+        transcriptions = [dict(r) for r in cx.execute(
+            """SELECT module, champ, section, titre, rang, enregistre_le, texte FROM transcriptions
+                WHERE dossier=? ORDER BY module, rang, enregistre_le""", (num_,))]
         dossiers.append({**dict(d), "saisies": saisies, "photos": photos,
                          "anomalies": anomalies, "alertes": alertes, "masses": masses,
-                         "historique": historique, "journal": journal_})
+                         "historique": historique, "journal": journal_,
+                         "transcriptions": transcriptions})
 
     return {
         "genere_at": dt.datetime.now().isoformat(timespec="seconds"),
@@ -1246,6 +1252,94 @@ def ingerer_paquet(cx, racine: Path, chemin: Path):
     return "info", msg
 
 
+# ── Transcription des dictées : module facultatif ────────────────────────────
+# hub/transcription/ (transcrire.py + son propre Python, et le modèle Whisper) se pose à côté
+# d'app/. Présent : les dictées des saisies sont transcrites à l'ingestion, en un seul lot.
+# Absent : seul le JSON est ingéré, le son attend dans l'archive ; la prochaine ingestion
+# après la pose du module rattrape tout ce qui attend.
+TRANSCRIPTION = ICI.parent / "transcription"
+
+
+def module_transcription():
+    """(python, script) du module, ou None. Son Python : python/python.exe (Windows) ou
+    python/bin/python3 ; MONOLITHE_TRANSCRIPTION_PYTHON pour un autre interpréteur qui a
+    faster-whisper (poste de développement), MONOLITHE_TRANSCRIPTION pour un autre dossier."""
+    d = Path(os.environ.get("MONOLITHE_TRANSCRIPTION") or TRANSCRIPTION)
+    script = d / "transcrire.py"
+    for py in (os.environ.get("MONOLITHE_TRANSCRIPTION_PYTHON"),
+               d / "python" / "python.exe", d / "python" / "bin" / "python3"):
+        if py and Path(py).is_file() and script.is_file():
+            return str(py), str(script)
+    return None
+
+
+def transcrire_en_attente(cx, racine: Path):
+    """Transcrit les dictées qui ne le sont pas encore ; rend le nombre de clips transcrits.
+
+    Le son est relu dans l'archive (la base n'a que les métadonnées des clips). Chaque
+    transcription garde le titre de l'onglet où le clip a été enregistré, et son rang :
+    l'onglet Transcriptions les range ainsi.
+    """
+    mod = module_transcription()
+    if not mod:
+        return 0
+    faites = {r[0] for r in cx.execute("SELECT clip_id FROM transcriptions")}
+    lot, metas = [], {}
+    for s in cx.execute("""SELECT dossier, module, archive, donnees_json FROM saisies
+                            WHERE donnees_json LIKE '%"dictees"%' ORDER BY ingere_at"""):
+        d = json.loads(s["donnees_json"] or "{}")
+        manquants = [c for c in d.get("dictees") or [] if c.get("id") and c["id"] not in faites]
+        if not manquants:
+            continue
+        try:
+            brut = json.loads((racine / s["archive"]).read_text(encoding="utf-8"))
+        except (OSError, ValueError) as e:
+            journal(cx, "erreur", f"transcription : archive illisible ({e})", s["archive"],
+                    s["dossier"], s["module"])
+            continue
+        sons = {c.get("id"): c.get("data_base64") for c in brut.get("dictees") or []}
+        sections = [(x.get("id"), x.get("titre")) for x in d.get("sections") or []]
+        for c in manquants:
+            if not sons.get(c["id"]):
+                continue
+            rang = next((i for i, (sid, _) in enumerate(sections) if sid == c.get("section")),
+                        len(sections))
+            titre = sections[rang][1] if rang < len(sections) else c.get("section")
+            lot.append({"id": c["id"], "data_base64": sons[c["id"]]})
+            metas[c["id"]] = (s["dossier"], s["module"], c.get("champ"), c.get("section"),
+                              titre, rang, c.get("addedAt"))
+            faites.add(c["id"])          # le même clip dans deux exports : une seule fois
+    if not lot:
+        return 0
+    py, script = mod
+    r = subprocess.run([py, script], input=json.dumps({"clips": lot}), capture_output=True,
+                       text=True, encoding="utf-8", env={**os.environ, "PYTHONUTF8": "1"})
+    n = 0
+    for ligne in r.stdout.splitlines():
+        try:
+            o = json.loads(ligne)
+        except ValueError:
+            continue
+        m = metas.get(o.get("id"))
+        if not m:
+            continue
+        if "erreur" in o:
+            journal(cx, "erreur", f"transcription de {o['id']} : {o['erreur']}", None, m[0], m[1])
+            continue
+        cx.execute("""INSERT OR IGNORE INTO transcriptions (clip_id, dossier, module, champ, section,
+                      titre, rang, enregistre_le, texte, modele, transcrit_le)
+                      VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+                   (o["id"], *m, o.get("texte") or "", o.get("modele"),
+                    dt.datetime.now().isoformat(timespec="seconds")))
+        n += 1
+    if r.returncode != 0:
+        journal(cx, "erreur", "module de transcription en échec : " + r.stderr.strip()[-500:])
+    elif n:
+        journal(cx, "info", f"{n} dictée(s) transcrite(s)")
+    cx.commit()
+    return n
+
+
 def rejouer(cx, racine: Path):
     """Vide la base et la reconstruit depuis l'archive, la plus ancienne d'abord.
 
@@ -1287,6 +1381,8 @@ def main():
     ap.add_argument("--reindex", action="store_true",
                     help="refabriquer les tables par module depuis les JSON en base")
     ap.add_argument("--index-seul", action="store_true", help="régénérer index.json sans ingérer")
+    ap.add_argument("--transcrire", action="store_true",
+                    help="transcrire les dictées en attente (module hub/transcription/), sans ingérer")
     args = ap.parse_args()
 
     racine = args.base.resolve()
@@ -1328,8 +1424,18 @@ def main():
         print(f"index.json régénéré — {n} dossier(s).")
         return 0
 
+    if args.transcrire:
+        if not module_transcription():
+            print("module de transcription absent (hub/transcription/) — rien à faire.")
+            return 1
+        n = transcrire_en_attente(cx, racine)
+        ecrire_index(cx, racine)
+        print(f"{n} dictée(s) transcrite(s).")
+        return 0
+
     if args.rejouer:
         n_ok, n_ko = rejouer(cx, racine)
+        transcrire_en_attente(cx, racine)
         ecrire_index(cx, racine)
         print(f"\nrejoué : {n_ok} saisie(s), {n_ko} refus.")
         return 1 if n_ko else 0
@@ -1348,7 +1454,10 @@ def main():
 
     fichiers = sorted((racine / "arrivee").glob("*.json"))
     if not fichiers:
-        print("arrivee/ est vide — rien à faire.")
+        print("arrivee/ est vide — rien à ingérer.")
+        n = transcrire_en_attente(cx, racine)   # module posé après coup : rattrape ce qui attend
+        if n:
+            print(f"{n} dictée(s) transcrite(s).")
         ecrire_index(cx, racine)
         return 0
 
@@ -1400,6 +1509,9 @@ def main():
             print(f"  !! {f.name} — erreur inattendue : {e}\n      → rejets/{cible.name}")
 
     if not args.dry_run:
+        nt = transcrire_en_attente(cx, racine)
+        if nt:
+            print(f"{nt} dictée(s) transcrite(s).")
         n = ecrire_index(cx, racine)
         print(f"\n{n_ok} ingérée(s), {n_dbl} doublon(s), {n_ko} rejet(s) — "
               f"index.json à jour, {n} dossier(s) en base.")

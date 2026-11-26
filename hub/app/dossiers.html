@@ -801,6 +801,8 @@ function ongletsDe(d){
             poste: !!(s && s.provenance === "poste"), facultatif: facultatif(m)});
   });
   if ((d.photos || []).length) l.push({id:"cliches", t:"Clichés (" + d.photos.length + ")"});
+  if ((d.transcriptions || []).length)
+    l.push({id:"transcriptions", t:"Transcriptions (" + d.transcriptions.length + ")"});
   if (SERVI) l.push({id:"cr", t:"Compte rendu" + (d.comptes_rendus ? " (" + d.comptes_rendus + ")" : "")});
   var nh = (d.historique || []).length;
   if (nh || (d.journal || []).length) l.push({id:"historique", t:"Historique" + (nh ? " (" + nh + ")" : "")});
@@ -854,6 +856,7 @@ function ouvrir(numero, garderOnglet){
   var h = "";
   if (ONGLET === "dossier")         h = panneauDossier(d, slugs);
   else if (ONGLET === "cliches")    h = panneauCliches(d);
+  else if (ONGLET === "transcriptions") h = panneauTranscriptions(d);
   else if (ONGLET === "historique") h = panneauHistorique(d);
   else if (ONGLET === "cr")         h = panneauCr(d);
   else if (ONGLET === "m_microscopie") h = panneauMicroscopie(d, slugs);
@@ -1017,6 +1020,28 @@ function compterFeuilles(v){
   return 1;
 }
 
+/* Les dictées transcrites par le module hub/transcription/, rangées par onglet
+   d'enregistrement (module, puis section dans l'ordre du formulaire), dans
+   l'ordre où elles ont été dictées. Texte brut de Whisper : à relire. */
+function panneauTranscriptions(d){
+  var groupes = [], cle = null;
+  (d.transcriptions || []).forEach(function(t){
+    var k = t.module + "|" + t.titre;
+    if (k !== cle){ groupes.push({module: t.module, titre: t.titre || t.section || "—", l: []}); cle = k; }
+    groupes[groupes.length - 1].l.push(t);
+  });
+  return '<p class="note" style="margin-top:0">Transcription automatique (Whisper), sur ce poste. ' +
+    "Le son reste dans l'archive ; relire avant de reprendre un texte.</p>" +
+    groupes.map(function(g){
+      return '<h3 style="margin:14px 0 6px">' + esc(g.titre) +
+        ' <span class="note">· ' + esc(g.module.replace(/_/g, " ")) + "</span></h3>" +
+        '<div class="scroll"><table><tbody>' + g.l.map(function(t){
+          return '<tr><td style="width:9em;white-space:nowrap">' + esc(dateCourte(t.enregistre_le)) +
+            '</td><td style="width:12em">' + esc((t.champ || "").replace(/_/g, " ")) + "</td><td>" +
+            (t.texte ? esc(t.texte) : '<span class="note">rien d\'entendu</span>') + "</td></tr>";
+        }).join("") + "</tbody></table></div>";
+    }).join("");
+}
 function panneauCliches(d){
   return '<div class="cliches">' + (d.photos || []).map(function(p){
     var vig = p.chemin.replace(/([^\/]+)$/, "vignettes/$1");
@@ -1476,7 +1501,8 @@ if (SERVI){
     api("/api/ingerer", {method:"POST"}).then(function(o){
       $("rapport").innerHTML =
         '<p class="note"><b>' + o.ingerees + "</b> ingérée(s), <b>" + o.doublons +
-        "</b> doublon(s), <b>" + o.rejets + "</b> rejet(s).</p>" +
+        "</b> doublon(s), <b>" + o.rejets + "</b> rejet(s)" +
+        (o.transcrites ? ", <b>" + o.transcrites + "</b> dictée(s) transcrite(s)" : "") + ".</p>" +
         (o.lignes.length
           ? '<div class="scroll"><table><thead><tr><th>Fichier</th><th>État</th>' +
             "<th>Détail</th></tr></thead><tbody>" +

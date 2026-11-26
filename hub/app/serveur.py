@@ -59,7 +59,7 @@ import perinatal
 from ingest import (ADAPTATEURS, MODULES_FACULTATIFS, MODULES_MICRO,
                     ORDRE_MODULES, Refus, slot, arborescence, construire_index,
                     ecrire_index, ingerer, ingerer_fichier, ingerer_paquet, journal,
-                    migrer, ouvrir, rejeter, reindexer)
+                    migrer, ouvrir, rejeter, reindexer, transcrire_en_attente)
 
 ICI = Path(__file__).resolve().parent      # hub/app — le code, la page, web/, gabarits/, migrations/
 HUB = ICI.parent                            # hub/     — la base et les dossiers de travail
@@ -416,6 +416,7 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
                     fichier=nom, dossier=enveloppe.get("dossier") if isinstance(enveloppe, dict) else None,
                     module=enveloppe.get("module") if isinstance(enveloppe, dict) else None)
             cx.commit()
+            transcrire_en_attente(cx, racine)   # module de transcription posé : dictées transcrites
             ecrire_index(cx, racine)
             return jsonify({"etat": etat, "message": msg, "saisie_id": sid})
         except Refus as e:
@@ -517,9 +518,11 @@ def creer_app(racine: Path, depot: Path = None, hotes=None):
                     lignes.append({"fichier": f.name, "etat": "erreur",
                                    "message": f"erreur inattendue : {e}",
                                    "rejet": cible.name})
+            # module de transcription posé : les dictées en attente, y compris celles d'avant sa pose
+            n_tr = transcrire_en_attente(cx, racine)
             ecrire_index(cx, racine)
             return jsonify({"ingerees": n_ok, "doublons": n_dbl, "rejets": n_ko,
-                            "lignes": lignes})
+                            "transcrites": n_tr, "lignes": lignes})
         finally:
             cx.close()
 

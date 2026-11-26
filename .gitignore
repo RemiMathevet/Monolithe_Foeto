@@ -18,6 +18,9 @@ hub/index.json
 hub/exemples/_cliche_de_controle.jpg
 hub/__pycache__/
 hub/outils/corrections/
+# module de transcription : son Python et le modèle se refont (outils/paquet_transcription.sh)
+hub/transcription/python/
+hub/transcription/modele/
 hub/bamara.json
 hub/.sonde_sqlite*
 hub/exemples/cas/

@@ -188,6 +188,21 @@ sans serveur : le mode hors ligne n'est jamais perdu.
 
 ---
 
+## Transcription des dictées — module facultatif
+
+Les modules qui enregistrent des dictées (macro placenta 1.2 et suivants) les
+exportent en son, sans les transcrire. Le hub les ingère tel quel : le son
+reste dans l'archive. Si le module `transcription/` est posé à côté d'`app/`
+(son propre Python portable, faster-whisper et le modèle Whisper large-v3-turbo,
+`Monolithe_Transcription_Windows.zip`), chaque ingestion transcrit en un lot les
+dictées qui attendent, y compris celles d'avant sa pose. Les textes vont dans la
+table `transcriptions` et dans l'onglet **Transcriptions** du dossier, rangés
+par onglet d'enregistrement. `python app/ingest.py --transcrire` le fait sans
+ingérer. Tout reste sur le poste. Voir `transcription/LISEZMOI.md` ;
+vérification : `python3 outils/verifier_transcriptions.py`.
+
+---
+
 ## La biblio — le paquet data_hub
 
 Onglet « Biblio ». Il reprend `data_hub_vN.zip`, publié par
