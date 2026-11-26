@@ -223,7 +223,7 @@ td:first-child{color:var(--ink-soft);white-space:nowrap;padding-right:12px}
 var MODULE = "macro_placenta";
 var SCHEMA = "0.2.1";   /* 0.2.0 : indication ; masse parée dans sa section "paree" ;
                            0.2.1 : clé facultative "dictees" (clips audio en base64) */
-var VERSION = "1.2.0";   /* version du document ; à incrémenter à chaque diffusion */
+var VERSION = "1.2.1";   /* version du document ; à incrémenter à chaque diffusion */
 var DB_NAME = "foeto-macro-placenta", DB_VER = 2, db = null;   /* 2 : store "clips" */
 
 /* ── Sections ───────────────────────────────────────────────────────────────
@@ -785,13 +785,38 @@ function majBoutonMic(champ, s){
   b.classList.toggle("rec", s != null);
   b.textContent = s != null ? "■ " + s + " / " + MIC_MAX + " s" : "🎙 Dicter";
 }
+/* Chrome Android refuse d'office le micro à une page ouverte depuis un fichier (file://, content://) :
+   pas d'origine à qui donner la permission. Repli natif : l'enregistreur du téléphone, par un
+   <input capture>, qui ne demande rien à la page ; le fichier son revient comme un cliché. */
+function repliNatif(proto, ua){ return !/^https?:$/.test(proto) && /Android/i.test(ua); }
+function dureeAudio(blob){
+  return new Promise(function(res){
+    var a = new Audio(), u = URL.createObjectURL(blob);
+    a.preload = "metadata";
+    a.onloadedmetadata = function(){ URL.revokeObjectURL(u); res(isFinite(a.duration) ? Math.round(a.duration * 10) / 10 : null); };
+    a.onerror = function(){ URL.revokeObjectURL(u); res(null); };
+    a.src = u;
+  });
+}
+function dicterParAppli(champ){
+  var d = dossier, inp = document.createElement("input");
+  inp.type = "file"; inp.accept = "audio/*"; inp.setAttribute("capture", "");
+  inp.onchange = async function(){
+    var f = inp.files && inp.files[0];
+    if (!f || !f.size) return;
+    var duree = await dureeAudio(f);
+    try { await ajouterClip(champ, f, duree, d); flash("Dictée conservée" + (duree != null ? " (" + duree + " s)." : ".")); }
+    catch(err){ flash("Échec : " + err.message + " — dictée non conservée."); }
+  };
+  inp.click();
+}
 async function basculerMic(champ){
   if (enr){ if (enr.champ === champ) arreterMic(); else flash("Une dictée est déjà en cours."); return; }
   if (!dossier){ flash("Saisir d'abord dossier et opérateur."); $("dossier").focus(); return; }
-  if (!micDispo()){ flash("Micro indisponible dans ce navigateur (voir le diagnostic)."); return; }
+  if (!micDispo() || repliNatif(location.protocol, navigator.userAgent)){ dicterParAppli(champ); return; }
   var flux, rec, fa = formatAudio();
   try { flux = await navigator.mediaDevices.getUserMedia({audio: true}); }
-  catch(e){ flash("Micro refusé : " + e.message); return; }
+  catch(e){ flash("Micro refusé (" + e.message + ") : enregistreur du téléphone."); dicterParAppli(champ); return; }
   try { rec = fa ? new MediaRecorder(flux, {mimeType: fa}) : new MediaRecorder(flux); }
   catch(e){
     flux.getTracks().forEach(function(t){ t.stop(); });
@@ -843,7 +868,7 @@ function rendreClips(){
       l.map(function(r, i){
         return '<span class="clip">' +
           '<button type="button" class="mini" data-play="' + esc(r.id) + '" aria-label="Écouter la dictée ' +
-            (i+1) + '">▶ ' + (i+1) + ' · ' + Math.round(r.duree_s) + ' s</button>' +
+            (i+1) + '">▶ ' + (i+1) + ' · ' + (r.duree_s != null ? Math.round(r.duree_s) + ' s' : '?') + '</button>' +
           '<button type="button" class="mini danger" data-delclip="' + esc(r.id) + '" aria-label="Supprimer la dictée ' +
             (i+1) + '">✕</button></span>';
       }).join("");
@@ -1304,6 +1329,9 @@ async function autotest(){
   chk("un micro par texte libre", document.querySelectorAll("#sections textarea").length ===
                                   document.querySelectorAll("#sections [data-mic]").length);
   chk("micro sous la lésion",     !!document.querySelector('[data-mic="lesion_1"]'));
+  chk("Android en fichier : enregistreur du téléphone",
+      repliNatif("file:", "Mozilla/5.0 (Linux; Android 14)") && repliNatif("content:", "Android") &&
+      !repliNatif("https:", "Android") && !repliNatif("file:", "Mozilla/5.0 (X11; Linux x86_64)"));
   chk("format audio : chaîne",    typeof formatAudio() === "string");
   var c1 = await ajouterClip("remarques_basale", son(3000), 4.2);
   await pause(5);   /* l'identifiant porte l'horodatage à la milliseconde */
